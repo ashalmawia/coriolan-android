@@ -1,3 +1,5 @@
 <resources>
 	<string name="app_name">Coriolan</string>
+
+	<string name="decks_select_deck">Select deck:</string>
 </resources>

@@ -1,9 +1,9 @@
 package com.ashalmawia.coriolan.model
 
-class Notion(
+class Expression(
         val lang: String,
         val value: String,
-        val type: NotionType
+        val type: ExpressionType
 ) {
 
     //val original Card;
@@ -11,6 +11,6 @@ class Notion(
 
 }
 
-enum class NotionType {
+enum class ExpressionType {
     WORD
 }
