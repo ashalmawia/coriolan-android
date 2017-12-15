@@ -1,6 +1,9 @@
 package com.ashalmawia.coriolan
 
-import kotlinx.android.synthetic.main.main.*
+import android.content.Context
+import android.content.Intent
+
+import kotlinx.android.synthetic.main.decks_list.*
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -17,14 +20,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
+        setContentView(R.layout.decks_list)
 
         initializeList()
     }
 
     private fun initializeList() {
         decksList.layoutManager = LinearLayoutManager(this)
-        decksList.adapter = DecksAdapter(decksList())
+        decksList.adapter = DecksAdapter(this, decksList())
     }
 
     private fun decksList(): List<Deck> {
@@ -32,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class DecksAdapter(private val decks: List<Deck>) : RecyclerView.Adapter<DeckViewHolder>() {
+class DecksAdapter(
+        private val context: Context,
+        private val decks: List<Deck>) : RecyclerView.Adapter<DeckViewHolder>() {
 
     override fun getItemCount(): Int {
         return decks.size
@@ -41,6 +46,12 @@ class DecksAdapter(private val decks: List<Deck>) : RecyclerView.Adapter<DeckVie
     override fun onBindViewHolder(holder: DeckViewHolder?, position: Int) {
         val item = decks[position]
         (holder!!.itemView as TextView).text = item.name
+        holder.itemView.setOnClickListener { showContent() }
+    }
+
+    private fun showContent() {
+        val intent = Intent(context, DeckContentActivity::class.java)
+        context.startActivity(intent)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DeckViewHolder {
