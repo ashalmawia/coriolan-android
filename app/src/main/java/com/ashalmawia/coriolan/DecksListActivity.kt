@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan
 
 import android.content.Context
-import android.content.Intent
 
 import kotlinx.android.synthetic.main.decks_list.*
 
@@ -13,10 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.ashalmawia.coriolan.data.DecksStorage
+import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
 
-class MainActivity : AppCompatActivity() {
+class DecksListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +46,11 @@ class DecksAdapter(
     override fun onBindViewHolder(holder: DeckViewHolder?, position: Int) {
         val item = decks[position]
         (holder!!.itemView as TextView).text = item.name
-        holder.itemView.setOnClickListener { showContent() }
+        holder.itemView.setOnClickListener { showContent(item) }
     }
 
-    private fun showContent() {
-        val intent = Intent(context, DeckContentActivity::class.java)
-        context.startActivity(intent)
+    private fun showContent(deck: Deck) {
+        LearningFlow.initiateDefault(deck).start(context)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DeckViewHolder {

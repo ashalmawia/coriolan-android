@@ -4,4 +4,9 @@
 	<string name="decks_select_deck">Select deck:</string>
 
 	<string name="deck_content_cards">Cards:</string>
+
+	<string name="exercise_simple">Simple exercise</string>
+
+	<string name="cards_yes">Yes</string>
+	<string name="cards_no">No</string>
 </resources>

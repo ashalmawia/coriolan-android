@@ -3,14 +3,15 @@ package com.ashalmawia.coriolan.model
 import java.util.*
 
 class Card private constructor(
+        val id: Int,
         val original: Expression,
         val translations: List<Expression>,
         val state: State
 ) {
 
     companion object {
-        fun create(original: Expression, translation: Expression) :Card {
-            return Card(original, Arrays.asList(translation), stateCreateNew())
+        fun create(id: Int, original: Expression, translation: Expression) :Card {
+            return Card(id, original, Arrays.asList(translation), stateCreateNew())
         }
     }
 
