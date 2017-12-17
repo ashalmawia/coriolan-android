@@ -8,10 +8,14 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.ashalmawia.coriolan.data.DecksStorage
+import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
@@ -28,6 +32,30 @@ class DecksListActivity : AppCompatActivity() {
     private fun initializeList() {
         decksList.layoutManager = LinearLayoutManager(this)
         decksList.adapter = DecksAdapter(this, decksList())
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.decks_list_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.menu_import_from_file -> importFromFile()
+        }
+        return true
+    }
+
+    private fun importFromFile() {
+        DataImportFlow.start(this, DataImportFlow.default(), object : DataImportCallback {
+            override fun onSuccess() {
+                Toast.makeText(this@DecksListActivity, R.string.import_success, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(message: String) {
+                Toast.makeText(this@DecksListActivity, message, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun decksList(): List<Deck> {

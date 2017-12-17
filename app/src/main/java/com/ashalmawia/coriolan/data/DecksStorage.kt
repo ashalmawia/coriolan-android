@@ -4,11 +4,12 @@ import com.ashalmawia.coriolan.model.Deck
 
 object DecksStorage {
 
+    val default = Deck(1, "Default", CardsStorage.cardsByDeckId(1))
+
     fun allDecks() :List<Deck> {
         val list = ArrayList<Deck>()
 
-        val name = "Default"
-        list.add(Deck(name, CardsStorage.cardsByDeckName(name)))
+        list.add(default)
 
         return list
     }

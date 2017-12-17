@@ -1,10 +1,13 @@
 package com.ashalmawia.coriolan.data
 
+import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
 object CardsStorage {
+
+    private var index = 0;
 
     val stub : List<Card>
 
@@ -12,7 +15,7 @@ object CardsStorage {
         stub = createStubDeck()
     }
 
-    fun cardsByDeckName(name: String): List<Card> {
+    fun cardsByDeckId(id: Int): List<Card> {
         return ArrayList<Card>(stub)
     }
 
@@ -20,12 +23,19 @@ object CardsStorage {
         return stub[id-1]
     }
 
+    fun addCard(data: CardData): Card {
+        return Card.create(
+                index++,
+                Expression("ru", data.original, ExpressionType.WORD),
+                Expression("en", data.translation, ExpressionType.WORD))
+    }
+
     private fun createStubDeck(): ArrayList<Card> {
         val list = ArrayList<Card>()
 
-        list.add(Card.create(1, toExpression("ru", "красный"), toExpression("en", "red")))
-        list.add(Card.create(2, toExpression("ru", "зеленый"), toExpression("en", "green")))
-        list.add(Card.create(3, toExpression("ru", "синий"), toExpression("en", "blue")))
+//        list.add(Card.create(1, toExpression("ru", "красный"), toExpression("en", "red")))
+//        list.add(Card.create(2, toExpression("ru", "зеленый"), toExpression("en", "green")))
+//        list.add(Card.create(3, toExpression("ru", "синий"), toExpression("en", "blue")))
 //        list.add(Card.create(4, toExpression("ru", "желтый"), toExpression("en", "yellow")))
 //        list.add(Card.create(5, toExpression("ru", "белый"), toExpression("en", "white")))
 //        list.add(Card.create(6, toExpression("ru", "коричневый"), toExpression("en", "brown")))
