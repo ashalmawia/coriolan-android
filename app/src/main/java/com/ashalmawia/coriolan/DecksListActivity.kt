@@ -14,7 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import com.ashalmawia.coriolan.data.DecksStorage
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Deck
@@ -59,7 +59,7 @@ class DecksListActivity : AppCompatActivity() {
     }
 
     private fun decksList(): List<Deck> {
-        return DecksStorage.allDecks()
+        return DecksRegistry.allDecks()
     }
 }
 

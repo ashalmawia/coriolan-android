@@ -1,8 +1,7 @@
 package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
-import com.ashalmawia.coriolan.data.CardsStorage
-import com.ashalmawia.coriolan.data.DecksStorage
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.file.ImporterFromFile
 
 class DataImportFlow(
@@ -41,11 +40,10 @@ class DataImportFlow(
         importer.launch(context)
     }
 
-    fun onData(data: List<CardData>) {
+    fun onData(context: Context, data: List<CardData>) {
         // TODO: add generalized confirmation UI
 
-        val cards = data.map { CardsStorage.addCard(it) }
-        DecksStorage.default.add(cards)
+        DecksRegistry.addCardsToDeck(context, DecksRegistry.default(context), data)
 
         callback.onSuccess()
         finish()

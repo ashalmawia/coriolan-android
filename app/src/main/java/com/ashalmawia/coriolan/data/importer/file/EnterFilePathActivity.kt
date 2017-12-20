@@ -52,7 +52,7 @@ class EnterFilePathActivity : AppCompatActivity() {
             return
         }
 
-        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(path)
+        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(this, path)
         finish()
     }
 

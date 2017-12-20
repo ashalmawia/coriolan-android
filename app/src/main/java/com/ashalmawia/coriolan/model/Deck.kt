@@ -1,7 +1,5 @@
 package com.ashalmawia.coriolan.model
 
-import com.ashalmawia.coriolan.data.DecksStorage
-
 class Deck(
         val id: Int,
         val name: String,

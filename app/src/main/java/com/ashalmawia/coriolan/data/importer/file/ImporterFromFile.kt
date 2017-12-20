@@ -16,7 +16,7 @@ class ImporterFromFile : DataImporter {
         context.startActivity(intent)
     }
 
-    fun onFile(path: String) {
+    fun onFile(context: Context, path: String) {
         val file = File(path)
         if (!file.exists()) {
             ongoing().onError("File should be located under $path")
@@ -25,7 +25,7 @@ class ImporterFromFile : DataImporter {
 
         try {
             val data = FileParser.parseFile(file)
-            ongoing().onData(data)
+            ongoing().onData(context, data)
         } catch (e: ParsingException) {
             ongoing().onError("Failed to parse file, line[" + e.line + "]")
         } catch (e: Exception) {
