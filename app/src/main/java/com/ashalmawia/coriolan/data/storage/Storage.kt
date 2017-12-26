@@ -2,9 +2,11 @@ package com.ashalmawia.coriolan.data.storage
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.importer.CardData
-import com.ashalmawia.coriolan.data.storage.stub.StubStorage
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.ExpressionType
 
 interface Storage {
 
@@ -13,17 +15,21 @@ interface Storage {
 
         fun get(context: Context): Storage {
             if (!this::instance.isInitialized) {
-                instance = StubStorage()
+                instance = SqliteStorage(context)
             }
             return instance
         }
     }
 
-    fun addCard(data: CardData): Card
+    fun addExpression(value: String, type: ExpressionType): Expression
 
-    fun cardsByDeckId(id: Int): List<Card>
+    fun expressionById(id: Long): Expression?
+
+    fun addCard(data: CardData): Card
 
     fun allDecks() :List<Deck>
 
-    fun deckById(id: Int): Deck?
+    fun deckById(id: Long): Deck?
+
+    fun addDeck(name: String): Deck
 }

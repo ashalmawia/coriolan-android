@@ -31,7 +31,12 @@ class DecksListActivity : AppCompatActivity() {
 
     private fun initializeList() {
         decksList.layoutManager = LinearLayoutManager(this)
-        decksList.adapter = DecksAdapter(this, decksList())
+        decksList.adapter = DecksAdapter(this)
+        fetchData()
+    }
+
+    private fun fetchData() {
+        (decksList.adapter as DecksAdapter).setData(decksList())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -49,6 +54,7 @@ class DecksListActivity : AppCompatActivity() {
     private fun importFromFile() {
         DataImportFlow.start(this, DataImportFlow.default(), object : DataImportCallback {
             override fun onSuccess() {
+                fetchData()
                 Toast.makeText(this@DecksListActivity, R.string.import_success, Toast.LENGTH_SHORT).show()
             }
 
@@ -59,13 +65,19 @@ class DecksListActivity : AppCompatActivity() {
     }
 
     private fun decksList(): List<Deck> {
-        return DecksRegistry.allDecks()
+        return DecksRegistry.allDecks(this)
     }
 }
 
-class DecksAdapter(
-        private val context: Context,
-        private val decks: List<Deck>) : RecyclerView.Adapter<DeckViewHolder>() {
+class DecksAdapter(private val context: Context) : RecyclerView.Adapter<DeckViewHolder>() {
+
+    private val decks: MutableList<Deck> = mutableListOf()
+
+    fun setData(data: List<Deck>) {
+        decks.clear()
+        decks.addAll(data)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int {
         return decks.size

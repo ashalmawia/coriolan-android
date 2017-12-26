@@ -11,6 +11,7 @@
 	<string name="import_file_does_not_exist">File \"%s\" does not exist</string>
 	<string name="import_file_empty_path">Please enter the file path</string>
 
+	<string name="decks_default">Default</string>
 	<string name="decks_select_deck">Select deck:</string>
 
 	<string name="deck_content_cards">Cards:</string>

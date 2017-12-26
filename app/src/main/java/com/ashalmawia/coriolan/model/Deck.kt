@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.model
 
 class Deck(
-        val id: Int,
+        val id: Long,
         val name: String,
         cards: List<Card>
 ) {

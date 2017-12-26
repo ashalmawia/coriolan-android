@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
 import android.support.annotation.StringRes
+import com.ashalmawia.coriolan.model.ExpressionType
 
 interface DataImporter {
 
@@ -17,5 +18,7 @@ interface DataImporter {
 
 data class CardData(
         val original: String,
-        val translation: String
+        val translation: String,
+        val deckId: Long,
+        val type: ExpressionType
 )
