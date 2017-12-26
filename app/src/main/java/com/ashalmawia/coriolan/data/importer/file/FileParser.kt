@@ -6,7 +6,7 @@ import com.ashalmawia.coriolan.model.ExpressionType
 import java.io.File
 import java.util.regex.Pattern
 
-object FileParser {
+class FileParser(private val decksRegistry: DecksRegistry) {
 
     fun parseFile(file: File): List<CardData> {
         val lines = file.readLines()
@@ -21,7 +21,7 @@ object FileParser {
     fun parseLine(line: String): CardData? {
         val matcher = regexp.matcher(line)
         if (matcher.matches()) {
-            return CardData(matcher.group(1), matcher.group(2), DecksRegistry.default().id, ExpressionType.WORD)
+            return CardData(matcher.group(1), matcher.group(2), decksRegistry.default().id, ExpressionType.WORD)
         }
 
         if (line.isBlank()) {
