@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan
+package com.ashalmawia.coriolan.data.importer
 
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.file.FileParser
@@ -12,7 +12,7 @@ import org.mockito.Mockito.mock
 
 class FileParserTest {
 
-    lateinit var parser: FileParser
+    private lateinit var parser: FileParser
 
     @Before
     fun before() {

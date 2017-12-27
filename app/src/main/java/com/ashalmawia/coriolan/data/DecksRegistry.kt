@@ -11,10 +11,10 @@ object DecksRegistry {
     private lateinit var def: Deck
 
     fun preinitialize(context: Context) {
-        val prefs = Preferences.get(context)
+        val prefs = preferences(context)
         val defaultDeckId = prefs.getDefaultDeckId()
 
-        val storage = Storage.get(context)
+        val storage = storage(context)
 
         if (defaultDeckId != null) {
             def = storage.deckById(defaultDeckId)!!
@@ -29,13 +29,17 @@ object DecksRegistry {
     }
 
     fun allDecks(context: Context): List<Deck> {
-        return Storage.get(context).allDecks()
+        return storage(context).allDecks()
     }
 
     fun addCardsToDeck(context: Context, deck: Deck, data: List<CardData>) {
-        val cards = data.map { Storage.get(context).addCard(it) }
+        val cards = data.map { storage(context).addCard(it) }
         deck.add(cards)
     }
+
+    fun preferences(context: Context) = Preferences.get(context)
+
+    fun storage(context: Context) = Storage.get(context)
 
     private fun addDefaultDeck(context: Context, storage: Storage): Deck {
         return storage.addDeck(context.getString(R.string.decks_default))

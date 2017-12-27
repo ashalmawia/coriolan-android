@@ -40,7 +40,10 @@ class SqliteStorage(context: Context) : Storage {
         try {
             val original = addExpression(data.original, data.type)
             val translation = addExpression(data.translation, data.type)
-            val cardId = db.insert(SQLITE_TABLE_CARDS, null, toContentValues(data, original, translation))
+            val cardId = db.insert(
+                    SQLITE_TABLE_CARDS,
+                    null,
+                    toContentValues(data.deckId, original, translation))
 
             // todo: tmp https://trello.com/c/EJBtdetZ
 //            db.insert(SQLITE_TABLE_CARDS_REVERSE,

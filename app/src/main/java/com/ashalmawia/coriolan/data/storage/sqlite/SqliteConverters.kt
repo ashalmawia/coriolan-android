@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
@@ -16,11 +15,11 @@ fun createExpressionContentValues(value: String, type: ExpressionType): ContentV
 
 // ********** CARD ********************
 
-fun toContentValues(data: CardData, original: Expression, translation: Expression): ContentValues {
+fun toContentValues(deckId: Long, original: Expression, translation: Expression): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_FRONT_ID, original.id)
     cv.put(SQLITE_COLUMN_REVERSE_ID, translation.id)    // TMP: https://trello.com/c/EJBtdetZ
-    cv.put(SQLITE_COLUMN_DECK_ID, data.deckId)
+    cv.put(SQLITE_COLUMN_DECK_ID, deckId)
     return cv
 }
 
