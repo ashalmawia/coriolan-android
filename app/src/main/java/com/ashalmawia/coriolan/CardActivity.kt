@@ -1,7 +1,9 @@
 package com.ashalmawia.coriolan
 
 import android.content.Context
+
 import kotlinx.android.synthetic.main.card_activity.*
+import kotlinx.android.synthetic.main.app_toolbar.*
 
 import android.content.Intent
 
@@ -18,6 +20,9 @@ class CardActivity : AppCompatActivity(), FlipListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.card_activity)
+
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         bindToCurrent()
 

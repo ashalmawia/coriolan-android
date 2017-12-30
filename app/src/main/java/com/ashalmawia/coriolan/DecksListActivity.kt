@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan
 import android.content.Context
 
 import kotlinx.android.synthetic.main.decks_list.*
+import kotlinx.android.synthetic.main.app_toolbar.*
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -25,6 +26,10 @@ class DecksListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.decks_list)
+
+        setSupportActionBar(toolbar)
+        toolbar.setLogo(R.drawable.ic_logo_action_bar_with_text)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         initializeList()
     }
