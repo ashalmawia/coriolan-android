@@ -32,15 +32,13 @@ class SqliteConvertersTest {
         // given
         val deckId = 5L
         val original = Expression(1L, "some original expression", ExpressionType.WORD)
-        val translation = Expression(99L, "some translated expression", ExpressionType.WORD)
 
         // when
-        val cv = toContentValues(deckId, original, translation)
+        val cv = toContentValues(deckId, original)
 
         // then
-        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("values count is correct", 2, cv.size())
         assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv.get(SQLITE_COLUMN_FRONT_ID))
-        assertEquals("$SQLITE_COLUMN_REVERSE_ID is correct", translation.id, cv.get(SQLITE_COLUMN_REVERSE_ID))
         assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv.get(SQLITE_COLUMN_DECK_ID))
     }
 
@@ -55,5 +53,28 @@ class SqliteConvertersTest {
         // then
         assertEquals("values count is correct", 1, cv.size())
         assertEquals("$SQLITE_COLUMN_NAME is correct", name, cv.get(SQLITE_COLUMN_NAME))
+    }
+
+    @Test
+    fun generateCardsReverseContentValuesTest() {
+        // given
+        val cardId = 99L
+        val translations = listOf(
+                Expression(1L, "firework", ExpressionType.WORD),
+                Expression(2L, "rocket", ExpressionType.WORD),
+                Expression(8L, "missile", ExpressionType.WORD)
+        )
+
+        // when
+        val cvList = generateCardsReverseContentValues(cardId, translations)
+
+        // then
+        assertEquals("entries count is correct", 3, cvList.size)
+        for (i in 0 until 3) {
+            val cv = cvList[i]
+            assertEquals("values count is correct", 2, cv.size())
+            assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
+            assertEquals("$SQLITE_COLUMN_EXPRESSION_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_EXPRESSION_ID))
+        }
     }
 }

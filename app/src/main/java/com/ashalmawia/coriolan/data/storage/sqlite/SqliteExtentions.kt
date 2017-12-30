@@ -12,9 +12,8 @@ fun Cursor.getValue(): String { return getString(SQLITE_COLUMN_VALUE) }
 fun Cursor.getName(): String { return getString(SQLITE_COLUMN_NAME) }
 
 fun Cursor.getId(): Long { return getLong(SQLITE_COLUMN_ID) }
-fun Cursor.getDeckId(): Long { return getLong(SQLITE_COLUMN_DECK_ID) }
 fun Cursor.getFrontId(): Long { return getLong(SQLITE_COLUMN_FRONT_ID) }
-fun Cursor.getReverseId(): Long { return getLong(SQLITE_COLUMN_REVERSE_ID) }
+fun Cursor.getExpressionId(): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID) }
 
 fun Cursor.getExpressionType(): ExpressionType {
     val intValue = getInt(SQLITE_COLUMN_TYPE)

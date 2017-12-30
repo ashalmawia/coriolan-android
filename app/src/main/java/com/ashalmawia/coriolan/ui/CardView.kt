@@ -46,10 +46,7 @@ class CardView : LinearLayout {
             // for multiple translations, let's concatenate
             val builder = StringBuilder()
             for ((i, value) in translations.withIndex()) {
-                builder.append(i)
-                builder.append(". ")
-                builder.append(value.value)
-                builder.append("\n")
+                builder.append("${i+1}. ${value.value}\n")
             }
             return builder.toString()
         }

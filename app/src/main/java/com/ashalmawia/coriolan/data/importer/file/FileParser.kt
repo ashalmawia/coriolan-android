@@ -17,11 +17,23 @@ class FileParser(private val decksRegistry: DecksRegistry) {
         return data.mapNotNull { parseLine(it) }
     }
 
-    private val regexp = Pattern.compile("^.*\\{(.*)\\}.*\\{(.*)\\}.*$")
+    /**
+     * Matches something like:
+     *  {original} {translation}
+     * or
+     *  {original} {translation1|translation2|translation3}
+     */
+    private val regexp = Pattern.compile("^[^{}]*\\{([^{}]*)\\}[^{}]*\\{([^{}]*)\\}[^{}]*$")
     fun parseLine(line: String): CardData? {
         val matcher = regexp.matcher(line)
         if (matcher.matches()) {
-            return CardData(matcher.group(1), matcher.group(2), decksRegistry.default().id, ExpressionType.WORD)
+            val translationsData = matcher.group(2)
+            return CardData(
+                    matcher.group(1),
+                    extractTranslations(translationsData),
+                    decksRegistry.default().id,
+                    ExpressionType.WORD
+            )
         }
 
         if (line.isBlank()) {
@@ -29,6 +41,10 @@ class FileParser(private val decksRegistry: DecksRegistry) {
         } else {
             throw ParsingException(line)
         }
+    }
+
+    private fun extractTranslations(data: String): List<String> {
+        return data.split('|')
     }
 }
 

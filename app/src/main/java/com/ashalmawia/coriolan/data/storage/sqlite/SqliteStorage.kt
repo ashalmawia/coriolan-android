@@ -39,18 +39,19 @@ class SqliteStorage(context: Context) : Storage {
         db.beginTransaction()
         try {
             val original = addExpression(data.original, data.type)
-            val translation = addExpression(data.translation, data.type)
+            val translations = data.translations.map { addExpression(it, data.type) }
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
-                    toContentValues(data.deckId, original, translation))
+                    toContentValues(data.deckId, original))
 
-            // todo: tmp https://trello.com/c/EJBtdetZ
-//            db.insert(SQLITE_TABLE_CARDS_REVERSE,
-//                    null,
-//                    generateCardsReverseContentValues(cardId, translation)[0])
+            // write the card-to-expression relation (many-to-many)
+            val cardsReversCV = generateCardsReverseContentValues(cardId, translations)
+            for (cv in cardsReversCV) {
+                db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
+            }
 
-            val card = Card.create(cardId, original, translation)
+            val card = Card.create(cardId, original, translations)
 
             db.setTransactionSuccessful()
 
@@ -101,19 +102,42 @@ class SqliteStorage(context: Context) : Storage {
 
     private fun cardsByDeckId(id: Long): List<Card> {
         val db = helper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $SQLITE_TABLE_CARDS WHERE $SQLITE_COLUMN_DECK_ID = ?",
-                arrayOf(id.toString()))
+
+        val cursor = db.rawQuery("""
+            |SELECT * FROM $SQLITE_TABLE_CARDS
+            |WHERE $SQLITE_COLUMN_DECK_ID = ?
+            |""".trimMargin(), arrayOf(id.toString()))
 
         val list = mutableListOf<Card>()
         while (cursor.moveToNext()) {
+            val cardId = cursor.getId()
             list.add(Card.create(
-                    cursor.getId(),
+                    cardId,
                     expressionById(cursor.getFrontId())!!,
-                    expressionById(cursor.getReverseId())!!
-            ))
+                    translationsByCardId(cardId))
+            )
         }
 
         cursor.close()
         return list
+    }
+
+    private fun translationsByCardId(id: Long): List<Expression> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+                |SELECT * FROM $SQLITE_TABLE_CARDS_REVERSE
+                |WHERE $SQLITE_COLUMN_CARD_ID = ?
+            """.trimMargin(),
+                arrayOf(id.toString()))
+
+        // TODO: this is disastrously inoptimal, but who cares? https://trello.com/c/fkgQn5KD
+        val translations = mutableListOf<Expression>()
+        while (cursor.moveToNext()) {
+            translations.add(expressionById(cursor.getExpressionId())!!)
+        }
+
+        cursor.close()
+        return translations
     }
 }

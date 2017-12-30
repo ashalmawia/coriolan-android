@@ -91,17 +91,17 @@ class SqliteStorageTest {
         assertCardCorrect(card, data)
     }
 
-//    @Test
-//    fun `test__addCard__Word__MultipleTranslations`() {
-//        // given
-//        val data = mockCardData("ракета",  listOf("firework", "rocket", "missile"))
-//
-//        // when
-//        val card = storage.addCard(data)
-//
-//        // then
-//        assertCardCorrect(card, data)
-//    }
+    @Test
+    fun `test__addCard__Word__MultipleTranslations`() {
+        // given
+        val data = mockCardData("ракета",  listOf("firework", "rocket", "missile"))
+
+        // when
+        val card = storage.addCard(data)
+
+        // then
+        assertCardCorrect(card, data)
+    }
 
     @Test
     fun `test__addCard__Sentence`() {
@@ -153,7 +153,7 @@ class SqliteStorageTest {
         storage.addDeck("wrong deck 2")
         val cards = listOf(
                 mockCardData("shrimp", "креветка", id),
-                mockCardData("ракета", "rocket", id),
+                mockCardData("ракета", listOf("rocket", "missile", "firework"), id),
                 mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", id)
         )
         for (card in cards) {

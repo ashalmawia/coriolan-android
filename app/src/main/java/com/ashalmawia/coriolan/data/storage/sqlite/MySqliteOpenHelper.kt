@@ -18,16 +18,15 @@ class MySqliteOpenHelper(context: Context) : SQLiteOpenHelper(context, "data.db"
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_FRONT_ID INTEGER NOT NULL,
-            |$SQLITE_COLUMN_REVERSE_ID INTEGER NOT NULL,
             |$SQLITE_COLUMN_DECK_ID INTEGER NOT NULL
             |);""".trimMargin()
         )
-        // TODO: support multiple translations: https://trello.com/c/EJBtdetZ
-//        db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS_REVERSE(
-//            |$SQLITE_COLUMN_CARD_ID INTEGER,
-//            |$SQLITE_COLUMN_EXPRESSION_ID INTEGER
-//            |);""".trimMargin()
-//        )
+        db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS_REVERSE(
+            |$SQLITE_COLUMN_CARD_ID INTEGER NOT NULL,
+            |$SQLITE_COLUMN_EXPRESSION_ID INTEGER NOT NULL,
+            |PRIMARY KEY($SQLITE_COLUMN_CARD_ID, $SQLITE_COLUMN_EXPRESSION_ID)
+            |);""".trimMargin()
+        )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DECKS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_NAME TEXT NOT NULL

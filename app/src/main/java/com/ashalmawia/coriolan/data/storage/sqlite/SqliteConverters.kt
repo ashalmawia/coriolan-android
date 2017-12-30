@@ -15,25 +15,23 @@ fun createExpressionContentValues(value: String, type: ExpressionType): ContentV
 
 // ********** CARD ********************
 
-fun toContentValues(deckId: Long, original: Expression, translation: Expression): ContentValues {
+fun toContentValues(deckId: Long, original: Expression): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_FRONT_ID, original.id)
-    cv.put(SQLITE_COLUMN_REVERSE_ID, translation.id)    // TMP: https://trello.com/c/EJBtdetZ
     cv.put(SQLITE_COLUMN_DECK_ID, deckId)
     return cv
 }
 
-// TODO: tmp https://trello.com/c/EJBtdetZ
-//fun generateCardsReverseContentValues(cardId: Long, translation: Expression): List<ContentValues> {
-//    return listOf(toCardsReverseContentValues(cardId, translation))
-//}
+fun generateCardsReverseContentValues(cardId: Long, translations: List<Expression>): List<ContentValues> {
+    return translations.map { toCardsReverseContentValues(cardId, it) }
+}
 
-//private fun toCardsReverseContentValues(cardId: Long, expression: Expression): ContentValues {
-//    val cv = ContentValues()
-//    cv.put(SQLITE_COLUMN_CARD_ID, cardId)
-//    cv.put(SQLITE_COLUMN_EXPRESSION_ID, expression.id)
-//    return cv
-//}
+private fun toCardsReverseContentValues(cardId: Long, expression: Expression): ContentValues {
+    val cv = ContentValues()
+    cv.put(SQLITE_COLUMN_CARD_ID, cardId)
+    cv.put(SQLITE_COLUMN_EXPRESSION_ID, expression.id)
+    return cv
+}
 
 // ********** DECK ********************
 
