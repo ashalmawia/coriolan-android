@@ -2,40 +2,49 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			  android:layout_width="match_parent"
 			  android:layout_height="match_parent"
-			  android:orientation="vertical"
-			  android:padding="10dp">
+			  android:orientation="vertical">
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginBottom="5dp"
-		android:text="@string/import_file_enter_file_path"/>
-
-	<EditText
-		android:id="@+id/editText"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginBottom="10dp"
-		android:inputType="textUri"/>
+	<include layout="@layout/app_toolbar"/>
 
 	<LinearLayout
-		style="?attr/buttonBarStyle"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="10dp">
 
-		<Button
-			android:id="@+id/buttonCancel"
-			style="?attr/buttonBarNegativeButtonStyle"
+		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/button_cancel"/>
+			android:layout_marginBottom="5dp"
+			android:text="@string/import_file_enter_file_path"/>
 
-		<Button
-			android:id="@+id/buttonSubmit"
-			style="?attr/buttonBarPositiveButtonStyle"
-			android:layout_width="wrap_content"
+		<EditText
+			android:id="@+id/editText"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/button_submit"/>
+			android:layout_marginBottom="10dp"
+			android:inputType="textUri"/>
+
+		<LinearLayout
+			style="?attr/buttonBarStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/buttonCancel"
+				style="?attr/buttonBarNegativeButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_cancel"/>
+
+			<Button
+				android:id="@+id/buttonSubmit"
+				style="?attr/buttonBarPositiveButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_submit"/>
+
+		</LinearLayout>
 
 	</LinearLayout>
 
