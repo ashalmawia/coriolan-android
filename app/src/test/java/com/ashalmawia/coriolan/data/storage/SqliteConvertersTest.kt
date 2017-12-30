@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import android.support.test.runner.AndroidJUnit4
 import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
@@ -8,8 +7,9 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 class SqliteConvertersTest {
 
     @Test
