@@ -15,22 +15,35 @@ class MySqliteOpenHelper(context: Context) : SQLiteOpenHelper(context, "data.db"
             |$SQLITE_COLUMN_TYPE TEXT NOT NULL
             |);""".trimMargin()
         )
+        db.execSQL("""CREATE TABLE $SQLITE_TABLE_DECKS(
+            |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
+            |$SQLITE_COLUMN_NAME TEXT NOT NULL
+            );""".trimMargin()
+        )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_FRONT_ID INTEGER NOT NULL,
-            |$SQLITE_COLUMN_DECK_ID INTEGER NOT NULL
+            |$SQLITE_COLUMN_DECK_ID INTEGER NOT NULL,
+            |FOREIGN KEY ($SQLITE_COLUMN_FRONT_ID) REFERENCES $SQLITE_TABLE_EXPRESSIONS ($SQLITE_COLUMN_ID)
+            |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE,
+            |FOREIGN KEY ($SQLITE_COLUMN_DECK_ID) REFERENCES $SQLITE_TABLE_DECKS ($SQLITE_COLUMN_ID)
+            |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS_REVERSE(
             |$SQLITE_COLUMN_CARD_ID INTEGER NOT NULL,
             |$SQLITE_COLUMN_EXPRESSION_ID INTEGER NOT NULL,
-            |PRIMARY KEY($SQLITE_COLUMN_CARD_ID, $SQLITE_COLUMN_EXPRESSION_ID)
+            |PRIMARY KEY ($SQLITE_COLUMN_CARD_ID, $SQLITE_COLUMN_EXPRESSION_ID),
+            |FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
+            |   ON DELETE CASCADE
+            |   ON UPDATE CASCADE,
+            |FOREIGN KEY ($SQLITE_COLUMN_EXPRESSION_ID) REFERENCES $SQLITE_TABLE_EXPRESSIONS ($SQLITE_COLUMN_ID)
+            |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
-        db.execSQL("""CREATE TABLE $SQLITE_TABLE_DECKS(
-            |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
-            |$SQLITE_COLUMN_NAME TEXT NOT NULL
-            );""".trimMargin())
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
