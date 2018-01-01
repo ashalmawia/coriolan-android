@@ -12,6 +12,10 @@ class Deck(
         return ArrayList(cards)
     }
 
+    fun add(new: Card) {
+        cards.add(new)
+    }
+
     fun add(new: List<Card>) {
         cards.addAll(new)
     }

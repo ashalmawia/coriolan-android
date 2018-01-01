@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
-class SqliteStorage(context: Context) : Storage {
+class SqliteStorage(private val context: Context) : Storage {
 
     private val helper = MySqliteOpenHelper(context)
 
@@ -59,6 +59,11 @@ class SqliteStorage(context: Context) : Storage {
         } finally {
             db.endTransaction()
         }
+    }
+
+    override fun cardById(id: Long): Card? {
+        // please make sure to cover it with tests in case of adding a real implementation
+        throw UnsupportedOperationException("this method is currently only used in testing")
     }
 
     override fun allDecks(): List<Deck> {
@@ -113,7 +118,7 @@ class SqliteStorage(context: Context) : Storage {
             val cardId = cursor.getId()
             list.add(Card.create(
                     cardId,
-                    expressionById(cursor.getFrontId())!!,
+                    storage().expressionById(cursor.getFrontId())!!,
                     translationsByCardId(cardId))
             )
         }
@@ -134,10 +139,12 @@ class SqliteStorage(context: Context) : Storage {
         // TODO: this is disastrously inoptimal, but who cares? https://trello.com/c/fkgQn5KD
         val translations = mutableListOf<Expression>()
         while (cursor.moveToNext()) {
-            translations.add(expressionById(cursor.getExpressionId())!!)
+            translations.add(storage().expressionById(cursor.getExpressionId())!!)
         }
 
         cursor.close()
         return translations
     }
+
+    fun storage() = Storage.get(context)
 }

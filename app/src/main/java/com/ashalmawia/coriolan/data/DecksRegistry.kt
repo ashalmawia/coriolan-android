@@ -32,9 +32,8 @@ object DecksRegistry {
         return storage(context).allDecks()
     }
 
-    fun addCardsToDeck(context: Context, deck: Deck, data: List<CardData>) {
-        val cards = data.map { storage(context).addCard(it) }
-        deck.add(cards)
+    fun addCardsToDeck(context: Context, data: List<CardData>) {
+        data.map { storage(context).addCard(it) }
     }
 
     fun preferences(context: Context) = Preferences.get(context)

@@ -15,7 +15,7 @@ interface Storage {
 
         fun get(context: Context): Storage {
             if (!this::instance.isInitialized) {
-                instance = SqliteStorage(context)
+                instance = InMemoryCache(SqliteStorage(context))
             }
             return instance
         }
@@ -26,6 +26,8 @@ interface Storage {
     fun expressionById(id: Long): Expression?
 
     fun addCard(data: CardData): Card
+
+    fun cardById(id: Long): Card?
 
     fun allDecks() :List<Deck>
 

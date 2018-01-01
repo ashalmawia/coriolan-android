@@ -8,15 +8,15 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 
 /**
- * Test pure SQLite storage, without any wrappers.
+ * Test SQLite storage wrapped with in-memory cache.
  */
 
 @RunWith(RobolectricTestRunner::class)
-class SqliteStorageTest : StorageTest() {
+class SqliteStorageWithCacheTest : StorageTest() {
 
     override fun createStorage(): Storage {
         val storage = spy(SqliteStorage(RuntimeEnvironment.application))
         whenever(storage.storage()).thenReturn(storage)
-        return storage
+        return InMemoryCache(storage)
     }
 }
