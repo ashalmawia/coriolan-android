@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.learning
 
 import android.content.Context
 import com.ashalmawia.coriolan.model.Assignment
-import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import java.util.*
 
@@ -44,17 +43,15 @@ class LearningFlow(
         LearningFlow.current = null
     }
 
-    fun current(): Card {
-        return assignment.current!!
-    }
+    fun card() = assignment.current!!
 
     fun reschedule(context: Context) {
-        assignment.reschedule(current())
+        assignment.reschedule(card())
         showNextOrComplete(context)
     }
 
     fun done(context: Context) {
-        assignment.done(current())
+        assignment.done(card())
         showNextOrComplete(context)
     }
 

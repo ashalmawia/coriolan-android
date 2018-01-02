@@ -23,6 +23,7 @@ class CardActivity : AppCompatActivity(), CardViewListener {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        supportActionBar!!.title = flow().deck.name
         bindToCurrent()
     }
 
@@ -57,7 +58,7 @@ class CardActivity : AppCompatActivity(), CardViewListener {
 
     private fun bindToCurrent() {
         val view = cardView as CardView
-        view.bind(flow().current())
+        view.bind(flow().card())
         view.listener = this
     }
 
