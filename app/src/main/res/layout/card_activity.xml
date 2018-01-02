@@ -5,7 +5,7 @@
 			  android:orientation="vertical">
 
 	<include
-		layout="@layout/app_toolbar" />
+		layout="@layout/app_toolbar"/>
 
 	<include
 		android:id="@+id/cardView"
@@ -13,30 +13,5 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1"/>
-
-	<LinearLayout
-		android:id="@+id/buttonsBar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-
-		<Button
-			android:id="@+id/buttonNo"
-			style="@style/CardButton"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:background="@color/wrong"
-			android:text="@string/cards_no"/>
-
-		<Button
-			android:id="@+id/buttonYes"
-			style="@style/CardButton"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:background="@color/correct"
-			android:text="@string/cards_yes"/>
-
-	</LinearLayout>
 
 </LinearLayout>

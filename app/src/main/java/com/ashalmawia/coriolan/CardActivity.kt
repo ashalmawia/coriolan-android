@@ -9,13 +9,12 @@ import android.content.Intent
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.ui.CardView
-import com.ashalmawia.coriolan.ui.FlipListener
+import com.ashalmawia.coriolan.ui.CardViewListener
 
-class CardActivity : AppCompatActivity(), FlipListener {
+class CardActivity : AppCompatActivity(), CardViewListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +24,6 @@ class CardActivity : AppCompatActivity(), FlipListener {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         bindToCurrent()
-
-        buttonYes.setOnClickListener { correct() }
-        buttonNo.setOnClickListener { wrong() }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -51,28 +47,18 @@ class CardActivity : AppCompatActivity(), FlipListener {
         LearningFlow.current?.listener = null
     }
 
-    private fun correct() {
+    override fun onCorrect() {
         flow().done(this)
     }
 
-    private fun wrong() {
+    override fun onWrong() {
         flow().reschedule(this)
     }
 
     private fun bindToCurrent() {
         val view = cardView as CardView
         view.bind(flow().current())
-        view.flippedListener = this
-
-        setButtonsBarVisibility(View.INVISIBLE)
-    }
-
-    override fun onFlipped() {
-        setButtonsBarVisibility(View.VISIBLE)
-    }
-
-    private fun setButtonsBarVisibility(visibility: Int) {
-        buttonsBar.visibility = visibility
+        view.listener = this
     }
 
     private fun flow() = LearningFlow.current!!

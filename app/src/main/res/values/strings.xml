@@ -19,6 +19,7 @@
 	<!-- Cards -->
 	<string name="cards_yes">Yes</string>
 	<string name="cards_no">No</string>
+	<string name="cards_click_to_show_answer">Click anywhere to show the answer</string>
 
 	<!-- General -->
 	<string name="button_submit">Submit</string>

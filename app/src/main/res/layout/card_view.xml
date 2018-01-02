@@ -24,4 +24,43 @@
 		android:layout_height="0dp"
 		android:layout_weight="1"/>
 
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<Button
+			android:id="@+id/showAnswerButton"
+			style="@style/CardButton"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@color/neutral"
+			android:text="@string/cards_click_to_show_answer"/>
+
+		<LinearLayout
+			android:id="@+id/buttonsBar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/buttonNo"
+				style="@style/CardButton"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:background="@color/wrong"
+				android:text="@string/cards_no"/>
+
+			<Button
+				android:id="@+id/buttonYes"
+				style="@style/CardButton"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:background="@color/correct"
+				android:text="@string/cards_yes"/>
+
+		</LinearLayout>
+
+	</FrameLayout>
+
 </com.ashalmawia.coriolan.ui.CardView>
