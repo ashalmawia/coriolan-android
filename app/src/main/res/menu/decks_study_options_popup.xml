@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/decks_study_options_popup__straightforward"
+		android:title="@string/deck_options_study_straightforward"/>
+	<item
+		android:id="@+id/decks_study_options_popup__random"
+		android:title="@string/deck_options_study_random"/>
+</menu>

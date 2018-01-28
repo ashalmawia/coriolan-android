@@ -11,10 +11,14 @@
 	<string name="import_file_does_not_exist">File \"%s\" does not exist</string>
 	<string name="import_file_empty_path">Please enter the file path</string>
 
+	<!-- Decks -->
 	<string name="decks_default">Default</string>
 	<string name="decks_select_deck">Select deck:</string>
 
 	<string name="deck_content_cards">Cards:</string>
+
+	<string name="deck_options_study_random">Study in random order</string>
+	<string name="deck_options_study_straightforward">Study in order added</string>
 
 	<!-- Cards -->
 	<string name="cards_yes">Yes</string>

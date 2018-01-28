@@ -13,6 +13,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import com.ashalmawia.coriolan.data.DecksRegistry
@@ -90,18 +92,44 @@ class DecksAdapter(private val context: Context) : RecyclerView.Adapter<DeckView
 
     override fun onBindViewHolder(holder: DeckViewHolder?, position: Int) {
         val item = decks[position]
-        (holder!!.itemView as TextView).text = item.name
-        holder.itemView.setOnClickListener { showContent(item) }
-    }
-
-    private fun showContent(deck: Deck) {
-        LearningFlow.initiateDefault(deck).start(context)
+        holder!!.text.text = item.name
+        holder.more.isClickable = true
+        holder.more.setOnClickListener { showPopupMenu(item, it) }
+        holder.text.setOnClickListener { studyDefault(item) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DeckViewHolder {
         val view = parent!!.inflate(R.layout.deck_list_item, false)
         return DeckViewHolder(view)
     }
+
+    private fun showPopupMenu(deck: Deck, anchor: View) {
+        val menu = PopupMenu(context, anchor)
+        menu.inflate(R.menu.decks_study_options_popup)
+        menu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
+                R.id.decks_study_options_popup__random -> studyRandom(deck)
+            }
+            true
+        }
+        menu.show()
+    }
+
+    private fun studyDefault(deck: Deck) {
+        LearningFlow.initiate(deck).start(context)
+    }
+
+    private fun studyStraightforward(deck: Deck) {
+        LearningFlow.initiate(deck, false).start(context)
+    }
+
+    private fun studyRandom(deck: Deck) {
+        LearningFlow.initiate(deck, true).start(context)
+    }
 }
 
-class DeckViewHolder(view :View) : RecyclerView.ViewHolder(view)
+class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    val text = view.findViewById<TextView>(R.id.deck_list_item__text)!!
+    val more = view.findViewById<ImageView>(R.id.deck_list_item__more)!!
+}
