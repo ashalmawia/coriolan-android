@@ -31,7 +31,7 @@ class DeckRegistryTest {
 
         val registry = mock(DecksRegistry::class.java)
         `when`(registry.preferences(any())).thenReturn(mockPrefs)
-        `when`(registry.storage(any())).thenReturn(mockStorage)
+        `when`(registry.repository(any())).thenReturn(mockStorage)
         `when`(registry.preinitialize(any())).thenCallRealMethod()
         `when`(registry.default()).thenCallRealMethod()
 
@@ -58,7 +58,7 @@ class DeckRegistryTest {
 
         val registry = mock(DecksRegistry::class.java)
         `when`(registry.preferences(any())).thenReturn(mockPrefs)
-        `when`(registry.storage(any())).thenReturn(mockStorage)
+        `when`(registry.repository(any())).thenReturn(mockStorage)
         `when`(registry.preinitialize(any())).thenCallRealMethod()
         `when`(registry.default()).thenCallRealMethod()
 

@@ -1,11 +1,13 @@
 package com.ashalmawia.coriolan.data.importer.file
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import kotlinx.android.synthetic.main.app_toolbar.*
@@ -16,6 +18,8 @@ import permissions.dispatcher.RuntimePermissions
 import java.io.File
 
 const val EXTRA_TEXT = "extra_text"
+
+private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
 @RuntimePermissions
 class EnterFilePathActivity : AppCompatActivity() {
@@ -32,6 +36,8 @@ class EnterFilePathActivity : AppCompatActivity() {
 
         buttonCancel.setOnClickListener { cancel() }
         buttonSubmit.setOnClickListener { validateAndSubmit(editText.text.toString()) }
+
+        maybeSetDebugValues()
     }
 
     @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -39,7 +45,7 @@ class EnterFilePathActivity : AppCompatActivity() {
         finish()
     }
 
-    fun validateAndSubmit(path: String) {
+    private fun validateAndSubmit(path: String) {
         if (path.isBlank()) {
             showMessage(getString(R.string.import_file_empty_path))
             return
@@ -87,6 +93,13 @@ class EnterFilePathActivity : AppCompatActivity() {
     companion object {
         fun intent(context: Context): Intent {
             return Intent(context, EnterFilePathActivity::class.java)
+        }
+    }
+
+    @SuppressLint("SetTextI18n", "SdCardPath")
+    private fun maybeSetDebugValues() {
+        if (DEBUG_PREFILL_PATH) {
+            editText.setText("/mnt/sdcard/import_from_file")
         }
     }
 }

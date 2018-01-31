@@ -14,7 +14,7 @@ object DecksRegistry {
         val prefs = preferences(context)
         val defaultDeckId = prefs.getDefaultDeckId()
 
-        val storage = storage(context)
+        val storage = repository(context)
 
         if (defaultDeckId != null) {
             def = storage.deckById(defaultDeckId)!!
@@ -29,16 +29,16 @@ object DecksRegistry {
     }
 
     fun allDecks(context: Context): List<Deck> {
-        return storage(context).allDecks()
+        return repository(context).allDecks()
     }
 
     fun addCardsToDeck(context: Context, data: List<CardData>) {
-        data.map { storage(context).addCard(it) }
+        data.map { repository(context).addCard(it) }
     }
 
     fun preferences(context: Context) = Preferences.get(context)
 
-    fun storage(context: Context) = Repository.get(context)
+    fun repository(context: Context) = Repository.get(context)
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {
         return repository.addDeck(context.getString(R.string.decks_default))

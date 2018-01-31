@@ -1,26 +1,28 @@
 package com.ashalmawia.coriolan.learning
 
 import android.content.Context
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.RandomAssignment
 import com.ashalmawia.coriolan.learning.assignment.StraightForwardAssignment
+import com.ashalmawia.coriolan.learning.scheduler.Scheduler
+import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
-import java.util.*
 
 class LearningFlow(
         val deck: Deck,
         private val random: Boolean,
-        private val exercise: Exercise) {
+        private val exercise: Exercise,
+        val scheduler: Scheduler) {
 
-    private val assignment: Assignment
+    private lateinit var assignment: Assignment
 
     var listener: FlowListener? = null
 
-    init {
-        assignment = createAssignment(exercise)
-    }
-
     fun start(context: Context) {
+        assignment = createAssignment(context, exercise)
         showNextOrComplete(context)
     }
 
@@ -48,28 +50,46 @@ class LearningFlow(
 
     fun card() = assignment.current!!
 
-    fun reschedule(context: Context) {
-        assignment.reschedule(card())
+    fun repository(context: Context) = Repository.get(context)
+
+    fun wrong(context: Context) {
+        val card = card()
+        val state = scheduler.wrong(card.state)
+        updateAndRescheduleIfNeeded(context, card, state)
+    }
+
+    fun correct(context: Context) {
+        val card = card()
+        val state = scheduler.correct(card.state)
+        updateAndRescheduleIfNeeded(context, card, state)
+    }
+
+    private fun updateAndRescheduleIfNeeded(context: Context, card: Card, state: State) {
+        repository(context).updateCardState(card, state, exercise)
+        if (state.due <= today()) {
+            assignment.reschedule(card)
+        }
         showNextOrComplete(context)
     }
 
-    fun done(context: Context) {
-        assignment.done(card())
-        showNextOrComplete(context)
-    }
-
-    private fun createAssignment(exercise: Exercise): Assignment {
+    private fun createAssignment(context: Context, exercise: Exercise): Assignment {
         // TODO: deck limits or custom options go here
-        val cards = exercise.prefilter(deck.cards())
-        val date = Date()
+        val date = today()
+        val cardsDue = repository(context).cardsDueDate(exercise, deck, date)
+        val cards = exercise.prefilter(cardsDue)
         return if (random) RandomAssignment(date, cards) else StraightForwardAssignment(date, cards)
     }
 
     companion object {
         var current: LearningFlow? = null
 
-        fun initiate(deck: Deck, random: Boolean = true, exercise: Exercise = ExercisesRegistry.defaultExercise()): LearningFlow {
-            val flow = LearningFlow(deck, random, exercise)
+        fun initiate(
+                context: Context,
+                deck: Deck,
+                random: Boolean = true,
+                exercise: Exercise = ExercisesRegistry.defaultExercise(context)
+        ): LearningFlow {
+            val flow = LearningFlow(deck, random, exercise, Scheduler.default())
             current = flow
             return flow
         }

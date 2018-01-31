@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
+import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
@@ -38,5 +39,15 @@ private fun toCardsReverseContentValues(cardId: Long, expression: Expression): C
 fun createDeckContentValues(name: String): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_NAME, name)
+    return cv
+}
+
+// ********** STATE ********************
+
+fun createStateContentValues(cardId: Long, state: State): ContentValues {
+    val cv = ContentValues()
+    cv.put(SQLITE_COLUMN_CARD_ID, cardId)
+    cv.put(SQLITE_COLUMN_DUE, state.due)
+    cv.put(SQLITE_COLUMN_PERIOD, state.period)
     return cv
 }

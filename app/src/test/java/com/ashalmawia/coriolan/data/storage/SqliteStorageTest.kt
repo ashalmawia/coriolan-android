@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
+import com.ashalmawia.coriolan.learning.Exercise
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.runner.RunWith
@@ -14,8 +15,8 @@ import org.robolectric.RuntimeEnvironment
 @RunWith(RobolectricTestRunner::class)
 class SqliteStorageTest : StorageTest() {
 
-    override fun createStorage(): Repository {
-        val storage = spy(SqliteStorage(RuntimeEnvironment.application))
+    override fun createStorage(exercises: List<Exercise>): Repository {
+        val storage = spy(SqliteStorage(RuntimeEnvironment.application, exercises))
         whenever(storage.storage()).thenReturn(storage)
         return storage
     }

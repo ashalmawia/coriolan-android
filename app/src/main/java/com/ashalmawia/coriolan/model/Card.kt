@@ -1,15 +1,10 @@
 package com.ashalmawia.coriolan.model
 
-class Card private constructor(
+import com.ashalmawia.coriolan.learning.scheduler.State
+
+data class Card constructor(
         val id: Long,
         val original: Expression,
-        val translations: List<Expression>
-) {
-
-    companion object {
-        fun create(id: Long, original: Expression, translations: List<Expression>): Card {
-            return Card(id, original, translations)
-        }
-    }
-
-}
+        val translations: List<Expression>,
+        var state: State
+)

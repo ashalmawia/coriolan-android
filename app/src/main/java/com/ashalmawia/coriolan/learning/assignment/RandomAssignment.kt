@@ -5,7 +5,7 @@ import java.util.*
 
 private const val MIN_TURNS_FOR_NEXT_REVIEW = 4
 
-class RandomAssignment(date: Date, cards: List<Card>) : Assignment(date, cards) {
+class RandomAssignment(date: Date, cards: List<Card>) : Assignment(date) {
 
     private val cards = cards.map { it -> CardEntry(it, -MIN_TURNS_FOR_NEXT_REVIEW) }.toMutableList()
     private val random = Random()

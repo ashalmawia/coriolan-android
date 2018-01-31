@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan
 
+import android.annotation.SuppressLint
 import android.content.Context
 
 import kotlinx.android.synthetic.main.card_activity.*
@@ -9,16 +10,22 @@ import android.content.Intent
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.TextView
 import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
+import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.ui.CardView
 import com.ashalmawia.coriolan.ui.CardViewListener
+
+private const val DEBUG_SHOW_SCHEDULER_STATUS = true
 
 class CardActivity : AppCompatActivity(), CardViewListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.card_activity)
+
+        addDebugViewIfNeeded()
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -49,17 +56,19 @@ class CardActivity : AppCompatActivity(), CardViewListener {
     }
 
     override fun onCorrect() {
-        flow().done(this)
+        flow().correct(this)
     }
 
     override fun onWrong() {
-        flow().reschedule(this)
+        flow().wrong(this)
     }
 
     private fun bindToCurrent() {
         val view = cardView as CardView
         view.bind(flow().card())
         view.listener = this
+
+        maybeUpdateDebugView(flow().card())
     }
 
     private fun flow() = LearningFlow.current!!
@@ -67,6 +76,26 @@ class CardActivity : AppCompatActivity(), CardViewListener {
     companion object {
         fun intent(context: Context): Intent {
             return Intent(context, CardActivity::class.java)
+        }
+    }
+
+    private fun addDebugViewIfNeeded() {
+        if (DEBUG_SHOW_SCHEDULER_STATUS) {
+            val view = TextView(this)
+            view.tag = "DebugStatus"
+            view.setPadding(100, view.paddingTop, 10, view.paddingBottom)
+            root.addView(view)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun maybeUpdateDebugView(card: Card) {
+        if (DEBUG_SHOW_SCHEDULER_STATUS) {
+            val scheduler = flow().scheduler
+            val view = root.findViewWithTag<TextView>("DebugStatus")
+            view.text = "now: ${card.state}\n\n" +
+                    "yes: ${scheduler.correct(card.state)}\n" +
+                    "no: ${scheduler.wrong(card.state)}"
         }
     }
 }

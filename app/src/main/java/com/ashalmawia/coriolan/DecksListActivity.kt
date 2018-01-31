@@ -117,15 +117,15 @@ class DecksAdapter(private val context: Context) : RecyclerView.Adapter<DeckView
     }
 
     private fun studyDefault(deck: Deck) {
-        LearningFlow.initiate(deck).start(context)
+        LearningFlow.initiate(context, deck).start(context)
     }
 
     private fun studyStraightforward(deck: Deck) {
-        LearningFlow.initiate(deck, false).start(context)
+        LearningFlow.initiate(context, deck, false).start(context)
     }
 
     private fun studyRandom(deck: Deck) {
-        LearningFlow.initiate(deck, true).start(context)
+        LearningFlow.initiate(context, deck, true).start(context)
     }
 }
 

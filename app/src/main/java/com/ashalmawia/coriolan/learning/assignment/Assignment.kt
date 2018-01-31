@@ -4,12 +4,10 @@ import com.ashalmawia.coriolan.model.Card
 import java.util.*
 
 abstract class Assignment(
-        val date: Date,
-        cards: List<Card>
+        val date: Date
 ) {
-    private val done: MutableList<Card> = ArrayList()
-
     var current: Card? = null
+        protected set
 
     abstract fun hasNext(): Boolean
     protected abstract fun getNext(): Card
@@ -24,9 +22,5 @@ abstract class Assignment(
 
     protected open fun onCurrent(card: Card) {
         // for overriding
-    }
-
-    fun done(card: Card) {
-        done.add(card)
     }
 }

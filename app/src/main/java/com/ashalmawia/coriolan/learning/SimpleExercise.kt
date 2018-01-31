@@ -7,12 +7,16 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.model.Card
 
 /**
- * Simple learning exercise which shows all the cards in the assignment one by one.
+ * Simple learning exercise which shows all the cards in the assignment: given front, guess back.
+ * After seeing the back side, user asserts themselves.
  *
  * If the card is answered correctly, it removes it from the queue.
  * Otherwise, adds it to the end of the queue.
  */
 class SimpleExercise() : Exercise {
+
+    override val stableId: String
+        get() = "simple"
 
     @StringRes
     override fun name(): Int {

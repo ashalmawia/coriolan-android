@@ -1,10 +1,13 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
+import java.util.*
 
 class InMemoryCache(private val inner: Repository) : Repository {
 
@@ -73,5 +76,18 @@ class InMemoryCache(private val inner: Repository) : Repository {
         if (allDecks.isEmpty()) {
             allDecks.putAll(inner.allDecks().associateBy { it.id })
         }
+    }
+
+    override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
+        // this does not need to be cached
+        return inner.updateCardState(card, state, exercise)
+    }
+
+    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: Date): List<Card> {
+        val due = inner.cardsDueDate(exercise, deck, date)
+        for (card in due) {
+            cards[card.id] = card
+        }
+        return due
     }
 }

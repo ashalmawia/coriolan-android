@@ -1,8 +1,14 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.Status
+import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
-import org.junit.Assert
+import com.ashalmawia.coriolan.util.addDays
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -10,11 +16,14 @@ abstract class StorageTest {
 
     private lateinit var storage: Repository
 
-    protected abstract fun createStorage(): Repository
+    private val exercise = MockExercise()
+
+    protected abstract fun createStorage(exercises: List<Exercise>): Repository
 
     @Before
     fun before() {
-        storage = createStorage()
+        val exercises = listOf(exercise)
+        storage = createStorage(exercises)
     }
 
     @Test
@@ -117,7 +126,7 @@ abstract class StorageTest {
 
         // assert
         assertDeckCorrect(deck, name)
-        Assert.assertEquals("new deck is empty", 0, deck.cards().size)
+        assertEquals("new deck is empty", 0, deck.cards().size)
     }
 
     @Test
@@ -133,7 +142,7 @@ abstract class StorageTest {
 
         // assert
         assertDeckCorrect(deck, name)
-        Assert.assertEquals("deck is empty", 0, deck!!.cards().size)
+        assertEquals("deck is empty", 0, deck!!.cards().size)
     }
 
     @Test
@@ -170,7 +179,7 @@ abstract class StorageTest {
         val deck = storage.deckById(id)
 
         // assert
-        Assert.assertNull("deck not found", deck)
+        assertNull("deck not found", deck)
     }
 
     @Test
@@ -185,7 +194,7 @@ abstract class StorageTest {
         val allDecks = storage.allDecks()
 
         // then
-        Assert.assertEquals("decks number is correct", decks.size, allDecks.size)
+        assertEquals("decks number is correct", decks.size, allDecks.size)
         for (i in 0 until decks.size) {
             assertDeckCorrect(allDecks[i], decks[i].name)
         }
@@ -209,7 +218,7 @@ abstract class StorageTest {
         val allDecks = storage.allDecks()
 
         // then
-        Assert.assertEquals("decks number is correct", decks.size, allDecks.size)
+        assertEquals("decks number is correct", decks.size, allDecks.size)
         for (i in 0 until decks.size) {
             assertDeckCorrect(allDecks[i], decks[i].name, cardData[i])
         }
@@ -223,6 +232,99 @@ abstract class StorageTest {
         val allDecks = storage.allDecks()
 
         // then
-        Assert.assertEquals("no decks found", 0, allDecks.size)
+        assertEquals("no decks found", 0, allDecks.size)
+    }
+
+    @Test
+    fun `test__updateCardState`() {
+        // when
+        val card = storage.addCard(mockCardData())
+
+        // then
+        assertEquals("state is correct", Status.NEW, card.state.status)
+//        assertEquals("new card is due today", today(), card.state.due)            todo: uncomment
+
+        // given
+        val newState = State(today().addDays(8), 8)
+
+        // when
+        val secondRead = storage.updateCardState(card, newState, exercise)
+
+        // then
+        assertEquals("state is correct", newState.status, secondRead.state.status)
+//        assertEquals("new card is due today", newState.due, secondRead.state.due)     todo: uncomment
+    }
+
+    @Test
+    fun `test__cardsDueDate__newCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cardData = mutableListOf<CardData>()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardData.add(data)
+            storage.addCard(data)
+        }
+
+        // when
+        val due = storage.cardsDueDate(exercise, deck, today())
+
+        // then
+        assertEquals("all new cards are due today", count, due.size)
+        for (i in 0 until count) {
+            assertCardCorrect(due[i], cardData[i])
+//            assertEquals("state is correct", today(), due[i].state.due)   TODO: uncomment
+            assertEquals("state is correct", Status.NEW, due[i].state.status)
+        }
+    }
+
+    @Test
+    fun `test__cardsDueDate__cardsInProgress`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cardsData = mutableListOf<CardData>()
+        val cards = mutableListOf<Card>()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardsData.add(data)
+            val added = storage.addCard(data)
+            cards.add(added)
+        }
+        val today = today()
+
+        storage.updateCardState(cards[0], State(today, 4), exercise)
+        storage.updateCardState(cards[1], State(today.addDays(1), 4), exercise)
+        storage.updateCardState(cards[2], State(today.addDays(-1), 4), exercise)
+
+        // when
+        val due = storage.cardsDueDate(exercise, deck, today)
+
+        // then
+        assertEquals(2, due.size)
+        assertCardCorrect(due[0], cardsData[0])
+        assertCardCorrect(due[1], cardsData[2])
+    }
+
+    @Test
+    fun `test__cardsDueDate__noPendingCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cards = (0 until count)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { storage.addCard(it) }
+        val today = today()
+
+        storage.updateCardState(cards[0], State(today.addDays(3), 4), exercise)
+        storage.updateCardState(cards[1], State(today.addDays(1), 4), exercise)
+        storage.updateCardState(cards[2], State(today.addDays(10), 4), exercise)
+
+        // when
+        val due = storage.cardsDueDate(exercise, deck, today)
+
+        // then
+        assertEquals(0, due.size)
     }
 }

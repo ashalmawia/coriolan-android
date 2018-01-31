@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
+import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 import org.junit.Test
@@ -8,6 +9,7 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 class SqliteConvertersTest {
@@ -76,5 +78,23 @@ class SqliteConvertersTest {
             assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
             assertEquals("$SQLITE_COLUMN_EXPRESSION_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_EXPRESSION_ID))
         }
+    }
+
+    @Test
+    fun createStateContentValuesTest() {
+        // given
+        val cardId = 1L
+        val due = Date(1519529781000)
+        val period = 16
+        val state = State(due, period)
+
+        // when
+        val cv = createStateContentValues(cardId, state)
+
+        // then
+        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
+        assertEquals("$SQLITE_COLUMN_DUE is correct", due, cv.getAsDate(SQLITE_COLUMN_DUE))
+        assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv.get(SQLITE_COLUMN_PERIOD))
     }
 }

@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
 import com.nhaarman.mockito_kotlin.*
 import junit.framework.Assert.*
@@ -12,12 +13,14 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class InMemoryCacheTest {
 
-    private lateinit var inner: MockStorage
+    private lateinit var inner: MockRepository
     private lateinit var cache: InMemoryCache
+
+    private val exercise = MockExercise()
 
     @Before
     fun before() {
-        inner = spy(MockStorage())
+        inner = spy(MockRepository())
         cache = InMemoryCache(inner)
     }
 
@@ -124,6 +127,7 @@ class InMemoryCacheTest {
         verify(inner, times(1)).allDecks()
     }
 
+    @Test
     fun `test__allDecks`() {
         // given
         val decks = mutableListOf<Deck>()
@@ -143,46 +147,51 @@ class InMemoryCacheTest {
         }
         // allDecks() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
-        verify(cache, times(1)).allDecks()
-    }
-}
-
-private class MockStorage : Repository {
-    val expressions = mutableListOf<Expression>()
-    override fun addExpression(value: String, type: ExpressionType): Expression {
-        val exp = Expression(expressions.size + 1L, value, type)
-        expressions.add(exp)
-        return exp
-    }
-    override fun expressionById(id: Long): Expression? {
-        return expressions.find { it.id == id }
+        verify(inner, times(1)).allDecks()
     }
 
-    val cards = mutableListOf<Card>()
-    override fun addCard(data: CardData): Card {
-        val card = Card.create(
-                cards.size + 1L,
-                addExpression(data.original, data.type),
-                data.translations.map { addExpression(it, data.type) }
-        )
-        cards.add(card)
-        decks.find { it.id == data.deckId }?.add(cards)
-        return card
-    }
-    override fun cardById(id: Long): Card? {
-        return cards.find { it.id == id }
+    @Test
+    fun `test__updateCardState__stateIsPassed`() {
+        // given
+        val card = mockCard()
+        val state = mockState()
+
+        // when
+        cache.updateCardState(card, state, exercise)
+
+        // then
+        assertEquals("state is updated", state, inner.states[card.id])
     }
 
-    val decks = mutableListOf<Deck>()
-    override fun allDecks(): List<Deck> {
-        return decks
+    @Test
+    fun `test__updateCardState__updatedStateIsCachedCorrectly`() {
+        // given
+        val cardData = mockCardData()
+
+        val card = cache.addCard(cardData)
+
+        val state = mockState()
+
+        // when
+        cache.updateCardState(card, state, exercise)
+        val cached = cache.cardById(card.id)
+
+        // then
+        assertEquals("state is updated", state, cached!!.state)
+        verify(inner, never()).cardById(any())
     }
-    override fun deckById(id: Long): Deck? {
-        return decks.find { it.id == id }
-    }
-    override fun addDeck(name: String): Deck {
-        val deck = Deck(decks.size + 1L, name, listOf())
-        decks.add(deck)
-        return deck
+
+    @Test
+    fun `test__cardsDueDate`() {
+        // given
+        val deck = cache.addDeck("name")
+        val card = cache.addCard(mockCardData())
+
+        // when
+        val due = cache.cardsDueDate(exercise, deck, today())
+
+        // then
+        assertEquals("number of due cards is correct", 1, due.size)
+        assertTrue("the returned copy is the one from cache", due[0] == card)
     }
 }

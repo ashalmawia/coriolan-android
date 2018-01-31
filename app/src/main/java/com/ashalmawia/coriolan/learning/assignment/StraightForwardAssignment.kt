@@ -2,9 +2,8 @@ package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
 import java.util.*
-import kotlin.collections.ArrayList
 
-class StraightForwardAssignment(date: Date, cards: List<Card>) : Assignment(date, cards) {
+class StraightForwardAssignment(date: Date, cards: List<Card>) : Assignment(date) {
     private val queue: Queue<Card> = LinkedList(cards)
 
     override fun hasNext(): Boolean {
@@ -16,6 +15,6 @@ class StraightForwardAssignment(date: Date, cards: List<Card>) : Assignment(date
     }
 
     override fun reschedule(card: Card) {
-        queue.add(card)
+        queue.offer(card)
     }
 }

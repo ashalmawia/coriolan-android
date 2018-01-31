@@ -1,16 +1,20 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.scheduler.*
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
+import java.util.*
 
-class SqliteStorage(private val context: Context) : Repository {
+class SqliteStorage(private val context: Context, exercises: List<Exercise>) : Repository {
 
-    private val helper = MySqliteOpenHelper(context)
+    private val helper = MySqliteOpenHelper(context, exercises)
 
     override fun addExpression(value: String, type: ExpressionType): Expression {
         val id = helper.writableDatabase.insert(SQLITE_TABLE_EXPRESSIONS,
@@ -51,7 +55,7 @@ class SqliteStorage(private val context: Context) : Repository {
                 db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
             }
 
-            val card = Card.create(cardId, original, translations)
+            val card = Card(cardId, original, translations, emptyState())
 
             db.setTransactionSuccessful()
 
@@ -116,11 +120,13 @@ class SqliteStorage(private val context: Context) : Repository {
         val list = mutableListOf<Card>()
         while (cursor.moveToNext()) {
             val cardId = cursor.getId()
-            list.add(Card.create(
+            list.add(Card(
                     cardId,
                     storage().expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cardId))
-            )
+                    translationsByCardId(cardId),
+                    // todo: read state here
+                    State(today(), PERIOD_NEVER_SCHEDULED)
+            ))
         }
 
         cursor.close()
@@ -144,6 +150,45 @@ class SqliteStorage(private val context: Context) : Repository {
 
         cursor.close()
         return translations
+    }
+
+    override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
+        val table = sqliteTableExerciseState(exercise)
+        val cv = createStateContentValues(card.id, state)
+        helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+        card.state = state
+        return card
+    }
+
+    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: Date): List<Card> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |FROM
+            |   $SQLITE_TABLE_CARDS AS Cards
+            |   LEFT JOIN ${sqliteTableExerciseState(exercise)} AS States
+            |       ON Cards.$SQLITE_COLUMN_ID = States.$SQLITE_COLUMN_CARD_ID
+            |WHERE
+            |   Cards.$SQLITE_COLUMN_DECK_ID = ?
+            |   AND
+            |   (States.$SQLITE_COLUMN_DUE IS NULL OR States.$SQLITE_COLUMN_DUE <= ?)
+        """.trimMargin(),
+                arrayOf(deck.id.toString(), date.time.toString()))
+
+        val cards = mutableListOf<Card>()
+        while (cursor.moveToNext()) {
+            val state = if (cursor.hasSavedState()) State(cursor.getDateDue(), cursor.getPeriod()) else emptyState()
+            cards.add(Card(
+                    cursor.getId(),
+                    expressionById(cursor.getFrontId())!!,
+                    translationsByCardId(cursor.getId()),
+                    state
+            ))
+        }
+        cursor.close()
+
+        return cards
     }
 
     fun storage() = Repository.get(context)

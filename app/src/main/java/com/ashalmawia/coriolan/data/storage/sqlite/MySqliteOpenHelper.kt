@@ -3,10 +3,12 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.ashalmawia.coriolan.learning.Exercise
 
 private const val SQLITE_VERSION = 1
 
-class MySqliteOpenHelper(context: Context) : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
+class MySqliteOpenHelper(context: Context, private val exercises: List<Exercise>)
+    : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         db!!.execSQL("""CREATE TABLE $SQLITE_TABLE_EXPRESSIONS(
@@ -44,6 +46,22 @@ class MySqliteOpenHelper(context: Context) : SQLiteOpenHelper(context, "data.db"
             |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
+        createTablesForExercises(db, exercises)
+    }
+
+    private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<Exercise>) {
+        exercises.forEach { createTableExerciseState(db, sqliteTableExerciseState(it)) }
+    }
+
+    private fun createTableExerciseState(db: SQLiteDatabase, tableName: String) {
+        db.execSQL("""CREATE TABLE $tableName(
+                |$SQLITE_COLUMN_CARD_ID INTEGER PRIMARY KEY,
+                |$SQLITE_COLUMN_DUE INTEGER NOT NULL,
+                |$SQLITE_COLUMN_PERIOD INTEGER NOT NULL,
+                |FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
+                |   ON DELETE CASCADE
+                |   ON UPDATE CASCADE
+                |);""".trimMargin())
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
