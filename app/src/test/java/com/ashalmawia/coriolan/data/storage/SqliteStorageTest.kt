@@ -14,7 +14,7 @@ import org.robolectric.RuntimeEnvironment
 @RunWith(RobolectricTestRunner::class)
 class SqliteStorageTest : StorageTest() {
 
-    override fun createStorage(): Storage {
+    override fun createStorage(): Repository {
         val storage = spy(SqliteStorage(RuntimeEnvironment.application))
         whenever(storage.storage()).thenReturn(storage)
         return storage

@@ -8,9 +8,9 @@ import org.junit.Test
 
 abstract class StorageTest {
 
-    private lateinit var storage: Storage
+    private lateinit var storage: Repository
 
-    protected abstract fun createStorage(): Storage
+    protected abstract fun createStorage(): Repository
 
     @Before
     fun before() {

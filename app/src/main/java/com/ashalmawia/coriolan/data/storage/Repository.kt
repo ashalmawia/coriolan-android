@@ -8,12 +8,12 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
-interface Storage {
+interface Repository {
 
     companion object {
-        private lateinit var instance: Storage
+        private lateinit var instance: Repository
 
-        fun get(context: Context): Storage {
+        fun get(context: Context): Repository {
             if (!this::instance.isInitialized) {
                 instance = InMemoryCache(SqliteStorage(context))
             }

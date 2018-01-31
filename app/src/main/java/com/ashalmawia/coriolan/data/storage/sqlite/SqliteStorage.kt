@@ -2,13 +2,13 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.importer.CardData
-import com.ashalmawia.coriolan.data.storage.Storage
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
-class SqliteStorage(private val context: Context) : Storage {
+class SqliteStorage(private val context: Context) : Repository {
 
     private val helper = MySqliteOpenHelper(context)
 
@@ -146,5 +146,5 @@ class SqliteStorage(private val context: Context) : Storage {
         return translations
     }
 
-    fun storage() = Storage.get(context)
+    fun storage() = Repository.get(context)
 }

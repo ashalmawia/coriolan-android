@@ -23,7 +23,7 @@ class DeckRegistryTest {
         val context = mock(Context::class.java)
         `when`(context.getString(anyInt())).thenReturn(defaultDeck.name)
 
-        val mockStorage = mock(Storage::class.java)
+        val mockStorage = mock(Repository::class.java)
         `when`(mockStorage.addDeck(any())).thenReturn(defaultDeck)
 
         val mockPrefs = mock(Preferences::class.java)
@@ -50,7 +50,7 @@ class DeckRegistryTest {
 
         val context = mock(Context::class.java)
 
-        val mockStorage = mock(Storage::class.java)
+        val mockStorage = mock(Repository::class.java)
         `when`(mockStorage.deckById(anyLong())).thenReturn(defaultDeck)
 
         val mockPrefs = mock(Preferences::class.java)

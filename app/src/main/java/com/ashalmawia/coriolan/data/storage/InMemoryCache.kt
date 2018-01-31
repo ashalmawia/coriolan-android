@@ -6,7 +6,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 
-class InMemoryCache(private val inner: Storage) : Storage {
+class InMemoryCache(private val inner: Repository) : Repository {
 
     private val expressions = mutableMapOf<Long, Expression?>()
     private val cards = mutableMapOf<Long, Card?>()

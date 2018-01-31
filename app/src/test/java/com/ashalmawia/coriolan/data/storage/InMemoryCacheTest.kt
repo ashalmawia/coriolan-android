@@ -147,7 +147,7 @@ class InMemoryCacheTest {
     }
 }
 
-private class MockStorage : Storage {
+private class MockStorage : Repository {
     val expressions = mutableListOf<Expression>()
     override fun addExpression(value: String, type: ExpressionType): Expression {
         val exp = Expression(expressions.size + 1L, value, type)

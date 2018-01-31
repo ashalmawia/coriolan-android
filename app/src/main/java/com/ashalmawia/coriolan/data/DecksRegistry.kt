@@ -4,7 +4,7 @@ import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Storage
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Deck
 
 object DecksRegistry {
@@ -38,9 +38,9 @@ object DecksRegistry {
 
     fun preferences(context: Context) = Preferences.get(context)
 
-    fun storage(context: Context) = Storage.get(context)
+    fun storage(context: Context) = Repository.get(context)
 
-    private fun addDefaultDeck(context: Context, storage: Storage): Deck {
-        return storage.addDeck(context.getString(R.string.decks_default))
+    private fun addDefaultDeck(context: Context, repository: Repository): Deck {
+        return repository.addDeck(context.getString(R.string.decks_default))
     }
 }
