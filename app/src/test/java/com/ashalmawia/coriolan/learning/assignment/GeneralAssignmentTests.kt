@@ -2,13 +2,12 @@ package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.mockCard
-import org.junit.Test
+import org.joda.time.DateTime
 
 import org.junit.Assert.*
-import java.util.*
 
 private const val MAGIC_COLLECTION_LENGTH = 4   // this magic number exactly meets the min amount of turns before rescheduled go
-private val date = Date()
+private val date = DateTime.now()
 
 fun `assignmentTest__emptyCollection`(factory: AssignmentCreator) {
     // given
@@ -131,5 +130,5 @@ fun `assignmentTest__rescheduledDoesNotAppearImmediately`(factory: AssignmentCre
 }
 
 interface AssignmentCreator {
-    fun create(date: Date, cards: List<Card>): Assignment
+    fun create(date: DateTime, cards: List<Card>): Assignment
 }

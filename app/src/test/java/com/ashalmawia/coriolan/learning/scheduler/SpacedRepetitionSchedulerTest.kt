@@ -1,9 +1,7 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.assignment.MockAssignment
-import com.ashalmawia.coriolan.model.assertSameDate
 import com.ashalmawia.coriolan.model.mockCard
-import com.ashalmawia.coriolan.util.addDays
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -37,7 +35,7 @@ class SpacedRepetitionSchedulerTest {
 
         // then
         val today = today()
-        assertSameDate(today, updated.due)
+        assertEquals(today, updated.due)
         assertEquals(0, updated.period)
     }
 
@@ -59,7 +57,7 @@ class SpacedRepetitionSchedulerTest {
 
         // then
         val today = today()
-        assertSameDate(today, updated.due)
+        assertEquals(today, updated.due)
         assertEquals(0, updated.period)
     }
 
@@ -81,7 +79,7 @@ class SpacedRepetitionSchedulerTest {
 
         // then
         val today = today()
-        assertSameDate(today.addDays(1), updated.due)
+        assertEquals(today.plusDays(1), updated.due)
         assertEquals(1, updated.period)
     }
 
@@ -103,7 +101,7 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.wrong(card.state)
 
         // then
-        assertSameDate(today, updated.due)
+        assertEquals(today, updated.due)
         assertEquals(0, updated.period)
     }
 
@@ -125,7 +123,7 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.correct(card.state)
 
         // then
-        assertSameDate(today.addDays(8), updated.due)
+        assertEquals(today.plusDays(8), updated.due)
         assertEquals(8, updated.period)
     }
 
@@ -137,7 +135,7 @@ class SpacedRepetitionSchedulerTest {
         val assignment = assignment()
         val today = today()
 
-        val state = State(today.addDays(-5), 8)
+        val state = State(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         assignment.mockCurrent(mockCard(state))
@@ -147,7 +145,7 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.wrong(card.state)
 
         // then
-        assertSameDate(today, updated.due)
+        assertEquals(today, updated.due)
         assertEquals(0, updated.period)
     }
 
@@ -159,7 +157,7 @@ class SpacedRepetitionSchedulerTest {
         val assignment = assignment()
         val today = today()
 
-        val state = State(today.addDays(-5), 8)
+        val state = State(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         assignment.mockCurrent(mockCard(state))
@@ -169,7 +167,7 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.correct(card.state)
 
         // then
-        assertSameDate(today.addDays(16), updated.due)
+        assertEquals(today.plusDays(16), updated.due)
         assertEquals(16, updated.period)
     }
 
@@ -181,7 +179,7 @@ class SpacedRepetitionSchedulerTest {
         val assignment = assignment()
         val today = today()
 
-        val state = State(today.addDays(-217), 200)
+        val state = State(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         assignment.mockCurrent(mockCard(state))
@@ -191,7 +189,7 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.wrong(card.state)
 
         // then
-        assertSameDate(today, updated.due)
+        assertEquals(today, updated.due)
         assertEquals(0, updated.period)
     }
 
@@ -203,7 +201,7 @@ class SpacedRepetitionSchedulerTest {
         val assignment = assignment()
         val today = today()
 
-        val state = State(today.addDays(-217), 200)
+        val state = State(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         assignment.mockCurrent(mockCard(state))
@@ -213,7 +211,7 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.correct(card.state)
 
         // then
-        assertSameDate(today.addDays(400), updated.due)
+        assertEquals(today.plusDays(400), updated.due)
         assertEquals(400, updated.period)
         assertEquals(Status.LEARNT, state.status)
     }

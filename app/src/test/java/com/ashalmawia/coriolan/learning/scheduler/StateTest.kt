@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
-import java.util.*
+import com.ashalmawia.coriolan.model.mockState
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,7 +21,7 @@ class StateTest {
     @Test
     fun `test__state__period__0`() {
         // when
-        val state = state(0)
+        val state = mockState(0)
 
         // then
         assertEquals(Status.IN_PROGRESS, state.status)
@@ -30,7 +30,7 @@ class StateTest {
     @Test
     fun `test__state__period__1`() {
         // when
-        val state = state(1)
+        val state = mockState(1)
 
         // then
         assertEquals(Status.IN_PROGRESS, state.status)
@@ -39,7 +39,7 @@ class StateTest {
     @Test
     fun `test__state__period__almost_learnt`() {
         // when
-        val state = state(PERIOD_LEARNT - 1)
+        val state = mockState(PERIOD_LEARNT - 1)
 
         // then
         assertEquals(Status.IN_PROGRESS, state.status)
@@ -48,14 +48,9 @@ class StateTest {
     @Test
     fun `test__state__period__learnt`() {
         // when
-        val state = state(PERIOD_LEARNT)
+        val state = mockState(PERIOD_LEARNT)
 
         // then
         assertEquals(Status.LEARNT, state.status)
     }
-}
-
-private fun state(period: Int): State {
-    val date = Date()
-    return State(date, period)
 }

@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
-import com.ashalmawia.coriolan.util.addDays
 import kotlin.math.max
 
 private const val MULTIPLIER_CORRECT = 2
@@ -20,7 +19,7 @@ class SpacedRepetitionScheduler : Scheduler {
             return wrong(state)
         } else {
             val period = max(state.period * MULTIPLIER_CORRECT, 1)
-            val due = today().addDays(period)
+            val due = today().plusDays(period)
             return State(due, period)
         }
     }

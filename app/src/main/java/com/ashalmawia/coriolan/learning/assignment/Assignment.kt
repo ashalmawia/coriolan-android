@@ -1,10 +1,10 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
-import java.util.*
+import org.joda.time.DateTime
 
 abstract class Assignment(
-        val date: Date
+        val date: DateTime
 ) {
     var current: Card? = null
         protected set

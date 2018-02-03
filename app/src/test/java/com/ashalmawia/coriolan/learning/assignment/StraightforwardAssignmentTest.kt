@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
+import org.joda.time.DateTime
 import org.junit.Test
-import java.util.*
 
 import org.junit.runner.RunWith
 import org.junit.runners.BlockJUnit4ClassRunner
@@ -13,7 +13,7 @@ private const val EXPECTED_SEQUENTIAL = true
 class StraightforwardAssignmentTest {
 
     private val factory = object : AssignmentCreator {
-        override fun create(date: Date, cards: List<Card>): Assignment {
+        override fun create(date: DateTime, cards: List<Card>): Assignment {
             return StraightForwardAssignment(date, cards)
         }
     }

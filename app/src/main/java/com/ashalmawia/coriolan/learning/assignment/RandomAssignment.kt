@@ -1,11 +1,12 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
+import org.joda.time.DateTime
 import java.util.*
 
 private const val MIN_TURNS_FOR_NEXT_REVIEW = 4
 
-class RandomAssignment(date: Date, cards: List<Card>) : Assignment(date) {
+class RandomAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
 
     private val cards = cards.map { it -> CardEntry(it, -MIN_TURNS_FOR_NEXT_REVIEW) }.toMutableList()
     private val random = Random()

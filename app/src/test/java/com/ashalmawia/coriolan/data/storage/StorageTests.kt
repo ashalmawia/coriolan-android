@@ -7,7 +7,6 @@ import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
-import com.ashalmawia.coriolan.util.addDays
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -242,17 +241,17 @@ abstract class StorageTest {
 
         // then
         assertEquals("state is correct", Status.NEW, card.state.status)
-//        assertEquals("new card is due today", today(), card.state.due)            todo: uncomment
+        assertEquals("new card is due today", today(), card.state.due)
 
         // given
-        val newState = State(today().addDays(8), 8)
+        val newState = State(today().plusDays(8), 8)
 
         // when
         val secondRead = storage.updateCardState(card, newState, exercise)
 
         // then
         assertEquals("state is correct", newState.status, secondRead.state.status)
-//        assertEquals("new card is due today", newState.due, secondRead.state.due)     todo: uncomment
+        assertEquals("new card is due today", newState.due, secondRead.state.due)
     }
 
     @Test
@@ -274,7 +273,7 @@ abstract class StorageTest {
         assertEquals("all new cards are due today", count, due.size)
         for (i in 0 until count) {
             assertCardCorrect(due[i], cardData[i])
-//            assertEquals("state is correct", today(), due[i].state.due)   TODO: uncomment
+            assertEquals("state is correct", today(), due[i].state.due)
             assertEquals("state is correct", Status.NEW, due[i].state.status)
         }
     }
@@ -295,8 +294,8 @@ abstract class StorageTest {
         val today = today()
 
         storage.updateCardState(cards[0], State(today, 4), exercise)
-        storage.updateCardState(cards[1], State(today.addDays(1), 4), exercise)
-        storage.updateCardState(cards[2], State(today.addDays(-1), 4), exercise)
+        storage.updateCardState(cards[1], State(today.plusDays(1), 4), exercise)
+        storage.updateCardState(cards[2], State(today.minusDays(1), 4), exercise)
 
         // when
         val due = storage.cardsDueDate(exercise, deck, today)
@@ -317,9 +316,9 @@ abstract class StorageTest {
                 .map { storage.addCard(it) }
         val today = today()
 
-        storage.updateCardState(cards[0], State(today.addDays(3), 4), exercise)
-        storage.updateCardState(cards[1], State(today.addDays(1), 4), exercise)
-        storage.updateCardState(cards[2], State(today.addDays(10), 4), exercise)
+        storage.updateCardState(cards[0], State(today.plusDays(3), 4), exercise)
+        storage.updateCardState(cards[1], State(today.plusDays(1), 4), exercise)
+        storage.updateCardState(cards[2], State(today.plusDays(10), 4), exercise)
 
         // when
         val due = storage.cardsDueDate(exercise, deck, today)

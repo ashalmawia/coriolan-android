@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import org.junit.Assert.*
-import java.util.*
 
 fun assertExpressionCorrect(expression: Expression?, value: String, type: ExpressionType) {
     assertNotNull("expression is found", expression)
@@ -28,16 +27,4 @@ fun assertDeckCorrect(deck: Deck?, name: String, cards: List<CardData>? = null) 
             assertCardCorrect(deck.cards()[i], cards[i])
         }
     }
-}
-
-fun assertSameDate(date: Date, other: Date) {
-    val cal1 = Calendar.getInstance()
-    cal1.time = date
-
-    val cal2 = Calendar.getInstance()
-    cal2.time = other
-
-    assertEquals(cal1.get(Calendar.DAY_OF_MONTH), cal2.get(Calendar.DAY_OF_MONTH))
-    assertEquals(cal1.get(Calendar.MONTH), cal2.get(Calendar.MONTH))
-    assertEquals(cal1.get(Calendar.YEAR), cal2.get(Calendar.YEAR))
 }

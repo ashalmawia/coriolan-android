@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
+import org.joda.time.DateTime
 import org.junit.Test
 import java.util.*
 
@@ -13,7 +14,7 @@ private const val EXPECTED_SEQUENTIAL = false
 class RandomAssignmentTest {
 
     private val factory = object : AssignmentCreator {
-        override fun create(date: Date, cards: List<Card>): Assignment {
+        override fun create(date: DateTime, cards: List<Card>): Assignment {
             return RandomAssignment(date, cards)
         }
     }

@@ -1,9 +1,10 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
+import org.joda.time.DateTime
 import java.util.*
 
-class MockAssignment(cards: List<Card>) : Assignment(Date()) {
+class MockAssignment(cards: List<Card>) : Assignment(DateTime.now()) {
 
     val cards: Queue<Card> = LinkedList(cards)
 

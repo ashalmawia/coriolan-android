@@ -10,7 +10,8 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
-import java.util.*
+import com.ashalmawia.coriolan.util.timespamp
+import org.joda.time.DateTime
 
 class SqliteStorage(private val context: Context, exercises: List<Exercise>) : Repository {
 
@@ -160,7 +161,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         return card
     }
 
-    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: Date): List<Card> {
+    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -174,7 +175,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             |   AND
             |   (States.$SQLITE_COLUMN_DUE IS NULL OR States.$SQLITE_COLUMN_DUE <= ?)
         """.trimMargin(),
-                arrayOf(deck.id.toString(), date.time.toString()))
+                arrayOf(deck.id.toString(), date.timespamp.toString()))
 
         val cards = mutableListOf<Card>()
         while (cursor.moveToNext()) {

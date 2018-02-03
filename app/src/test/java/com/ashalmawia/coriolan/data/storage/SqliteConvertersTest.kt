@@ -4,12 +4,12 @@ import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
+import org.joda.time.DateTime
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 class SqliteConvertersTest {
@@ -84,7 +84,7 @@ class SqliteConvertersTest {
     fun createStateContentValuesTest() {
         // given
         val cardId = 1L
-        val due = Date(1519529781000)
+        val due = DateTime(1519529781000)
         val period = 16
         val state = State(due, period)
 

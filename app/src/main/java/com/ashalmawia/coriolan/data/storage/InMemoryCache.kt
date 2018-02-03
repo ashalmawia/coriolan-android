@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
-import java.util.*
+import org.joda.time.DateTime
 
 class InMemoryCache(private val inner: Repository) : Repository {
 
@@ -83,7 +83,7 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return inner.updateCardState(card, state, exercise)
     }
 
-    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: Date): List<Card> {
+    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
         val due = inner.cardsDueDate(exercise, deck, date)
         for (card in due) {
             cards[card.id] = card

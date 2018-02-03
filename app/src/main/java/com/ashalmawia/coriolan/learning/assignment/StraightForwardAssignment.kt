@@ -1,9 +1,10 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
+import org.joda.time.DateTime
 import java.util.*
 
-class StraightForwardAssignment(date: Date, cards: List<Card>) : Assignment(date) {
+class StraightForwardAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
     private val queue: Queue<Card> = LinkedList(cards)
 
     override fun hasNext(): Boolean {

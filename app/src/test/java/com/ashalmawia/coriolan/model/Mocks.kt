@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.scheduler.State
-import java.util.*
+import org.joda.time.DateTime
 
 fun mockCardData(original: String, translations: List<String>, deckId: Long = 1L, type: ExpressionType = ExpressionType.WORD)
         = CardData(original, translations, deckId, type)
@@ -21,6 +21,6 @@ fun mockCard(state: State = mockState()): Card {
 private var deckId = 1L
 fun mockDeck(name: String = "My deck") = Deck(deckId++, name, listOf())
 
-fun mockState(): State {
-    return State(Date(), 0)
+fun mockState(period: Int = 0): State {
+    return State(DateTime.now(), period)
 }

@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.emptyState
 import com.ashalmawia.coriolan.model.*
-import java.util.*
+import org.joda.time.DateTime
 
 class MockRepository : Repository {
     val expressions = mutableListOf<Expression>()
@@ -53,7 +53,7 @@ class MockRepository : Repository {
         card.state = state
         return card
     }
-    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: Date): List<Card> {
+    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
         return deck.cards().filter { it.state.due <= date }
     }
 }

@@ -1,15 +1,16 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
-import java.text.SimpleDateFormat
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 const val PERIOD_NEVER_SCHEDULED = -1
 const val PERIOD_LEARNT = 30 * 4               // 4 months
 
-private val format = SimpleDateFormat("dd MMM", Locale.ENGLISH)
+private val format = DateTimeFormat.forPattern("dd MMM hh:mm").withLocale(Locale.ENGLISH)
 
 data class State(
-        val due: Date,
+        val due: DateTime,
         val period: Int
 ) {
 
@@ -26,7 +27,7 @@ data class State(
 
 
     override fun toString(): String {
-        return "due: ${format.format(due)}, period: $period"
+        return "due: ${format.print(due)}, period: $period"
     }
 }
 

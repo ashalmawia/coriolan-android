@@ -10,7 +10,7 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
-import java.util.*
+import org.joda.time.DateTime
 
 interface Repository {
 
@@ -41,5 +41,5 @@ interface Repository {
 
     fun updateCardState(card: Card, state: State, exercise: Exercise): Card
 
-    fun cardsDueDate(exercise: Exercise, deck: Deck, date: Date): List<Card>
+    fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card>
 }
