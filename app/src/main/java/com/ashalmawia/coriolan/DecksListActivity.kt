@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.*
+import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
@@ -48,6 +49,11 @@ class DecksListActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.decks_list_menu, menu)
+
+        if (BuildConfig.DEBUG) {
+            menu!!.setGroupVisible(R.id.menu_group_debug, true)
+        }
+
         return true
     }
 
@@ -55,7 +61,19 @@ class DecksListActivity : AppCompatActivity() {
         when (item!!.itemId) {
             R.id.menu_import_from_file -> importFromFile()
         }
+
+        if (BuildConfig.DEBUG) {
+            // handle debug options
+            when (item.itemId) {
+                R.id.menu_debug_increase_date -> increaseDate()
+            }
+        }
+
         return true
+    }
+
+    private fun increaseDate() {
+        DebugIncreaseDateActivity.launch(this)
     }
 
     private fun importFromFile() {

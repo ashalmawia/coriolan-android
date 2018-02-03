@@ -11,13 +11,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
+import com.ashalmawia.coriolan.debug.DEBUG_SHOW_SCHEDULER_STATUS
 import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.ui.CardView
 import com.ashalmawia.coriolan.ui.CardViewListener
-
-private const val DEBUG_SHOW_SCHEDULER_STATUS = true
 
 class CardActivity : AppCompatActivity(), CardViewListener {
 
