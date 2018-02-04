@@ -23,4 +23,8 @@ class MockAssignment(cards: List<Card>) : Assignment(DateTime.now()) {
     override fun reschedule(card: Card) {
         cards.offer(card)
     }
+
+    override fun createPendingCounter(): PendingCounter {
+        return MockPendingCounter()
+    }
 }

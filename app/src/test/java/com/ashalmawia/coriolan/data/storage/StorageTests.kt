@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.scheduler.PERIOD_LEARNT
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.today
@@ -412,5 +413,159 @@ abstract class StorageTest {
 
         // then
         assertEquals(0, due.size)
+    }
+
+    @Test
+    fun `test__cardsDueDateCount__allNewCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cardData = mutableListOf<CardData>()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardData.add(data)
+            storage.addCard(data)
+        }
+
+        // when
+        val counts = storage.cardsDueDateCount(exercise, deck, today())
+
+        // then
+        assertEquals(count, counts.countNew())
+        assertEquals(0, counts.countReview())
+        assertEquals(0, counts.countRelearn())
+        assertTrue(counts.isAnythingPending())
+    }
+
+    @Test
+    fun `test__cardsDueDateCount__allInProgressCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cardData = mutableListOf<CardData>()
+        val date = today()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardData.add(data)
+            val card = storage.addCard(data)
+            storage.updateCardState(card, State(date, 4), exercise)
+        }
+
+        // when
+        val counts = storage.cardsDueDateCount(exercise, deck, today())
+
+        // then
+        assertEquals(0, counts.countNew())
+        assertEquals(count, counts.countReview())
+        assertEquals(0, counts.countRelearn())
+        assertTrue(counts.isAnythingPending())
+    }
+
+    @Test
+    fun `test__cardsDueDateCount__allLearntCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cardData = mutableListOf<CardData>()
+        val date = today()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardData.add(data)
+            val card = storage.addCard(data)
+            storage.updateCardState(card, State(date, PERIOD_LEARNT + 1), exercise)
+        }
+
+        // when
+        val counts = storage.cardsDueDateCount(exercise, deck, today())
+
+        // then
+        assertEquals(0, counts.countNew())
+        assertEquals(count, counts.countReview())
+        assertEquals(0, counts.countRelearn())
+        assertTrue(counts.isAnythingPending())
+    }
+
+    @Test
+    fun `test__cardsDueDateCount__allRelearnCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cardData = mutableListOf<CardData>()
+        val date = today()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardData.add(data)
+            val card = storage.addCard(data)
+            storage.updateCardState(card, State(date, 0), exercise)
+        }
+
+        // when
+        val counts = storage.cardsDueDateCount(exercise, deck, today())
+
+        // then
+        assertEquals(0, counts.countNew())
+        assertEquals(0, counts.countReview())
+        assertEquals(count, counts.countRelearn())
+        assertTrue(counts.isAnythingPending())
+    }
+
+    @Test
+    fun `test__cardsDueDateCount__mixedCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 10
+        val cardsData = mutableListOf<CardData>()
+        val cards = mutableListOf<Card>()
+        for (i in 0 until count) {
+            val data = mockCardData("original $i", "translation $i", deck.id)
+            cardsData.add(data)
+            val added = storage.addCard(data)
+            cards.add(added)
+        }
+        val today = today()
+
+        storage.updateCardState(cards[0], State(today, 4), exercise)
+        storage.updateCardState(cards[1], State(today.plusDays(1), 4), exercise)
+        storage.updateCardState(cards[2], State(today.minusDays(3), -1), exercise)
+        storage.updateCardState(cards[3], State(today, 1), exercise)
+        storage.updateCardState(cards[4], State(today.plusDays(1), -1), exercise)
+        storage.updateCardState(cards[5], State(today.minusDays(1), PERIOD_LEARNT), exercise)
+        storage.updateCardState(cards[6], State(today.minusDays(2), 0), exercise)
+        storage.updateCardState(cards[7], State(today, -1), exercise)
+        storage.updateCardState(cards[8], State(today.minusDays(1), 0), exercise)
+        storage.updateCardState(cards[9], State(today.minusDays(2), PERIOD_LEARNT * 2), exercise)
+
+        // when
+        val counts = storage.cardsDueDateCount(exercise, deck, today)
+
+        // then
+        assertEquals(2, counts.countNew())
+        assertEquals(4, counts.countReview())
+        assertEquals(2, counts.countRelearn())
+        assertTrue(counts.isAnythingPending())
+    }
+
+    @Test
+    fun `test__cardsDueDateCount__noPendingCards`() {
+        // given
+        val deck = storage.addDeck("mock deck")
+        val count = 3
+        val cards = (0 until count)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { storage.addCard(it) }
+        val today = today()
+
+        storage.updateCardState(cards[0], State(today.plusDays(3), 0), exercise)
+        storage.updateCardState(cards[1], State(today.plusDays(1), 4), exercise)
+        storage.updateCardState(cards[2], State(today.plusDays(10), -1), exercise)
+
+        // when
+        val counts = storage.cardsDueDateCount(exercise, deck, today)
+
+        // then
+        assertEquals(0, counts.countNew())
+        assertEquals(0, counts.countReview())
+        assertEquals(0, counts.countRelearn())
+        assertFalse(counts.isAnythingPending())
     }
 }

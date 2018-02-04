@@ -18,4 +18,9 @@ class StraightForwardAssignment(date: DateTime, cards: List<Card>) : Assignment(
     override fun reschedule(card: Card) {
         queue.offer(card)
     }
+
+    override fun createPendingCounter(): PendingCounter {
+        val counts = queue.groupBy { it.state.status }.mapValues { it.value.size }
+        return PendingCounter.createFrom(counts)
+    }
 }

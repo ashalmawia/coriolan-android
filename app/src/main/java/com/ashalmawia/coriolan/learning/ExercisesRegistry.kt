@@ -1,7 +1,5 @@
 package com.ashalmawia.coriolan.learning
 
-import android.content.Context
-
 object ExercisesRegistry {
 
     private val default = SimpleExercise()
@@ -15,7 +13,7 @@ object ExercisesRegistry {
         return exercises
     }
 
-    fun defaultExercise(context: Context): Exercise {
+    fun defaultExercise(): Exercise {
         return default
     }
 }

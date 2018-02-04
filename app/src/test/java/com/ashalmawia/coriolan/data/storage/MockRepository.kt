@@ -2,7 +2,10 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.assignment.Counts
+import com.ashalmawia.coriolan.learning.scheduler.MockCounts
 import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.emptyState
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
@@ -58,5 +61,13 @@ class MockRepository : Repository {
     }
     override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
         return cardsOfDeck(deck).filter { it.state.due <= date }
+    }
+    override fun cardsDueDateCount(exercise: Exercise, deck: Deck, date: DateTime): Counts {
+        val due = cardsDueDate(exercise, deck, date)
+        return MockCounts(
+                due.count { it.state.status == Status.NEW },
+                due.count { it.state.status == Status.IN_PROGRESS || it.state.status == Status.LEARNT },
+                due.count { it.state.status == Status.RELEARN }
+        )
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<dimen name="pending_item_size">14dp</dimen>
+	<fraction name="pending_item_size">24.0</fraction>
+
+</resources>

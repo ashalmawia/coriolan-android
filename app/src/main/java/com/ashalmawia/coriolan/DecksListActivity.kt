@@ -20,15 +20,22 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
+import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
 
 class DecksListActivity : AppCompatActivity() {
 
+    private lateinit var exercise: Exercise
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.decks_list)
+
+        exercise = ExercisesRegistry.defaultExercise()
 
         setSupportActionBar(toolbar)
         toolbar.setLogo(R.drawable.ic_logo_action_bar_with_text)
@@ -37,10 +44,14 @@ class DecksListActivity : AppCompatActivity() {
         initializeList()
     }
 
+    override fun onStart() {
+        super.onStart()
+        fetchData()
+    }
+
     private fun initializeList() {
         decksList.layoutManager = LinearLayoutManager(this)
-        decksList.adapter = DecksAdapter(this)
-        fetchData()
+        decksList.adapter = DecksAdapter(this, exercise)
     }
 
     private fun fetchData() {
@@ -94,13 +105,17 @@ class DecksListActivity : AppCompatActivity() {
     }
 }
 
-class DecksAdapter(private val context: Context) : RecyclerView.Adapter<DeckViewHolder>() {
+class DecksAdapter(private val context: Context, private val exercise: Exercise) : RecyclerView.Adapter<DeckViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
+    private val counts: MutableMap<Long, Counts> = mutableMapOf()
 
     fun setData(data: List<Deck>) {
         decks.clear()
         decks.addAll(data)
+
+        decks.forEach { counts[it.id] = LearningFlow.peekCounts(context, exercise, it) }
+
         notifyDataSetChanged()
     }
 
@@ -114,6 +129,7 @@ class DecksAdapter(private val context: Context) : RecyclerView.Adapter<DeckView
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
         holder.text.setOnClickListener { studyDefault(item) }
+        setPendingStatus(holder, counts[item.id]!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DeckViewHolder {
@@ -135,19 +151,36 @@ class DecksAdapter(private val context: Context) : RecyclerView.Adapter<DeckView
     }
 
     private fun studyDefault(deck: Deck) {
-        LearningFlow.initiate(context, deck).start(context)
+        LearningFlow.initiate(deck, exercise = exercise).start(context)
     }
 
     private fun studyStraightforward(deck: Deck) {
-        LearningFlow.initiate(context, deck, false).start(context)
+        LearningFlow.initiate(deck, false, exercise).start(context)
     }
 
     private fun studyRandom(deck: Deck) {
-        LearningFlow.initiate(context, deck, true).start(context)
+        LearningFlow.initiate(deck, true, exercise).start(context)
+    }
+
+    private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
+        if (counts.isAnythingPending()) {
+            val new = counts.countNew()
+            holder.countNew.text = new.toString()
+
+            val review = counts.countReview() + counts.countRelearn()
+            holder.countReview.text = review.toString()
+
+            holder.pending.visibility = View.VISIBLE
+        } else {
+            holder.pending.visibility = View.INVISIBLE
+        }
     }
 }
 
 class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val text = view.findViewById<TextView>(R.id.deck_list_item__text)!!
     val more = view.findViewById<ImageView>(R.id.deck_list_item__more)!!
+    val pending = view.findViewById<ViewGroup>(R.id.deck_list_item__pending)!!
+    val countNew = view.findViewById<TextView>(R.id.pending_counter__new)!!
+    val countReview = view.findViewById<TextView>(R.id.pending_counter__review)!!
 }

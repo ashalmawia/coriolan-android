@@ -20,6 +20,8 @@
 	<string name="deck_options_study_random">Study in random order</string>
 	<string name="deck_options_study_straightforward">Study in order added</string>
 
+	<string name="decks_pending">new: {%1$d}, review: {%2$d}</string>
+
 	<!-- Cards -->
 	<string name="cards_yes">Yes</string>
 	<string name="cards_no">No</string>

@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.learning
 import android.content.Context
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.assignment.RandomAssignment
 import com.ashalmawia.coriolan.learning.assignment.StraightForwardAssignment
 import com.ashalmawia.coriolan.learning.scheduler.Scheduler
@@ -22,7 +23,7 @@ class LearningFlow(
     var listener: FlowListener? = null
 
     fun start(context: Context) {
-        assignment = createAssignment(context, exercise)
+        assignment = createAssignment(repository(context), random, exercise, deck)
         showNextOrComplete(context)
     }
 
@@ -50,8 +51,6 @@ class LearningFlow(
 
     fun card() = assignment.current!!
 
-    fun repository(context: Context) = Repository.get(context)
-
     fun wrong(context: Context) {
         val card = card()
         val state = scheduler.wrong(card.state)
@@ -72,29 +71,35 @@ class LearningFlow(
         showNextOrComplete(context)
     }
 
-    private fun createAssignment(context: Context, exercise: Exercise): Assignment {
-        // TODO: deck limits or custom options go here
-        val date = today()
-        val cardsDue = repository(context).cardsDueDate(exercise, deck, date)
-        val cards = exercise.prefilter(cardsDue)
-        return if (random) RandomAssignment(date, cards) else StraightForwardAssignment(date, cards)
-    }
-
     companion object {
         var current: LearningFlow? = null
 
         fun initiate(
-                context: Context,
                 deck: Deck,
                 random: Boolean = true,
-                exercise: Exercise = ExercisesRegistry.defaultExercise(context)
+                exercise: Exercise
         ): LearningFlow {
             val flow = LearningFlow(deck, random, exercise, Scheduler.default())
             current = flow
             return flow
         }
+
+        fun peekCounts(context: Context, exercise: Exercise, deck: Deck): Counts {
+            val date = today()
+            val repository = repository(context)
+            return repository.cardsDueDateCount(exercise, deck, date)
+        }
     }
 }
+
+private fun createAssignment(repository: Repository, random: Boolean, exercise: Exercise, deck: Deck): Assignment {
+    // TODO: deck limits or custom options go here
+    val date = today()
+    val cards = repository.cardsDueDate(exercise, deck, date)
+    return if (random) RandomAssignment(date, cards) else StraightForwardAssignment(date, cards)
+}
+
+private fun repository(context: Context) = Repository.get(context)
 
 interface FlowListener {
 

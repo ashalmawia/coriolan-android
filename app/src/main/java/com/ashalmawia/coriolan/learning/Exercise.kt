@@ -19,11 +19,4 @@ interface Exercise {
     fun name(): Int
 
     fun show(context: Context, card: Card)
-
-    /**
-     * Some exercises might want to only work with specific cards (e.g. already seen)
-     */
-    fun prefilter(cards: List<Card>): List<Card> {
-        return cards
-    }
 }

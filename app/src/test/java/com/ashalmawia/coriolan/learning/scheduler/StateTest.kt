@@ -24,7 +24,7 @@ class StateTest {
         val state = mockState(0)
 
         // then
-        assertEquals(Status.IN_PROGRESS, state.status)
+        assertEquals(Status.RELEARN, state.status)
     }
 
     @Test

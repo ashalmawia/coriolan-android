@@ -19,6 +19,9 @@ data class State(
             if (period == PERIOD_NEVER_SCHEDULED) {
                 return Status.NEW
             }
+            if (period == 0) {
+                return Status.RELEARN
+            }
             if (period >= PERIOD_LEARNT) {
                 return Status.LEARNT
             }
@@ -37,6 +40,7 @@ fun emptyState(): State {
 
 enum class Status {
     NEW,
+    RELEARN,
     IN_PROGRESS,
     LEARNT
 }

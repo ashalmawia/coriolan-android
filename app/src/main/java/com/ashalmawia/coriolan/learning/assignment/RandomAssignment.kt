@@ -55,6 +55,11 @@ class RandomAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
     override fun reschedule(card: Card) {
         cards.add(CardEntry(card, turn))
     }
+
+    override fun createPendingCounter(): PendingCounter {
+        val counts = cards.groupBy { it.card.state.status }.mapValues { it.value.size }
+        return PendingCounter.createFrom(counts)
+    }
 }
 
 private data class CardEntry(val card: Card, var turn: Int)
