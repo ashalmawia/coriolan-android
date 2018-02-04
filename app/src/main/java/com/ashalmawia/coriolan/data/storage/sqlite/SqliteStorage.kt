@@ -56,7 +56,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                 db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
             }
 
-            val card = Card(cardId, original, translations, emptyState())
+            val card = Card(cardId, data.deckId, original, translations, emptyState())
 
             db.setTransactionSuccessful()
 
@@ -79,7 +79,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         val list = mutableListOf<Deck>()
         while (cursor.moveToNext()) {
             val id = cursor.getId()
-            list.add(Deck(id, cursor.getName(), cardsByDeckId(id)))
+            list.add(Deck(id, cursor.getName()))
         }
 
         cursor.close()
@@ -96,7 +96,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         if (cursor.count > 1) throw IllegalStateException("more that one value for deck id $id")
 
         cursor.moveToFirst()
-        val result = Deck(id, cursor.getName(), cardsByDeckId(id))
+        val result = Deck(id, cursor.getName())
         cursor.close()
         return result
     }
@@ -107,22 +107,23 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         val db = helper.writableDatabase
         val id = db.insert(SQLITE_TABLE_DECKS, null, cv)
 
-        return Deck(id, name, arrayListOf())
+        return Deck(id, name)
     }
 
-    private fun cardsByDeckId(id: Long): List<Card> {
+    override fun cardsOfDeck(deck: Deck): List<Card> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT * FROM $SQLITE_TABLE_CARDS
             |WHERE $SQLITE_COLUMN_DECK_ID = ?
-            |""".trimMargin(), arrayOf(id.toString()))
+            |""".trimMargin(), arrayOf(deck.id.toString()))
 
         val list = mutableListOf<Card>()
         while (cursor.moveToNext()) {
             val cardId = cursor.getId()
             list.add(Card(
                     cardId,
+                    deck.id,
                     storage().expressionById(cursor.getFrontId())!!,
                     translationsByCardId(cardId),
                     // todo: read state here
@@ -182,6 +183,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             val state = if (cursor.hasSavedState()) State(cursor.getDateDue(), cursor.getPeriod()) else emptyState()
             cards.add(Card(
                     cursor.getId(),
+                    deck.id,
                     expressionById(cursor.getFrontId())!!,
                     translationsByCardId(cursor.getId()),
                     state

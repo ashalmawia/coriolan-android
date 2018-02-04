@@ -18,13 +18,14 @@ fun assertCardCorrect(card: Card?, data: CardData) {
     }
 }
 
-fun assertDeckCorrect(deck: Deck?, name: String, cards: List<CardData>? = null) {
+fun assertDeckCorrect(deck: Deck?, name: String) {
     assertNotNull("deck is created", deck)
     assertEquals("deck name is correct", name, deck!!.name)
-    if (cards != null) {
-        assertEquals("cards count is correct", cards.size, deck.cards().size)
-        for (i in 0 until cards.size) {
-            assertCardCorrect(deck.cards()[i], cards[i])
-        }
+}
+
+fun assertDeckCardsCorrect(cards: List<Card>, data: List<CardData>) {
+    assertEquals("cards count is correct", data.size, cards.size)
+    for (i in 0 until cards.size) {
+        assertCardCorrect(cards[i], data[i])
     }
 }

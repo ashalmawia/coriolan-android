@@ -15,11 +15,11 @@ fun mockExpression(value: String = "mock value", type: ExpressionType = Expressi
 
 private var cardId = 1L
 fun mockCard(state: State = mockState()): Card {
-    return Card(cardId++, mockExpression(), listOf(mockExpression(), mockExpression()), state)
+    return Card(cardId++, deckId, mockExpression(), listOf(mockExpression(), mockExpression()), state)
 }
 
 private var deckId = 1L
-fun mockDeck(name: String = "My deck") = Deck(deckId++, name, listOf())
+fun mockDeck(name: String = "My deck") = Deck(deckId++, name)
 
 fun mockState(period: Int = 0): State {
     return State(DateTime.now(), period)

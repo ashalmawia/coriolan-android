@@ -34,8 +34,6 @@ class InMemoryCache(private val inner: Repository) : Repository {
     override fun addCard(data: CardData): Card {
         val card = inner.addCard(data)
         cards.put(card.id, card)
-        val deck = deckById(data.deckId)
-        deck?.add(card)
         return card
     }
 
@@ -62,6 +60,12 @@ class InMemoryCache(private val inner: Repository) : Repository {
         } else {
             null
         }
+    }
+
+    override fun cardsOfDeck(deck: Deck): List<Card> {
+        val result = inner.cardsOfDeck(deck)
+        result.forEach { cards[it.id] = it }
+        return result
     }
 
     override fun addDeck(name: String): Deck {

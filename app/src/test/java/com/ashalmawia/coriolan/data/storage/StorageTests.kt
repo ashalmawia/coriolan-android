@@ -125,7 +125,6 @@ abstract class StorageTest {
 
         // assert
         assertDeckCorrect(deck, name)
-        assertEquals("new deck is empty", 0, deck.cards().size)
     }
 
     @Test
@@ -141,7 +140,6 @@ abstract class StorageTest {
 
         // assert
         assertDeckCorrect(deck, name)
-        assertEquals("deck is empty", 0, deck!!.cards().size)
     }
 
     @Test
@@ -161,10 +159,11 @@ abstract class StorageTest {
         }
 
         // when
-        val deck = storage.deckById(id)
+        val deck = storage.deckById(id)!!
 
         // assert
-        assertDeckCorrect(deck, name, cards)
+        assertDeckCorrect(deck, name)
+        assertDeckCardsCorrect(storage.cardsOfDeck(deck), cards)
     }
 
     @Test
@@ -179,6 +178,93 @@ abstract class StorageTest {
 
         // assert
         assertNull("deck not found", deck)
+    }
+
+    @Test
+    fun `test__cardsOfDeck__NewDeck`() {
+        // given
+
+        // when
+        val deck = storage.addDeck("Mock deck")
+        val cards = storage.cardsOfDeck(deck)
+
+        // assert
+        assertEquals("new deck is empty", 0, cards.size)
+    }
+
+    @Test
+    fun `test__cardsOfDeck__EmptyDeck`() {
+        // given
+        val deck = storage.addDeck("Mock deck")
+        val wrongDeck1 = storage.addDeck("wrong deck 1")
+        for (i in 0 until 3) {
+            storage.addCard(mockCardData(deckId = wrongDeck1.id))
+        }
+        val wrongDeck2 = storage.addDeck("wrong deck 2")
+        for (i in 0 until 3) {
+            storage.addCard(mockCardData(deckId = wrongDeck2.id))
+        }
+
+        // when
+        val cards = storage.cardsOfDeck(deck)
+
+        // assert
+        assertEquals("empty deck has no cards", 0, cards.size)
+    }
+
+    @Test
+    fun `test__cardsOfDeck__NonEmptyDeck`() {
+        // given
+        val decks = mutableListOf<Deck>()
+        val cardData = mutableListOf<List<CardData>>()
+        for (i in 0 until 3) {
+            val deck = storage.addDeck("deck $i")
+            decks.add(deck)
+            cardData.add(listOf(
+                    mockCardData("original ${i*i}", "translation ${i*i}", deck.id),
+                    mockCardData("original ${i*i+1}", "translation ${i*i+1}", deck.id)
+            ))
+        }
+        cardData.forEach { it.forEach { storage.addCard(it) } }
+
+        for (i in 0 until decks.size) {
+            // when
+            val cards = storage.cardsOfDeck(decks[i])
+
+            // assert
+            assertDeckCardsCorrect(cards, cardData[i])
+        }
+    }
+
+    @Test
+    fun `test__cardsOfDeck__NonEmptyDeck__differentCount`() {
+        // given
+        val decks = mutableListOf<Deck>()
+        val cardData = mutableListOf<List<CardData>>()
+        val deck1 = storage.addDeck("deck 1")
+        decks.add(deck1)
+        cardData.add(listOf(
+                mockCardData("original $1", "translation $1", deck1.id),
+                mockCardData("original $2", "translation $2", deck1.id)
+        ))
+        val deck2 = storage.addDeck("deck 2")
+        decks.add(deck2)
+        cardData.add(listOf())
+        val deck3 = storage.addDeck("deck 3")
+        decks.add(deck3)
+        cardData.add(listOf(
+                mockCardData("original $4", "translation 4", deck3.id),
+                mockCardData("original 5", "translation 5", deck3.id)
+        ))
+        cardData.forEach { it.forEach { storage.addCard(it) } }
+
+        for (i in 0 until decks.size) {
+            // when
+            val cards = storage.cardsOfDeck(decks[i])
+
+            // assert
+            assertDeckCardsCorrect(cards, cardData[i])
+        }
     }
 
     @Test
@@ -219,7 +305,8 @@ abstract class StorageTest {
         // then
         assertEquals("decks number is correct", decks.size, allDecks.size)
         for (i in 0 until decks.size) {
-            assertDeckCorrect(allDecks[i], decks[i].name, cardData[i])
+            assertDeckCorrect(allDecks[i], decks[i].name)
+            assertDeckCardsCorrect(storage.cardsOfDeck(decks[i]), cardData[i])
         }
     }
 

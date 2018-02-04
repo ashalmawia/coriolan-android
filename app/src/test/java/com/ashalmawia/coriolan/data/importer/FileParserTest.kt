@@ -4,6 +4,7 @@ import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.file.FileParser
 import com.ashalmawia.coriolan.data.importer.file.ParsingException
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.mockDeck
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -22,7 +23,7 @@ class FileParserTest {
     @Before
     fun before() {
         val mockRegistry = mock(DecksRegistry::class.java)
-        `when`(mockRegistry.default()).thenReturn(Deck(1, "Default", listOf()))
+        `when`(mockRegistry.default()).thenReturn(mockDeck("Default"))
         parser = FileParser(mockRegistry)
     }
 

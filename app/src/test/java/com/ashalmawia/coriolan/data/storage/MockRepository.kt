@@ -22,12 +22,12 @@ class MockRepository : Repository {
     override fun addCard(data: CardData): Card {
         val card = Card(
                 cards.size + 1L,
+                data.deckId,
                 addExpression(data.original, data.type),
                 data.translations.map { addExpression(it, data.type) },
                 emptyState()
         )
         cards.add(card)
-//        decks.find { it.id == data.deckId }?.add(card)
         return card
     }
     override fun cardById(id: Long): Card? {
@@ -41,8 +41,11 @@ class MockRepository : Repository {
     override fun deckById(id: Long): Deck? {
         return decks.find { it.id == id }
     }
+    override fun cardsOfDeck(deck: Deck): List<Card> {
+        return cards.filter { it.deckId == deck.id }
+    }
     override fun addDeck(name: String): Deck {
-        val deck = Deck(decks.size + 1L, name, listOf())
+        val deck = Deck(decks.size + 1L, name)
         decks.add(deck)
         return deck
     }
@@ -54,6 +57,6 @@ class MockRepository : Repository {
         return card
     }
     override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
-        return deck.cards().filter { it.state.due <= date }
+        return cardsOfDeck(deck).filter { it.state.due <= date }
     }
 }

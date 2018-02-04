@@ -115,5 +115,5 @@ class DeckRegistryTest {
 //        }
 //    }
 
-    private fun mockDeck() = Deck(111L, "Default", arrayListOf())
+    private fun mockDeck() = Deck(111L, "Default")
 }

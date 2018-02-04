@@ -37,6 +37,8 @@ interface Repository {
 
     fun deckById(id: Long): Deck?
 
+    fun cardsOfDeck(deck: Deck): List<Card>
+
     fun addDeck(name: String): Deck
 
     fun updateCardState(card: Card, state: State, exercise: Exercise): Card
