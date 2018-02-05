@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan
 
 import android.app.Application
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.errors.Errors
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
@@ -12,9 +13,11 @@ open class CoriolanApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        preinitialize()
         crashlytics()
         errors()
+
+        todayManager()
+        deckRegistry()
     }
 
     private fun crashlytics() {
@@ -27,7 +30,11 @@ open class CoriolanApplication : Application() {
         Errors.with(errors)
     }
 
-    protected open fun preinitialize() {
+    private fun todayManager() {
+        TodayManager.initialize(this)
+    }
+
+    protected open fun deckRegistry() {
         DecksRegistry.preinitialize(this)
     }
 }

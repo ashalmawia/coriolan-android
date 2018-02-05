@@ -24,10 +24,12 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.assignment.Counts
+import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
+import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
 
-class DecksListActivity : AppCompatActivity() {
+class DecksListActivity : AppCompatActivity(), TodayChangeListener {
 
     private lateinit var exercise: Exercise
 
@@ -47,6 +49,14 @@ class DecksListActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         fetchData()
+
+        TodayManager.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        TodayManager.unregister(this)
     }
 
     private fun initializeList() {
@@ -56,6 +66,11 @@ class DecksListActivity : AppCompatActivity() {
 
     private fun fetchData() {
         (decksList.adapter as DecksAdapter).setData(decksList())
+    }
+
+    override fun onDayChanged() {
+        // to update pending counters on deck items
+        fetchData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

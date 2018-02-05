@@ -31,4 +31,5 @@ private fun todayWithOverride(): DateTime {
 }
 fun overrideToday(date: DateTime) {
     overridenToday = date
+    TodayManager.dayChanged()
 }

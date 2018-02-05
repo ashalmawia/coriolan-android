@@ -4,7 +4,7 @@ package com.ashalmawia.coriolan;
 public class TestCoriolanApplication extends CoriolanApplication {
 
 	@Override
-	protected void preinitialize() {
+	protected void deckRegistry() {
 		// do nothing here
 	}
 }
