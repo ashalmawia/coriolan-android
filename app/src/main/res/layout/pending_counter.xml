@@ -5,7 +5,7 @@
 
 	<TextView
 		android:id="@+id/pending_counter__new"
-		style="@style/PendingCounter"
+		style="@style/PendingCounter.Standout"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginRight="3dp"
@@ -16,7 +16,7 @@
 
 	<TextView
 		android:id="@+id/pending_counter__review"
-		style="@style/PendingCounter"
+		style="@style/PendingCounter.Standout"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_pending_review"

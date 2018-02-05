@@ -9,7 +9,7 @@ abstract class Assignment(
     var current: Card? = null
         protected set
 
-//    private val pendingCounter = lazy(LazyThreadSafetyMode.NONE, { createPendingCounter() })
+    val pendingCounter = lazy(LazyThreadSafetyMode.NONE, { createPendingCounter() })
 
     abstract fun hasNext(): Boolean
     protected abstract fun getNext(): Card
@@ -22,15 +22,6 @@ abstract class Assignment(
         onCurrent(next)
         return next
     }
-
-//    val countNew
-//        get() = pendingCounter.value.countNew()
-//
-//    val countReivew
-//        get() = pendingCounter.value.countReview()
-//
-//    val countRelearn
-//        get() = pendingCounter.value.countRelearn()
 
     protected open fun onCurrent(card: Card) {
         // for overriding

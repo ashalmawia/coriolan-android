@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:paddingLeft="@dimen/deck_progress_bar_margin_horizontal"
+			  android:paddingRight="@dimen/deck_progress_bar_margin_horizontal">
+
+	<TextView
+		android:id="@+id/deck_progress_bar__new"
+		style="@style/PendingCounter"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_marginLeft="@dimen/deck_progress_bar_margin_horizontal"
+		android:layout_marginStart="@dimen/deck_progress_bar_margin_horizontal"
+		android:drawableLeft="@drawable/ic_pending_new"
+		android:drawableStart="@drawable/ic_pending_new"/>
+
+	<TextView
+		android:id="@+id/deck_progress_bar__relearn"
+		style="@style/PendingCounter"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_marginLeft="@dimen/deck_progress_bar_margin_horizontal"
+		android:layout_marginStart="@dimen/deck_progress_bar_margin_horizontal"
+		android:drawableLeft="@drawable/ic_pending_relearn"
+		android:drawableStart="@drawable/ic_pending_relearn"
+		/>
+
+	<TextView
+		android:id="@+id/deck_progress_bar__review"
+		style="@style/PendingCounter"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_marginLeft="@dimen/deck_progress_bar_margin_horizontal"
+		android:layout_marginRight="@dimen/deck_progress_bar_margin_horizontal"
+		android:drawableLeft="@drawable/ic_pending_review"
+		android:drawableStart="@drawable/ic_pending_review"/>
+
+</LinearLayout>

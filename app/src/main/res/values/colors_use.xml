@@ -4,4 +4,8 @@
 	<color name="pending_item__background">@color/colorAccent</color>
 	<color name="pending_item__foreground">@color/colorPrimaryDark</color>
 
+	<color name="deck_progress_bar__foregreound">@color/grey</color>
+
+	<color name="ic_pending_color">@color/deck_progress_bar__foregreound</color>
+
 </resources>

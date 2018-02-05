@@ -4,4 +4,6 @@
 	<dimen name="pending_item_size">14dp</dimen>
 	<fraction name="pending_item_size">24.0</fraction>
 
+	<dimen name="deck_progress_bar_margin_horizontal">5dp</dimen>
+
 </resources>

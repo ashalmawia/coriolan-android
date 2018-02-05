@@ -28,6 +28,7 @@ import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
+import com.ashalmawia.coriolan.util.setStartDrawableTint
 
 class DecksListActivity : AppCompatActivity(), TodayChangeListener {
 
@@ -149,7 +150,16 @@ class DecksAdapter(private val context: Context, private val exercise: Exercise)
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DeckViewHolder {
         val view = parent!!.inflate(R.layout.deck_list_item, false)
-        return DeckViewHolder(view)
+        val holder = DeckViewHolder(view)
+
+        setTint(holder.countNew)
+        setTint(holder.countReview)
+
+        return holder
+    }
+
+    private fun setTint(view: TextView) {
+        view.setStartDrawableTint(R.color.pending_item__foreground)
     }
 
     private fun showPopupMenu(deck: Deck, anchor: View) {

@@ -17,6 +17,8 @@ import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.ui.CardView
 import com.ashalmawia.coriolan.ui.CardViewListener
+import com.ashalmawia.coriolan.util.setStartDrawableTint
+import kotlinx.android.synthetic.main.deck_progress_bar.*
 
 class CardActivity : AppCompatActivity(), CardViewListener {
 
@@ -24,6 +26,7 @@ class CardActivity : AppCompatActivity(), CardViewListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.card_activity)
 
+        adjustProgressCountsUI()
         addDebugViewIfNeeded()
 
         setSupportActionBar(toolbar)
@@ -67,6 +70,8 @@ class CardActivity : AppCompatActivity(), CardViewListener {
         view.bind(flow().card())
         view.listener = this
 
+        updateProgressCounts()
+
         maybeUpdateDebugView(flow().card())
     }
 
@@ -76,6 +81,19 @@ class CardActivity : AppCompatActivity(), CardViewListener {
         fun intent(context: Context): Intent {
             return Intent(context, CardActivity::class.java)
         }
+    }
+
+    private fun adjustProgressCountsUI() {
+        deck_progress_bar__new.setStartDrawableTint(R.color.deck_progress_bar__foregreound)
+        deck_progress_bar__review.setStartDrawableTint(R.color.deck_progress_bar__foregreound)
+        deck_progress_bar__relearn.setStartDrawableTint(R.color.deck_progress_bar__foregreound)
+    }
+
+    private fun updateProgressCounts() {
+        val counts = flow().counts
+        deck_progress_bar__new.text = counts.countNew().toString()
+        deck_progress_bar__review.text = counts.countReview().toString()
+        deck_progress_bar__relearn.text = counts.countRelearn().toString()
     }
 
     private fun addDebugViewIfNeeded() {

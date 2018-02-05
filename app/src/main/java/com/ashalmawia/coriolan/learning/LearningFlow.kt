@@ -20,6 +20,9 @@ class LearningFlow(
 
     private lateinit var assignment: Assignment
 
+    val counts: Counts
+        get() = assignment.pendingCounter.value
+
     var listener: FlowListener? = null
 
     fun start(context: Context) {
