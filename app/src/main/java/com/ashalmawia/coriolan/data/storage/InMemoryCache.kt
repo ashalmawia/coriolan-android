@@ -4,10 +4,7 @@ import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
 class InMemoryCache(private val inner: Repository) : Repository {
@@ -16,8 +13,18 @@ class InMemoryCache(private val inner: Repository) : Repository {
     private val cards = mutableMapOf<Long, Card?>()
     private val allDecks = mutableMapOf<Long, Deck?>()  // must be all decks as we have a function to return them all
 
-    override fun addExpression(value: String, type: ExpressionType): Expression {
-        val expression = inner.addExpression(value, type)
+    override fun addLanguage(value: String): Language {
+        // no need to cache languages as it's immutable data that isn't normally queried
+        return inner.addLanguage(value)
+    }
+
+    override fun languageById(id: Long): Language? {
+        // no need to cache languages as it's immutable data that isn't normally queried
+        return inner.languageById(id)
+    }
+
+    override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
+        val expression = inner.addExpression(value, type, language)
         expressions.put(expression.id, expression)
         return expression
     }

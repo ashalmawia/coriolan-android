@@ -4,13 +4,23 @@ import android.content.ContentValues
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.Language
 
 // ********** EXPRESSION ********************
 
-fun createExpressionContentValues(value: String, type: ExpressionType): ContentValues {
+fun createLanguageContentValues(value: String): ContentValues {
+    val cv = ContentValues()
+    cv.put(SQLITE_COLUMN_LANG_VALUE, value)
+    return cv
+}
+
+// ********** EXPRESSION ********************
+
+fun createExpressionContentValues(value: String, type: ExpressionType, language: Language): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_VALUE, value)
     cv.put(SQLITE_COLUMN_TYPE, type.value)
+    cv.put(SQLITE_COLUMN_LANGUAGE_ID, language.id)
     return cv
 }
 

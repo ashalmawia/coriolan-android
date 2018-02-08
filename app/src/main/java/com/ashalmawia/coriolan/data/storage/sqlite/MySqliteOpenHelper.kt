@@ -11,10 +11,18 @@ class MySqliteOpenHelper(context: Context, private val exercises: List<Exercise>
     : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db!!.execSQL("""CREATE TABLE $SQLITE_TABLE_EXPRESSIONS(
+        db!!.execSQL("""CREATE TABLE $SQLITE_TABLE_LANGUAGES(
+            |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
+            |$SQLITE_COLUMN_LANG_VALUE TEXT NOT NULL
+            |);""".trimMargin())
+        db.execSQL("""CREATE TABLE $SQLITE_TABLE_EXPRESSIONS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_VALUE TEXT NOT NULL,
-            |$SQLITE_COLUMN_TYPE TEXT NOT NULL
+            |$SQLITE_COLUMN_TYPE TEXT NOT NULL,
+            |$SQLITE_COLUMN_LANGUAGE_ID INTEGER NUL NULL,
+            |FOREIGN KEY ($SQLITE_COLUMN_LANGUAGE_ID) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
+            |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DECKS(

@@ -117,7 +117,7 @@ class DecksListActivity : AppCompatActivity(), TodayChangeListener {
     }
 
     private fun decksList(): List<Deck> {
-        return DecksRegistry.allDecks(this)
+        return DecksRegistry.get().allDecks()
     }
 }
 

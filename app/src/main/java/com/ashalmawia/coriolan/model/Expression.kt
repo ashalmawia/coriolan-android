@@ -3,12 +3,9 @@ package com.ashalmawia.coriolan.model
 data class Expression(
         val id: Long,
         val value: String,
-        val type: ExpressionType
-) {
-
-    //val original Card;
-    //val List<Card> trans;
-}
+        val type: ExpressionType,
+        val language: Language
+)
 
 enum class ExpressionType(val value: Int) {
     UNKNOWN(-1), WORD(0)

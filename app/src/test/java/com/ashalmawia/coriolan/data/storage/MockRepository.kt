@@ -11,9 +11,20 @@ import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
+    val langs = mutableListOf<Language>()
+    override fun addLanguage(value: String): Language {
+        val lang = Language(langs.size + 1L, value)
+        langs.add(lang)
+        return lang
+    }
+
+    override fun languageById(id: Long): Language? {
+        return langs.find { it.id == id }
+    }
+
     val expressions = mutableListOf<Expression>()
-    override fun addExpression(value: String, type: ExpressionType): Expression {
-        val exp = Expression(expressions.size + 1L, value, type)
+    override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
+        val exp = Expression(expressions.size + 1L, value, type, language)
         expressions.add(exp)
         return exp
     }
@@ -26,8 +37,8 @@ class MockRepository : Repository {
         val card = Card(
                 cards.size + 1L,
                 data.deckId,
-                addExpression(data.original, data.type),
-                data.translations.map { addExpression(it, data.type) },
+                addExpression(data.original, data.contentType, data.originalLang),
+                data.translations.map { addExpression(it, data.contentType, data.translationsLang) },
                 emptyState()
         )
         cards.add(card)

@@ -4,6 +4,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.mockLanguage
 import org.joda.time.DateTime
 import org.junit.Test
 
@@ -15,25 +16,41 @@ import org.robolectric.RobolectricTestRunner
 class SqliteConvertersTest {
 
     @Test
+    fun createLanguageContentValuesTest() {
+        // given
+        val value = "Russian"
+
+        // when
+        val cv = createLanguageContentValues(value)
+
+        // then
+        assertEquals("values count is correct", 1, cv.size())
+        assertEquals("$SQLITE_COLUMN_LANG_VALUE is correct", value, cv.get(SQLITE_COLUMN_LANG_VALUE))
+    }
+
+    @Test
     fun createExpressionContentValuesTest() {
         // given
         val value = "some value"
         val type = ExpressionType.WORD
+        val lang = mockLanguage(777L, "Russian")
 
         // when
-        val cv = createExpressionContentValues(value, type)
+        val cv = createExpressionContentValues(value, type, lang)
 
         // then
-        assertEquals("values count is correct", 2, cv.size())
+        assertEquals("values count is correct", 3, cv.size())
         assertEquals("$SQLITE_COLUMN_VALUE is correct", value, cv.get(SQLITE_COLUMN_VALUE))
         assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, cv.get(SQLITE_COLUMN_TYPE))
+        assertEquals("$SQLITE_COLUMN_LANGUAGE_ID is correct", lang.id, cv.get(SQLITE_COLUMN_LANGUAGE_ID))
     }
 
     @Test
     fun cardDataToContentValuesTest() {
         // given
         val deckId = 5L
-        val original = Expression(1L, "some original expression", ExpressionType.WORD)
+        val lang = mockLanguage()
+        val original = Expression(1L, "some original expression", ExpressionType.WORD, lang)
 
         // when
         val cv = toContentValues(deckId, original)
@@ -61,10 +78,11 @@ class SqliteConvertersTest {
     fun generateCardsReverseContentValuesTest() {
         // given
         val cardId = 99L
+        val lang = mockLanguage()
         val translations = listOf(
-                Expression(1L, "firework", ExpressionType.WORD),
-                Expression(2L, "rocket", ExpressionType.WORD),
-                Expression(8L, "missile", ExpressionType.WORD)
+                Expression(1L, "firework", ExpressionType.WORD, lang),
+                Expression(2L, "rocket", ExpressionType.WORD, lang),
+                Expression(8L, "missile", ExpressionType.WORD, lang)
         )
 
         // when

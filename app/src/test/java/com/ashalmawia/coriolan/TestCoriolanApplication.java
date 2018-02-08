@@ -7,4 +7,9 @@ public class TestCoriolanApplication extends CoriolanApplication {
 	protected void deckRegistry() {
 		// do nothing here
 	}
+
+	@Override
+	protected void languages() {
+		// do nothing here
+	}
 }

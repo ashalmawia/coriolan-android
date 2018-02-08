@@ -7,10 +7,7 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
 interface Repository {
@@ -26,7 +23,11 @@ interface Repository {
         }
     }
 
-    fun addExpression(value: String, type: ExpressionType): Expression
+    fun addLanguage(value: String): Language
+
+    fun languageById(id: Long): Language?
+
+    fun addExpression(value: String, type: ExpressionType, language: Language): Expression
 
     fun expressionById(id: Long): Expression?
 

@@ -29,20 +29,21 @@ class InMemoryCacheTest {
         // given
         val value = "shrimp"
         val type = ExpressionType.WORD
+        val lang = mockLanguage()
 
         // when
-        val added = cache.addExpression(value, type)
+        val added = cache.addExpression(value, type, lang)
 
         // then
         assertEquals("expression was added", 1, inner.expressions.size)
-        assertExpressionCorrect(inner.expressions[0], value, type)
+        assertExpressionCorrect(inner.expressions[0], value, type, lang)
 
         // when
         val cached = cache.expressionById(added.id)
 
         // then
         assertNotNull("expression is found", cached)
-        assertExpressionCorrect(cached, value, type)
+        assertExpressionCorrect(cached, value, type, lang)
         // expressionById() must not be called as the value is expected to be cached while adding
         verify(inner, never()).expressionById(any())
     }
@@ -50,7 +51,8 @@ class InMemoryCacheTest {
     @Test
     fun `test__expressionById`() {
         // given
-        val expression = mockExpression()
+        val lang = mockLanguage(value = "Russian")
+        val expression = mockExpression(language = lang)
         inner.expressions.add(expression)
         cache.expressionById(expression.id)     // caching is expected to happen here
 
@@ -59,7 +61,7 @@ class InMemoryCacheTest {
 
         // then
         assertNotNull("expression was found", cached)
-        assertExpressionCorrect(cached, expression.value, expression.type)
+        assertExpressionCorrect(cached, expression.value, expression.type, lang)
         // expressionById() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
         verify(inner, times(1)).expressionById(any())

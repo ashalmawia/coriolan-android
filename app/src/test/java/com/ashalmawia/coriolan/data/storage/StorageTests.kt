@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
+import com.ashalmawia.coriolan.data.LanguagesRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
@@ -27,16 +28,57 @@ abstract class StorageTest {
     }
 
     @Test
+    fun `test__addLanguage`() {
+        // given
+        val value = "Russian"
+
+        // when
+        val language = storage.addLanguage(value)
+
+        // then
+        assertLanguageCorrect(language, value)
+    }
+
+    @Test
+    fun `test__languageById__languageExists`() {
+        // given
+        val value = "Russian"
+
+        storage.addLanguage("Some language")
+        val language = storage.addLanguage(value)
+        storage.addLanguage("Other language")
+
+        // when
+        val read = storage.languageById(language.id)
+
+        // then
+        assertLanguageCorrect(read, language.value)
+        assertEquals("language id is correct", language.id, read!!.id)
+    }
+
+    @Test
+    fun `test__languageById__languageDoesNotExist`() {
+        // given
+
+        // when
+        val read = storage.languageById(777L)
+
+        // then
+        assertNull(read)
+    }
+
+    @Test
     fun `test__addExpression__Word`() {
         // given
         val value = "shrimp"
         val type = ExpressionType.WORD
+        val lang = mockLanguage(value = "Russian")
 
         // when
-        val expression = storage.addExpression(value, type)
+        val expression = storage.addExpression(value, type, lang)
 
         // then
-        assertExpressionCorrect(expression, value, type)
+        assertExpressionCorrect(expression, value, type, lang)
     }
 
     @Test
@@ -44,40 +86,45 @@ abstract class StorageTest {
         // given
         val value = "Shrimp is going out on Fridays."
         val type = ExpressionType.WORD
+        val lang = mockLanguage(value = "Russian")
 
         // when
-        val expression = storage.addExpression(value, type)
+        val expression = storage.addExpression(value, type, lang)
 
         // then
-        assertExpressionCorrect(expression, value, type)
+        assertExpressionCorrect(expression, value, type, lang)
     }
 
     @Test
     fun `test__expressionById__Word`() {
         // given
+        val lang = storage.addLanguage("Russian")
+
         val value = "shrimp"
         val type = ExpressionType.WORD
-        val id = storage.addExpression(value, type).id
+        val id = storage.addExpression(value, type, lang).id
 
         // when
         val expression = storage.expressionById(id)
 
         // then
-        assertExpressionCorrect(expression, value, type)
+        assertExpressionCorrect(expression, value, type, lang)
     }
 
     @Test
     fun `test__expressionById__Sentence`() {
         // given
+        val lang = storage.addLanguage("Russian")
+
         val value = "Shrimp is going out on Fridays."
         val type = ExpressionType.WORD
-        val id = storage.addExpression(value, type).id
+        val id = storage.addExpression(value, type, lang).id
 
         // when
         val expression = storage.expressionById(id)
 
         // then
-        assertExpressionCorrect(expression, value, type)
+        assertExpressionCorrect(expression, value, type, lang)
     }
 
     @Test
@@ -146,6 +193,8 @@ abstract class StorageTest {
     @Test
     fun `test__deckById__HasCards`() {
         // given
+        addMockLanguages(storage)
+
         val name = "EN - My deck"
         storage.addDeck("wrong deck 1")
         val id = storage.addDeck(name).id
@@ -216,6 +265,8 @@ abstract class StorageTest {
     @Test
     fun `test__cardsOfDeck__NonEmptyDeck`() {
         // given
+        addMockLanguages(storage)
+
         val decks = mutableListOf<Deck>()
         val cardData = mutableListOf<List<CardData>>()
         for (i in 0 until 3) {
@@ -240,6 +291,8 @@ abstract class StorageTest {
     @Test
     fun `test__cardsOfDeck__NonEmptyDeck__differentCount`() {
         // given
+        addMockLanguages(storage)
+
         val decks = mutableListOf<Deck>()
         val cardData = mutableListOf<List<CardData>>()
         val deck1 = storage.addDeck("deck 1")
@@ -289,6 +342,8 @@ abstract class StorageTest {
     @Test
     fun `test__allDecks__DecksAreNonEmpty`() {
         // given
+        addMockLanguages(storage)
+
         val decks = mutableListOf<Deck>()
         val cardData = mutableListOf<List<CardData>>()
         for (i in 0 until 3) {
@@ -345,6 +400,8 @@ abstract class StorageTest {
     @Test
     fun `test__cardsDueDate__newCards`() {
         // given
+        addMockLanguages(storage)
+
         val deck = storage.addDeck("mock deck")
         val count = 3
         val cardData = mutableListOf<CardData>()
@@ -369,6 +426,8 @@ abstract class StorageTest {
     @Test
     fun `test__cardsDueDate__cardsInProgress`() {
         // given
+        addMockLanguages(storage)
+
         val deck = storage.addDeck("mock deck")
         val count = 3
         val cardsData = mutableListOf<CardData>()
@@ -568,4 +627,9 @@ abstract class StorageTest {
         assertEquals(0, counts.countRelearn())
         assertFalse(counts.isAnythingPending())
     }
+}
+
+private fun addMockLanguages(storage: Repository) {
+    storage.addLanguage(LanguagesRegistry.original().value)
+    storage.addLanguage(LanguagesRegistry.translations().value)
 }

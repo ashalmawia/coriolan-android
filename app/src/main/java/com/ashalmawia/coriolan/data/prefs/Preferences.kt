@@ -17,4 +17,10 @@ interface Preferences {
 
     fun getDefaultDeckId(): Long?
     fun setDefaultDeckId(id: Long)
+
+    // temporary, in future should be stored in domain
+    fun getOriginalLanguageId(): Long?
+    fun setOriginalLanguageId(id: Long)
+    fun getTranslatoinsLanguageId(): Long?
+    fun setTranslationsLanguageId(id: Long)
 }

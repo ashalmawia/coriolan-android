@@ -9,10 +9,7 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.assignment.PendingCounter
 import com.ashalmawia.coriolan.learning.scheduler.*
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
 
@@ -20,23 +17,57 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
     private val helper = MySqliteOpenHelper(context, exercises)
 
-    override fun addExpression(value: String, type: ExpressionType): Expression {
+    override fun addLanguage(value: String): Language {
+        val db = helper.writableDatabase
+
+        val cv = createLanguageContentValues(value)
+        val id = db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null, cv)
+
+        return Language(id, value)
+    }
+
+    override fun languageById(id: Long): Language? {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT * FROM $SQLITE_TABLE_LANGUAGES
+            |WHERE $SQLITE_COLUMN_ID = ?
+        """.trimMargin(), arrayOf(id.toString()))
+
+        cursor.use { it ->
+            return if (it.moveToNext()) {
+                Language(it.getId(), it.getLangValue())
+            } else {
+                null
+            }
+        }
+    }
+
+    override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
         val id = helper.writableDatabase.insert(SQLITE_TABLE_EXPRESSIONS,
                 null,
-                createExpressionContentValues(value, type))
-        return Expression(id, value, type)
+                createExpressionContentValues(value, type, language))
+        return Expression(id, value, type, language)
     }
 
     override fun expressionById(id: Long): Expression? {
         val db = helper.readableDatabase
-        val cursor = db.rawQuery("""SELECT * FROM $SQLITE_TABLE_EXPRESSIONS WHERE $SQLITE_COLUMN_ID = ?""",
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |FROM $SQLITE_TABLE_EXPRESSIONS AS E
+            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS L
+            |       ON E.$SQLITE_COLUMN_LANGUAGE_ID = L.$SQLITE_COLUMN_ID
+            |
+            |WHERE E.$SQLITE_COLUMN_ID = ?
+            |""".trimMargin(),
                 arrayOf(id.toString()))
 
         if (cursor.count == 0) return null
         if (cursor.count > 1) throw IllegalStateException("more that one expression for id $id")
 
         cursor.moveToFirst()
-        val expression = Expression(id, cursor.getValue(), cursor.getExpressionType())
+        val expression = Expression(id, cursor.getValue(), cursor.getExpressionType(), cursor.getLanguage())
         cursor.close()
 
         return expression
@@ -46,8 +77,8 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         val db = helper.writableDatabase
         db.beginTransaction()
         try {
-            val original = addExpression(data.original, data.type)
-            val translations = data.translations.map { addExpression(it, data.type) }
+            val original = addExpression(data.original, data.contentType, data.originalLang)
+            val translations = data.translations.map { addExpression(it, data.contentType, data.translationsLang) }
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
@@ -95,13 +126,13 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         val cursor = db.rawQuery("SELECT * FROM $SQLITE_TABLE_DECKS WHERE $SQLITE_COLUMN_ID = ?",
                 arrayOf(id.toString()))
 
-        if (cursor.count == 0) { return null }
-        if (cursor.count > 1) throw IllegalStateException("more that one value for deck id $id")
+        cursor.use { it ->
+            if (it.count == 0) return null
+            if (it.count > 1) throw IllegalStateException("more that one value for deck id $id")
 
-        cursor.moveToFirst()
-        val result = Deck(id, cursor.getName())
-        cursor.close()
-        return result
+            it.moveToFirst()
+            return Deck(id, it.getName())
+        }
     }
 
     override fun addDeck(name: String): Deck {

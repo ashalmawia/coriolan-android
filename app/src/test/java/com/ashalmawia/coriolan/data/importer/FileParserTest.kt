@@ -1,10 +1,11 @@
 package com.ashalmawia.coriolan.data.importer
 
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.LanguagesRegistry
 import com.ashalmawia.coriolan.data.importer.file.FileParser
 import com.ashalmawia.coriolan.data.importer.file.ParsingException
-import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.mockDeck
+import com.ashalmawia.coriolan.model.mockLanguage
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -22,9 +23,14 @@ class FileParserTest {
 
     @Before
     fun before() {
-        val mockRegistry = mock(DecksRegistry::class.java)
-        `when`(mockRegistry.default()).thenReturn(mockDeck("Default"))
-        parser = FileParser(mockRegistry)
+        val mockDecksRegistry = mock(DecksRegistry::class.java)
+        `when`(mockDecksRegistry.default()).thenReturn(mockDeck("Default"))
+
+        val mockLangsRegistry = mock(LanguagesRegistry::class.java)
+        `when`(mockLangsRegistry.original()).thenReturn(mockLanguage(value = "English"))
+        `when`(mockLangsRegistry.translations()).thenReturn(mockLanguage(value = "Nederlands"))
+
+        parser = FileParser(mockDecksRegistry, mockLangsRegistry)
     }
 
     @Test

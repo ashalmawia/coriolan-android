@@ -2,14 +2,19 @@ package com.ashalmawia.coriolan.data.storage
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.*
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -26,17 +31,10 @@ class DeckRegistryTest {
         val mockStorage = mock(Repository::class.java)
         `when`(mockStorage.addDeck(any())).thenReturn(defaultDeck)
 
-        val mockPrefs = mock(Preferences::class.java)
-        `when`(mockPrefs.getDefaultDeckId()).thenReturn(null)
-
-        val registry = mock(DecksRegistry::class.java)
-        `when`(registry.preferences(any())).thenReturn(mockPrefs)
-        `when`(registry.repository(any())).thenReturn(mockStorage)
-        `when`(registry.preinitialize(any())).thenCallRealMethod()
-        `when`(registry.default()).thenCallRealMethod()
+        val mockPrefs = MockPreferences()
 
         // when
-        registry.preinitialize(context)
+        val registry = DecksRegistry(context, mockPrefs, mockStorage)
 
         // then
         verify(mockStorage).addDeck(any())
@@ -56,64 +54,81 @@ class DeckRegistryTest {
         val mockPrefs = mock(Preferences::class.java)
         `when`(mockPrefs.getDefaultDeckId()).thenReturn(defaultDeck.id)
 
-        val registry = mock(DecksRegistry::class.java)
-        `when`(registry.preferences(any())).thenReturn(mockPrefs)
-        `when`(registry.repository(any())).thenReturn(mockStorage)
-        `when`(registry.preinitialize(any())).thenCallRealMethod()
-        `when`(registry.default()).thenCallRealMethod()
-
         // when
-        registry.preinitialize(context)
+        val registry = DecksRegistry(context, mockPrefs, mockStorage)
 
         // then
         verify(mockStorage).deckById(anyLong())
         assertEquals("Default deck is set correctly", defaultDeck, registry.default())
     }
 
-//    @Test
-//    fun addCardsToDeckTest() {
-//        // given
-//        val deck = mockDeck()
-//        val cardsData = arrayListOf(
-//                CardData("original", "translation", deck.id, ExpressionType.WORD),
-//                CardData("original2", "translation2", deck.id, ExpressionType.UNKNOWN)
-//        )
-//
-//        val context = mock(Context::class.java)
-//
-//        val mockStorage = object : Storage {
-//
-//            var called = 0
-//            override fun addCard(data: CardData): Card {
-//                called++
-//                return Card.create(
-//                        111L,
-//                        Expression(1L, data.original, data.type),
-//                        Expression(2L, data.translation, data.type))
-//            }
-//
-//            override fun addExpression(value: String, type: ExpressionType): Expression { throw UnsupportedOperationException() }
-//            override fun expressionById(id: Long): Expression? { throw UnsupportedOperationException() }
-//            override fun allDecks(): List<Deck> { throw UnsupportedOperationException() }
-//            override fun deckById(id: Long): Deck? { throw UnsupportedOperationException() }
-//            override fun addDeck(name: String): Deck { throw UnsupportedOperationException() }
-//        }
-//
-//        val mockRegistry = mock(DecksRegistry::class.java)
-//        `when`(mockRegistry.storage(any())).thenThrow(IllegalAccessError())
-//        `when`(mockRegistry.addCardsToDeck(any(), any(), anyList())).thenCallRealMethod()
-//
-//        // when
-//        mockRegistry.addCardsToDeck(context, deck, cardsData)
-//
-//        // then
-//        assertEquals("addCard() was called correct amount of times", cardsData.size, mockStorage.called)
-//        assertEquals("amount of cards is correct", cardsData.size, deck.cards().size)
-//        for (i in 0 until cardsData.size) {
-//            assertEquals("cards data is correct", cardsData[i].original, deck.cards()[i].original.value)
-//            assertEquals("cards data is correct", cardsData[i].translation, deck.cards()[i].translations[i].value)
-//        }
-//    }
+    @Test
+    fun `addCardsToDeck__singleTranslation`() {
+        // given
+        val deck = mockDeck()
+        val cardsData = arrayListOf(
+                mockCardData("original", "translation", deck.id),
+                mockCardData("original2", "translation2", deck.id)
+        )
 
-    private fun mockDeck() = Deck(111L, "Default")
+        val mockPrefs = MockPreferences()
+        val mockRepository = MockRepository()
+        val context = mock(Context::class.java)
+        `when`(context.getString(anyInt())).thenReturn("Default")
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
+
+        // when
+        mockRegistry.addCardsToDeck(cardsData)
+
+        // then
+        val cardsOfDeck = mockRepository.cardsOfDeck(deck)
+        verifyAddedCardsCorrect(cardsData, cardsOfDeck)
+    }
+
+    @Test
+    fun `addCardsToDeck__multipleTranslations`() {
+        // given
+        val deck = mockDeck()
+        val cardsData = arrayListOf(
+                mockCardData("shrimp", "креветка", deck.id),
+                mockCardData("spring", listOf("весна", "источник"), deck.id)
+        )
+
+        val mockPrefs = MockPreferences()
+        val mockRepository = MockRepository()
+
+        val context = mock(Context::class.java)
+        `when`(context.getString(anyInt())).thenReturn("Default")
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
+
+        // when
+        mockRegistry.addCardsToDeck(cardsData)
+
+        // then
+        val cardsOfDeck = mockRepository.cardsOfDeck(deck)
+        verifyAddedCardsCorrect(cardsData, cardsOfDeck)
+    }
+}
+
+private fun verifyAddedCardsCorrect(cardsData: ArrayList<CardData>, cardsOfDeck: List<Card>) {
+    val forwardCount = cardsData.size
+    val reverseCount = cardsData.sumBy { it.translations.size }
+    val expectedCount = forwardCount + reverseCount
+
+    assertEquals("amount of cards is correct", expectedCount, cardsOfDeck.size)
+//    assertEquals("amount of forward cards is correct", forwardCount, cardsOfDeck.count { it.type == CardType.FORWARD })
+//    assertEquals("amount of reverse cards is correct", reverseCount, cardsOfDeck.count { it.type == CardType.REVERSE })
+
+    for (data in cardsData) {
+        val forward = cardsOfDeck.find { it.type == CardType.FORWARD && it.original.value == data.original }
+        assertCardCorrect(forward, data)
+
+        val reversedCards = CardData.reversedTo(data)
+        for (reversedData in reversedCards) {
+            val reverse = cardsOfDeck.find { it.type == CardType.REVERSE && it.original.value == reversedData.original }
+            assertCardCorrect(reverse, reversedData)
+        }
+    }
 }

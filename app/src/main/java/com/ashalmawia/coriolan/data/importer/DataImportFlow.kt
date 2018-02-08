@@ -43,7 +43,7 @@ class DataImportFlow(
     fun onData(context: Context, data: List<CardData>) {
         // TODO: add generalized confirmation UI
 
-        DecksRegistry.addCardsToDeck(context, data)
+        DecksRegistry.get().addCardsToDeck(data)
 
         callback.onSuccess()
         finish()

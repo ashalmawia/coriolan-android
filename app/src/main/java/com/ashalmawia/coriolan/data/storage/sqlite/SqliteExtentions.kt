@@ -3,16 +3,18 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.toExpressionType
 import org.joda.time.DateTime
 
-private fun Cursor.isNull(name: String): Boolean { return isNull(getColumnIndex(name)) }
+private fun Cursor.isNull(name: String): Boolean { return isNull(getColumnIndexOrThrow(name)) }
 
-private fun Cursor.getString(name: String): String { return getString(getColumnIndex(name)) }
-private fun Cursor.getInt(name: String): Int { return getInt(getColumnIndex(name)) }
-private fun Cursor.getLong(name: String): Long { return getLong(getColumnIndex(name)) }
+private fun Cursor.getString(name: String): String { return getString(getColumnIndexOrThrow(name)) }
+private fun Cursor.getInt(name: String): Int { return getInt(getColumnIndexOrThrow(name)) }
+private fun Cursor.getLong(name: String): Long { return getLong(getColumnIndexOrThrow(name)) }
 
 fun Cursor.getValue(): String { return getString(SQLITE_COLUMN_VALUE) }
+fun Cursor.getLangValue(): String { return getString(SQLITE_COLUMN_LANG_VALUE) }
 fun Cursor.getName(): String { return getString(SQLITE_COLUMN_NAME) }
 
 fun Cursor.getId(): Long { return getLong(SQLITE_COLUMN_ID) }
@@ -30,6 +32,12 @@ fun Cursor.getExpressionType(): ExpressionType {
 fun Cursor.getDate(column: String): DateTime {
     val longValue = getLong(column)
     return DateTime(longValue)
+}
+fun Cursor.getLanguage(): Language {
+    return Language(
+            getLong(SQLITE_COLUMN_ID),
+            getString(SQLITE_COLUMN_LANG_VALUE)
+    )
 }
 
 fun ContentValues.put(key: String, value: DateTime) {
