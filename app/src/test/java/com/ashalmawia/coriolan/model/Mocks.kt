@@ -22,8 +22,9 @@ fun mockCardData(
         type: ExpressionType = ExpressionType.WORD
 ) = mockCardData(original, listOf(translation), deckId, type)
 
+private var expressionId = 1L
 fun mockExpression(value: String = "mock value", type: ExpressionType = ExpressionType.WORD, language: Language = mockLanguage())
-        = Expression(99L, value, type, language)
+        = Expression(expressionId++, value, type, language)
 
 private var cardId = 1L
 fun mockCard(state: State = mockState()): Card {

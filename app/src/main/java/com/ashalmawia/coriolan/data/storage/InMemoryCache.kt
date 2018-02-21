@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.scheduler.State
@@ -39,8 +38,8 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return value
     }
 
-    override fun addCard(data: CardData): Card {
-        val card = inner.addCard(data)
+    override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
+        val card = inner.addCard(deckId, original, translations)
         cards.put(card.id, card)
         return card
     }

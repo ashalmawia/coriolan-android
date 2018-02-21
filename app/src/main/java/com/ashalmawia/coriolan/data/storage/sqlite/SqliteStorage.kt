@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.assignment.Counts
@@ -11,7 +10,10 @@ import com.ashalmawia.coriolan.learning.assignment.PendingCounter
 import com.ashalmawia.coriolan.learning.scheduler.*
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
+import com.ashalmawia.errors.Errors
 import org.joda.time.DateTime
+
+private val TAG = SqliteStorage::class.java.simpleName
 
 class SqliteStorage(private val context: Context, exercises: List<Exercise>) : Repository {
 
@@ -73,16 +75,14 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         return expression
     }
 
-    override fun addCard(data: CardData): Card {
+    override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
         val db = helper.writableDatabase
         db.beginTransaction()
         try {
-            val original = addExpression(data.original, data.contentType, data.originalLang)
-            val translations = data.translations.map { addExpression(it, data.contentType, data.translationsLang) }
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
-                    toContentValues(data.deckId, original))
+                    toContentValues(deckId, original))
 
             // write the card-to-expression relation (many-to-many)
             val cardsReversCV = generateCardsReverseContentValues(cardId, translations)
@@ -90,7 +90,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                 db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
             }
 
-            val card = Card(cardId, data.deckId, original, translations, emptyState())
+            val card = Card(cardId, deckId, original, translations, emptyState())
 
             db.setTransactionSuccessful()
 

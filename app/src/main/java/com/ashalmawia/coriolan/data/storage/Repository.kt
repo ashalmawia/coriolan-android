@@ -31,7 +31,7 @@ interface Repository {
 
     fun expressionById(id: Long): Expression?
 
-    fun addCard(data: CardData): Card
+    fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card
 
     fun cardById(id: Long): Card?
 

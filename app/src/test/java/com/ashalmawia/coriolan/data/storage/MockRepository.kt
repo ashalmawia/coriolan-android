@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.scheduler.MockCounts
@@ -33,12 +32,12 @@ class MockRepository : Repository {
     }
 
     val cards = mutableListOf<Card>()
-    override fun addCard(data: CardData): Card {
+    override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
         val card = Card(
                 cards.size + 1L,
-                data.deckId,
-                addExpression(data.original, data.contentType, data.originalLang),
-                data.translations.map { addExpression(it, data.contentType, data.translationsLang) },
+                deckId,
+                original,
+                translations,
                 emptyState()
         )
         cards.add(card)

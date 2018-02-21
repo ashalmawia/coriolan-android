@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage
 import android.content.Context
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.model.*
@@ -118,14 +119,14 @@ private fun verifyAddedCardsCorrect(cardsData: ArrayList<CardData>, cardsOfDeck:
     val expectedCount = forwardCount + reverseCount
 
     assertEquals("amount of cards is correct", expectedCount, cardsOfDeck.size)
-//    assertEquals("amount of forward cards is correct", forwardCount, cardsOfDeck.count { it.type == CardType.FORWARD })
-//    assertEquals("amount of reverse cards is correct", reverseCount, cardsOfDeck.count { it.type == CardType.REVERSE })
+    assertEquals("amount of forward cards is correct", forwardCount, cardsOfDeck.count { it.type == CardType.FORWARD })
+    assertEquals("amount of reverse cards is correct", reverseCount, cardsOfDeck.count { it.type == CardType.REVERSE })
 
     for (data in cardsData) {
         val forward = cardsOfDeck.find { it.type == CardType.FORWARD && it.original.value == data.original }
         assertCardCorrect(forward, data)
 
-        val reversedCards = CardData.reversedTo(data)
+        val reversedCards = reversedTo(data)
         for (reversedData in reversedCards) {
             val reverse = cardsOfDeck.find { it.type == CardType.REVERSE && it.original.value == reversedData.original }
             assertCardCorrect(reverse, reversedData)

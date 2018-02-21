@@ -6,6 +6,9 @@ import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.ExpressionType
+import com.ashalmawia.coriolan.model.Language
 
 class DecksRegistry(context: Context, preferences: Preferences, private val repository: Repository) {
 
@@ -54,8 +57,15 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
      * 3. reverse: "источник -- spring"
      */
     private fun addCard(cardData: CardData) {
-        repository.addCard(cardData)
-        CardData.reversedTo(cardData).forEach { repository.addCard(it) }
+        val original = findOrAddExpression(cardData.original, cardData.contentType, cardData.originalLang)
+        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, cardData.translationsLang) }
+
+        repository.addCard(cardData.deckId, original, translations)
+        translations.forEach { repository.addCard(cardData.deckId, it, listOf(original)) }
+    }
+
+    private fun findOrAddExpression(value: String, type: ExpressionType, language: Language): Expression {
+        return repository.addExpression(value, type, language)
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {

@@ -133,7 +133,7 @@ abstract class StorageTest {
         val data = mockCardData("shrimp", "креветка")
 
         // when
-        val card = storage.addCard(data)
+        val card = addMockCard(storage, data)
 
         // then
         assertCardCorrect(card, data)
@@ -145,7 +145,7 @@ abstract class StorageTest {
         val data = mockCardData("ракета", listOf("firework", "rocket", "missile"))
 
         // when
-        val card = storage.addCard(data)
+        val card = addMockCard(storage, data)
 
         // then
         assertCardCorrect(card, data)
@@ -157,7 +157,7 @@ abstract class StorageTest {
         val data = mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.")
 
         // when
-        val card = storage.addCard(data)
+        val card = addMockCard(storage, data)
 
         // then
         assertCardCorrect(card, data)
@@ -205,7 +205,7 @@ abstract class StorageTest {
                 mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", id)
         )
         for (card in cards) {
-            storage.addCard(card)
+            addMockCard(storage, card)
         }
 
         // when
@@ -245,14 +245,16 @@ abstract class StorageTest {
     @Test
     fun `test__cardsOfDeck__EmptyDeck`() {
         // given
+        addMockLanguages(storage)
+
         val deck = storage.addDeck("Mock deck")
         val wrongDeck1 = storage.addDeck("wrong deck 1")
         for (i in 0 until 3) {
-            storage.addCard(mockCardData(deckId = wrongDeck1.id))
+            addMockCard(storage, wrongDeck1.id)
         }
         val wrongDeck2 = storage.addDeck("wrong deck 2")
         for (i in 0 until 3) {
-            storage.addCard(mockCardData(deckId = wrongDeck2.id))
+            addMockCard(storage, wrongDeck2.id)
         }
 
         // when
@@ -277,7 +279,7 @@ abstract class StorageTest {
                     mockCardData("original ${i*i+1}", "translation ${i*i+1}", deck.id)
             ))
         }
-        cardData.forEach { it.forEach { storage.addCard(it) } }
+        cardData.forEach { it.forEach { addMockCard(storage, it) } }
 
         for (i in 0 until decks.size) {
             // when
@@ -310,7 +312,7 @@ abstract class StorageTest {
                 mockCardData("original $4", "translation 4", deck3.id),
                 mockCardData("original 5", "translation 5", deck3.id)
         ))
-        cardData.forEach { it.forEach { storage.addCard(it) } }
+        cardData.forEach { it.forEach { addMockCard(storage, it) } }
 
         for (i in 0 until decks.size) {
             // when
@@ -353,7 +355,7 @@ abstract class StorageTest {
                     mockCardData("original $i", "translation $i", deck.id)
             ))
         }
-        cardData.forEach { it.forEach { storage.addCard(it) } }
+        cardData.forEach { it.forEach { addMockCard(storage, it) } }
 
         // when
         val allDecks = storage.allDecks()
@@ -380,7 +382,7 @@ abstract class StorageTest {
     @Test
     fun `test__updateCardState`() {
         // when
-        val card = storage.addCard(mockCardData())
+        val card = addMockCard(storage)
 
         // then
         assertEquals("state is correct", Status.NEW, card.state.status)
@@ -408,7 +410,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardData.add(data)
-            storage.addCard(data)
+            addMockCard(storage, data)
         }
 
         // when
@@ -435,7 +437,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardsData.add(data)
-            val added = storage.addCard(data)
+            val added = addMockCard(storage, data)
             cards.add(added)
         }
         val today = today()
@@ -460,7 +462,7 @@ abstract class StorageTest {
         val count = 3
         val cards = (0 until count)
                 .map { mockCardData("original $it", "translation $it", deck.id) }
-                .map { storage.addCard(it) }
+                .map { addMockCard(storage, it) }
         val today = today()
 
         storage.updateCardState(cards[0], State(today.plusDays(3), 4), exercise)
@@ -483,7 +485,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardData.add(data)
-            storage.addCard(data)
+            addMockCard(storage, data)
         }
 
         // when
@@ -506,7 +508,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardData.add(data)
-            val card = storage.addCard(data)
+            val card = addMockCard(storage, data)
             storage.updateCardState(card, State(date, 4), exercise)
         }
 
@@ -530,7 +532,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardData.add(data)
-            val card = storage.addCard(data)
+            val card = addMockCard(storage, data)
             storage.updateCardState(card, State(date, PERIOD_LEARNT + 1), exercise)
         }
 
@@ -554,7 +556,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardData.add(data)
-            val card = storage.addCard(data)
+            val card = addMockCard(storage, data)
             storage.updateCardState(card, State(date, 0), exercise)
         }
 
@@ -578,7 +580,7 @@ abstract class StorageTest {
         for (i in 0 until count) {
             val data = mockCardData("original $i", "translation $i", deck.id)
             cardsData.add(data)
-            val added = storage.addCard(data)
+            val added = addMockCard(storage, data)
             cards.add(added)
         }
         val today = today()
@@ -611,7 +613,7 @@ abstract class StorageTest {
         val count = 3
         val cards = (0 until count)
                 .map { mockCardData("original $it", "translation $it", deck.id) }
-                .map { storage.addCard(it) }
+                .map { addMockCard(storage, it) }
         val today = today()
 
         storage.updateCardState(cards[0], State(today.plusDays(3), 0), exercise)

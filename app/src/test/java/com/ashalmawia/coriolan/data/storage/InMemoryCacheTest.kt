@@ -73,7 +73,7 @@ class InMemoryCacheTest {
         val data = mockCardData("shrimp", "креветка")
 
         // when
-        val card = cache.addCard(data)
+        val card = addMockCard(cache, data)
 
         // then
         assertNotNull("card is added", card)
@@ -170,7 +170,7 @@ class InMemoryCacheTest {
         // given
         val cardData = mockCardData()
 
-        val card = cache.addCard(cardData)
+        val card = addMockCard(cache, cardData)
 
         val state = mockState()
 
@@ -187,7 +187,7 @@ class InMemoryCacheTest {
     fun `test__cardsDueDate`() {
         // given
         val deck = cache.addDeck("name")
-        val card = cache.addCard(mockCardData())
+        val card = addMockCard(cache, mockCardData())
 
         // when
         val due = cache.cardsDueDate(exercise, deck, today())
