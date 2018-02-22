@@ -38,6 +38,11 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return value
     }
 
+    override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
+        val found = expressions.values.find { it?.value == value && it.type == type && it.language == language }
+        return found ?: inner.expressionByValues(value, type, language)
+    }
+
     override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
         val card = inner.addCard(deckId, original, translations)
         cards.put(card.id, card)

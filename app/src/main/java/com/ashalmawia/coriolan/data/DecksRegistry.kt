@@ -65,7 +65,8 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
     }
 
     private fun findOrAddExpression(value: String, type: ExpressionType, language: Language): Expression {
-        return repository.addExpression(value, type, language)
+        val found = repository.expressionByValues(value, type, language)
+        return found ?: repository.addExpression(value, type, language)
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {

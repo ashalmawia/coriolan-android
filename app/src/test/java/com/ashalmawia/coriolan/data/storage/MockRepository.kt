@@ -30,6 +30,11 @@ class MockRepository : Repository {
     override fun expressionById(id: Long): Expression? {
         return expressions.find { it.id == id }
     }
+    override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
+        System.out.println("---------------")
+        expressions.forEach { System.out.println(it) }
+        return expressions.find { it.value == value && it.type == type && it.language == language }
+    }
 
     val cards = mutableListOf<Card>()
     override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {

@@ -75,6 +75,36 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         return expression
     }
 
+    override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |FROM $SQLITE_TABLE_EXPRESSIONS AS E
+            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS L
+            |       ON E.$SQLITE_COLUMN_LANGUAGE_ID = L.$SQLITE_COLUMN_ID
+            |
+            |WHERE E.$SQLITE_COLUMN_VALUE = ?
+            |   AND E.$SQLITE_COLUMN_TYPE = ?
+            |   AND E.$SQLITE_COLUMN_LANGUAGE_ID = ?
+        """.trimMargin(), arrayOf(value, type.value.toString(), language.id.toString()))
+
+        cursor.use { it ->
+            if (it.count == 0) {
+                return null
+            }
+
+            if (it.count > 1) {
+                Errors.illegalState(TAG, "found ${it.count} values for the value[$value], " +
+                        "type[$type], language[$language]")
+                return null
+            }
+
+            it.moveToFirst()
+            return Expression(it.getId(), it.getValue(), it.getExpressionType(), it.getLanguage())
+        }
+    }
+
     override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
         val db = helper.writableDatabase
         db.beginTransaction()

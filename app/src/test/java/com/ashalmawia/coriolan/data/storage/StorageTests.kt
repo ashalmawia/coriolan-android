@@ -128,6 +128,106 @@ abstract class StorageTest {
     }
 
     @Test
+    fun `test__expressionByValues__DoesNotExist_Empty`() {
+        // given
+        val lang = storage.addLanguage("Russian")
+
+        val value = "shrimp"
+        val type = ExpressionType.WORD
+
+        // when
+        val expression = storage.expressionByValues(value, type, lang)
+
+        // then
+        assertNull(expression)
+    }
+
+    @Test
+    fun `test__expressionByValues__DoesNotExist_WrongValue`() {
+        // given
+        val lang = storage.addLanguage("Russian")
+
+        storage.addExpression("aaa", ExpressionType.WORD, lang)
+        storage.addExpression("bbb", ExpressionType.WORD, lang)
+
+        // when
+        val expression = storage.expressionByValues("shrimp", ExpressionType.WORD, lang)
+
+        // then
+        assertNull(expression)
+    }
+
+    @Test
+    fun `test__expressionByValues__DoesNotExist_WrongLanguage`() {
+        // given
+        val value = "shrimp"
+
+        val langRussian = storage.addLanguage("Russian")
+        val langEnglish = storage.addLanguage("English")
+        val langFrench = storage.addLanguage("French")
+
+        storage.addExpression(value, ExpressionType.WORD, langRussian)
+        storage.addExpression(value, ExpressionType.WORD, langEnglish)
+
+        // when
+        val expression = storage.expressionByValues(value, ExpressionType.WORD, langFrench)
+
+        // then
+        assertNull(expression)
+    }
+
+    @Test
+    fun `test__expressionByValues__DoesNotExist_WrongContentType`() {
+        // given
+        val value = "shrimp"
+        val lang = storage.addLanguage("English")
+
+        storage.addExpression(value, ExpressionType.WORD, lang)
+        storage.addExpression(value, ExpressionType.WORD, lang)
+
+        // when
+        val expression = storage.expressionByValues(value, ExpressionType.UNKNOWN, lang)
+
+        // then
+        assertNull(expression)
+    }
+
+    @Test
+    fun `test__expressionByValues__DoesNotExist_WrongEverything`() {
+        // given
+        val langRussian = storage.addLanguage("Russian")
+        val langEnglish = storage.addLanguage("English")
+        val langFrench = storage.addLanguage("French")
+
+        storage.addExpression("она", ExpressionType.WORD, langRussian)
+        storage.addExpression("she", ExpressionType.WORD, langEnglish)
+
+        // when
+        val expression = storage.expressionByValues("elle", ExpressionType.UNKNOWN, langFrench)
+
+        // then
+        assertNull(expression)
+    }
+
+    @Test
+    fun `test__expressionByValues__Exists`() {
+        // given
+        val lang = storage.addLanguage("English")
+
+        val value = "shrimp"
+        val type = ExpressionType.WORD
+        val id = storage.addExpression(value, type, lang).id
+
+        // when
+        val expression = storage.expressionByValues(value, type, lang)
+
+        // then
+        assertNotNull(expression)
+        assertEquals(id, expression!!.id)
+        assertExpressionCorrect(expression, value, type, lang)
+    }
+
+    @Test
     fun `test__addCard__Word__SingleTranslation`() {
         // given
         val data = mockCardData("shrimp", "креветка")

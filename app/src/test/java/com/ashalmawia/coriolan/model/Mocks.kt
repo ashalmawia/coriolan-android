@@ -8,12 +8,15 @@ import org.joda.time.DateTime
 // TODO: go over it's default usages and consider adding params and checking them
 fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
 
+fun langOriginal() = LanguagesRegistry.original()
+fun langTranslations() = LanguagesRegistry.translations()
+
 fun mockCardData(
         original: String,
         translations: List<String>,
         deckId: Long = 1L,
         contentType: ExpressionType = ExpressionType.WORD
-) = CardData(original, LanguagesRegistry.original(), translations, LanguagesRegistry.translations(), deckId, contentType)
+) = CardData(original, langOriginal(), translations, langTranslations(), deckId, contentType)
 
 fun mockCardData(
         original: String = "shrimp",
