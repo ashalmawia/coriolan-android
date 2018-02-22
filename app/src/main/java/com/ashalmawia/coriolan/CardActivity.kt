@@ -9,8 +9,12 @@ import kotlinx.android.synthetic.main.app_toolbar.*
 import android.content.Intent
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.debug.DEBUG_SHOW_SCHEDULER_STATUS
 import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
@@ -49,6 +53,36 @@ class CardActivity : AppCompatActivity(), CardViewListener {
                 finish()
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.learning_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.learning_menu__delete_card -> {
+                confirmDeleteCurrentCard()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun confirmDeleteCurrentCard() {
+        val dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.learning_menu_delete_card)
+                .setMessage(R.string.deleting_card__are_you_sure)
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(R.string.button_delete) { _, _ -> deleteCurrentCard()}
+                .create()
+        dialog.show()
+    }
+
+    private fun deleteCurrentCard() {
+        val current = flow().card()
+        flow().deleteCurrent(this)
+        DecksRegistry.get().deleteCard(current)
     }
 
     override fun onStop() {

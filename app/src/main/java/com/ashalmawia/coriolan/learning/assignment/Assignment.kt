@@ -11,10 +11,18 @@ abstract class Assignment(
 
     val pendingCounter = lazy(LazyThreadSafetyMode.NONE, { createPendingCounter() })
 
-    abstract fun hasNext(): Boolean
     protected abstract fun getNext(): Card
+
+    abstract fun hasNext(): Boolean
     abstract fun reschedule(card: Card)
+
+    fun delete(card: Card) {
+        innerDelete(card)
+        pendingCounter.value.onCardDeleted(card)
+    }
+
     protected abstract fun createPendingCounter(): PendingCounter
+    protected abstract fun innerDelete(card: Card)
 
     fun next(): Card {
         val next = getNext()

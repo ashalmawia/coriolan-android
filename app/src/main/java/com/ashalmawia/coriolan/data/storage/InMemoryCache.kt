@@ -43,6 +43,16 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return found ?: inner.expressionByValues(value, type, language)
     }
 
+    override fun isUsed(expression: Expression): Boolean {
+        // does not need caching
+        return inner.isUsed(expression)
+    }
+
+    override fun deleteExpression(expression: Expression) {
+        inner.deleteExpression(expression)
+        expressions.remove(expression.id)
+    }
+
     override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
         val card = inner.addCard(deckId, original, translations)
         cards.put(card.id, card)
@@ -57,6 +67,11 @@ class InMemoryCache(private val inner: Repository) : Repository {
         val value = inner.cardById(id)
         cards.put(id, value)
         return value
+    }
+
+    override fun deleteCard(card: Card) {
+        inner.deleteCard(card)
+        cards.remove(card.id)
     }
 
     override fun allDecks(): List<Deck> {

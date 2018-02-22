@@ -60,6 +60,10 @@ class RandomAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
         val counts = cards.groupBy { it.card.state.status }.mapValues { it.value.size }
         return PendingCounter.createFrom(counts)
     }
+
+    override fun innerDelete(card: Card) {
+        cards.removeAll { it.card == card }
+    }
 }
 
 private data class CardEntry(val card: Card, var turn: Int)

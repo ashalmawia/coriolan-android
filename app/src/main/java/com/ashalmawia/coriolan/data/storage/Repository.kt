@@ -33,9 +33,15 @@ interface Repository {
 
     fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression?
 
+    fun isUsed(expression: Expression): Boolean
+
+    fun deleteExpression(expression: Expression)
+
     fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card
 
     fun cardById(id: Long): Card?
+
+    fun deleteCard(card: Card)
 
     fun allDecks(): List<Deck>
 

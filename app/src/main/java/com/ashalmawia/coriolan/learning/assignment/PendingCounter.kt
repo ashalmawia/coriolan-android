@@ -18,6 +18,7 @@ interface PendingCounter : Counts {
 
     fun onCardCorrect(card: Card)
     fun onCardWrong(card: Card)
+    fun onCardDeleted(card: Card)
 
     companion object {
         fun createFrom(counts: Map<Status, Int>): PendingCounter {
@@ -74,6 +75,20 @@ private class PendingCounterImpl(
             }
         }
         relearn++
+    }
+
+    override fun onCardDeleted(card: Card) {
+        when (card.state.status) {
+            Status.NEW -> {
+                new--
+            }
+            Status.IN_PROGRESS, Status.LEARNT -> {
+                review--
+            }
+            Status.RELEARN -> {
+                relearn--
+            }
+        }
     }
 }
 

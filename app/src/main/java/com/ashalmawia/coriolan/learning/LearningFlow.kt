@@ -58,12 +58,20 @@ class LearningFlow(
         val card = card()
         val state = scheduler.wrong(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
+        assignment.pendingCounter.value.onCardWrong(card)
     }
 
     fun correct(context: Context) {
         val card = card()
         val state = scheduler.correct(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
+        assignment.pendingCounter.value.onCardCorrect(card)
+    }
+
+    fun deleteCurrent(context: Context) {
+        val card = card()
+        assignment.delete(card)
+        showNextOrComplete(context)
     }
 
     private fun updateAndRescheduleIfNeeded(context: Context, card: Card, state: State) {

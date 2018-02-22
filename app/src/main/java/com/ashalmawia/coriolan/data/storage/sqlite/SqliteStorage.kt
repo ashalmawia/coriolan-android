@@ -78,15 +78,22 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
         val db = helper.readableDatabase
 
+        val EXPRESSIONS = "E"
+        val LANGUAGES = "L"
+
         val cursor = db.rawQuery("""
-            |SELECT *
-            |FROM $SQLITE_TABLE_EXPRESSIONS AS E
-            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS L
-            |       ON E.$SQLITE_COLUMN_LANGUAGE_ID = L.$SQLITE_COLUMN_ID
+            |SELECT
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
             |
-            |WHERE E.$SQLITE_COLUMN_VALUE = ?
-            |   AND E.$SQLITE_COLUMN_TYPE = ?
-            |   AND E.$SQLITE_COLUMN_LANGUAGE_ID = ?
+            |FROM $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |WHERE ${SQLITE_COLUMN_VALUE.from(EXPRESSIONS)} = ?
+            |   AND ${SQLITE_COLUMN_TYPE.from(EXPRESSIONS)} = ?
+            |   AND ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ?
+            |
         """.trimMargin(), arrayOf(value, type.value.toString(), language.id.toString()))
 
         cursor.use { it ->
@@ -101,8 +108,46 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             }
 
             it.moveToFirst()
-            return Expression(it.getId(), it.getValue(), it.getExpressionType(), it.getLanguage())
+            return Expression(
+                    it.getId(EXPRESSIONS),
+                    it.getValue(EXPRESSIONS),
+                    it.getExpressionType(EXPRESSIONS),
+                    it.getLanguage(LANGUAGES)
+            )
         }
+    }
+
+    override fun isUsed(expression: Expression): Boolean {
+        val db = helper.readableDatabase
+
+        val CARDS = "C"
+        val REVERSE = "T"
+        val COUNT = "count"
+
+        val cursor = db.rawQuery("""
+            |SELECT
+            |   COUNT(*) AS $COUNT
+            |
+            |FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |   LEFT JOIN $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
+            |      ON $CARDS.$SQLITE_COLUMN_ID = $REVERSE.$SQLITE_COLUMN_CARD_ID
+            |
+            |WHERE
+            |   $CARDS.$SQLITE_COLUMN_FRONT_ID = ?
+            |   OR
+            |   $REVERSE.$SQLITE_COLUMN_EXPRESSION_ID = ?
+        """.trimMargin(), arrayOf(expression.id.toString(), expression.id.toString()))
+
+        cursor.use {
+            it.moveToFirst()
+            val count = it.getInt(0)
+            return count > 0
+        }
+    }
+
+    override fun deleteExpression(expression: Expression) {
+        val db = helper.writableDatabase
+        db.delete(SQLITE_TABLE_EXPRESSIONS, "$SQLITE_COLUMN_ID = ?", arrayOf(expression.id.toString()))
     }
 
     override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
@@ -131,8 +176,38 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     }
 
     override fun cardById(id: Long): Card? {
-        // please make sure to cover it with tests in case of adding a real implementation
-        throw UnsupportedOperationException("this method is currently only used in testing")
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |FROM $SQLITE_TABLE_CARDS
+            |WHERE $SQLITE_COLUMN_ID = ?
+        """.trimMargin(), arrayOf(id.toString()))
+
+        cursor.use {
+            return if (cursor.moveToNext()) {
+                Card(
+                        id,
+                        cursor.getDeckId(),
+                        storage().expressionById(cursor.getFrontId())!!,
+                        translationsByCardId(id),
+                        // todo: state should not be a part of a card
+                        State(today(), PERIOD_NEVER_SCHEDULED)
+                )
+            } else {
+                null
+            }
+        }
+    }
+
+    override fun deleteCard(card: Card) {
+        val db = helper.writableDatabase
+
+        db.delete(
+                SQLITE_TABLE_CARDS,
+                "$SQLITE_COLUMN_ID = ?",
+                arrayOf(card.id.toString())
+        )
     }
 
     override fun allDecks(): List<Deck> {

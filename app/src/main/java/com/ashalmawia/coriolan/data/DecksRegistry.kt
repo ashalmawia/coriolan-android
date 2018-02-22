@@ -5,10 +5,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionType
-import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.model.*
 
 class DecksRegistry(context: Context, preferences: Preferences, private val repository: Repository) {
 
@@ -46,6 +43,16 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
 
     fun addCardsToDeck(data: List<CardData>) {
         data.map { addCard(it) }
+    }
+
+    fun deleteCard(card: Card) {
+        val expressions = card.translations.plus(card.original)
+        repository.deleteCard(card)
+        deleteOrphanExpressions(expressions)
+    }
+
+    private fun deleteOrphanExpressions(candidates: List<Expression>) {
+        candidates.forEach { if (!repository.isUsed(it)) repository.deleteExpression(it) }
     }
 
     /**

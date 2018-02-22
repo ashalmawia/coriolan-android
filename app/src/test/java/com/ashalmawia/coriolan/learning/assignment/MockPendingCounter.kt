@@ -21,6 +21,9 @@ class MockPendingCounter : PendingCounter {
     override fun onCardWrong(card: Card) {
     }
 
+    override fun onCardDeleted(card: Card) {
+    }
+
     override fun isAnythingPending(): Boolean {
         return false
     }

@@ -5,71 +5,58 @@ import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.model.*
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.verify
-import junit.framework.Assert.assertEquals
+import junit.framework.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
+
+private const val DEFAULT_DECK_NAME = "Default"
 
 @RunWith(MockitoJUnitRunner::class)
 class DeckRegistryTest {
 
     private lateinit var mockPrefs: MockPreferences
     private lateinit var mockRepository: MockRepository
+    private lateinit var context: Context
 
     @Before
     fun before() {
         mockPrefs = MockPreferences()
         mockRepository = MockRepository()
+
+        val context = mock(Context::class.java)
+        `when`(context.getString(anyInt())).thenReturn(DEFAULT_DECK_NAME)
+        this.context = context
     }
 
     @Test
     fun preinitializeTestNoDefaultDeck() {
-        // given
-        val defaultDeck = mockDeck()
-
-        val context = mock(Context::class.java)
-        `when`(context.getString(anyInt())).thenReturn(defaultDeck.name)
-
-        val mockStorage = mock(Repository::class.java)
-        `when`(mockStorage.addDeck(any())).thenReturn(defaultDeck)
-
-        val mockPrefs = MockPreferences()
-
         // when
-        val registry = DecksRegistry(context, mockPrefs, mockStorage)
+        val registry = DecksRegistry(context, mockPrefs, mockRepository)
 
         // then
-        verify(mockStorage).addDeck(any())
-        assertEquals("Default deck is initialized correctly", defaultDeck, registry.default())
+        assertNotNull("Default deck is initialized", registry.default())
+        assertEquals("Default deck is initialized correctly", DEFAULT_DECK_NAME, registry.default().name)
     }
 
     @Test
     fun preinitializeTestHasDefaultDeck() {
         // given
-        val defaultDeck = mockDeck()
+        mockRepository.addDeck("Some deck")
+        val defaultDeck = mockRepository.addDeck(DEFAULT_DECK_NAME)
+        mockRepository.addDeck("Some other deck")
 
-        val context = mock(Context::class.java)
-
-        val mockStorage = mock(Repository::class.java)
-        `when`(mockStorage.deckById(anyLong())).thenReturn(defaultDeck)
-
-        val mockPrefs = mock(Preferences::class.java)
-        `when`(mockPrefs.getDefaultDeckId()).thenReturn(defaultDeck.id)
+        mockPrefs.setDefaultDeckId(defaultDeck.id)
 
         // when
-        val registry = DecksRegistry(context, mockPrefs, mockStorage)
+        val registry = DecksRegistry(context, mockPrefs, mockRepository)
 
         // then
-        verify(mockStorage).deckById(anyLong())
         assertEquals("Default deck is set correctly", defaultDeck, registry.default())
     }
 
@@ -81,9 +68,6 @@ class DeckRegistryTest {
                 mockCardData("original", "translation", deck.id),
                 mockCardData("original2", "translation2", deck.id)
         )
-
-        val context = mock(Context::class.java)
-        `when`(context.getString(anyInt())).thenReturn("Default")
 
         val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
 
@@ -103,9 +87,6 @@ class DeckRegistryTest {
                 mockCardData("shrimp", "креветка", deck.id),
                 mockCardData("spring", listOf("весна", "источник"), deck.id)
         )
-
-        val context = mock(Context::class.java)
-        `when`(context.getString(anyInt())).thenReturn("Default")
 
         val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
 
@@ -136,9 +117,6 @@ class DeckRegistryTest {
                 mockCardData(repeatedOriginalValue, uniqueTranslationValue, deck.id),
                 mockCardData(uniqueOriginalValue, repeatedTranslationValue, deck.id)
         )
-
-        val context = mock(Context::class.java)
-        `when`(context.getString(anyInt())).thenReturn("Default")
 
         val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
 
@@ -178,9 +156,6 @@ class DeckRegistryTest {
                         deck.id)
         )
 
-        val context = mock(Context::class.java)
-        `when`(context.getString(anyInt())).thenReturn("Default")
-
         val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
 
         // when
@@ -192,6 +167,33 @@ class DeckRegistryTest {
         assertEquals("expression is reused", repeatedOriginal, cardsOfDeck[0].original)
         assertEquals("expression is reused", repeatedTranslation, cardsOfDeck[0].translations[0])
         assertEquals("expression is reused", repeatedTranslation2, cardsOfDeck[0].translations[2])
+    }
+
+    @Test
+    fun `deleteCard`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = mockRepository.addExpression("spring", type, langOriginal())
+        val expression2 = mockRepository.addExpression("весна", type, langTranslations())
+        val expression3 = mockRepository.addExpression("источник", type, langTranslations())
+
+        val card = mockRepository.addCard(deckId, expression1, listOf(expression2, expression3))
+        val card2 = mockRepository.addCard(deckId, expression3, listOf(expression1))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
+
+        // when
+        mockRegistry.deleteCard(card)
+
+        // then
+        assertNull("card is deleted", mockRepository.cardById(card.id))
+        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression2.id))
+
+        assertNotNull("other cards are preserved", mockRepository.cardById(card2.id))
+        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression1.id))
+        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression3.id))
     }
 }
 

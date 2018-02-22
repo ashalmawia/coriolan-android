@@ -12,11 +12,6 @@ fun sqliteTableExerciseState(exercise: Exercise): String {
     return "State_${exercise.stableId}"
 }
 
-/**
- * All column names must be unique,
- * as shitty Android SQLite API does not provide an adequate tool to distinguish
- * columns from different tables sharing the same name, even when table name is specified.
- */
 const val SQLITE_COLUMN_ID = "_id"
 const val SQLITE_COLUMN_VALUE = "Value"
 const val SQLITE_COLUMN_LANG_VALUE = "LangValue"

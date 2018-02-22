@@ -27,6 +27,13 @@
 	<string name="cards_no">No</string>
 	<string name="cards_click_to_show_answer">Click anywhere to show the answer</string>
 
+	<!-- Learning menu -->
+	<string name="learning_menu_delete_card">Delete card</string>
+
+	<string name="deleting_card__are_you_sure">Are you sure you want to permanently delete this card?
+		This action cannot be undone.</string>
+	<string name="button_delete">Delete</string>
+
 	<!-- General -->
 	<string name="button_submit">Submit</string>
 	<string name="button_cancel">Cancel</string>

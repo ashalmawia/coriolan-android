@@ -25,6 +25,7 @@ abstract class StorageTest {
     fun before() {
         val exercises = listOf(exercise)
         storage = createStorage(exercises)
+        addMockLanguages(storage)
     }
 
     @Test
@@ -212,7 +213,7 @@ abstract class StorageTest {
     @Test
     fun `test__expressionByValues__Exists`() {
         // given
-        val lang = storage.addLanguage("English")
+        val lang = storage.addLanguage("French")
 
         val value = "shrimp"
         val type = ExpressionType.WORD
@@ -228,15 +229,196 @@ abstract class StorageTest {
     }
 
     @Test
+    fun `test__isUsed__emptyStorage`() {
+        // given
+        val type = ExpressionType.WORD
+
+        val expression = mockExpression("креветка", type, langTranslations())
+
+        // when
+        val used = storage.isUsed(expression)
+
+        // then
+        assertFalse(used)
+    }
+
+    @Test
+    fun `test__isUsed__isNotPresent`() {
+        // given
+        val type = ExpressionType.WORD
+
+        storage.addExpression("shrimp", type, langOriginal())
+        storage.addExpression("креветка", type, langTranslations())
+        val expression = Expression(5L, "spring", type, langOriginal())
+
+        // when
+        val used = storage.isUsed(expression)
+
+        // then
+        assertFalse(used)
+    }
+
+    @Test
+    fun `test__isUsed__isNotUsed`() {
+        // given
+        val type = ExpressionType.WORD
+
+        storage.addExpression("shrimp", type, langOriginal())
+        val expression = storage.addExpression("креветка", type, langTranslations())
+
+        // when
+        val used = storage.isUsed(expression)
+
+        // then
+        assertFalse(used)
+    }
+
+    @Test
+    fun `test__isUsed__used`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = storage.addExpression("shrimp", type, langOriginal())
+        val expression2 = storage.addExpression("креветка", type, langTranslations())
+        val expression3 = storage.addExpression("spring", type, langOriginal())
+
+        // when
+        storage.addCard(deckId, expression1, listOf(expression2))
+        storage.addCard(deckId, expression2, listOf(expression3))
+
+        // then
+        assertTrue(storage.isUsed(expression1))
+        assertTrue(storage.isUsed(expression2))
+        assertTrue(storage.isUsed(expression3))
+    }
+
+    @Test
+    fun `test__isUsed__addAndRemove`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = storage.addExpression("shrimp", type, langOriginal())
+        val expression2 = storage.addExpression("креветка", type, langTranslations())
+
+        // when
+        val card = storage.addCard(deckId, expression1, listOf(expression2))
+        storage.deleteCard(card)
+
+        // then
+        assertFalse(storage.isUsed(expression1))
+        assertFalse(storage.isUsed(expression2))
+    }
+
+    @Test
+    fun `test__isUsed__addAndRemoveMultipleExpressions`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = storage.addExpression("shrimp", type, langOriginal())
+        val expression2 = storage.addExpression("креветка", type, langTranslations())
+        val expression3 = storage.addExpression("spring", type, langOriginal())
+
+        // when
+        val card = storage.addCard(deckId, expression1, listOf(expression2, expression3))
+        storage.deleteCard(card)
+
+        // then
+        assertFalse(storage.isUsed(expression1))
+        assertFalse(storage.isUsed(expression2))
+        assertFalse(storage.isUsed(expression3))
+    }
+
+    @Test
+    fun `test__isUsed__addAndRemoveMultipleCards`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = storage.addExpression("shrimp", type, langOriginal())
+        val expression2 = storage.addExpression("креветка", type, langTranslations())
+        val expression3 = storage.addExpression("spring", type, langOriginal())
+
+        // when
+        val card1 = storage.addCard(deckId, expression1, listOf(expression2))
+        storage.addCard(deckId, expression2, listOf(expression3))
+
+        storage.deleteCard(card1)
+
+        // then
+        assertFalse(storage.isUsed(expression1))
+        assertTrue(storage.isUsed(expression2))
+        assertTrue(storage.isUsed(expression3))
+    }
+
+    @Test
+    fun `test__deleteExpression__emptyStorage`() {
+        // given
+        val type = ExpressionType.WORD
+        val expression = mockExpression("креветка", type, langTranslations())
+
+        // when
+        storage.deleteExpression(expression)
+        val read = storage.expressionById(expression.id)
+
+        // then
+        assertNull(read)
+    }
+
+    @Test
+    fun `test__deleteExpression__nonPresent`() {
+        // given
+        val type = ExpressionType.WORD
+
+        storage.addExpression("shrimp", type, langOriginal())
+        storage.addExpression("креветка", type, langTranslations())
+        val expression = Expression(5L, "spring", type, langOriginal())
+
+        // when
+        storage.deleteExpression(expression)
+        val read = storage.expressionById(expression.id)
+
+        // then
+        assertNull(read)
+    }
+
+    @Test
+    fun `test__deleteExpression__present`() {
+        // given
+        val type = ExpressionType.WORD
+
+        val expression1 = storage.addExpression("shrimp", type, langOriginal())
+        val expression2 = storage.addExpression("креветка", type, langTranslations())
+
+        // when
+        storage.deleteExpression(expression1)
+        val read1 = storage.expressionById(expression1.id)
+
+        // then
+        assertNull(read1)
+
+        // when
+        storage.deleteExpression(expression2)
+        val read2 = storage.expressionById(expression2.id)
+
+        // then
+        assertNull(read2)
+    }
+
+    @Test
     fun `test__addCard__Word__SingleTranslation`() {
         // given
         val data = mockCardData("shrimp", "креветка")
 
         // when
         val card = addMockCard(storage, data)
+        val read = storage.cardById(card.id)
 
         // then
         assertCardCorrect(card, data)
+        assertCardCorrect(read, data)
     }
 
     @Test
@@ -246,9 +428,11 @@ abstract class StorageTest {
 
         // when
         val card = addMockCard(storage, data)
+        val read = storage.cardById(card.id)
 
         // then
         assertCardCorrect(card, data)
+        assertCardCorrect(read, data)
     }
 
     @Test
@@ -258,9 +442,62 @@ abstract class StorageTest {
 
         // when
         val card = addMockCard(storage, data)
+        val read = storage.cardById(card.id)
 
         // then
         assertCardCorrect(card, data)
+        assertCardCorrect(read, data)
+    }
+
+    @Test
+    fun `test__cardById__present`() {
+        // given
+        val data = mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.")
+
+        // when
+        val card = addMockCard(storage, data)
+        val read = storage.cardById(card.id)
+
+        // then
+        assertCardCorrect(read, data)
+    }
+
+    @Test
+    fun `test__cardById__absent`() {
+        // when
+        val read = storage.cardById(1L)
+
+        // then
+        assertNull(read)
+    }
+
+    @Test
+    fun `test__deleteCard__present`() {
+        // given
+        val data = mockCardData()
+        val card = addMockCard(storage, data)
+
+        // when
+        storage.deleteCard(card)
+        val read = storage.cardById(card.id)
+
+        // then
+        assertNull("card was removed", read)
+    }
+
+    @Test
+    fun `test__deleteCard__absent`() {
+        // given
+        val notAddedCard = mockCard()
+        val searched = storage.cardById(notAddedCard.id)
+        assertNull("card is not in the DB", searched)
+
+        // when
+        storage.deleteCard(notAddedCard)
+        val read = storage.cardById(notAddedCard.id)
+
+        // then
+        assertNull("card is absent from the DB", read)
     }
 
     @Test
@@ -293,8 +530,6 @@ abstract class StorageTest {
     @Test
     fun `test__deckById__HasCards`() {
         // given
-        addMockLanguages(storage)
-
         val name = "EN - My deck"
         storage.addDeck("wrong deck 1")
         val id = storage.addDeck(name).id
@@ -345,8 +580,6 @@ abstract class StorageTest {
     @Test
     fun `test__cardsOfDeck__EmptyDeck`() {
         // given
-        addMockLanguages(storage)
-
         val deck = storage.addDeck("Mock deck")
         val wrongDeck1 = storage.addDeck("wrong deck 1")
         for (i in 0 until 3) {
@@ -367,8 +600,6 @@ abstract class StorageTest {
     @Test
     fun `test__cardsOfDeck__NonEmptyDeck`() {
         // given
-        addMockLanguages(storage)
-
         val decks = mutableListOf<Deck>()
         val cardData = mutableListOf<List<CardData>>()
         for (i in 0 until 3) {
@@ -393,8 +624,6 @@ abstract class StorageTest {
     @Test
     fun `test__cardsOfDeck__NonEmptyDeck__differentCount`() {
         // given
-        addMockLanguages(storage)
-
         val decks = mutableListOf<Deck>()
         val cardData = mutableListOf<List<CardData>>()
         val deck1 = storage.addDeck("deck 1")
@@ -444,8 +673,6 @@ abstract class StorageTest {
     @Test
     fun `test__allDecks__DecksAreNonEmpty`() {
         // given
-        addMockLanguages(storage)
-
         val decks = mutableListOf<Deck>()
         val cardData = mutableListOf<List<CardData>>()
         for (i in 0 until 3) {
@@ -502,8 +729,6 @@ abstract class StorageTest {
     @Test
     fun `test__cardsDueDate__newCards`() {
         // given
-        addMockLanguages(storage)
-
         val deck = storage.addDeck("mock deck")
         val count = 3
         val cardData = mutableListOf<CardData>()
@@ -528,8 +753,6 @@ abstract class StorageTest {
     @Test
     fun `test__cardsDueDate__cardsInProgress`() {
         // given
-        addMockLanguages(storage)
-
         val deck = storage.addDeck("mock deck")
         val count = 3
         val cardsData = mutableListOf<CardData>()

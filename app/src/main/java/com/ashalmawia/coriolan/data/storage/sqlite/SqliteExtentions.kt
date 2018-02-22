@@ -7,36 +7,37 @@ import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.toExpressionType
 import org.joda.time.DateTime
 
-private fun Cursor.isNull(name: String): Boolean { return isNull(getColumnIndexOrThrow(name)) }
+private fun Cursor.isNull(name: String, alias: String? = null): Boolean { return isNull(getColumnIndexOrThrow(name.from(alias))) }
 
-private fun Cursor.getString(name: String): String { return getString(getColumnIndexOrThrow(name)) }
-private fun Cursor.getInt(name: String): Int { return getInt(getColumnIndexOrThrow(name)) }
-private fun Cursor.getLong(name: String): Long { return getLong(getColumnIndexOrThrow(name)) }
-
-fun Cursor.getValue(): String { return getString(SQLITE_COLUMN_VALUE) }
-fun Cursor.getLangValue(): String { return getString(SQLITE_COLUMN_LANG_VALUE) }
-fun Cursor.getName(): String { return getString(SQLITE_COLUMN_NAME) }
-
-fun Cursor.getId(): Long { return getLong(SQLITE_COLUMN_ID) }
-fun Cursor.getFrontId(): Long { return getLong(SQLITE_COLUMN_FRONT_ID) }
-fun Cursor.getExpressionId(): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID) }
-
-fun Cursor.getDateDue(): DateTime { return getDate(SQLITE_COLUMN_DUE) }
-fun Cursor.getPeriod(): Int { return getInt(SQLITE_COLUMN_PERIOD) }
-fun Cursor.hasSavedState(): Boolean { return !isNull(SQLITE_COLUMN_DUE) }
-
-fun Cursor.getExpressionType(): ExpressionType {
-    val intValue = getInt(SQLITE_COLUMN_TYPE)
-    return toExpressionType(intValue)
-}
-fun Cursor.getDate(column: String): DateTime {
-    val longValue = getLong(column)
+private fun Cursor.getString(name: String, alias: String?): String { return getString(getColumnIndexOrThrow(name.from(alias))) }
+private fun Cursor.getInt(name: String, alias: String?): Int { return getInt(getColumnIndexOrThrow(name.from(alias))) }
+private fun Cursor.getLong(name: String, alias: String?): Long { return getLong(getColumnIndexOrThrow(name.from(alias))) }
+private fun Cursor.getDate(column: String, alias: String? = null): DateTime {
+    val longValue = getLong(column, alias)
     return DateTime(longValue)
 }
-fun Cursor.getLanguage(): Language {
+
+fun Cursor.getValue(alias: String? = null): String { return getString(SQLITE_COLUMN_VALUE, alias) }
+fun Cursor.getLangValue(alias: String? = null): String { return getString(SQLITE_COLUMN_LANG_VALUE, alias) }
+fun Cursor.getName(alias: String? = null): String { return getString(SQLITE_COLUMN_NAME, alias) }
+
+fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID, alias) }
+fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }
+fun Cursor.getFrontId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_FRONT_ID, alias) }
+fun Cursor.getExpressionId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID, alias) }
+
+fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE, alias) }
+fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }
+fun Cursor.hasSavedState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_DUE, alias) }
+
+fun Cursor.getExpressionType(alias: String? = null): ExpressionType {
+    val intValue = getInt(SQLITE_COLUMN_TYPE, alias)
+    return toExpressionType(intValue)
+}
+fun Cursor.getLanguage(alias: String? = null): Language {
     return Language(
-            getLong(SQLITE_COLUMN_ID),
-            getString(SQLITE_COLUMN_LANG_VALUE)
+            getLong(SQLITE_COLUMN_ID, alias),
+            getString(SQLITE_COLUMN_LANG_VALUE, alias)
     )
 }
 

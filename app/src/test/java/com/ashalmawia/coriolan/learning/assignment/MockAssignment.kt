@@ -27,4 +27,8 @@ class MockAssignment(cards: List<Card>) : Assignment(DateTime.now()) {
     override fun createPendingCounter(): PendingCounter {
         return MockPendingCounter()
     }
+
+    override fun innerDelete(card: Card) {
+        cards.remove(card)
+    }
 }
