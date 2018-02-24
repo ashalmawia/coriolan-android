@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui
 
 import android.os.Bundle
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.errors.Errors
@@ -38,7 +39,7 @@ class DomainActivity : AppCompatActivity() {
         val adapter = AHBottomNavigationAdapter(this, R.menu.domain_navigation_bar)
         adapter.setupWithBottomNavigation(bottomNavigation)
 
-        bottomNavigation.defaultBackgroundColor = resources.getColor(R.color.colorPrimary)
+        bottomNavigation.defaultBackgroundColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
         bottomNavigation.setOnTabSelectedListener { position, _ -> onNavigationItemSelected(position) }
         bottomNavigation.currentItem = TAB_LEARNING

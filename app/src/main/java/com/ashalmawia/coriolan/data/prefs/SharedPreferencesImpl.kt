@@ -22,7 +22,7 @@ class SharedPreferencesImpl(context: Context) : Preferences {
         prefs.edit().putLong(ORIGINAL_LANGUAGE_ID, id).apply()
     }
 
-    override fun getTranslatoinsLanguageId(): Long? {
+    override fun getTranslationsLanguageId(): Long? {
         return prefs.getLongOrNull(TRANSLATIONS_LANGUAGE_ID)
     }
 

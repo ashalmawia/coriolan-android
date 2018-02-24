@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 
 import kotlinx.android.synthetic.main.card_activity.*
-import kotlinx.android.synthetic.main.app_toolbar.*
 
 import android.content.Intent
 
@@ -22,6 +21,7 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.ui.view.CardView
 import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
+import com.ashalmawia.coriolan.util.setUpToolbar
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 
 class CardActivity : AppCompatActivity(), CardViewListener {
@@ -33,10 +33,8 @@ class CardActivity : AppCompatActivity(), CardViewListener {
         adjustProgressCountsUI()
         addDebugViewIfNeeded()
 
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        setUpToolbar(flow().deck.name)
 
-        supportActionBar!!.title = flow().deck.name
         bindToCurrent()
     }
 
@@ -53,6 +51,11 @@ class CardActivity : AppCompatActivity(), CardViewListener {
                 finish()
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

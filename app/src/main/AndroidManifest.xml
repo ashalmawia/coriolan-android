@@ -30,6 +30,11 @@
 			android:name=".data.importer.file.EnterFilePathActivity"
 			/>
 
+		<activity
+			android:name=".ui.AddEditCardActivity"
+			android:parentActivityName=".ui.DomainActivity"
+			/>
+
 		<meta-data
 			android:name="io.fabric.ApiKey"
 			android:value="ca462037f58b6b70d20cae63e6a564f0569ef551"

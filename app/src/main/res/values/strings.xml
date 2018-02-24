@@ -40,7 +40,18 @@
 		This action cannot be undone.</string>
 	<string name="button_delete">Delete</string>
 
+	<!-- Edit screen -->
+	<string name="edit__add_new_cards">Add new cards</string>
+
+	<!-- Add/edit a card -->
+	<string name="edit_card__original">Original (%s):</string>
+	<string name="edit_card__translations">Translations (%s):</string>
+	<string name="edit_card__added">Card added successfully</string>
+	<string name="edit_card__deck">Deck:</string>
+	<string name="edit_card__add_translation">add another translation…</string>
+
 	<!-- General -->
 	<string name="button_submit">Submit</string>
+	<string name="button_add">Add</string>
 	<string name="button_cancel">Cancel</string>
 </resources>

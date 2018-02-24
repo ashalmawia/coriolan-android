@@ -30,7 +30,7 @@ object LanguagesRegistry {
     }
 
     private fun readTranslations(context: Context): Language? {
-        val id = Preferences.get(context).getOriginalLanguageId()
+        val id = Preferences.get(context).getTranslationsLanguageId()
         return if (id == null) null else Repository.get(context).languageById(id)
     }
 

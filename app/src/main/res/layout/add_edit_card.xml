@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<include layout="@layout/app_toolbar"/>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="@dimen/spacing__medium">
+
+			<TextView
+				style="@style/EditCardSubtitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/edit_card__deck"/>
+
+			<Spinner
+				android:id="@+id/deckSelector"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+
+			<TextView
+				android:id="@+id/labelOriginal"
+				style="@style/EditCardSubtitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/spacing__medium"/>
+
+			<com.ashalmawia.coriolan.ui.AddEditCardItemView
+				android:id="@+id/original"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				/>
+
+			<TextView
+				android:id="@+id/labelTranslations"
+				style="@style/EditCardSubtitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/spacing__large"/>
+
+			<LinearLayout
+				android:id="@+id/translationsContainer"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				/>
+
+			<LinearLayout
+				android:id="@+id/addTranslation"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingLeft="@dimen/spacing__very_large"
+				android:paddingStart="@dimen/spacing__very_large">
+
+				<android.support.v7.widget.AppCompatEditText
+					android:id="@+id/mockInputField"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"
+					android:layout_marginEnd="33dp"
+					android:layout_marginRight="33dp"
+					android:layout_weight="1"
+					android:focusable="false"
+					android:gravity="end"
+					android:hint="@string/edit_card__add_translation"
+					android:inputType="text"
+					android:textColorHint="@color/colorPrimary__60"
+					android:textSize="14sp"
+					android:textStyle="italic"
+					app:backgroundTint="@color/colorPrimary__60"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				style="?attr/buttonBarStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="end"
+				android:layout_marginTop="@dimen/spacing__large"
+				android:orientation="horizontal">
+
+				<Button
+					android:id="@+id/buttonCancel"
+					style="?attr/buttonBarButtonStyle"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/button_cancel"/>
+
+				<Button
+					android:id="@+id/buttonAdd"
+					style="?attr/buttonBarButtonStyle"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/button_add"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</LinearLayout>

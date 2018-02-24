@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	   android:layout_width="match_parent"
+	   android:layout_height="match_parent">
+
+	<TextView
+		android:id="@+id/ordinalLabel"
+		style="@style/EditCardSubtitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:layout_marginEnd="@dimen/spacing__small"
+		android:layout_marginRight="@dimen/spacing__small"
+		android:visibility="gone"/>
+
+	<EditText
+		android:id="@+id/inputField"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:layout_weight="1"
+		android:inputType="textMultiLine"
+		android:maxLines="5"/>
+
+	<ImageView
+		android:id="@+id/removeButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:layout_marginLeft="@dimen/spacing__medium"
+		android:layout_marginStart="@dimen/spacing__medium"
+		android:src="@drawable/ic_cross"/>
+
+</merge>

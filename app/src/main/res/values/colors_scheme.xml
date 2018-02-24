@@ -2,6 +2,7 @@
 <resources>
 	<color name="colorPrimary">#5b2a4f</color>
 	<color name="colorPrimary__60">#995b2a4f</color>
+	<color name="colorPrimary__40">#405b2a4f</color>
 
 	<color name="colorPrimaryDark">#421e39</color>
 
@@ -14,6 +15,8 @@
 	<color name="textColorPrimary">@color/colorPrimaryDark</color>
 
 	<color name="grey">#999999</color>
+	<color name="grey_light">#99999999</color>
+
 	<color name="white">#FFFFFF</color>
 	<color name="while__65">#A6FFFFFF</color>
 

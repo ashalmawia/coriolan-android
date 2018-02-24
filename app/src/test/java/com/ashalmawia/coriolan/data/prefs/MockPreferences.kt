@@ -18,7 +18,7 @@ class MockPreferences : Preferences {
     override fun setOriginalLanguageId(id: Long) {
     }
 
-    override fun getTranslatoinsLanguageId(): Long? {
+    override fun getTranslationsLanguageId(): Long? {
         return 1L;
     }
 

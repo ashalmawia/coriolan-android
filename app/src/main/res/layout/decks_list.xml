@@ -8,8 +8,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="5dp"
-		android:textSize="14sp"
-		android:textStyle="bold"
+		style="@style/Coriolan.Text.Caption"
 		android:text="@string/decks_select_deck"
 		android:padding="10dp"/>
 

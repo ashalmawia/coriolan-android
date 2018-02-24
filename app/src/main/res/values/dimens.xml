@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<dimen name="spacing__tiny">5dp</dimen>
+	<dimen name="spacing__small">10dp</dimen>
+	<dimen name="spacing__medium">15dp</dimen>
+	<dimen name="spacing__large">20dp</dimen>
+	<dimen name="spacing__very_large">25dp</dimen>
+
+	<dimen name="minimum_tappable_area">48dp</dimen>
+
 	<dimen name="pending_item_size">14dp</dimen>
-	<fraction name="pending_item_size">24.0</fraction>
 
 	<dimen name="deck_progress_bar_margin_horizontal">5dp</dimen>
 

@@ -41,6 +41,10 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
         return repository.allDecks()
     }
 
+    fun addCardToDeck(data: CardData) {
+        addCard(data)
+    }
+
     fun addCardsToDeck(data: List<CardData>) {
         data.map { addCard(it) }
     }

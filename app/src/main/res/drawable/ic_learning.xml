@@ -2,12 +2,12 @@
     android:viewportWidth="48.0" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <clip-path android:pathData="M0,0h48v48h-48z M 0,0"/>
-        <path android:fillColor="@color/domain_navigation_foreground" android:pathData=" M 2.595 16.677 L 21.93 6.999 C 23.002 6.463 24.743 6.463 25.815 6.999 L 45.091 16.648 C 46.163 17.185 46.163 18.056 45.091 18.593 L 25.756 28.271 C 24.684 28.808 22.943 28.808 21.871 28.271 L 2.595 18.622 C 1.523 18.086 1.523 17.214 2.595 16.677 Z "/>
-        <path android:fillColor="@color/domain_navigation_foreground" android:pathData=" M 36.908 25.239 L 36.908 35.102 L 36.908 35.403 L 36.893 35.403 C 36.568 38.741 30.851 41.403 23.856 41.403 C 16.861 41.403 11.144 38.741 10.819 35.403 L 10.804 35.403 L 10.804 35.102 L 10.804 35.102 L 10.804 25.281 L 20.996 30.383 C 22.551 31.161 25.076 31.161 26.631 30.383 L 36.908 25.239 Z "/>
-        <path android:fillColor="@color/domain_navigation_foreground"
+        <path android:fillColor="#000000" android:pathData=" M 2.595 16.677 L 21.93 6.999 C 23.002 6.463 24.743 6.463 25.815 6.999 L 45.091 16.648 C 46.163 17.185 46.163 18.056 45.091 18.593 L 25.756 28.271 C 24.684 28.808 22.943 28.808 21.871 28.271 L 2.595 18.622 C 1.523 18.086 1.523 17.214 2.595 16.677 Z "/>
+        <path android:fillColor="#000000" android:pathData=" M 36.908 25.239 L 36.908 35.102 L 36.908 35.403 L 36.893 35.403 C 36.568 38.741 30.851 41.403 23.856 41.403 C 16.861 41.403 11.144 38.741 10.819 35.403 L 10.804 35.403 L 10.804 35.102 L 10.804 35.102 L 10.804 25.281 L 20.996 30.383 C 22.551 31.161 25.076 31.161 26.631 30.383 L 36.908 25.239 Z "/>
+        <path android:fillColor="#000000"
             android:pathData="M43.843,17.62L43.843,28.403"
-            android:strokeColor="@color/domain_navigation_foreground" android:strokeLineCap="square"
+            android:strokeColor="#000000" android:strokeLineCap="square"
             android:strokeLineJoin="miter" android:strokeWidth="1"/>
-        <path android:fillColor="@color/domain_navigation_foreground" android:pathData="M43.843,27.194l-2.3659973,4.0979996l4.7319984,0.0z"/>
+        <path android:fillColor="#000000" android:pathData="M43.843,27.194l-2.3659973,4.0979996l4.7319984,0.0z"/>
     </group>
 </vector>
