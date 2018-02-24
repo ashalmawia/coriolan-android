@@ -8,4 +8,6 @@
 
 	<color name="ic_pending_color">@color/deck_progress_bar__foregreound</color>
 
+	<color name="domain_navigation_foreground">@color/colorPrimary</color>
+
 </resources>

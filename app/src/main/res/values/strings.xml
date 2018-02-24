@@ -1,6 +1,12 @@
 <resources>
 	<string name="app_name" translatable="false">Coriolan</string>
 
+	<!-- Domain navigation bar -->
+	<string name="tab_learning">Learning</string>
+	<string name="tab_edit">Edit</string>
+	<string name="tab_statistics">Statistics</string>
+	<string name="tab_settings">Settings</string>
+
 	<!-- Exercise types -->
 	<string name="exercise_simple">Simple exercise</string>
 

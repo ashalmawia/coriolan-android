@@ -1,24 +1,20 @@
-package com.ashalmawia.coriolan
+package com.ashalmawia.coriolan.ui
 
 import android.content.Context
-
-import kotlinx.android.synthetic.main.decks_list.*
-import kotlinx.android.synthetic.main.app_toolbar.*
-
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import com.ashalmawia.coriolan.BuildConfig
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.importer.*
+import com.ashalmawia.coriolan.data.importer.DataImportCallback
+import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
@@ -29,21 +25,22 @@ import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
+import kotlinx.android.synthetic.main.decks_list.*
 
-class DecksListActivity : AppCompatActivity(), TodayChangeListener {
+class LearningFragment : Fragment(), TodayChangeListener {
 
     private lateinit var exercise: Exercise
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.decks_list)
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater!!.inflate(R.layout.decks_list, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setHasOptionsMenu(true)
 
         exercise = ExercisesRegistry.defaultExercise()
-
-        setSupportActionBar(toolbar)
-        toolbar.setLogo(R.drawable.ic_logo_action_bar_with_text)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-
         initializeList()
     }
 
@@ -61,8 +58,8 @@ class DecksListActivity : AppCompatActivity(), TodayChangeListener {
     }
 
     private fun initializeList() {
-        decksList.layoutManager = LinearLayoutManager(this)
-        decksList.adapter = DecksAdapter(this, exercise)
+        decksList.layoutManager = LinearLayoutManager(context)
+        decksList.adapter = DecksAdapter(context, exercise)
     }
 
     private fun fetchData() {
@@ -74,14 +71,12 @@ class DecksListActivity : AppCompatActivity(), TodayChangeListener {
         fetchData()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.decks_list_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu?, menuInflater: MenuInflater?) {
+        menuInflater!!.inflate(R.menu.decks_list_menu, menu)
 
         if (BuildConfig.DEBUG) {
             menu!!.setGroupVisible(R.id.menu_group_debug, true)
         }
-
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -100,18 +95,18 @@ class DecksListActivity : AppCompatActivity(), TodayChangeListener {
     }
 
     private fun increaseDate() {
-        DebugIncreaseDateActivity.launch(this)
+        DebugIncreaseDateActivity.launch(context)
     }
 
     private fun importFromFile() {
-        DataImportFlow.start(this, DataImportFlow.default(), object : DataImportCallback {
+        DataImportFlow.start(context, DataImportFlow.default(), object : DataImportCallback {
             override fun onSuccess() {
                 fetchData()
-                Toast.makeText(this@DecksListActivity, R.string.import_success, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
             }
 
             override fun onError(message: String) {
-                Toast.makeText(this@DecksListActivity, message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         })
     }

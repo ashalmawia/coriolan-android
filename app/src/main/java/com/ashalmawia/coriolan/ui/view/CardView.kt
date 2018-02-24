@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.view
 
 import kotlinx.android.synthetic.main.card_view.view.*
 

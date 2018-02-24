@@ -19,8 +19,8 @@ import com.ashalmawia.coriolan.debug.DEBUG_SHOW_SCHEDULER_STATUS
 import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.ui.CardView
-import com.ashalmawia.coriolan.ui.CardViewListener
+import com.ashalmawia.coriolan.ui.view.CardView
+import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ashalmawia.coriolan.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-									 android:layout_width="match_parent"
-									 android:layout_height="match_parent"
-									 android:orientation="vertical">
+<com.ashalmawia.coriolan.ui.view.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
 	<TextView
 		android:id="@+id/front"
@@ -63,4 +64,4 @@
 
 	</FrameLayout>
 
-</com.ashalmawia.coriolan.ui.CardView>
+</com.ashalmawia.coriolan.ui.view.CardView>
