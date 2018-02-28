@@ -21,7 +21,7 @@ val DateTime.timespamp
     get() = toDate().time
 
 fun TextView.setStartDrawableTint(@ColorRes colorRes: Int) {
-    val wrap = DrawableCompat.wrap(compoundDrawables[0])
+    val wrap = DrawableCompat.wrap(compoundDrawablesRelative[0])
     DrawableCompat.setTint(wrap, ContextCompat.getColor(context, colorRes))
     TextViewCompat.setCompoundDrawablesRelative(this, wrap, null, null, null)
 }

@@ -10,7 +10,7 @@ android {
     buildToolsVersion COMMON__BUILD_TOOLS
     defaultConfig {
         applicationId "com.ashalmawia.coriolan"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion COMMON__TARGET_SDK
         versionCode 1
         versionName "1.0"

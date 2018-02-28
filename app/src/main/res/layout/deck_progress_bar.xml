@@ -11,9 +11,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
-		android:layout_marginLeft="@dimen/deck_progress_bar_margin_horizontal"
 		android:layout_marginStart="@dimen/deck_progress_bar_margin_horizontal"
-		android:drawableLeft="@drawable/ic_pending_new"
 		android:drawableStart="@drawable/ic_pending_new"/>
 
 	<TextView
@@ -22,9 +20,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
-		android:layout_marginLeft="@dimen/deck_progress_bar_margin_horizontal"
 		android:layout_marginStart="@dimen/deck_progress_bar_margin_horizontal"
-		android:drawableLeft="@drawable/ic_pending_relearn"
 		android:drawableStart="@drawable/ic_pending_relearn"
 		/>
 
@@ -36,7 +32,6 @@
 		android:layout_gravity="center"
 		android:layout_marginLeft="@dimen/deck_progress_bar_margin_horizontal"
 		android:layout_marginRight="@dimen/deck_progress_bar_margin_horizontal"
-		android:drawableLeft="@drawable/ic_pending_review"
 		android:drawableStart="@drawable/ic_pending_review"/>
 
 </LinearLayout>

@@ -10,7 +10,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="top"
 		android:layout_marginEnd="@dimen/spacing__small"
-		android:layout_marginRight="@dimen/spacing__small"
+		android:labelFor="@id/inputField"
 		android:visibility="gone"/>
 
 	<EditText
@@ -27,7 +27,6 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="top"
-		android:layout_marginLeft="@dimen/spacing__medium"
 		android:layout_marginStart="@dimen/spacing__medium"
 		android:src="@drawable/ic_cross"/>
 
