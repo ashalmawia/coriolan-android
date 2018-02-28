@@ -34,6 +34,7 @@
 	<string name="cards_click_to_show_answer">Click anywhere to show the answer</string>
 
 	<!-- Learning menu -->
+	<string name="learning_menu_edit_card">Edit card</string>
 	<string name="learning_menu_delete_card">Delete card</string>
 
 	<string name="deleting_card__are_you_sure">Are you sure you want to permanently delete this card?
@@ -47,11 +48,13 @@
 	<string name="edit_card__original">Original (%s):</string>
 	<string name="edit_card__translations">Translations (%s):</string>
 	<string name="edit_card__added">Card added successfully</string>
+	<string name="edit_card__saved">Card updated successfully</string>
 	<string name="edit_card__deck">Deck:</string>
 	<string name="edit_card__add_translation">add another translation…</string>
 
 	<!-- General -->
 	<string name="button_submit">Submit</string>
 	<string name="button_add">Add</string>
+	<string name="button_save">Save</string>
 	<string name="button_cancel">Cancel</string>
 </resources>

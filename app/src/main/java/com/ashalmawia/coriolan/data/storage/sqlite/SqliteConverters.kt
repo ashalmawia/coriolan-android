@@ -26,8 +26,11 @@ fun createExpressionContentValues(value: String, type: ExpressionType, language:
 
 // ********** CARD ********************
 
-fun toContentValues(deckId: Long, original: Expression): ContentValues {
+fun createCardContentValues(deckId: Long, original: Expression, cardId: Long? = null): ContentValues {
     val cv = ContentValues()
+    if (cardId != null) {
+        cv.put(SQLITE_COLUMN_ID, cardId)
+    }
     cv.put(SQLITE_COLUMN_FRONT_ID, original.id)
     cv.put(SQLITE_COLUMN_DECK_ID, deckId)
     return cv

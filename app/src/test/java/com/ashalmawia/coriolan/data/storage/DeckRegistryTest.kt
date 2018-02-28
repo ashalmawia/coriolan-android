@@ -5,6 +5,7 @@ import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
+import com.ashalmawia.coriolan.learning.scheduler.emptyState
 import com.ashalmawia.coriolan.model.*
 import junit.framework.Assert.*
 import org.junit.Before
@@ -167,6 +168,83 @@ class DeckRegistryTest {
         assertEquals("expression is reused", repeatedOriginal, cardsOfDeck[0].original)
         assertEquals("expression is reused", repeatedTranslation, cardsOfDeck[0].translations[0])
         assertEquals("expression is reused", repeatedTranslation2, cardsOfDeck[0].translations[2])
+    }
+
+    @Test
+    fun `editCard__changeTypoInOriginal`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = mockRepository.addExpression("spring", type, langOriginal())
+        val expression2 = mockRepository.addExpression("весна", type, langTranslations())
+        val expression3 = mockRepository.addExpression("весло", type, langTranslations())
+        val expression4 = mockRepository.addExpression("источник", type, langTranslations())
+
+        mockRepository.addCard(deckId, expression1, listOf(expression2, expression4))
+        val card = mockRepository.addCard(deckId, expression3, listOf(expression1))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
+
+        // when
+        val edited = mockRegistry.editCard(card,
+                CardData("весна", langTranslations(), listOf("spring"), langOriginal(), deckId, type))
+
+        // then
+        assertNotNull("edit was successful", edited)
+        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("expressions are reused", expression2, edited.original)
+        assertEquals("translations are preserved", listOf(expression1), edited.translations)
+        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression3.id))
+    }
+
+    @Test
+    fun `editCard__addTranslation`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = mockRepository.addExpression("spring", type, langOriginal())
+        val expression2 = mockRepository.addExpression("источник", type, langTranslations())
+
+        val card = mockRepository.addCard(deckId, expression1, listOf(expression2))
+        mockRepository.addCard(deckId, expression2, listOf(expression1))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
+
+        // when
+        val edited = mockRegistry.editCard(card,
+                CardData("spring", langOriginal(), listOf("источник", "весна"), langTranslations(), deckId, type))
+
+        // then
+        assertNotNull("edit was successful", edited)
+        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("expressions are reused", expression1, edited.original)
+        assertEquals("translations are updated", listOf(expression2,
+                mockRepository.expressionByValues("весна", type, langTranslations())), edited.translations)
+    }
+
+    @Test
+    fun `editCard__nonExistentCard`() {
+        // given
+        val type = ExpressionType.WORD
+        val deckId = 1L
+
+        val expression1 = mockRepository.addExpression("spring", type, langOriginal())
+        val expression2 = mockRepository.addExpression("источник", type, langTranslations())
+
+        mockRepository.addCard(deckId, expression2, listOf(expression1))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, mockRepository)
+
+        val card = Card(77L, deckId, expression1, listOf(expression2), emptyState())
+
+        // when
+        val edited = mockRegistry.editCard(card,
+                CardData("spring", langOriginal(), listOf("источник", "весна"), langTranslations(), deckId, type))
+
+        // then
+        assertNull("card was not found", edited)
     }
 
     @Test

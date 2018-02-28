@@ -55,6 +55,16 @@ class MockRepository : Repository {
     override fun cardById(id: Long): Card? {
         return cards.find { it.id == id }
     }
+    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
+        if (!cards.contains(card)) {
+            return null
+        }
+
+        val updated = Card(card.id, deckId, original, translations, card.state)
+        cards.remove(card)
+        cards.add(updated)
+        return updated
+    }
     override fun deleteCard(card: Card) {
         cards.remove(card)
     }

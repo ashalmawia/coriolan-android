@@ -31,4 +31,11 @@ class MockAssignment(cards: List<Card>) : Assignment(DateTime.now()) {
     override fun innerDelete(card: Card) {
         cards.remove(card)
     }
+
+    override fun onCardUpdatedInner(old: Card, new: Card) {
+        if (cards.contains(old)) {
+            cards.remove(old)
+            cards.add(new)
+        }
+    }
 }

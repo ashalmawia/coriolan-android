@@ -53,10 +53,28 @@ class SqliteConvertersTest {
         val original = Expression(1L, "some original expression", ExpressionType.WORD, lang)
 
         // when
-        val cv = toContentValues(deckId, original)
+        val cv = createCardContentValues(deckId, original)
 
         // then
         assertEquals("values count is correct", 2, cv.size())
+        assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv.get(SQLITE_COLUMN_FRONT_ID))
+        assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv.get(SQLITE_COLUMN_DECK_ID))
+    }
+
+    @Test
+    fun `cardDataToContentValuesTest__hasCardId`() {
+        // given
+        val deckId = 5L
+        val lang = mockLanguage()
+        val original = Expression(1L, "some original expression", ExpressionType.WORD, lang)
+        val cardId = 7L
+
+        // when
+        val cv = createCardContentValues(deckId, original, cardId)
+
+        // then
+        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("$SQLITE_COLUMN_ID is correct", cardId, cv.get(SQLITE_COLUMN_ID))
         assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv.get(SQLITE_COLUMN_FRONT_ID))
         assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv.get(SQLITE_COLUMN_DECK_ID))
     }

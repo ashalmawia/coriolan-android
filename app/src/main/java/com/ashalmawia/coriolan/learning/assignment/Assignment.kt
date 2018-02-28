@@ -31,7 +31,16 @@ abstract class Assignment(
         return next
     }
 
+    fun onCardUpdated(old: Card, new: Card) {
+        if (current == old) {
+            current = new
+        } else {
+            onCardUpdatedInner(old, new)
+        }
+    }
+
     protected open fun onCurrent(card: Card) {
         // for overriding
     }
+    protected abstract fun onCardUpdatedInner(old: Card, new: Card)
 }

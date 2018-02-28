@@ -41,6 +41,8 @@ interface Repository {
 
     fun cardById(id: Long): Card?
 
+    fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card?
+
     fun deleteCard(card: Card)
 
     fun allDecks(): List<Deck>

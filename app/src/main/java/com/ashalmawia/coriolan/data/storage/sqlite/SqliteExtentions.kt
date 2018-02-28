@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.toExpressionType
@@ -47,4 +48,8 @@ fun ContentValues.put(key: String, value: DateTime) {
 fun ContentValues.getAsDate(key: String): DateTime? {
     val timestamp = getAsLong(key)
     return if (timestamp == null) null else DateTime(timestamp)
+}
+
+fun SQLiteDatabase.insertOrUpdate(table: String, cv: ContentValues) {
+    insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
 }

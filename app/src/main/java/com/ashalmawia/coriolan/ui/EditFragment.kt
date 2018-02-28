@@ -36,7 +36,7 @@ class EditFragment : Fragment() {
     }
 
     private fun addNewCards(context: Context) {
-        val intent = AddEditCardActivity.intent(context, LanguagesRegistry.original(), LanguagesRegistry.translations())
+        val intent = AddEditCardActivity.create(context, LanguagesRegistry.original(), LanguagesRegistry.translations())
         context.startActivity(intent)
     }
 }

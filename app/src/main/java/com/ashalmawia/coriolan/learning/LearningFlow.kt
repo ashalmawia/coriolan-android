@@ -68,6 +68,12 @@ class LearningFlow(
         assignment.pendingCounter.value.onCardCorrect(card)
     }
 
+    fun onCurrentCardUpdated(context: Context) {
+        val old = card()
+        val updated = repository(context).cardById(old.id)!!
+        assignment.onCardUpdated(old, updated)
+    }
+
     fun deleteCurrent(context: Context) {
         val card = card()
         assignment.delete(card)

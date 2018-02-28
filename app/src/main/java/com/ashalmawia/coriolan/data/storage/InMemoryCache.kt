@@ -69,6 +69,12 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return value
     }
 
+    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
+        val updated = inner.updateCard(card, deckId, original, translations)
+        cards[card.id] = updated
+        return updated
+    }
+
     override fun deleteCard(card: Card) {
         inner.deleteCard(card)
         cards.remove(card.id)

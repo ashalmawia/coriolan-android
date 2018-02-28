@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,14 +16,17 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.util.setUpToolbar
+import com.ashalmawia.errors.Errors
 import kotlinx.android.synthetic.main.add_edit_card.*
 
 private const val EXTRA_LANG_ORIGINAL = "lang_original"
 private const val EXTRA_LANG_TRANSLATIONS = "lang_translation"
+private const val EXTRA_CARD_ID = "card_id"
 
 class AddEditCardActivity : AppCompatActivity() {
 
@@ -31,12 +35,42 @@ class AddEditCardActivity : AppCompatActivity() {
     private lateinit var originalLang: Language
     private lateinit var translationsLang: Language
 
+    private var card: Card? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_edit_card)
 
         setUpToolbar(R.string.edit__add_new_cards)
 
+        extractData()
+
+        initialize()
+    }
+
+    private val isInEditMode
+        get() = card != null
+
+    private fun extractData() {
+        if (intent.hasExtra(EXTRA_CARD_ID)) {
+            extractDataEditCard()
+        } else {
+            extractDataNewCard()
+        }
+    }
+
+    private fun extractDataEditCard() {
+        val cardId = intent.getLongExtra(EXTRA_CARD_ID, -1)
+        val card = repository.cardById(cardId) ?: throw IllegalStateException("card with id[$cardId] does not exist in the database")
+        originalLang = card.original.language
+
+        if (card.translations.isEmpty()) throw IllegalStateException("card with id[$cardId] has no translations")
+        translationsLang = card.translations[0].language
+
+        this.card = card
+    }
+
+    private fun extractDataNewCard() {
         val originalLang = repository.languageById(intent.getLongExtra(EXTRA_LANG_ORIGINAL, -1))
         val translationsLang = repository.languageById(intent.getLongExtra(EXTRA_LANG_TRANSLATIONS, -1))
         if (originalLang == null || translationsLang == null) {
@@ -45,8 +79,6 @@ class AddEditCardActivity : AppCompatActivity() {
 
         this.originalLang = originalLang
         this.translationsLang = translationsLang
-
-        initialize()
     }
 
     private fun initialize() {
@@ -56,15 +88,33 @@ class AddEditCardActivity : AppCompatActivity() {
         findViewById<AddEditCardItemView>(R.id.original).canBeDeleted = false
         original.removeListener = { onRemoveClicked(it) }
 
-        addTrasnlationField()
-
         buttonCancel.setOnClickListener { finish() }
-        buttonAdd.setOnClickListener { add() }
+
+        buttonOk.setOnClickListener { onSaveClicked() }
+        buttonOk.setText(if (isInEditMode) R.string.button_save else R.string.button_add)
 
         initializeDecksDropDown()
 
         addTranslation.setOnClickListener { onAddNewTranslationClicked() }
         mockInputField.setOnClickListener { onAddNewTranslationClicked() }
+
+        if (isInEditMode) {
+            prefillData(card!!)
+        } else {
+            addTrasnlationField()
+        }
+    }
+
+    private fun prefillData(card: Card) {
+        val position = (deckSelector.adapter as DecksSelectorAdapter).positionOfDeck(card.deckId)
+        deckSelector.setSelection(position, false)
+
+        original.input = card.original.value
+
+        card.translations.forEach {
+            val view = addTrasnlationField()
+            view.input = it.value
+        }
     }
 
     private fun onAddNewTranslationClicked() {
@@ -111,18 +161,48 @@ class AddEditCardActivity : AppCompatActivity() {
         return true
     }
 
-    private fun add() {
+    private fun onSaveClicked() {
+        val data = collectCardDataWithValidation() ?: return
+
+        if (isInEditMode) {
+            save(data)
+        } else {
+            add(data)
+        }
+    }
+
+    private fun add(data: CardData) {
+        DecksRegistry.get().addCardToDeck(data)
+
+        confirm()
+        clear()
+    }
+
+    private fun save(data: CardData) {
+        DecksRegistry.get().editCard(card!!, data)
+
+        confirm()
+
+        finishOk()
+    }
+
+    private fun finishOk() {
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
+    private fun collectCardDataWithValidation(): CardData? {
         val deckPosition = deckSelector.selectedItemPosition
         val original = original.input
         val translations = collectTranslations()
 
         if (!validate(deckPosition, original, translations)) {
-            return
+            return null
         }
 
         val deck = deckSelector.selectedItem as Deck
 
-        val data = CardData(
+        return CardData(
                 original,
                 originalLang,
                 translations,
@@ -130,10 +210,6 @@ class AddEditCardActivity : AppCompatActivity() {
                 deck.id,
                 ExpressionType.WORD
         )
-        DecksRegistry.get().addCardToDeck(data)
-
-        confirmAdded()
-        clear()
     }
 
     private fun collectTranslations(): List<String> {
@@ -145,8 +221,9 @@ class AddEditCardActivity : AppCompatActivity() {
         return list
     }
 
-    private fun confirmAdded() {
-        Toast.makeText(this, R.string.edit_card__added, Toast.LENGTH_SHORT).show()
+    private fun confirm() {
+        val messageId = if (isInEditMode) R.string.edit_card__saved else R.string.edit_card__added
+        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show()
     }
 
     private fun clear() {
@@ -182,16 +259,24 @@ class AddEditCardActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun intent(context: Context, originalLang: Language, translationsLang: Language): Intent {
+        fun create(context: Context, originalLang: Language, translationsLang: Language): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
             intent.putExtra(EXTRA_LANG_ORIGINAL, originalLang.id)
             intent.putExtra(EXTRA_LANG_TRANSLATIONS, translationsLang.id)
+            return intent
+        }
+
+        fun edit(context: Context, card: Card): Intent {
+            val intent = Intent(context, AddEditCardActivity::class.java)
+            intent.putExtra(EXTRA_CARD_ID, card.id)
             return intent
         }
     }
 }
 
 private class DecksSelectorAdapter(val context: Context, val decks: List<Deck>) : BaseAdapter() {
+
+    private val TAG = DecksSelectorAdapter::class.java.simpleName
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: createView(parent)
@@ -217,6 +302,16 @@ private class DecksSelectorAdapter(val context: Context, val decks: List<Deck>) 
 
     override fun getCount(): Int {
         return decks.size
+    }
+
+    fun positionOfDeck(deckId: Long): Int {
+        val index = decks.indexOfFirst { it.id == deckId }
+        return if (index == -1) {
+            Errors.illegalState(TAG, "deck with id[$deckId] not in the adapter, falling back to default")
+            0
+        } else {
+            index
+        }
     }
 }
 

@@ -27,4 +27,11 @@ class StraightForwardAssignment(date: DateTime, cards: List<Card>) : Assignment(
     override fun innerDelete(card: Card) {
         queue.remove(card)
     }
+
+    override fun onCardUpdatedInner(old: Card, new: Card) {
+        if (queue.contains(old)) {
+            queue.remove(old)
+            queue.offer(new)
+        }
+    }
 }

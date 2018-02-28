@@ -30,6 +30,14 @@ class RandomAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
         turn++
     }
 
+    override fun onCardUpdatedInner(old: Card, new: Card) {
+        val index = cards.indexOfFirst { it.card == old }
+        if (index >= 0) {
+            val oldEntry = cards[index]
+            cards[index] = CardEntry(new, oldEntry.turn)
+        }
+    }
+
     /**
      * Returns the "common index" which is an index shared between the two collections:
      * of normal and of rescheduled cards.

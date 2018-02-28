@@ -472,6 +472,211 @@ abstract class StorageTest {
     }
 
     @Test
+    fun `test__updateCard__absent`() {
+        // given
+        val card = mockCard()
+
+        // when
+        val updated = storage.updateCard(card, 2L, mockExpression(), listOf(mockExpression()))
+
+        // then
+        assertNull(updated)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertNull(read)
+    }
+
+    @Test
+    fun `test__updateCard__moveToAnotherDeck`() {
+        // given
+        val someDeck = storage.addDeck("some deck")
+        addMockCard(storage, someDeck.id)
+        addMockCard(storage, someDeck.id)
+        val card = addMockCard(storage, someDeck.id)
+        addMockCard(storage, someDeck.id)
+
+        val newDeck = storage.addDeck("new deck")
+
+        // when
+        val updated = storage.updateCard(card, newDeck.id, card.original, card.translations)
+
+        // then
+        assertNotNull(updated)
+        assertEquals(card.id, updated!!.id)
+        assertEquals(newDeck.id, updated.deckId)
+        assertEquals(card.original, updated.original)
+        assertEquals(card.translations, updated.translations)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertEquals(updated, read)
+
+        // when - check that the card was added to the new deck
+        val cardsOfDeck = storage.cardsOfDeck(newDeck)
+
+        // then
+        assertTrue(cardsOfDeck.contains(read))
+
+        // when - check that the card was removed from the old deck
+        val cardsOfOldDeck = storage.cardsOfDeck(someDeck)
+
+        // then
+        assertFalse(cardsOfOldDeck.contains(read))
+    }
+
+    @Test
+    fun `test__updateCard__changeOriginal`() {
+        // given
+        addMockCard(storage)
+        addMockCard(storage)
+        val card = addMockCard(storage)
+        addMockCard(storage)
+
+        val newOriginal = addMockExpressionOriginal(storage, "new value")
+
+        // when
+        val updated = storage.updateCard(card, card.deckId, newOriginal, card.translations)
+
+        // then
+        assertNotNull(updated)
+        assertEquals(card.id, updated!!.id)
+        assertEquals(card.deckId, updated.deckId)
+        assertEquals(newOriginal, updated.original)
+        assertEquals(card.translations, updated.translations)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertEquals(updated, read)
+    }
+
+    @Test
+    fun `test__updateCard__addTranslation`() {
+        // given
+        addMockCard(storage)
+        addMockCard(storage)
+        val card = addMockCard(storage)
+        addMockCard(storage)
+
+        val newTranslation = addMockExpressionTranslation(storage, "new translation")
+        val newTranslations = card.translations.plus(newTranslation)
+
+        // when
+        val updated = storage.updateCard(card, card.deckId, card.original, newTranslations)
+
+        // then
+        assertNotNull(updated)
+        assertEquals(card.id, updated!!.id)
+        assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.original, updated.original)
+        assertEquals(newTranslations, updated.translations)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertEquals(updated, read)
+    }
+
+    @Test
+    fun `test__updateCard__replaceTranslation`() {
+        // given
+        addMockCard(storage)
+        addMockCard(storage)
+        val card = addMockCard(storage, translations = listOf("some translation", "my translation", "translation"))
+        addMockCard(storage)
+
+        val toBeRemoved = card.translations.find { it.value == "my translation" }!!
+        val newTranslation = addMockExpressionTranslation(storage, "new value")
+
+        val newTranslations = card.translations.minus(toBeRemoved).plus(newTranslation)
+
+        // when
+        val updated = storage.updateCard(card, card.deckId, card.original, newTranslations)
+
+        // then
+        assertNotNull(updated)
+        assertEquals(card.id, updated!!.id)
+        assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.original, updated.original)
+        assertEquals(newTranslations, updated.translations)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertEquals(updated, read)
+    }
+
+    @Test
+    fun `test__updateCard__removeTranslation`() {
+        // given
+        addMockCard(storage)
+        addMockCard(storage)
+        val card = addMockCard(storage, translations = listOf("some translation", "my translation", "translation"))
+        addMockCard(storage)
+
+        val toBeRemoved = card.translations.find { it.value == "my translation" }!!
+
+        val newTranslations = card.translations.minus(toBeRemoved)
+
+        // when
+        val updated = storage.updateCard(card, card.deckId, card.original, newTranslations)
+
+        // then
+        assertNotNull(updated)
+        assertEquals(card.id, updated!!.id)
+        assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.original, updated.original)
+        assertEquals(newTranslations, updated.translations)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertEquals(updated, read)
+    }
+
+    @Test
+    fun `test__updateCard__updateAllInfo`() {
+        // given
+        addMockCard(storage)
+        addMockCard(storage)
+        val card = addMockCard(storage, translations = listOf("some translation", "my translation", "translation"))
+        addMockCard(storage)
+
+        val deckId = 456L
+
+        val newOriginal = addMockExpressionOriginal(storage, "new value")
+
+        val toBeRemoved = card.translations.find { it.value == "my translation" }!!
+        val newTranslation = addMockExpressionTranslation(storage, "new value")
+        val newTranslations = card.translations.minus(toBeRemoved).plus(newTranslation)
+
+        // when
+        val updated = storage.updateCard(card, deckId, newOriginal, newTranslations)
+
+        // then
+        assertNotNull(updated)
+        assertEquals(card.id, updated!!.id)
+        assertEquals(deckId, updated.deckId)
+        assertEquals(newOriginal, updated.original)
+        assertEquals(newTranslations, updated.translations)
+
+        // when
+        val read = storage.cardById(card.id)
+
+        // then
+        assertEquals(updated, read)
+    }
+
+    @Test
     fun `test__deleteCard__present`() {
         // given
         val data = mockCardData()

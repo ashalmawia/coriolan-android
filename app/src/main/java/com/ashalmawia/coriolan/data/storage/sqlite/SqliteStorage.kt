@@ -157,7 +157,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
-                    toContentValues(deckId, original))
+                    createCardContentValues(deckId, original))
 
             // write the card-to-expression relation (many-to-many)
             val cardsReversCV = generateCardsReverseContentValues(cardId, translations)
@@ -197,6 +197,40 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             } else {
                 null
             }
+        }
+    }
+
+    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
+        val db = helper.writableDatabase
+        db.beginTransaction()
+
+        try {
+            val cv = createCardContentValues(deckId, original, card.id)
+            val updated = db.update(SQLITE_TABLE_CARDS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(card.id.toString()))
+
+            if (updated == 0) {
+                // the card is not presented in the database!
+                return null
+            }
+
+            // delete all the old translations from the card
+            card.translations.forEach {
+                db.delete(
+                        SQLITE_TABLE_CARDS_REVERSE,
+                        "$SQLITE_COLUMN_CARD_ID = ? AND $SQLITE_COLUMN_EXPRESSION_ID = ?",
+                        arrayOf(card.id.toString(), it.id.toString())
+                )
+            }
+
+            // add new translations to the card
+            val reverseCV = generateCardsReverseContentValues(card.id, translations)
+            reverseCV.forEach { db.insertOrUpdate(SQLITE_TABLE_CARDS_REVERSE, it) }
+
+            db.setTransactionSuccessful()
+
+            return Card(card.id, deckId, original, translations, card.state)
+        } finally {
+            db.endTransaction()
         }
     }
 

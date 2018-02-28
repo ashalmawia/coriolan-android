@@ -18,11 +18,14 @@ import com.ashalmawia.coriolan.debug.DEBUG_SHOW_SCHEDULER_STATUS
 import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.view.CardView
 import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import com.ashalmawia.coriolan.util.setUpToolbar
 import kotlinx.android.synthetic.main.deck_progress_bar.*
+
+private val REQUEST_CODE_EDIT_CARD = 1
 
 class CardActivity : AppCompatActivity(), CardViewListener {
 
@@ -65,11 +68,21 @@ class CardActivity : AppCompatActivity(), CardViewListener {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
+            R.id.learning_menu__edit_card -> {
+                editCurrentCard()
+                return true
+            }
             R.id.learning_menu__delete_card -> {
                 confirmDeleteCurrentCard()
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun editCurrentCard() {
+        val intent = AddEditCardActivity.edit(this, flow().card())
+        startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
     }
 
     private fun confirmDeleteCurrentCard() {
@@ -86,6 +99,25 @@ class CardActivity : AppCompatActivity(), CardViewListener {
         val current = flow().card()
         flow().deleteCurrent(this)
         DecksRegistry.get().deleteCard(current)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            REQUEST_CODE_EDIT_CARD -> {
+                onCurrentCardUpdated()
+            }
+        }
+    }
+
+    private fun onCurrentCardUpdated() {
+        flow().onCurrentCardUpdated(this)
+        refresh()
+    }
+
+    private fun refresh() {
+        bindToCurrent()
     }
 
     override fun onStop() {

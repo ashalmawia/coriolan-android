@@ -46,7 +46,20 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
     }
 
     fun addCardsToDeck(data: List<CardData>) {
-        data.map { addCard(it) }
+        data.forEach { addCard(it) }
+    }
+
+    fun editCard(card: Card, cardData: CardData): Card? {
+        val original = findOrAddExpression(cardData.original, cardData.contentType, cardData.originalLang)
+        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, cardData.translationsLang) }
+
+        val updated = repository.updateCard(card, cardData.deckId, original, translations)
+
+        if (updated != null) {
+            deleteOrphanExpressions(card.translations.plus(card.original))
+        }
+
+        return updated
     }
 
     fun deleteCard(card: Card) {
