@@ -85,7 +85,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__noTranslations`() {
         // given
-        val translations = listOf<String>()
+        val translations = arrayOf<String>()
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -98,7 +98,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__allTranslationsEmpty`() {
         // given
-        val translations = listOf("")
+        val translations = arrayOf("")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -111,7 +111,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__multiple__allTranslationsEmpty`() {
         // given
-        val translations = listOf("", "")
+        val translations = arrayOf("", "")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -124,7 +124,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__oneTranslation`() {
         // given
-        val translations = listOf("shrimp")
+        val translations = arrayOf("shrimp")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -137,7 +137,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__oneTranslationWithEmpty`() {
         // given
-        val translations = listOf("", "shrimp")
+        val translations = arrayOf("", "shrimp")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -150,7 +150,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__multipleTranslations`() {
         // given
-        val translations = listOf("sleep", "doze")
+        val translations = arrayOf("sleep", "doze")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -163,7 +163,7 @@ class CardValidatorTest {
     @Test
     fun `test__validateHasTranslations__multipleTranslationsWithEmpty`() {
         // given
-        val translations = listOf("sleep", "", "doze")
+        val translations = arrayOf("sleep", "", "doze")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)

@@ -28,6 +28,10 @@ private const val EXTRA_LANG_ORIGINAL = "lang_original"
 private const val EXTRA_LANG_TRANSLATIONS = "lang_translation"
 private const val EXTRA_CARD_ID = "card_id"
 
+private const val KEY_ORIGINAL = "original"
+private const val KEY_TRANSLATIONS = "translations"
+private const val KEY_DECK_SELECTION_POSITION = "deck_id"
+
 class AddEditCardActivity : AppCompatActivity() {
 
     private val repository = Repository.get(this)
@@ -205,20 +209,20 @@ class AddEditCardActivity : AppCompatActivity() {
         return CardData(
                 original,
                 originalLang,
-                translations,
+                translations.asList(),
                 translationsLang,
                 deck.id,
                 ExpressionType.WORD
         )
     }
 
-    private fun collectTranslations(): List<String> {
-        val list = mutableListOf<String>()
-        for (i in 0 until translationsContainer.childCount) {
+    private fun collectTranslations(): Array<String> {
+        val array = Array(translationsContainer.childCount, { _ -> "" })
+        for (i in 0 until array.size) {
             val view = translationsContainer.getChildAt(i) as AddEditCardItemView
-            list.add(view.input)
+            array[i] = view.input
         }
-        return list
+        return array
     }
 
     private fun confirm() {
@@ -232,7 +236,7 @@ class AddEditCardActivity : AppCompatActivity() {
         addTrasnlationField()
     }
 
-    private fun validate(decksPosition: Int, original: String, translations: List<String>): Boolean {
+    private fun validate(decksPosition: Int, original: String, translations: Array<String>): Boolean {
         val onError = this::showError
 
         if (!CardValidator.validateDeckSelected(decksPosition, decks(), onError)) {
@@ -256,6 +260,25 @@ class AddEditCardActivity : AppCompatActivity() {
 
     private fun showError(error: String) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState!!.putInt(KEY_DECK_SELECTION_POSITION, deckSelector.selectedItemPosition)
+        outState.putString(KEY_ORIGINAL, original.input)
+        val translations = collectTranslations()
+        outState.putStringArray(KEY_TRANSLATIONS, translations)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        deckSelector.setSelection(savedInstanceState!!.getInt(KEY_DECK_SELECTION_POSITION, 0), false)
+        original.input = savedInstanceState.getString(KEY_ORIGINAL, "")
+
+        val translations = savedInstanceState.getStringArray(KEY_TRANSLATIONS)
+        translationsContainer.removeAllViews()
+        translations?.forEach {
+            val view = addTrasnlationField()
+            view.input = it
+        }
     }
 
     companion object {
@@ -323,10 +346,10 @@ object CardValidator {
     fun validateOriginalNotEmpty(original: String, onError: (String) -> Unit): Boolean
         = validate(!TextUtils.isEmpty(original), "Please enter the original", onError)
 
-    fun validateHasTranslations(translations: List<String>, onError: (String) -> Unit): Boolean
+    fun validateHasTranslations(translations: Array<String>, onError: (String) -> Unit): Boolean
         = validate(translations.filterNot { TextUtils.isEmpty(it) }.isNotEmpty(), "Please enter at least one translation", onError)
 
-    fun validateNoDuplicates(translations: List<String>, onError: (String) -> Unit): Boolean {
+    fun validateNoDuplicates(translations: Array<String>, onError: (String) -> Unit): Boolean {
         val nonEmpty = translations.filterNot { TextUtils.isEmpty(it) }
         return validate(nonEmpty.size == nonEmpty.distinct().size, "Some of translations duplicate each other", onError)
     }
