@@ -167,8 +167,8 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.correct(card.state)
 
         // then
-        assertEquals(today.plusDays(16), updated.due)
-        assertEquals(16, updated.period)
+        assertEquals(today.plusDays(13 * 2), updated.due)
+        assertEquals(13 * 2, updated.period)
     }
 
     @Test
@@ -211,8 +211,8 @@ class SpacedRepetitionSchedulerTest {
         val updated = scheduler.correct(card.state)
 
         // then
-        assertEquals(today.plusDays(400), updated.due)
-        assertEquals(400, updated.period)
+        assertEquals(today.plusDays(417 * 2), updated.due)
+        assertEquals(417 * 2, updated.period)
         assertEquals(Status.LEARNT, state.status)
     }
 }

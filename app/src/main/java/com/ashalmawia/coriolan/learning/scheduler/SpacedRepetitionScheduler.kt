@@ -1,5 +1,7 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
+import org.joda.time.Days
+import kotlin.math.abs
 import kotlin.math.max
 
 private const val MULTIPLIER_CORRECT = 2
@@ -18,7 +20,9 @@ class SpacedRepetitionScheduler : Scheduler {
             // the first answer actually counts like "wrong"
             return wrong(state)
         } else {
-            val period = max(state.period * MULTIPLIER_CORRECT, 1)
+            val expectedPeriod = state.period
+            val actualPeriod = abs(Days.daysBetween(state.due.minusDays(state.period), today()).days)
+            val period = max(max(expectedPeriod, actualPeriod) * MULTIPLIER_CORRECT, 1)
             val due = today().plusDays(period)
             return State(due, period)
         }
