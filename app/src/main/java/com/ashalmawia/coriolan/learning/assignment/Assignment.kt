@@ -21,7 +21,11 @@ abstract class Assignment(
         pendingCounter.value.onCardDeleted(card)
     }
 
-    protected abstract fun createPendingCounter(): PendingCounter
+    private fun createPendingCounter(): PendingCounter {
+        val counts = cards().groupBy { it.state.status }.mapValues { it.value.size }
+        return PendingCounter.createFrom(counts)
+    }
+
     protected abstract fun innerDelete(card: Card)
 
     fun next(): Card {
@@ -42,5 +46,7 @@ abstract class Assignment(
     protected open fun onCurrent(card: Card) {
         // for overriding
     }
+
+    protected abstract fun cards(): List<Card>
     protected abstract fun onCardUpdatedInner(old: Card, new: Card)
 }

@@ -24,12 +24,12 @@ class MockAssignment(cards: List<Card>) : Assignment(DateTime.now()) {
         cards.offer(card)
     }
 
-    override fun createPendingCounter(): PendingCounter {
-        return MockPendingCounter()
-    }
-
     override fun innerDelete(card: Card) {
         cards.remove(card)
+    }
+
+    override fun cards(): List<Card> {
+        return cards.toList()
     }
 
     override fun onCardUpdatedInner(old: Card, new: Card) {

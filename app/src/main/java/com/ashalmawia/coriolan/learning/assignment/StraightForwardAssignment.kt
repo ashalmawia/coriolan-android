@@ -19,13 +19,17 @@ class StraightForwardAssignment(date: DateTime, cards: List<Card>) : Assignment(
         queue.offer(card)
     }
 
-    override fun createPendingCounter(): PendingCounter {
-        val counts = queue.groupBy { it.state.status }.mapValues { it.value.size }
-        return PendingCounter.createFrom(counts)
-    }
-
     override fun innerDelete(card: Card) {
         queue.remove(card)
+    }
+
+    override fun cards(): List<Card> {
+        val cur = current
+        return if (cur != null) {
+            queue.plus(cur)
+        } else {
+            queue.toList()
+        }
     }
 
     override fun onCardUpdatedInner(old: Card, new: Card) {

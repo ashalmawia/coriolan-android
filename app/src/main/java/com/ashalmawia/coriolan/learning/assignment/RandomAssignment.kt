@@ -30,6 +30,16 @@ class RandomAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
         turn++
     }
 
+    override fun cards(): List<Card> {
+        val pending = cards.map { it.card }
+        val cur = current
+        return if (cur != null) {
+            pending.plus(cur)
+        } else {
+            pending
+        }
+    }
+
     override fun onCardUpdatedInner(old: Card, new: Card) {
         val index = cards.indexOfFirst { it.card == old }
         if (index >= 0) {
@@ -62,11 +72,6 @@ class RandomAssignment(date: DateTime, cards: List<Card>) : Assignment(date) {
 
     override fun reschedule(card: Card) {
         cards.add(CardEntry(card, turn))
-    }
-
-    override fun createPendingCounter(): PendingCounter {
-        val counts = cards.groupBy { it.card.state.status }.mapValues { it.value.size }
-        return PendingCounter.createFrom(counts)
     }
 
     override fun innerDelete(card: Card) {
