@@ -66,15 +66,16 @@ private class PendingCounterImpl(
         when (card.state.status) {
             Status.NEW -> {
                 new--
+                relearn++
             }
             Status.IN_PROGRESS, Status.LEARNT -> {
                 review--
+                relearn++
             }
             Status.RELEARN -> {
                 // do nothing, as relearn stayed relearn
             }
         }
-        relearn++
     }
 
     override fun onCardDeleted(card: Card) {

@@ -56,16 +56,18 @@ class LearningFlow(
 
     fun wrong(context: Context) {
         val card = card()
+        assignment.pendingCounter.value.onCardWrong(card)
+
         val state = scheduler.wrong(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
-        assignment.pendingCounter.value.onCardWrong(card)
     }
 
     fun correct(context: Context) {
         val card = card()
+        assignment.pendingCounter.value.onCardCorrect(card)
+
         val state = scheduler.correct(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
-        assignment.pendingCounter.value.onCardCorrect(card)
     }
 
     fun onCurrentCardUpdated(context: Context) {
