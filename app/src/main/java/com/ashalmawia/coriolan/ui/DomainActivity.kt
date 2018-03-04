@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.ui
 
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
@@ -20,7 +19,7 @@ private const val FRAGMENT_EDIT = "fragment_edit"
 private const val FRAGMENT_STATISTICS = "fragment_statistics"
 private const val FRAGMENT_SETTINGS = "fragment_settings"
 
-class DomainActivity : AppCompatActivity() {
+class DomainActivity : BaseActivity() {
 
     private val TAG = DomainActivity::class.java.simpleName
 

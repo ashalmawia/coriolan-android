@@ -5,12 +5,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
-import kotlinx.android.synthetic.main.app_toolbar.*
+import com.ashalmawia.coriolan.ui.BaseActivity
 import kotlinx.android.synthetic.main.enter_file_path.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnPermissionDenied
@@ -22,15 +21,13 @@ const val EXTRA_TEXT = "extra_text"
 private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
 @RuntimePermissions
-class EnterFilePathActivity : AppCompatActivity() {
+class EnterFilePathActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.enter_file_path)
 
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setTitle(R.string.import_from_file)
+        setUpToolbar(R.string.import_from_file)
 
         restore(savedInstanceState)
 

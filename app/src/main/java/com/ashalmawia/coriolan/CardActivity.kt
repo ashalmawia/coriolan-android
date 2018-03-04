@@ -9,7 +9,6 @@ import android.content.Intent
 
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -19,15 +18,15 @@ import com.ashalmawia.coriolan.learning.FlowListener
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.CardView
 import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
-import com.ashalmawia.coriolan.util.setUpToolbar
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 
 private val REQUEST_CODE_EDIT_CARD = 1
 
-class CardActivity : AppCompatActivity(), CardViewListener {
+class CardActivity : BaseActivity(), CardViewListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +53,6 @@ class CardActivity : AppCompatActivity(), CardViewListener {
                 finish()
             }
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
