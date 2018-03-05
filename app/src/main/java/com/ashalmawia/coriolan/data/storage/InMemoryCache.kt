@@ -9,6 +9,7 @@ import org.joda.time.DateTime
 class InMemoryCache(private val inner: Repository) : Repository {
 
     private val expressions = mutableMapOf<Long, Expression?>()
+    private val domains = mutableMapOf<Long, Domain?>()
     private val cards = mutableMapOf<Long, Card?>()
     private val allDecks = mutableMapOf<Long, Deck?>()  // must be all decks as we have a function to return them all
 
@@ -53,8 +54,18 @@ class InMemoryCache(private val inner: Repository) : Repository {
         expressions.remove(expression.id)
     }
 
-    override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
-        val card = inner.addCard(deckId, original, translations)
+    override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
+        val domain = inner.createDomain(name, langOriginal, langTranslations)
+        domains[domain.id] = domain
+        return domain
+    }
+
+    override fun allDomains(): List<Domain> {
+        return inner.allDomains()
+    }
+
+    override fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card {
+        val card = inner.addCard(domainId, deckId, original, translations)
         cards.put(card.id, card)
         return card
     }
@@ -101,10 +112,10 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return result
     }
 
-    override fun addDeck(name: String): Deck {
+    override fun addDeck(domainId: Long, name: String): Deck {
         loadDecksIfNeeded()
 
-        val deck = inner.addDeck(name)
+        val deck = inner.addDeck(domainId, name)
         allDecks.put(deck.id, deck)
         return deck
     }

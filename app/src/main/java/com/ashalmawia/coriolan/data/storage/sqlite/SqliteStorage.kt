@@ -150,14 +150,58 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         db.delete(SQLITE_TABLE_EXPRESSIONS, "$SQLITE_COLUMN_ID = ?", arrayOf(expression.id.toString()))
     }
 
-    override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
+    override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
+        val db = helper.writableDatabase
+
+        val cv = createDomainContentValues(name, langOriginal, langTranslations)
+        val id = db.insert(SQLITE_TABLE_DOMAINS, null, cv)
+
+        return Domain(id, name, langOriginal, langTranslations)
+    }
+
+    override fun allDomains(): List<Domain> {
+        val db = helper.readableDatabase
+
+        val DOMAINS = "D"
+        val LANGS1 = "L1"
+        val LANGS2 = "L2"
+
+        val cursor = db.rawQuery("""
+            |SELECT
+            |   ${allColumnsDomains(DOMAINS)},
+            |   ${allColumnsLanguages(LANGS1)},
+            |   ${allColumnsLanguages(LANGS2)}
+            |
+            |FROM $SQLITE_TABLE_DOMAINS AS $DOMAINS
+            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS1
+            |       ON ${SQLITE_COLUMN_LANG_ORIGINAL.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS1)}
+            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS2
+            |       ON ${SQLITE_COLUMN_LANG_TRANSLATIONS.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS2)}
+        """.trimMargin(), arrayOf())
+
+        val list = mutableListOf<Domain>()
+        cursor.use {
+            while (it.moveToNext()) {
+                list.add(Domain(
+                        it.getId(DOMAINS),
+                        it.getName(DOMAINS),
+                        it.getLanguage(LANGS1),
+                        it.getLanguage(LANGS2)
+                ))
+            }
+        }
+
+        return list
+    }
+
+    override fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card {
         val db = helper.writableDatabase
         db.beginTransaction()
         try {
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
-                    createCardContentValues(deckId, original))
+                    createCardContentValues(domainId, deckId, original))
 
             // write the card-to-expression relation (many-to-many)
             val cardsReversCV = generateCardsReverseContentValues(cardId, translations)
@@ -165,7 +209,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                 db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
             }
 
-            val card = Card(cardId, deckId, original, translations, emptyState())
+            val card = Card(cardId, deckId, domainId, original, translations, emptyState())
 
             db.setTransactionSuccessful()
 
@@ -189,6 +233,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                 Card(
                         id,
                         cursor.getDeckId(),
+                        cursor.getDomainId(),
                         storage().expressionById(cursor.getFrontId())!!,
                         translationsByCardId(id),
                         // todo: state should not be a part of a card
@@ -205,7 +250,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         db.beginTransaction()
 
         try {
-            val cv = createCardContentValues(deckId, original, card.id)
+            val cv = createCardContentValues(card.domainId, deckId, original, card.id)
             val updated = db.update(SQLITE_TABLE_CARDS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(card.id.toString()))
 
             if (updated == 0) {
@@ -228,7 +273,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
             db.setTransactionSuccessful()
 
-            return Card(card.id, deckId, original, translations, card.state)
+            return Card(card.id, deckId, card.domainId, original, translations, card.state)
         } finally {
             db.endTransaction()
         }
@@ -250,12 +295,13 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         val cursor = db.rawQuery("SELECT * FROM $SQLITE_TABLE_DECKS", null)
 
         val list = mutableListOf<Deck>()
-        while (cursor.moveToNext()) {
-            val id = cursor.getId()
-            list.add(Deck(id, cursor.getName()))
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getId()
+                list.add(Deck(id, it.getDomainId(), it.getName()))
+            }
         }
 
-        cursor.close()
         return list
     }
 
@@ -270,17 +316,17 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             if (it.count > 1) throw IllegalStateException("more that one value for deck id $id")
 
             it.moveToFirst()
-            return Deck(id, it.getName())
+            return Deck(id, it.getDomainId(), it.getName())
         }
     }
 
-    override fun addDeck(name: String): Deck {
-        val cv = createDeckContentValues(name)
+    override fun addDeck(domainId: Long, name: String): Deck {
+        val cv = createDeckContentValues(domainId, name)
 
         val db = helper.writableDatabase
         val id = db.insert(SQLITE_TABLE_DECKS, null, cv)
 
-        return Deck(id, name)
+        return Deck(id, domainId, name)
     }
 
     override fun cardsOfDeck(deck: Deck): List<Card> {
@@ -297,6 +343,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             list.add(Card(
                     cardId,
                     deck.id,
+                    deck.domainId,
                     storage().expressionById(cursor.getFrontId())!!,
                     translationsByCardId(cardId),
                     // todo: read state here
@@ -357,6 +404,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             cards.add(Card(
                     cursor.getId(),
                     deck.id,
+                    deck.domainId,
                     expressionById(cursor.getFrontId())!!,
                     translationsByCardId(cursor.getId()),
                     state

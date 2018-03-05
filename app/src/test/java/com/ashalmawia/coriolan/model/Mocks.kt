@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.LanguagesRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.scheduler.State
 import org.joda.time.DateTime
 
@@ -10,6 +11,11 @@ fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
 
 fun langOriginal() = LanguagesRegistry.original()
 fun langTranslations() = LanguagesRegistry.translations()
+
+fun addMockLanguages(storage: Repository) {
+    storage.addLanguage(langOriginal().value)
+    storage.addLanguage(langTranslations().value)
+}
 
 fun mockCardData(
         original: String,
@@ -29,11 +35,15 @@ private var expressionId = 1L
 fun mockExpression(value: String = "mock value", type: ExpressionType = ExpressionType.WORD, language: Language = mockLanguage())
         = Expression(expressionId++, value, type, language)
 
+private var domainId = 1L
+fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())
+
 private var cardId = 1L
 fun mockCard(state: State = mockState()): Card {
     return Card(
             cardId++,
             deckId,
+            1L,
             mockExpression(language = LanguagesRegistry.original()),
             listOf(mockExpression(language = LanguagesRegistry.translations()), mockExpression(language = LanguagesRegistry.translations())),
             state
@@ -41,7 +51,7 @@ fun mockCard(state: State = mockState()): Card {
 }
 
 private var deckId = 1L
-fun mockDeck(name: String = "My deck") = Deck(deckId++, name)
+fun mockDeck(name: String = "My deck") = Deck(deckId++, 1L, name)
 
 fun mockState(period: Int = 0): State {
     return State(DateTime.now(), period)

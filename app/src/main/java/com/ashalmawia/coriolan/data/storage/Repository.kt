@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
 import android.content.Context
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
@@ -37,7 +36,11 @@ interface Repository {
 
     fun deleteExpression(expression: Expression)
 
-    fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card
+    fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain
+
+    fun allDomains(): List<Domain>
+
+    fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card
 
     fun cardById(id: Long): Card?
 
@@ -51,7 +54,7 @@ interface Repository {
 
     fun cardsOfDeck(deck: Deck): List<Card>
 
-    fun addDeck(name: String): Deck
+    fun addDeck(domainId: Long, name: String): Deck
 
     fun updateCardState(card: Card, state: State, exercise: Exercise): Card
 

@@ -24,6 +24,7 @@ fun Cursor.getName(alias: String? = null): String { return getString(SQLITE_COLU
 
 fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID, alias) }
 fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }
+fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
 fun Cursor.getFrontId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_FRONT_ID, alias) }
 fun Cursor.getExpressionId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID, alias) }
 

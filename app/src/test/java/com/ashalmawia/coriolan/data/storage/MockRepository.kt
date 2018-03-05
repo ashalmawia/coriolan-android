@@ -10,7 +10,7 @@ import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
-    val langs = mutableListOf<Language>()
+    private val langs = mutableListOf<Language>()
     override fun addLanguage(value: String): Language {
         val lang = Language(langs.size + 1L, value)
         langs.add(lang)
@@ -40,10 +40,21 @@ class MockRepository : Repository {
         expressions.remove(expression)
     }
 
+    val domains = mutableListOf<Domain>()
+    override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
+        val domain = Domain(domains.size + 1L, name, langOriginal, langTranslations)
+        domains.add(domain)
+        return domain
+    }
+    override fun allDomains(): List<Domain> {
+        return domains
+    }
+
     val cards = mutableListOf<Card>()
-    override fun addCard(deckId: Long, original: Expression, translations: List<Expression>): Card {
+    override fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card {
         val card = Card(
                 cards.size + 1L,
+                domainId,
                 deckId,
                 original,
                 translations,
@@ -60,7 +71,7 @@ class MockRepository : Repository {
             return null
         }
 
-        val updated = Card(card.id, deckId, original, translations, card.state)
+        val updated = Card(card.id, deckId, card.domainId, original, translations, card.state)
         cards.remove(card)
         cards.add(updated)
         return updated
@@ -79,8 +90,8 @@ class MockRepository : Repository {
     override fun cardsOfDeck(deck: Deck): List<Card> {
         return cards.filter { it.deckId == deck.id }
     }
-    override fun addDeck(name: String): Deck {
-        val deck = Deck(decks.size + 1L, name)
+    override fun addDeck(domainId: Long, name: String): Deck {
+        val deck = Deck(decks.size + 1L, domainId, name)
         decks.add(deck)
         return deck
     }

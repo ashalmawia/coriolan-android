@@ -93,20 +93,21 @@ class InMemoryCacheTest {
     fun `test__addDeck`() {
         // given
         val name = "My deck"
+        val domainId = 1L
 
         // when
-        val deck = cache.addDeck(name)
+        val deck = cache.addDeck(domainId, name)
 
         // then
         assertNotNull("deck is added", deck)
-        assertDeckCorrect(deck, name)
+        assertDeckCorrect(deck, name, domainId)
 
         // when
         val cached = cache.deckById(deck.id)
 
         // then
         assertNotNull("deck is found", cached)
-        assertDeckCorrect(cached, name)
+        assertDeckCorrect(cached, name, domainId)
         // expressionById() must not be called as the value is expected to be cached while adding
         verify(inner, never()).deckById(deck.id)
     }
@@ -123,7 +124,7 @@ class InMemoryCacheTest {
 
         // then
         assertNotNull("deck is found", cached)
-        assertDeckCorrect(cached, deck.name)
+        assertDeckCorrect(cached, deck.name, deck.domainId)
         // deckById() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
         verify(inner, times(1)).allDecks()
@@ -145,7 +146,7 @@ class InMemoryCacheTest {
         // then
         assertEquals("number of decks is correct", decks.size, cached.size)
         for (i in 0 until decks.size) {
-            assertDeckCorrect(cached[i], decks[i].name)
+            assertDeckCorrect(cached[i], decks[i].name, decks[i].domainId)
         }
         // allDecks() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
@@ -186,7 +187,8 @@ class InMemoryCacheTest {
     @Test
     fun `test__cardsDueDate`() {
         // given
-        val deck = cache.addDeck("name")
+        val domainId = 1L
+        val deck = cache.addDeck(domainId, "name")
         val card = addMockCard(cache, mockCardData())
 
         // when

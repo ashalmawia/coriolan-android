@@ -14,7 +14,8 @@ class MySqliteOpenHelper(context: Context, private val exercises: List<Exercise>
         db!!.execSQL("""CREATE TABLE $SQLITE_TABLE_LANGUAGES(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_LANG_VALUE TEXT NOT NULL
-            |);""".trimMargin())
+            |);""".trimMargin()
+        )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_EXPRESSIONS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_VALUE TEXT NOT NULL,
@@ -25,20 +26,41 @@ class MySqliteOpenHelper(context: Context, private val exercises: List<Exercise>
             |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
+        db.execSQL("""CREATE TABLE $SQLITE_TABLE_DOMAINS(
+            |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
+            |$SQLITE_COLUMN_NAME TEXT NOT NULL,
+            |$SQLITE_COLUMN_LANG_ORIGINAL INTEGER NOT NULL,
+            |$SQLITE_COLUMN_LANG_TRANSLATIONS INTEGER NOT NULL,
+            |FOREIGN KEY ($SQLITE_COLUMN_LANG_ORIGINAL) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
+            |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE,
+            |FOREIGN KEY ($SQLITE_COLUMN_LANG_TRANSLATIONS) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
+            |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE
+            |);""".trimMargin()
+        )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DECKS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
-            |$SQLITE_COLUMN_NAME TEXT NOT NULL
+            |$SQLITE_COLUMN_NAME TEXT NOT NULL,
+            |$SQLITE_COLUMN_DOMAIN_ID INTEGER NOT NULL,
+            |FOREIGN KEY ($SQLITE_COLUMN_DOMAIN_ID) REFERENCES $SQLITE_TABLE_DOMAINS ($SQLITE_COLUMN_ID)
+            |   ON DELETE CASCADE
+            |   ON UPDATE CASCADE
             );""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_FRONT_ID INTEGER NOT NULL,
             |$SQLITE_COLUMN_DECK_ID INTEGER NOT NULL,
+            |$SQLITE_COLUMN_DOMAIN_ID INTEGER NOT NULL,
             |FOREIGN KEY ($SQLITE_COLUMN_FRONT_ID) REFERENCES $SQLITE_TABLE_EXPRESSIONS ($SQLITE_COLUMN_ID)
             |   ON DELETE RESTRICT
             |   ON UPDATE CASCADE,
             |FOREIGN KEY ($SQLITE_COLUMN_DECK_ID) REFERENCES $SQLITE_TABLE_DECKS ($SQLITE_COLUMN_ID)
             |   ON DELETE RESTRICT
+            |   ON UPDATE CASCADE,
+            |FOREIGN KEY ($SQLITE_COLUMN_DOMAIN_ID) REFERENCES $SQLITE_TABLE_DOMAINS ($SQLITE_COLUMN_ID)
+            |   ON DELETE CASCADE
             |   ON UPDATE CASCADE
             |);""".trimMargin()
         )

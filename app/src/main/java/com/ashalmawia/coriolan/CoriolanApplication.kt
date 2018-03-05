@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan
 
 import android.app.Application
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.LanguagesRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -19,8 +20,10 @@ open class CoriolanApplication : Application() {
         crashlytics()
         errors()
 
-        languages()
         todayManager()
+
+        languages()
+        domainsRegistry()
         deckRegistry()
     }
 
@@ -38,8 +41,12 @@ open class CoriolanApplication : Application() {
         TodayManager.initialize(this)
     }
 
+    protected open fun domainsRegistry() {
+        DomainsRegistry.preinitialize(Repository.get(this))
+    }
+
     protected open fun deckRegistry() {
-        DecksRegistry.initialize(this, Preferences.get(this), Repository.get(this))
+        DecksRegistry.initialize(this, Preferences.get(this), DomainsRegistry.domain(), Repository.get(this))
     }
 
     protected open fun languages() {

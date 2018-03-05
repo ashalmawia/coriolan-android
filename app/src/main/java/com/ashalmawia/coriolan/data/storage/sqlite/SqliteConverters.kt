@@ -24,15 +24,26 @@ fun createExpressionContentValues(value: String, type: ExpressionType, language:
     return cv
 }
 
+// ********** DOMAIIN ********************
+
+fun createDomainContentValues(name: String, langOriginal: Language, langTranslations: Language): ContentValues {
+    val cv = ContentValues()
+    cv.put(SQLITE_COLUMN_NAME, name)
+    cv.put(SQLITE_COLUMN_LANG_ORIGINAL, langOriginal.id)
+    cv.put(SQLITE_COLUMN_LANG_TRANSLATIONS, langTranslations.id)
+    return cv
+}
+
 // ********** CARD ********************
 
-fun createCardContentValues(deckId: Long, original: Expression, cardId: Long? = null): ContentValues {
+fun createCardContentValues(domainId: Long, deckId: Long, original: Expression, cardId: Long? = null): ContentValues {
     val cv = ContentValues()
     if (cardId != null) {
         cv.put(SQLITE_COLUMN_ID, cardId)
     }
     cv.put(SQLITE_COLUMN_FRONT_ID, original.id)
     cv.put(SQLITE_COLUMN_DECK_ID, deckId)
+    cv.put(SQLITE_COLUMN_DOMAIN_ID, domainId)
     return cv
 }
 
@@ -49,9 +60,10 @@ private fun toCardsReverseContentValues(cardId: Long, expression: Expression): C
 
 // ********** DECK ********************
 
-fun createDeckContentValues(name: String): ContentValues {
+fun createDeckContentValues(domainId: Long, name: String): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_NAME, name)
+    cv.put(SQLITE_COLUMN_DOMAIN_ID, domainId)
     return cv
 }
 

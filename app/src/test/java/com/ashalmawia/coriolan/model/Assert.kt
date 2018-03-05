@@ -15,6 +15,13 @@ fun assertExpressionCorrect(expression: Expression?, value: String, type: Expres
     assertLanguageCorrect(expression.language, language.value)
 }
 
+fun assertDomainCorrect(domain: Domain?, name: String, langOriginal: Language, langTranslations: Language) {
+    assertNotNull("domain exists", domain)
+    assertEquals("domain name is correct", name, domain!!.name)
+    assertEquals("original language is correct", langOriginal, domain.langOriginal)
+    assertEquals("translations language is correct", langTranslations, domain.langTranslations)
+}
+
 fun assertCardCorrect(card: Card?, data: CardData) {
     assertNotNull("card is created", card)
     assertExpressionCorrect(card!!.original, data.original, data.contentType, data.originalLang)
@@ -24,9 +31,10 @@ fun assertCardCorrect(card: Card?, data: CardData) {
     }
 }
 
-fun assertDeckCorrect(deck: Deck?, name: String) {
+fun assertDeckCorrect(deck: Deck?, name: String, domainId: Long) {
     assertNotNull("deck is created", deck)
     assertEquals("deck name is correct", name, deck!!.name)
+    assertEquals("domain id is correct", domainId, deck.domainId)
 }
 
 fun assertDeckCardsCorrect(cards: List<Card>, data: List<CardData>) {

@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.*
 
-class DecksRegistry(context: Context, preferences: Preferences, private val repository: Repository) {
+class DecksRegistry(context: Context, preferences: Preferences, private val domain: Domain, private val repository: Repository) {
 
     companion object {
         private lateinit var instance: DecksRegistry
@@ -16,8 +16,8 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
             return instance
         }
 
-        fun initialize(context: Context, preferences: Preferences, repository: Repository) {
-            instance = DecksRegistry(context, preferences, repository)
+        fun initialize(context: Context, preferences: Preferences, domain: Domain, repository: Repository) {
+            instance = DecksRegistry(context, preferences, domain, repository)
         }
     }
 
@@ -84,8 +84,8 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
         val original = findOrAddExpression(cardData.original, cardData.contentType, cardData.originalLang)
         val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, cardData.translationsLang) }
 
-        repository.addCard(cardData.deckId, original, translations)
-        translations.forEach { repository.addCard(cardData.deckId, it, listOf(original)) }
+        repository.addCard(domain.id, cardData.deckId, original, translations)
+        translations.forEach { repository.addCard(domain.id, cardData.deckId, it, listOf(original)) }
     }
 
     private fun findOrAddExpression(value: String, type: ExpressionType, language: Language): Expression {
@@ -94,6 +94,6 @@ class DecksRegistry(context: Context, preferences: Preferences, private val repo
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {
-        return repository.addDeck(context.getString(R.string.decks_default))
+        return repository.addDeck(domain.id, context.getString(R.string.decks_default))
     }
 }
