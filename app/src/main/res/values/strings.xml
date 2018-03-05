@@ -52,9 +52,25 @@
 	<string name="edit_card__deck">Deck:</string>
 	<string name="edit_card__add_translation">add another translation…</string>
 
+	<!-- Create domain -->
+	<string name="create_domain__title">Create new domain</string>
+	<string name="create_domain__label_first_start__welcome">Welcome!</string>
+	<string name="create_domain__label_first_start__text">To proceed, we only need to know which language you are
+	going to study with Coriolan, and which language you will use to translate the new words into!</string>
+	<string name="create_domain__specify_original_lang">The language you learn:</string>
+	<string name="create_domain__specify_original_lang_hint">(e.g. Chinese)</string>
+	<string name="create_domain__specify_translations_lang">Your native language (or the one you will use for translations):</string>
+	<string name="create_domain__specify_translations_lang_hint">(e.g. English)</string>
+	<string name="create_domain__verify__empty_original">Please specify the language you learn</string>
+	<string name="create_domain__verify__empty_translations">Please specify the language you will use for translations</string>
+	<string name="create_domain__error__already_exists">Domain like this already exists</string>
+	<string name="create_domain__created">Domain created successfully</string>
+
 	<!-- General -->
 	<string name="button_submit">Submit</string>
 	<string name="button_add">Add</string>
 	<string name="button_save">Save</string>
+	<string name="button_create">Create</string>
+	<string name="button_next">Next</string>
 	<string name="button_cancel">Cancel</string>
 </resources>

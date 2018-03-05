@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.LanguagesRegistry
+import com.ashalmawia.coriolan.data.DecksRegistry
 import kotlinx.android.synthetic.main.edit.*
 
 class EditFragment : Fragment() {
@@ -36,7 +36,8 @@ class EditFragment : Fragment() {
     }
 
     private fun addNewCards(context: Context) {
-        val intent = AddEditCardActivity.create(context, LanguagesRegistry.original(), LanguagesRegistry.translations())
+        val domain = DecksRegistry.get().domain
+        val intent = AddEditCardActivity.create(context, domain)
         context.startActivity(intent)
     }
 }

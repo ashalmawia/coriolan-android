@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.model
 
-import com.ashalmawia.coriolan.data.LanguagesRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.scheduler.State
@@ -9,8 +8,8 @@ import org.joda.time.DateTime
 // TODO: go over it's default usages and consider adding params and checking them
 fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
 
-fun langOriginal() = LanguagesRegistry.original()
-fun langTranslations() = LanguagesRegistry.translations()
+fun langOriginal() = Language(1L, "English")
+fun langTranslations() = Language(2L, "Russian")
 
 fun addMockLanguages(storage: Repository) {
     storage.addLanguage(langOriginal().value)
@@ -22,7 +21,7 @@ fun mockCardData(
         translations: List<String>,
         deckId: Long = 1L,
         contentType: ExpressionType = ExpressionType.WORD
-) = CardData(original, langOriginal(), translations, langTranslations(), deckId, contentType)
+) = CardData(original, translations, deckId, contentType)
 
 fun mockCardData(
         original: String = "shrimp",
@@ -39,19 +38,19 @@ private var domainId = 1L
 fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())
 
 private var cardId = 1L
-fun mockCard(state: State = mockState()): Card {
+fun mockCard(state: State = mockState(), domain: Domain = mockDomain()): Card {
     return Card(
             cardId++,
             deckId,
-            1L,
-            mockExpression(language = LanguagesRegistry.original()),
-            listOf(mockExpression(language = LanguagesRegistry.translations()), mockExpression(language = LanguagesRegistry.translations())),
+            domain,
+            mockExpression(language = domain.langOriginal()),
+            listOf(mockExpression(language = domain.langTranslations()), mockExpression(language = domain.langTranslations())),
             state
     )
 }
 
 private var deckId = 1L
-fun mockDeck(name: String = "My deck") = Deck(deckId++, 1L, name)
+fun mockDeck(name: String = "My deck", domain: Domain = mockDomain()) = Deck(deckId++, domain, name)
 
 fun mockState(period: Int = 0): State {
     return State(DateTime.now(), period)

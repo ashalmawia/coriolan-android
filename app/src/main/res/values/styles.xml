@@ -29,9 +29,6 @@
 		<item name="android:textColor">@color/pending_item__foreground</item>
 	</style>
 
-	<style name="EditCardSubtitle" parent="Coriolan.Text.Caption">
-		<item name="android:layout_marginLeft">@dimen/spacing__tiny</item>
-		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
-	</style>
+	<style name="EditCardSubtitle" parent="Coriolan.Text.Caption.Label" />
 
 </resources>

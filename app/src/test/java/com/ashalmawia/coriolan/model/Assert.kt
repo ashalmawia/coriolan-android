@@ -18,28 +18,34 @@ fun assertExpressionCorrect(expression: Expression?, value: String, type: Expres
 fun assertDomainCorrect(domain: Domain?, name: String, langOriginal: Language, langTranslations: Language) {
     assertNotNull("domain exists", domain)
     assertEquals("domain name is correct", name, domain!!.name)
-    assertEquals("original language is correct", langOriginal, domain.langOriginal)
-    assertEquals("translations language is correct", langTranslations, domain.langTranslations)
+    assertEquals("original language is correct", langOriginal, domain.langOriginal())
+    assertEquals("translations language is correct", langTranslations, domain.langTranslations())
 }
 
-fun assertCardCorrect(card: Card?, data: CardData) {
+fun assertCardCorrect(card: Card?, data: CardData, domain: Domain) {
+    _assertCardCorrect(card, data, domain.langOriginal(), domain.langTranslations())
+}
+fun assertCardCorrectReverse(card: Card?, data: CardData, domain: Domain) {
+    _assertCardCorrect(card, data, domain.langTranslations(), domain.langOriginal())
+}
+private fun `_assertCardCorrect`(card: Card?, data: CardData, langOriginal: Language, langTranslations: Language) {
     assertNotNull("card is created", card)
-    assertExpressionCorrect(card!!.original, data.original, data.contentType, data.originalLang)
+    assertExpressionCorrect(card!!.original, data.original, data.contentType, langOriginal)
     assertEquals("translations count is correct", data.translations.size, card.translations.size)
     for (i in 0 until card.translations.size) {
-        assertExpressionCorrect(card.translations[i], data.translations[i], data.contentType, data.translationsLang)
+        assertExpressionCorrect(card.translations[i], data.translations[i], data.contentType, langTranslations)
     }
 }
 
-fun assertDeckCorrect(deck: Deck?, name: String, domainId: Long) {
+fun assertDeckCorrect(deck: Deck?, name: String, domain: Domain) {
     assertNotNull("deck is created", deck)
     assertEquals("deck name is correct", name, deck!!.name)
-    assertEquals("domain id is correct", domainId, deck.domainId)
+    assertEquals("domain id is correct", domain, deck.domain)
 }
 
-fun assertDeckCardsCorrect(cards: List<Card>, data: List<CardData>) {
+fun assertDeckCardsCorrect(cards: List<Card>, data: List<CardData>, domain: Domain) {
     assertEquals("cards count is correct", data.size, cards.size)
     for (i in 0 until cards.size) {
-        assertCardCorrect(cards[i], data[i])
+        assertCardCorrect(cards[i], data[i], domain)
     }
 }

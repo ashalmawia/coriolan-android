@@ -1,12 +1,18 @@
 package com.ashalmawia.coriolan.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
-import kotlinx.android.synthetic.main.app_toolbar.*
 import kotlinx.android.synthetic.main.domain_activity.*
 
 private const val TAB_LEARNING = 0
@@ -19,6 +25,8 @@ private const val FRAGMENT_EDIT = "fragment_edit"
 private const val FRAGMENT_STATISTICS = "fragment_statistics"
 private const val FRAGMENT_SETTINGS = "fragment_settings"
 
+private const val EXTRA_DOMAIN_ID = "domain_id"
+
 class DomainActivity : BaseActivity() {
 
     private val TAG = DomainActivity::class.java.simpleName
@@ -27,11 +35,22 @@ class DomainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.domain_activity)
 
-        setSupportActionBar(toolbar)
-        toolbar.setLogo(R.drawable.ic_logo_action_bar_with_text)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        setUpToolbarWithLogo()
+
+        if (!intent.hasExtra(EXTRA_DOMAIN_ID)) {
+            throw IllegalStateException("missing domain id")
+        }
+
+        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        initializeDecksRegistry(domainId)
 
         setUpBottomBarNavigation()
+    }
+
+    private fun initializeDecksRegistry(domainId: Long) {
+        val domain = DomainsRegistry.domain() ?: throw IllegalStateException("domain was not initialized")
+        // TODO: handle actual domain when we get multiple domains
+        DecksRegistry.initialize(this, Preferences.get(this), domain, Repository.get(this))
     }
 
     private fun setUpBottomBarNavigation() {
@@ -95,5 +114,14 @@ class DomainActivity : BaseActivity() {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_SETTINGS)
                 .commit()
+    }
+
+    companion object {
+
+        fun intent(context: Context, domain: Domain): Intent {
+            val intent = Intent(context, DomainActivity::class.java)
+            intent.putExtra(EXTRA_DOMAIN_ID, domain.id)
+            return intent
+        }
     }
 }

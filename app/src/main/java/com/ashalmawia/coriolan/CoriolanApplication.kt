@@ -1,10 +1,7 @@
 package com.ashalmawia.coriolan
 
 import android.app.Application
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
-import com.ashalmawia.coriolan.data.LanguagesRegistry
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.errors.Errors
@@ -22,9 +19,7 @@ open class CoriolanApplication : Application() {
 
         todayManager()
 
-        languages()
         domainsRegistry()
-        deckRegistry()
     }
 
     private fun crashlytics() {
@@ -43,14 +38,5 @@ open class CoriolanApplication : Application() {
 
     protected open fun domainsRegistry() {
         DomainsRegistry.preinitialize(Repository.get(this))
-    }
-
-    protected open fun deckRegistry() {
-        DecksRegistry.initialize(this, Preferences.get(this), DomainsRegistry.domain(), Repository.get(this))
-    }
-
-    protected open fun languages() {
-        LanguagesRegistry.createStubOriginalAndTranslationsIfNeeded(this)
-        LanguagesRegistry.preinitialize(this)
     }
 }

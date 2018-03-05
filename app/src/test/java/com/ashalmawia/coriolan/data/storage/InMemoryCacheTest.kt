@@ -70,87 +70,91 @@ class InMemoryCacheTest {
     @Test
     fun `test__addCard`() {
         // given
+        val domain = mockDomain()
         val data = mockCardData("shrimp", "креветка")
 
         // when
-        val card = addMockCard(cache, data)
+        val card = addMockCard(cache, data, domain)
 
         // then
         assertNotNull("card is added", card)
-        assertCardCorrect(card, data)
+        assertCardCorrect(card, data, domain)
 
         // when
-        val cached = cache.cardById(card.id)
+        val cached = cache.cardById(card.id, domain)
 
         // then
         assertNotNull("card is found", cached)
-        assertCardCorrect(cached, data)
+        assertCardCorrect(cached, data, domain)
         // cardById() must not be called as the value is expected to be cached while adding
-        verify(inner, never()).cardById(any())
+        verify(inner, never()).cardById(any(), any())
     }
 
     @Test
     fun `test__addDeck`() {
         // given
         val name = "My deck"
-        val domainId = 1L
+        val domain = mockDomain()
 
         // when
-        val deck = cache.addDeck(domainId, name)
+        val deck = cache.addDeck(domain, name)
 
         // then
         assertNotNull("deck is added", deck)
-        assertDeckCorrect(deck, name, domainId)
+        assertDeckCorrect(deck, name, domain)
 
         // when
-        val cached = cache.deckById(deck.id)
+        val cached = cache.deckById(deck.id, domain)
 
         // then
         assertNotNull("deck is found", cached)
-        assertDeckCorrect(cached, name, domainId)
+        assertDeckCorrect(cached, name, domain)
         // expressionById() must not be called as the value is expected to be cached while adding
-        verify(inner, never()).deckById(deck.id)
+        verify(inner, never()).deckById(deck.id, domain)
     }
 
     @Test
     fun `test__deckById`() {
         // given
         val deck = mockDeck()
+        val domain = deck.domain
+
         inner.decks.add(deck)
-        cache.deckById(deck.id)     // caching is expected to happen here
+        cache.deckById(deck.id, domain)     // caching is expected to happen here
 
         // when
-        val cached = cache.deckById(deck.id)
+        val cached = cache.deckById(deck.id, domain)
 
         // then
         assertNotNull("deck is found", cached)
-        assertDeckCorrect(cached, deck.name, deck.domainId)
+        assertDeckCorrect(cached, deck.name, domain)
         // deckById() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
-        verify(inner, times(1)).allDecks()
+        verify(inner, times(1)).allDecks(domain)
     }
 
     @Test
     fun `test__allDecks`() {
         // given
+        val domain = mockDomain()
         val decks = mutableListOf<Deck>()
         for (i in 0 until 5) {
-            decks.add(mockDeck())
+            decks.add(mockDeck(domain = domain))
         }
         inner.decks.addAll(decks)
-        cache.allDecks()        // caching is expected to happen here
+        cache.allDecks(domain)        // caching is expected to happen here
 
         // when
-        val cached = cache.allDecks()
+        val cached = cache.allDecks(domain)
 
         // then
         assertEquals("number of decks is correct", decks.size, cached.size)
         for (i in 0 until decks.size) {
-            assertDeckCorrect(cached[i], decks[i].name, decks[i].domainId)
+            assertDeckCorrect(cached[i], decks[i].name, domain)
         }
         // allDecks() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
-        verify(inner, times(1)).allDecks()
+        verify(inner, times(1)).allDecks(domain)
     }
 
     @Test
@@ -170,25 +174,26 @@ class InMemoryCacheTest {
     fun `test__updateCardState__updatedStateIsCachedCorrectly`() {
         // given
         val cardData = mockCardData()
+        val domain = mockDomain()
 
-        val card = addMockCard(cache, cardData)
+        val card = addMockCard(cache, cardData, domain)
 
         val state = mockState()
 
         // when
         cache.updateCardState(card, state, exercise)
-        val cached = cache.cardById(card.id)
+        val cached = cache.cardById(card.id, domain)
 
         // then
         assertEquals("state is updated", state, cached!!.state)
-        verify(inner, never()).cardById(any())
+        verify(inner, never()).cardById(any(), any())
     }
 
     @Test
     fun `test__cardsDueDate`() {
         // given
-        val domainId = 1L
-        val deck = cache.addDeck(domainId, "name")
+        val domain = mockDomain()
+        val deck = cache.addDeck(domain, "name")
         val card = addMockCard(cache, mockCardData())
 
         // when

@@ -64,18 +64,18 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return inner.allDomains()
     }
 
-    override fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card {
-        val card = inner.addCard(domainId, deckId, original, translations)
+    override fun addCard(domain: Domain, deckId: Long, original: Expression, translations: List<Expression>): Card {
+        val card = inner.addCard(domain, deckId, original, translations)
         cards.put(card.id, card)
         return card
     }
 
-    override fun cardById(id: Long): Card? {
+    override fun cardById(id: Long, domain: Domain): Card? {
         if (cards.containsKey(id)) {
             return cards[id]
         }
 
-        val value = inner.cardById(id)
+        val value = inner.cardById(id, domain)
         cards.put(id, value)
         return value
     }
@@ -91,13 +91,13 @@ class InMemoryCache(private val inner: Repository) : Repository {
         cards.remove(card.id)
     }
 
-    override fun allDecks(): List<Deck> {
-        loadDecksIfNeeded()
+    override fun allDecks(domain: Domain): List<Deck> {
+        loadDecksIfNeeded(domain)
         return allDecks.values.filterNotNull().toList()
     }
 
-    override fun deckById(id: Long): Deck? {
-        loadDecksIfNeeded()
+    override fun deckById(id: Long, domain: Domain): Deck? {
+        loadDecksIfNeeded(domain)
 
         return if (allDecks.containsKey(id)) {
             allDecks[id]
@@ -112,17 +112,17 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return result
     }
 
-    override fun addDeck(domainId: Long, name: String): Deck {
-        loadDecksIfNeeded()
+    override fun addDeck(domain: Domain, name: String): Deck {
+        loadDecksIfNeeded(domain)
 
-        val deck = inner.addDeck(domainId, name)
+        val deck = inner.addDeck(domain, name)
         allDecks.put(deck.id, deck)
         return deck
     }
 
-    private fun loadDecksIfNeeded() {
+    private fun loadDecksIfNeeded(domain: Domain) {
         if (allDecks.isEmpty()) {
-            allDecks.putAll(inner.allDecks().associateBy { it.id })
+            allDecks.putAll(inner.allDecks(domain).associateBy { it.id })
         }
     }
 

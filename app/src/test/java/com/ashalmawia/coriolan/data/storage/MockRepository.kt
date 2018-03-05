@@ -51,11 +51,11 @@ class MockRepository : Repository {
     }
 
     val cards = mutableListOf<Card>()
-    override fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card {
+    override fun addCard(domain: Domain, deckId: Long, original: Expression, translations: List<Expression>): Card {
         val card = Card(
                 cards.size + 1L,
-                domainId,
                 deckId,
+                domain,
                 original,
                 translations,
                 emptyState()
@@ -63,7 +63,7 @@ class MockRepository : Repository {
         cards.add(card)
         return card
     }
-    override fun cardById(id: Long): Card? {
+    override fun cardById(id: Long, domain: Domain): Card? {
         return cards.find { it.id == id }
     }
     override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
@@ -71,7 +71,7 @@ class MockRepository : Repository {
             return null
         }
 
-        val updated = Card(card.id, deckId, card.domainId, original, translations, card.state)
+        val updated = Card(card.id, deckId, card.domain, original, translations, card.state)
         cards.remove(card)
         cards.add(updated)
         return updated
@@ -81,17 +81,17 @@ class MockRepository : Repository {
     }
 
     val decks = mutableListOf<Deck>()
-    override fun allDecks(): List<Deck> {
+    override fun allDecks(domain: Domain): List<Deck> {
         return decks
     }
-    override fun deckById(id: Long): Deck? {
+    override fun deckById(id: Long, domain: Domain): Deck? {
         return decks.find { it.id == id }
     }
     override fun cardsOfDeck(deck: Deck): List<Card> {
         return cards.filter { it.deckId == deck.id }
     }
-    override fun addDeck(domainId: Long, name: String): Deck {
-        val deck = Deck(decks.size + 1L, domainId, name)
+    override fun addDeck(domain: Domain, name: String): Deck {
+        val deck = Deck(decks.size + 1L, domain, name)
         decks.add(deck)
         return deck
     }

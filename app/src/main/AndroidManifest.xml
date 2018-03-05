@@ -9,9 +9,13 @@
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:supportsRtl="true"
-		android:theme="@style/AppTheme">
+		android:theme="@style/Coriolan.Theme">
 
-		<activity android:name=".ui.DomainActivity">
+		<activity
+			android:name=".ui.StartActivity"
+			android:noHistory="true"
+			android:theme="@style/Coriolan.Theme.Splash">
+
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.VIEW"/>
@@ -20,6 +24,8 @@
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
+
+		<activity android:name=".ui.DomainActivity" />
 
 		<activity
 			android:name=".CardActivity"
@@ -35,6 +41,10 @@
 			android:name=".ui.AddEditCardActivity"
 			android:parentActivityName=".ui.DomainActivity"
 			/>
+
+		<activity
+			android:name=".ui.CreateDomainActivity"
+			android:parentActivityName=".ui.DomainActivity"/>
 
 		<meta-data
 			android:name="io.fabric.ApiKey"

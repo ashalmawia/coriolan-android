@@ -40,21 +40,21 @@ interface Repository {
 
     fun allDomains(): List<Domain>
 
-    fun addCard(domainId: Long, deckId: Long, original: Expression, translations: List<Expression>): Card
+    fun addCard(domain: Domain, deckId: Long, original: Expression, translations: List<Expression>): Card
 
-    fun cardById(id: Long): Card?
+    fun cardById(id: Long, domain: Domain): Card?
 
     fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card?
 
     fun deleteCard(card: Card)
 
-    fun allDecks(): List<Deck>
+    fun allDecks(domain: Domain): List<Deck>
 
-    fun deckById(id: Long): Deck?
+    fun deckById(id: Long, domain: Domain): Deck?
 
     fun cardsOfDeck(deck: Deck): List<Card>
 
-    fun addDeck(domainId: Long, name: String): Deck
+    fun addDeck(domain: Domain, name: String): Deck
 
     fun updateCardState(card: Card, state: State, exercise: Exercise): Card
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical">
+
+	<include layout="@layout/app_toolbar"/>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="@dimen/spacing__medium"
+		android:paddingRight="@dimen/spacing__medium"
+		android:paddingTop="@dimen/spacing__very_large"
+		android:paddingBottom="@dimen/spacing__very_large">
+
+		<TextView
+			android:id="@+id/welcomeLabelTitle"
+			style="@style/Coriolan.Text.Title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="@dimen/spacing__very_large"
+			android:layout_marginEnd="@dimen/spacing__very_large"
+			android:layout_marginBottom="@dimen/spacing__medium"
+			android:text="@string/create_domain__label_first_start__welcome"
+			android:gravity="center"/>
+
+		<TextView
+			android:id="@+id/welcomeLabelSubtitle"
+			style="@style/Coriolan.Text.Subtitle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="@dimen/spacing__very_large"
+			android:layout_marginEnd="@dimen/spacing__very_large"
+			android:layout_marginBottom="@dimen/spacing__very_large"
+			android:text="@string/create_domain__label_first_start__text"
+			android:gravity="center"/>
+
+		<TextView
+			style="@style/Coriolan.Text.Caption.Label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:labelFor="@id/inputOriginalLang"
+			android:text="@string/create_domain__specify_original_lang"/>
+
+		<EditText
+			android:id="@+id/inputOriginalLang"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:inputType="text"
+			android:maxLines="1"
+			android:hint="@string/create_domain__specify_original_lang_hint"/>
+
+		<TextView
+			style="@style/Coriolan.Text.Caption.Label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/spacing__medium"
+			android:labelFor="@id/inputTranslationsLang"
+			android:text="@string/create_domain__specify_translations_lang"/>
+
+		<EditText
+			android:id="@+id/inputTranslationsLang"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:inputType="text"
+			android:maxLines="1"
+			android:hint="@string/create_domain__specify_translations_lang_hint"/>
+
+		<LinearLayout
+			style="?attr/buttonBarStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end"
+			android:layout_marginTop="@dimen/spacing__large"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/buttonCancel"
+				style="?attr/buttonBarButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_cancel"/>
+
+			<Button
+				android:id="@+id/buttonOk"
+				style="?attr/buttonBarButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_create"/>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</LinearLayout>

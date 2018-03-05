@@ -3,13 +3,12 @@ package com.ashalmawia.coriolan.data.importer.file
 import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.LanguagesRegistry
 import com.ashalmawia.coriolan.data.importer.DataImporter
 import java.io.File
 
 class ImporterFromFile : DataImporter {
 
-    val parser = FileParser(DecksRegistry.get(), LanguagesRegistry)
+    private val parser = FileParser(DecksRegistry.get())
 
     override fun label(): Int {
         return R.string.import_from_file
@@ -29,7 +28,7 @@ class ImporterFromFile : DataImporter {
 
         try {
             val data = parser.parseFile(file)
-            ongoing().onData(context, data)
+            ongoing().onData(data)
         } catch (e: ParsingException) {
             ongoing().onError("Failed to parse file, line[" + e.line + "]")
             e.printStackTrace()

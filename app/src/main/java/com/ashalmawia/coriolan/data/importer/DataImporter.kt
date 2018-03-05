@@ -19,9 +19,7 @@ interface DataImporter {
 
 data class CardData(
         val original: String,
-        val originalLang: Language,
         val translations: List<String>,
-        val translationsLang: Language,
         val deckId: Long,
         val contentType: ExpressionType
 )

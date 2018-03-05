@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,17 +12,14 @@ import android.widget.TextView
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.ExpressionType
-import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.errors.Errors
 import kotlinx.android.synthetic.main.add_edit_card.*
 
-private const val EXTRA_LANG_ORIGINAL = "lang_original"
-private const val EXTRA_LANG_TRANSLATIONS = "lang_translation"
+private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val EXTRA_CARD_ID = "card_id"
 
 private const val KEY_ORIGINAL = "original"
@@ -34,10 +30,9 @@ class AddEditCardActivity : BaseActivity() {
 
     private val repository = Repository.get(this)
 
-    private lateinit var originalLang: Language
-    private lateinit var translationsLang: Language
-
     private var card: Card? = null
+
+    private lateinit var domain: Domain
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,38 +49,29 @@ class AddEditCardActivity : BaseActivity() {
         get() = card != null
 
     private fun extractData() {
+        if (!intent.hasExtra(EXTRA_DOMAIN_ID)) {
+            throw IllegalStateException("activity was not properly initialized - missing domain id")
+        }   // todo: use it
+
+        domain = DomainsRegistry.domain()!!
+
         if (intent.hasExtra(EXTRA_CARD_ID)) {
             extractDataEditCard()
-        } else {
-            extractDataNewCard()
         }
     }
 
     private fun extractDataEditCard() {
         val cardId = intent.getLongExtra(EXTRA_CARD_ID, -1)
-        val card = repository.cardById(cardId) ?: throw IllegalStateException("card with id[$cardId] does not exist in the database")
-        originalLang = card.original.language
+        val card = repository.cardById(cardId, domain) ?: throw IllegalStateException("card with id[$cardId] does not exist in the database")
 
         if (card.translations.isEmpty()) throw IllegalStateException("card with id[$cardId] has no translations")
-        translationsLang = card.translations[0].language
 
         this.card = card
     }
 
-    private fun extractDataNewCard() {
-        val originalLang = repository.languageById(intent.getLongExtra(EXTRA_LANG_ORIGINAL, -1))
-        val translationsLang = repository.languageById(intent.getLongExtra(EXTRA_LANG_TRANSLATIONS, -1))
-        if (originalLang == null || translationsLang == null) {
-            throw IllegalStateException("activity was not properly initialized")
-        }
-
-        this.originalLang = originalLang
-        this.translationsLang = translationsLang
-    }
-
     private fun initialize() {
-        labelOriginal.text = getString(R.string.edit_card__original, originalLang.value)
-        labelTranslations.text = getString(R.string.edit_card__translations, translationsLang.value)
+        labelOriginal.text = getString(R.string.edit_card__original, domain.langOriginal().value)
+        labelTranslations.text = getString(R.string.edit_card__translations, domain.langTranslations().value)
 
         findViewById<AddEditCardItemView>(R.id.original).canBeDeleted = false
         original.removeListener = { onRemoveClicked(it) }
@@ -155,7 +141,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun decks(): List<Deck> {
-        return repository.allDecks()
+        return repository.allDecks(domain)
     }
 
     private fun onSaveClicked() {
@@ -183,11 +169,6 @@ class AddEditCardActivity : BaseActivity() {
         finishOk()
     }
 
-    private fun finishOk() {
-        setResult(Activity.RESULT_OK)
-        finish()
-    }
-
     private fun collectCardDataWithValidation(): CardData? {
         val deckPosition = deckSelector.selectedItemPosition
         val original = original.input
@@ -201,9 +182,7 @@ class AddEditCardActivity : BaseActivity() {
 
         return CardData(
                 original,
-                originalLang,
                 translations.asList(),
-                translationsLang,
                 deck.id,
                 ExpressionType.WORD
         )
@@ -275,10 +254,9 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     companion object {
-        fun create(context: Context, originalLang: Language, translationsLang: Language): Intent {
+        fun create(context: Context, domain: Domain): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
-            intent.putExtra(EXTRA_LANG_ORIGINAL, originalLang.id)
-            intent.putExtra(EXTRA_LANG_TRANSLATIONS, translationsLang.id)
+            intent.putExtra(EXTRA_DOMAIN_ID, domain.id)
             return intent
         }
 

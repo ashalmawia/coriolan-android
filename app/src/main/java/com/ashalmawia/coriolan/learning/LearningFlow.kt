@@ -72,7 +72,7 @@ class LearningFlow(
 
     fun onCurrentCardUpdated(context: Context) {
         val old = card()
-        val updated = repository(context).cardById(old.id)!!
+        val updated = repository(context).cardById(old.id, deck.domain)!!
         assignment.onCardUpdated(old, updated)
     }
 

@@ -26,13 +26,8 @@ class DomainsRegistryTest {
         registry.preinitialize(repository)
 
         // then
-        assertEquals(1, repository.allDomains().size)
-
-        // when
-        val domain = repository.domains[0]
-
-        // then
-        assertEquals(domain, registry.domain())
+        assertEquals(0, repository.allDomains().size)
+        assertNull(registry.domain())
     }
 
     @Test
@@ -45,6 +40,7 @@ class DomainsRegistryTest {
         val default = registry.domain()
 
         // then
+        assertNotNull(default)
         assertEquals(domain, default)
         assertEquals(1, repository.allDomains().size)
     }

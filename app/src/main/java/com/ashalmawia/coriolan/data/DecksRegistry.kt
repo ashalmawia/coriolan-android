@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.*
 
-class DecksRegistry(context: Context, preferences: Preferences, private val domain: Domain, private val repository: Repository) {
+class DecksRegistry(context: Context, preferences: Preferences, val domain: Domain, private val repository: Repository) {
 
     companion object {
         private lateinit var instance: DecksRegistry
@@ -24,9 +24,10 @@ class DecksRegistry(context: Context, preferences: Preferences, private val doma
     private val def: Deck
 
     init {
+        // TODO: must be per domain
         val defaultDeckId = preferences.getDefaultDeckId()
         if (defaultDeckId != null) {
-            def = repository.deckById(defaultDeckId)!!
+            def = repository.deckById(defaultDeckId, domain)!!
         } else {
             def = addDefaultDeck(context, repository)
             preferences.setDefaultDeckId(def.id)
@@ -38,7 +39,7 @@ class DecksRegistry(context: Context, preferences: Preferences, private val doma
     }
 
     fun allDecks(): List<Deck> {
-        return repository.allDecks()
+        return repository.allDecks(domain)
     }
 
     fun addCardToDeck(data: CardData) {
@@ -50,8 +51,8 @@ class DecksRegistry(context: Context, preferences: Preferences, private val doma
     }
 
     fun editCard(card: Card, cardData: CardData): Card? {
-        val original = findOrAddExpression(cardData.original, cardData.contentType, cardData.originalLang)
-        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, cardData.translationsLang) }
+        val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal(card.type))
+        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations(card.type)) }
 
         val updated = repository.updateCard(card, cardData.deckId, original, translations)
 
@@ -81,11 +82,11 @@ class DecksRegistry(context: Context, preferences: Preferences, private val doma
      * 3. reverse: "источник -- spring"
      */
     private fun addCard(cardData: CardData) {
-        val original = findOrAddExpression(cardData.original, cardData.contentType, cardData.originalLang)
-        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, cardData.translationsLang) }
+        val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal())
+        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations()) }
 
-        repository.addCard(domain.id, cardData.deckId, original, translations)
-        translations.forEach { repository.addCard(domain.id, cardData.deckId, it, listOf(original)) }
+        repository.addCard(domain, cardData.deckId, original, translations)
+        translations.forEach { repository.addCard(domain, cardData.deckId, it, listOf(original)) }
     }
 
     private fun findOrAddExpression(value: String, type: ExpressionType, language: Language): Expression {
@@ -94,6 +95,6 @@ class DecksRegistry(context: Context, preferences: Preferences, private val doma
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {
-        return repository.addDeck(domain.id, context.getString(R.string.decks_default))
+        return repository.addDeck(domain, context.getString(R.string.decks_default))
     }
 }
