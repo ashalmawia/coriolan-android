@@ -19,7 +19,7 @@ import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.learning.assignment.Counts
+import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.model.Deck
@@ -31,11 +31,11 @@ class LearningFragment : Fragment(), TodayChangeListener {
 
     private lateinit var exercise: Exercise
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.decks_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.decks_list, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
@@ -58,6 +58,8 @@ class LearningFragment : Fragment(), TodayChangeListener {
     }
 
     private fun initializeList() {
+        val context = context ?: return
+
         decksList.layoutManager = LinearLayoutManager(context)
         decksList.adapter = DecksAdapter(context, exercise)
     }
@@ -95,10 +97,12 @@ class LearningFragment : Fragment(), TodayChangeListener {
     }
 
     private fun increaseDate() {
+        val context = context ?: return
         DebugIncreaseDateActivity.launch(context)
     }
 
     private fun importFromFile() {
+        val context = context ?: return
         DataImportFlow.start(context, DataImportFlow.default(), object : DataImportCallback {
             override fun onSuccess() {
                 fetchData()
@@ -116,7 +120,7 @@ class LearningFragment : Fragment(), TodayChangeListener {
     }
 }
 
-class DecksAdapter(private val context: Context, private val exercise: Exercise) : RecyclerView.Adapter<DeckViewHolder>() {
+private class DecksAdapter(private val context: Context, private val exercise: Exercise) : RecyclerView.Adapter<DeckViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
     private val counts: MutableMap<Long, Counts> = mutableMapOf()

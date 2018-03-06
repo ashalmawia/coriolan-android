@@ -2,22 +2,27 @@ package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.model.Card
 import org.joda.time.DateTime
+import java.util.*
 
-abstract class Assignment(
-        val date: DateTime
-) {
+open class Assignment(val date: DateTime, cards: List<Card>) {
+    private val queue = LinkedList(cards)
+
     var current: Card? = null
         protected set
 
     val pendingCounter = lazy(LazyThreadSafetyMode.NONE, { createPendingCounter() })
 
-    protected abstract fun getNext(): Card
+    fun hasNext(): Boolean {
+        return queue.size > 0
+    }
 
-    abstract fun hasNext(): Boolean
-    abstract fun reschedule(card: Card)
+    fun reschedule(card: Card) {
+        // todo: reschedule not to the very end https://trello.com/c/02EhW776
+        queue.offer(card)
+    }
 
     fun delete(card: Card) {
-        innerDelete(card)
+        queue.remove(card)
         pendingCounter.value.onCardDeleted(card)
     }
 
@@ -26,27 +31,33 @@ abstract class Assignment(
         return PendingCounter.createFrom(counts)
     }
 
-    protected abstract fun innerDelete(card: Card)
-
     fun next(): Card {
         val next = getNext()
         current = next
-        onCurrent(next)
         return next
+    }
+
+    private fun getNext(): Card {
+        return queue.poll() ?: throw IllegalStateException("queue is empty")
     }
 
     fun onCardUpdated(old: Card, new: Card) {
         if (current == old) {
             current = new
         } else {
-            onCardUpdatedInner(old, new)
+            if (queue.contains(old)) {
+                queue.remove(old)
+                queue.offer(new)
+            }
         }
     }
 
-    protected open fun onCurrent(card: Card) {
-        // for overriding
+    private fun cards(): List<Card> {
+        val cur = current
+        return if (cur != null) {
+            queue.plus(cur)
+        } else {
+            queue.toList()
+        }
     }
-
-    protected abstract fun cards(): List<Card>
-    protected abstract fun onCardUpdatedInner(old: Card, new: Card)
 }

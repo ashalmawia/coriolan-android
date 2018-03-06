@@ -4,7 +4,7 @@
 	<style name="Coriolan" />
 
 	<!-- Base application theme. -->
-	<style name="Coriolan.Theme" parent="Theme.AppCompat.Light.NoActionBar">
+	<style name="Coriolan.Theme" parent="PreferenceFixTheme.Light.NoActionBar">
 		<!-- Customize your theme here. -->
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>

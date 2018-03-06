@@ -6,17 +6,12 @@ import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.toExpressionType
+import com.ashalmawia.coriolan.util.getDate
+import com.ashalmawia.coriolan.util.getLong
+import com.ashalmawia.coriolan.util.getString
+import com.ashalmawia.coriolan.util.getInt
+import com.ashalmawia.coriolan.util.isNull
 import org.joda.time.DateTime
-
-private fun Cursor.isNull(name: String, alias: String? = null): Boolean { return isNull(getColumnIndexOrThrow(name.from(alias))) }
-
-private fun Cursor.getString(name: String, alias: String?): String { return getString(getColumnIndexOrThrow(name.from(alias))) }
-private fun Cursor.getInt(name: String, alias: String?): Int { return getInt(getColumnIndexOrThrow(name.from(alias))) }
-private fun Cursor.getLong(name: String, alias: String?): Long { return getLong(getColumnIndexOrThrow(name.from(alias))) }
-private fun Cursor.getDate(column: String, alias: String? = null): DateTime {
-    val longValue = getLong(column, alias)
-    return DateTime(longValue)
-}
 
 fun Cursor.getValue(alias: String? = null): String { return getString(SQLITE_COLUMN_VALUE, alias) }
 fun Cursor.getLangValue(alias: String? = null): String { return getString(SQLITE_COLUMN_LANG_VALUE, alias) }
@@ -24,7 +19,7 @@ fun Cursor.getName(alias: String? = null): String { return getString(SQLITE_COLU
 
 fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID, alias) }
 fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }
-fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
+//fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
 fun Cursor.getFrontId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_FRONT_ID, alias) }
 fun Cursor.getExpressionId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID, alias) }
 

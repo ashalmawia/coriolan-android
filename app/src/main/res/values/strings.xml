@@ -66,6 +66,15 @@
 	<string name="create_domain__error__already_exists">Domain like this already exists</string>
 	<string name="create_domain__created">Domain created successfully</string>
 
+	<!-- Settings -->
+	<string name="settings__title">Settings</string>
+	<string name="settings__category__daily_limits">Daily limits</string>
+	<string name="settings_daily_limit_use">Limit the maximum daily amount of new and review cards</string>
+	<string name="settings__daily_limit_new_cards">New cards per day</string>
+	<string name="settings__daily_limit_review">Reviews per day</string>
+	<string name="settings__daily_limit_no_limit">No limit</string>
+	<string name="settings__daily_limit_leave_blank">Enter the maximum amount of cards to study per day, or leave the field blank to have no limit</string>
+
 	<!-- General -->
 	<string name="button_submit">Submit</string>
 	<string name="button_add">Add</string>

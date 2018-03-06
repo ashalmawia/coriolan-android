@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.importer.file
 import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.importer.DataImporter
 import java.io.File
 
@@ -26,15 +27,23 @@ class ImporterFromFile : DataImporter {
             return
         }
 
-        try {
-            val data = parser.parseFile(file)
+        val data = parseDataSafe(file)
+        if (data != null) {
             ongoing().onData(data)
+        }
+    }
+
+    private fun parseDataSafe(file: File): List<CardData>? {
+        try {
+            return parser.parseFile(file)
         } catch (e: ParsingException) {
             ongoing().onError("Failed to parse file, line[" + e.line + "]")
             e.printStackTrace()
+            return null
         } catch (e: Exception) {
             ongoing().onError("Error reading the file")
             e.printStackTrace()
+            return null
         }
     }
 }

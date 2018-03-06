@@ -1,13 +1,15 @@
 package com.ashalmawia.coriolan.learning
 
 import android.content.Context
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
-import com.ashalmawia.coriolan.learning.assignment.Counts
-import com.ashalmawia.coriolan.learning.assignment.RandomAssignment
-import com.ashalmawia.coriolan.learning.assignment.StraightForwardAssignment
+import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.learning.mutation.MutationRegistry
 import com.ashalmawia.coriolan.learning.scheduler.Scheduler
 import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
@@ -26,7 +28,7 @@ class LearningFlow(
     var listener: FlowListener? = null
 
     fun start(context: Context) {
-        assignment = createAssignment(repository(context), random, exercise, deck)
+        assignment = createAssignment(repository(context), Preferences.get(context), Journal.get(context), random, exercise, deck)
         showNextOrComplete(context)
     }
 
@@ -58,6 +60,8 @@ class LearningFlow(
         val card = card()
         assignment.pendingCounter.value.onCardWrong(card)
 
+        recordCardStudied(card.state, journal(context), false)
+
         val state = scheduler.wrong(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
     }
@@ -66,8 +70,29 @@ class LearningFlow(
         val card = card()
         assignment.pendingCounter.value.onCardCorrect(card)
 
+        recordCardStudied(card.state, journal(context), true)
+
         val state = scheduler.correct(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
+    }
+
+    private fun recordCardStudied(state: State, journal: Journal, correct: Boolean) {
+        val date = assignment.date
+        when (state.status) {
+            Status.NEW -> {
+                journal.recordNewCardStudied(date)
+            }
+
+            Status.IN_PROGRESS, Status.LEARNT -> {
+                if (correct) {
+                    journal.recordReviewStudied(date)
+                } else {
+                    journal.recordCardRelearned(date)
+                }
+            }
+
+            Status.RELEARN -> {} // ignore all relearns as if they appear they have been already counted somehow
+        }
     }
 
     fun onCurrentCardUpdated(context: Context) {
@@ -104,21 +129,25 @@ class LearningFlow(
         }
 
         fun peekCounts(context: Context, exercise: Exercise, deck: Deck): Counts {
-            val date = today()
             val repository = repository(context)
-            return repository.cardsDueDateCount(exercise, deck, date)
+            val preferences = Preferences.get(context)
+            return createAssignment(repository, preferences, journal(context), false, exercise, deck).pendingCounter.value
         }
     }
 }
 
-private fun createAssignment(repository: Repository, random: Boolean, exercise: Exercise, deck: Deck): Assignment {
-    // TODO: deck limits or custom options go here
+private fun createAssignment(
+        repository: Repository, preferences: Preferences, journal: Journal, random: Boolean, exercise: Exercise, deck: Deck): Assignment {
     val date = today()
     val cards = repository.cardsDueDate(exercise, deck, date)
-    return if (random) RandomAssignment(date, cards) else StraightForwardAssignment(date, cards)
+
+    val mutations = MutationRegistry.mutations(preferences, journal, date, random)
+    return Assignment(date, mutations.apply(cards))
 }
 
 private fun repository(context: Context) = Repository.get(context)
+
+private fun journal(context: Context) = Journal.get(context)
 
 interface FlowListener {
 

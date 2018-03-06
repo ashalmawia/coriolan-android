@@ -5,8 +5,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.assignment.Counts
-import com.ashalmawia.coriolan.learning.assignment.PendingCounter
 import com.ashalmawia.coriolan.learning.scheduler.*
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
@@ -17,7 +15,7 @@ private val TAG = SqliteStorage::class.java.simpleName
 
 class SqliteStorage(private val context: Context, exercises: List<Exercise>) : Repository {
 
-    private val helper = MySqliteOpenHelper(context, exercises)
+    private val helper = SqliteRepositoryOpenHelper(context, exercises)
 
     override fun addLanguage(value: String): Language {
         val db = helper.writableDatabase
@@ -417,33 +415,6 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         cursor.close()
 
         return cards
-    }
-
-    override fun cardsDueDateCount(exercise: Exercise, deck: Deck, date: DateTime): Counts {
-        val db = helper.readableDatabase
-
-        val cursor = db.rawQuery("""
-            |SELECT *
-            |FROM
-            |   $SQLITE_TABLE_CARDS AS Cards
-            |   LEFT JOIN ${sqliteTableExerciseState(exercise)} AS States
-            |       ON Cards.$SQLITE_COLUMN_ID = States.$SQLITE_COLUMN_CARD_ID
-            |WHERE
-            |   Cards.$SQLITE_COLUMN_DECK_ID = ?
-            |   AND
-            |   (States.$SQLITE_COLUMN_DUE IS NULL OR States.$SQLITE_COLUMN_DUE <= ?)
-        """.trimMargin(),
-                arrayOf(deck.id.toString(), date.timespamp.toString()))
-
-        val states = mutableMapOf<Status, Int>()
-        while (cursor.moveToNext()) {
-            val state = extractState(cursor)
-            states[state.status] = states[state.status]?.plus(1) ?: 1
-        }
-
-        cursor.close()
-
-        return PendingCounter.createFrom(states)
     }
 
     private fun extractState(cursor: Cursor) =

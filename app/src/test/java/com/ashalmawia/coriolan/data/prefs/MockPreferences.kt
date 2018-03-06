@@ -3,25 +3,34 @@ package com.ashalmawia.coriolan.data.prefs
 class MockPreferences : Preferences {
 
     private var defaultDeckId: Long? = null
-    override fun getDefaultDeckId(): Long? {
-        return defaultDeckId
-    }
-
+    override fun getDefaultDeckId(): Long? = defaultDeckId
     override fun setDefaultDeckId(id: Long) {
         defaultDeckId = id
     }
 
-    override fun getOriginalLanguageId(): Long? {
-        return 1L;
+    private var newCardsDailyLimit: Int? = null
+    override fun getNewCardsDailyLimit(): Int? = newCardsDailyLimit
+    override fun setNewCardsDailyLimit(limit: Int) {
+        newCardsDailyLimit = limit
+    }
+    override fun clearNewCardsDailyLimit() {
+        newCardsDailyLimit = null
     }
 
-    override fun setOriginalLanguageId(id: Long) {
+    private var reviewCardsDailyLimit: Int? = null
+    override fun getReviewCardsDailyLimit(): Int? = reviewCardsDailyLimit
+    override fun setReviewCardsDailyLimit(limit: Int) {
+        reviewCardsDailyLimit = limit
+    }
+    override fun clearReviewCardsDailyLimit() {
+        reviewCardsDailyLimit = null
     }
 
-    override fun getTranslationsLanguageId(): Long? {
-        return 1L;
+    private var firstStart: Boolean? = null
+    override fun isFirstStart(): Boolean {
+        return firstStart ?: true
     }
-
-    override fun setTranslationsLanguageId(id: Long) {
+    override fun recordFirstStart() {
+        firstStart = false
     }
 }

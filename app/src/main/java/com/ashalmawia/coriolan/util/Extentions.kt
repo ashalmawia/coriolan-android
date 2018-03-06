@@ -22,3 +22,7 @@ fun TextView.setStartDrawableTint(@ColorRes colorRes: Int) {
     DrawableCompat.setTint(wrap, ContextCompat.getColor(context, colorRes))
     TextViewCompat.setCompoundDrawablesRelative(this, wrap, null, null, null)
 }
+
+fun Int?.orZero(): Int {
+    return this ?: 0
+}

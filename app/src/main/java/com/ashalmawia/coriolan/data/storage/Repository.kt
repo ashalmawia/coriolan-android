@@ -4,7 +4,6 @@ import android.content.Context
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
@@ -59,6 +58,4 @@ interface Repository {
     fun updateCardState(card: Card, state: State, exercise: Exercise): Card
 
     fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card>
-
-    fun cardsDueDateCount(exercise: Exercise, deck: Deck, date: DateTime): Counts
 }

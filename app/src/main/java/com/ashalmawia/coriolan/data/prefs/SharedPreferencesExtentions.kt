@@ -8,3 +8,10 @@ fun SharedPreferences.getLongOrNull(key: String): Long? {
     else
         null
 }
+
+fun SharedPreferences.getIntOrNull(key: String): Int? {
+    return if (contains(key))
+        getInt(key, 0)
+    else
+        null
+}

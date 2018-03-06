@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.scheduler.PERIOD_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.scheduler.State
 import org.joda.time.DateTime
 
@@ -38,9 +39,9 @@ private var domainId = 1L
 fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())
 
 private var cardId = 1L
-fun mockCard(state: State = mockState(), domain: Domain = mockDomain()): Card {
+fun mockCard(state: State = mockState(), domain: Domain = mockDomain(), id: Long = cardId++): Card {
     return Card(
-            cardId++,
+            id,
             deckId,
             domain,
             mockExpression(language = domain.langOriginal()),
@@ -52,6 +53,8 @@ fun mockCard(state: State = mockState(), domain: Domain = mockDomain()): Card {
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain()) = Deck(deckId++, domain, name)
 
-fun mockState(period: Int = 0): State {
-    return State(DateTime.now(), period)
-}
+fun mockState(period: Int = 0) = State(DateTime.now(), period)
+fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)
+fun mockStateRelearn() = mockState(0)
+fun mockStateInProgress() = mockState(5)
+fun mockStateLearnt() = mockState(200)

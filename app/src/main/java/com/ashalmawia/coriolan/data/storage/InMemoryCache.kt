@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.assignment.Counts
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
@@ -137,9 +136,5 @@ class InMemoryCache(private val inner: Repository) : Repository {
             cards[card.id] = card
         }
         return due
-    }
-
-    override fun cardsDueDateCount(exercise: Exercise, deck: Deck, date: DateTime): Counts {
-        return inner.cardsDueDateCount(exercise, deck, date)
     }
 }

@@ -1,18 +1,9 @@
 package com.ashalmawia.coriolan.learning.assignment
 
+import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.model.Card
-
-interface Counts {
-
-    fun countNew(): Int
-    fun countReview(): Int
-    fun countRelearn(): Int
-
-    fun isAnythingPending(): Boolean {
-        return countNew() > 0 || countReview() > 0 || countRelearn() > 0
-    }
-}
+import com.ashalmawia.coriolan.util.orZero
 
 interface PendingCounter : Counts {
 
@@ -24,16 +15,22 @@ interface PendingCounter : Counts {
         fun createFrom(counts: Map<Status, Int>): PendingCounter {
             return PendingCounterImpl(counts)
         }
+        fun createFrom(new: Int, review: Int, relearn: Int): PendingCounter {
+            return PendingCounterImpl(new, review, relearn)
+        }
     }
 }
 
 private class PendingCounterImpl(
-        counts: Map<Status, Int>
+        private var new: Int,
+        private var review: Int,
+        private var relearn: Int
 ) : PendingCounter {
 
-    private var new = or0(counts[Status.NEW])
-    private var review = or0(counts[Status.IN_PROGRESS]) + or0(counts[Status.LEARNT])
-    private var relearn = or0(counts[Status.RELEARN])
+    constructor(counts: Map<Status, Int>) : this(
+            counts[Status.NEW].orZero(),
+            counts[Status.IN_PROGRESS].orZero() + counts[Status.LEARNT].orZero(),
+            counts[Status.RELEARN].orZero())
 
     override fun countNew(): Int {
         return new
@@ -91,8 +88,4 @@ private class PendingCounterImpl(
             }
         }
     }
-}
-
-private fun or0(value: Int?): Int {
-    return value ?: 0
 }

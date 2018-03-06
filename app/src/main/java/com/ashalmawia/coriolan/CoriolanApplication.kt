@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan
 
 import android.app.Application
 import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.errors.Errors
@@ -20,6 +21,8 @@ open class CoriolanApplication : Application() {
         todayManager()
 
         domainsRegistry()
+
+        firstStartJobs()
     }
 
     private fun crashlytics() {
@@ -38,5 +41,9 @@ open class CoriolanApplication : Application() {
 
     protected open fun domainsRegistry() {
         DomainsRegistry.preinitialize(Repository.get(this))
+    }
+
+    protected open fun firstStartJobs() {
+        FirstStart.preinitializeIfFirstStart(Preferences.get(this))
     }
 }

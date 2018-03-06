@@ -15,12 +15,17 @@ interface Preferences {
         }
     }
 
+    fun isFirstStart(): Boolean
+    fun recordFirstStart()
+
     fun getDefaultDeckId(): Long?
     fun setDefaultDeckId(id: Long)
 
-    // temporary, in future should be stored in domain
-    fun getOriginalLanguageId(): Long?
-    fun setOriginalLanguageId(id: Long)
-    fun getTranslationsLanguageId(): Long?
-    fun setTranslationsLanguageId(id: Long)
+    fun getNewCardsDailyLimit(): Int?
+    fun setNewCardsDailyLimit(limit: Int)
+    fun clearNewCardsDailyLimit()
+
+    fun getReviewCardsDailyLimit(): Int?
+    fun setReviewCardsDailyLimit(limit: Int)
+    fun clearReviewCardsDailyLimit()
 }

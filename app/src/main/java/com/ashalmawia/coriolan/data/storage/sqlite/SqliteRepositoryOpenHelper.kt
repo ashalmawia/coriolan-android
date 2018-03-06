@@ -7,11 +7,15 @@ import com.ashalmawia.coriolan.learning.Exercise
 
 private const val SQLITE_VERSION = 1
 
-class MySqliteOpenHelper(context: Context, private val exercises: List<Exercise>)
+class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<Exercise>)
     : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db!!.execSQL("""CREATE TABLE $SQLITE_TABLE_LANGUAGES(
+        if (db == null) {
+            return
+        }
+
+        db.execSQL("""CREATE TABLE $SQLITE_TABLE_LANGUAGES(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
             |$SQLITE_COLUMN_LANG_VALUE TEXT NOT NULL
             |);""".trimMargin()
