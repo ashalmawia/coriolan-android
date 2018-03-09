@@ -105,4 +105,22 @@ abstract class PreferencesTest {
         assertNull(preferences.getReviewCardsDailyLimit())
         assertNull(preferences.getReviewCardsDailyLimit())
     }
+
+    @Test
+    fun `test__cardTypePreference`() {
+        // given
+        val preferences = this.prefereces.value
+        val cardType = CardTypePreference.REVERSE_FIRST
+
+        // then
+        assertNull(preferences.getCardTypePreference())
+        assertNull(preferences.getCardTypePreference())
+
+        // when
+        preferences.setCardTypePreference(cardType)
+
+        // then
+        assertEquals(cardType, preferences.getCardTypePreference())
+        assertEquals(cardType, preferences.getCardTypePreference())
+    }
 }

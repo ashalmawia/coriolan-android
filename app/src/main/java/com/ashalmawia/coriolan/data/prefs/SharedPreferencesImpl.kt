@@ -45,9 +45,23 @@ class SharedPreferencesImpl(context: Context) : Preferences {
     override fun clearReviewCardsDailyLimit() {
         prefs.edit().remove(DAILY_LIMIT_REVIEW_CARDS).apply()
     }
+
+    override fun getCardTypePreference(): CardTypePreference? {
+        val value = prefs.getString(CARDY_TYPE_PREFERENCE, null)
+        return if (value == null) {
+            null
+        } else {
+            CardTypePreference.from(value)
+        }
+    }
+
+    override fun setCardTypePreference(preference: CardTypePreference) {
+        prefs.edit().putString(CARDY_TYPE_PREFERENCE, preference.value).apply()
+    }
 }
 
 private const val IS_FIRST_START = "is_first_start"
 private const val DEFAULT_DECK_ID = "default_deck_id"
 private const val DAILY_LIMIT_NEW_CARDS = "daily_limit_new_cards"
 private const val DAILY_LIMIT_REVIEW_CARDS = "daily_limit_review_cards"
+private const val CARDY_TYPE_PREFERENCE = "card_type_preference"

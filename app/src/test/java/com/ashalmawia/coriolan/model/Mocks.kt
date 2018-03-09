@@ -39,16 +39,23 @@ private var domainId = 1L
 fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())
 
 private var cardId = 1L
-fun mockCard(state: State = mockState(), domain: Domain = mockDomain(), id: Long = cardId++): Card {
+fun mockCard(
+        state: State = mockState(),
+        domain: Domain = mockDomain(),
+        id: Long = cardId++,
+        type: CardType = CardType.FORWARD
+): Card {
     return Card(
             id,
             deckId,
             domain,
-            mockExpression(language = domain.langOriginal()),
-            listOf(mockExpression(language = domain.langTranslations()), mockExpression(language = domain.langTranslations())),
+            mockExpression(language = domain.langOriginal(type)),
+            listOf(mockExpression(language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type))),
             state
     )
 }
+fun mockForwardCard(): Card = mockCard(type = CardType.FORWARD)
+fun mockReverseCard(): Card = mockCard(type = CardType.REVERSE)
 
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain()) = Deck(deckId++, domain, name)

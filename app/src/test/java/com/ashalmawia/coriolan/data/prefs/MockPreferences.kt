@@ -33,4 +33,12 @@ class MockPreferences : Preferences {
     override fun recordFirstStart() {
         firstStart = false
     }
+
+    private var cardType: CardTypePreference? = null
+    override fun getCardTypePreference(): CardTypePreference? {
+        return cardType
+    }
+    override fun setCardTypePreference(preference: CardTypePreference) {
+        cardType = preference
+    }
 }

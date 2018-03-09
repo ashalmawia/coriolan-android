@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.ui.settings.SettingsFragment
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter

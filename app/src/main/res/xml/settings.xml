@@ -3,21 +3,31 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/settings__title">
 
+	<PreferenceCategory android:title="@string/settings__category__learning_flow">
+
+		<ListPreference
+			android:key="card_types"
+			android:title="@string/settings__card_types"
+			android:summary="%s"
+			/>
+
+	</PreferenceCategory>
+
 	<PreferenceCategory android:title="@string/settings__category__daily_limits">
 
 		<AutoSummaryEditTextPreference
-			android:key="daily_limit_new_cards"
+			android:dialogMessage="@string/settings__daily_limit_leave_blank"
 			android:inputType="numberSigned"
-			android:title="@string/settings__daily_limit_new_cards"
+			android:key="daily_limit_new_cards"
 			android:summary="@string/settings__daily_limit_no_limit"
-			android:dialogMessage="@string/settings__daily_limit_leave_blank"/>
+			android:title="@string/settings__daily_limit_new_cards"/>
 
 		<AutoSummaryEditTextPreference
-			android:key="daily_limit_review_cards"
+			android:dialogMessage="@string/settings__daily_limit_leave_blank"
 			android:inputType="numberSigned"
-			android:title="@string/settings__daily_limit_review"
+			android:key="daily_limit_review_cards"
 			android:summary="@string/settings__daily_limit_no_limit"
-			android:dialogMessage="@string/settings__daily_limit_leave_blank"/>
+			android:title="@string/settings__daily_limit_review"/>
 
 	</PreferenceCategory>
 

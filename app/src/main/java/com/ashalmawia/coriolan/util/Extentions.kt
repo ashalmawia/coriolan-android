@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardType
 import org.joda.time.DateTime
 
 fun ViewGroup.inflate(resource: Int, attachToRoot: Boolean): View {
@@ -26,3 +28,6 @@ fun TextView.setStartDrawableTint(@ColorRes colorRes: Int) {
 fun Int?.orZero(): Int {
     return this ?: 0
 }
+
+fun List<Card>.forward() = filter { it.type == CardType.FORWARD }
+fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }

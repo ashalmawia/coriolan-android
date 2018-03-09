@@ -28,4 +28,7 @@ interface Preferences {
     fun getReviewCardsDailyLimit(): Int?
     fun setReviewCardsDailyLimit(limit: Int)
     fun clearReviewCardsDailyLimit()
+
+    fun getCardTypePreference(): CardTypePreference?
+    fun setCardTypePreference(preference: CardTypePreference)
 }

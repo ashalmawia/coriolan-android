@@ -74,6 +74,13 @@
 	<string name="settings__daily_limit_review">Reviews per day</string>
 	<string name="settings__daily_limit_no_limit">No limit</string>
 	<string name="settings__daily_limit_leave_blank">Enter the maximum amount of cards to study per day, or leave the field blank to have no limit</string>
+	<string name="settings__category__learning_flow">Learning flow</string>
+	<string name="settings__card_types">Card types</string>
+	<string name="settings__card_types_forward_first">Learn all forward, then all reverse</string>
+	<string name="settings__card_types_reverse_first">Learn all reverse, then all forward</string>
+	<string name="settings__card_types_mixed">Mixed</string>
+	<string name="settings__card_types_forward_only">Learn forward only</string>
+	<string name="settings__card_types_reverse_only">Learn reverse only</string>
 
 	<!-- General -->
 	<string name="button_submit">Submit</string>
