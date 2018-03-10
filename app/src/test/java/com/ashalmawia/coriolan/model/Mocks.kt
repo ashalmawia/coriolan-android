@@ -4,6 +4,7 @@ import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.scheduler.PERIOD_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.today
 import org.joda.time.DateTime
 
 // TODO: go over it's default usages and consider adding params and checking them
@@ -60,7 +61,7 @@ fun mockReverseCard(): Card = mockCard(type = CardType.REVERSE)
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain()) = Deck(deckId++, domain, name)
 
-fun mockState(period: Int = 0) = State(DateTime.now(), period)
+fun mockState(period: Int = 0) = State(today(), period)
 fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)
 fun mockStateRelearn() = mockState(0)
 fun mockStateInProgress() = mockState(5)

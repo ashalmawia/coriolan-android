@@ -47,6 +47,8 @@ interface Repository {
 
     fun deleteCard(card: Card)
 
+    fun allCards(domain: Domain, exercise: Exercise = ExercisesRegistry.defaultExercise()): List<Card>
+
     fun allDecks(domain: Domain): List<Deck>
 
     fun deckById(id: Long, domain: Domain): Deck?

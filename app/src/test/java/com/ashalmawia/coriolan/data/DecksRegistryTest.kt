@@ -7,6 +7,8 @@ import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.storage.MockRepository
 import com.ashalmawia.coriolan.learning.scheduler.emptyState
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.util.forward
+import com.ashalmawia.coriolan.util.reverse
 import junit.framework.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -172,6 +174,144 @@ class DecksRegistryTest {
         assertEquals("expression is reused", repeatedOriginal, cardsOfDeck[0].original)
         assertEquals("expression is reused", repeatedTranslation, cardsOfDeck[0].translations[0])
         assertEquals("expression is reused", repeatedTranslation2, cardsOfDeck[0].translations[2])
+    }
+
+    @Test
+    fun `addCardToDeck__testMatching__originalMatch__newTranslation`() {
+        // given
+        val deck = mockRepository.addDeck(domain, "Mock")
+        val type = ExpressionType.WORD
+
+        val repeatedOriginalValue = "spring"
+        val repeatedOriginal = mockRepository.addExpression(repeatedOriginalValue, type, domain.langOriginal())
+
+        val firstTranslation = mockRepository.addExpression("весна", type, domain.langTranslations())
+
+        val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
+        val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+
+        val secondTranslationValue = "источник"
+        val cardData = CardData(repeatedOriginalValue, listOf(secondTranslationValue), deck.id, type)
+
+        // when
+        mockRegistry.addCardToDeck(cardData)
+
+        // then
+        assertCardsMerged(deck, forward, repeatedOriginal, firstTranslation, secondTranslationValue, reverse)
+    }
+
+    @Test
+    fun `addCardToDeck__testMatching__originalMatch__partialDuplicateAndNewTranslation`() {
+        // given
+        val deck = mockRepository.addDeck(domain, "Mock")
+        val type = ExpressionType.WORD
+
+        val repeatedOriginalValue = "spring"
+        val repeatedOriginal = mockRepository.addExpression(repeatedOriginalValue, type, domain.langOriginal())
+
+        val firstTranslationValue = "весна"
+        val firstTranslation = mockRepository.addExpression(firstTranslationValue, type, domain.langTranslations())
+
+        val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
+        val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+
+        val secondTranslationValue = "источник"
+        val cardData = CardData(repeatedOriginalValue, listOf(firstTranslationValue, secondTranslationValue), deck.id, type)
+
+        // when
+        mockRegistry.addCardToDeck(cardData)
+
+        // then
+        assertCardsMerged(deck, forward, repeatedOriginal, firstTranslation, secondTranslationValue, reverse)
+    }
+
+    private fun assertCardsMerged(deck: Deck, forward: Card, repeatedOriginal: Expression, firstTranslation: Expression, secondTranslationValue: String, reverse: Card) {
+        val cardsOfDeck = mockRepository.cardsOfDeck(deck)
+        assertEquals("new forward card was not added", 1, cardsOfDeck.forward().size)
+        assertEquals("forward: card id was kept", forward.id, cardsOfDeck.forward()[0].id)
+        assertEquals("forward: original is kept", repeatedOriginal, cardsOfDeck.forward()[0].original)
+        assertEquals("forward: translations are merged", 2, cardsOfDeck.forward()[0].translations.size)
+        assertEquals("forward: translations are merged", firstTranslation, cardsOfDeck.forward()[0].translations[0])
+        assertEquals("forward: translations are merged", secondTranslationValue, cardsOfDeck.forward()[0].translations[1].value)
+        assertEquals("new reverse card was added", 2, cardsOfDeck.reverse().size)
+        assertEquals("reverse is kept", reverse, cardsOfDeck.reverse()[0])
+        assertEquals("new reverse is added", secondTranslationValue, cardsOfDeck.reverse()[1].original.value)
+        assertEquals("new reverse is added", listOf(repeatedOriginal), cardsOfDeck.reverse()[1].translations)
+    }
+
+    @Test
+    fun `addCardToDeck__testMatching__translationsMatch`() {
+        // given
+        val deck = mockRepository.addDeck(domain, "Mock")
+        val type = ExpressionType.WORD
+
+        val firstOriginalValue = "весна"
+        val firstOriginal = mockRepository.addExpression(firstOriginalValue, type, domain.langOriginal())
+
+        val repeatedTranslationValue = "spring"
+        val repeatedTranslation = mockRepository.addExpression(repeatedTranslationValue, type, domain.langTranslations())
+
+        val forward = mockRepository.addCard(domain, deck.id, firstOriginal, listOf(repeatedTranslation))
+        val reverse = mockRepository.addCard(domain, deck.id, repeatedTranslation, listOf(firstOriginal))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+
+        val secondOriginalValue = "источник"
+        val cardData = CardData(secondOriginalValue, listOf(repeatedTranslationValue), deck.id, type)
+
+        // when
+        mockRegistry.addCardToDeck(cardData)
+
+        // then
+        val cardsOfDeck = mockRepository.cardsOfDeck(deck)
+        assertEquals("new forward card was added", 2, cardsOfDeck.forward().size)
+        assertEquals("old forward is kept", forward, cardsOfDeck.forward()[0])
+        assertEquals("new forward is added", secondOriginalValue, cardsOfDeck.forward()[1].original.value)
+        assertEquals("new forward is added", listOf(repeatedTranslation), cardsOfDeck.forward()[1].translations)
+        assertEquals("new reverse card was not added", 1, cardsOfDeck.reverse().size)
+        assertEquals("reverse: card id was kept", reverse.id, cardsOfDeck.reverse()[0].id)
+        assertEquals("reverse: original is kept", repeatedTranslation, cardsOfDeck.reverse()[0].original)
+        assertEquals("reverse: translations are merged", 2, cardsOfDeck.reverse()[0].translations.size)
+        assertEquals("reverse: translations are merged", firstOriginal, cardsOfDeck.reverse()[0].translations[0])
+        assertEquals("reverse: translations are merged", secondOriginalValue, cardsOfDeck.reverse()[0].translations[1].value)
+    }
+
+    @Test
+    fun `addCardToDeck__testMatching__noMatch`() {
+        // given
+        val deck = mockRepository.addDeck(domain, "Mock")
+        val type = ExpressionType.WORD
+
+        val firstOriginal = mockRepository.addExpression("spring", type, domain.langOriginal())
+        val firstTranslation = mockRepository.addExpression("весна", type, domain.langTranslations())
+
+        val forward = mockRepository.addCard(domain, deck.id, firstOriginal, listOf(firstTranslation))
+        val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(firstOriginal))
+
+        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+
+        val secondOriginalValue = "shrimp"
+        val secondTranslationValue = "креветка"
+        val cardData = CardData(secondOriginalValue, listOf(secondTranslationValue), deck.id, type)
+
+        // when
+        mockRegistry.addCardToDeck(cardData)
+
+        // then
+        val cardsOfDeck = mockRepository.cardsOfDeck(deck)
+        assertEquals("new cards are added", 4, cardsOfDeck.size)
+        assertEquals("old forward is kept", forward, cardsOfDeck.forward()[0])
+        assertEquals("old reverse is kept", reverse, cardsOfDeck.reverse()[0])
+        assertEquals("new forward is correct", secondOriginalValue, cardsOfDeck.forward()[1].original.value)
+        assertEquals("new forward is correct", 1, cardsOfDeck.forward()[1].translations.size)
+        assertEquals("new forward is correct", secondTranslationValue, cardsOfDeck.forward()[1].translations[0].value)
+        assertEquals("new reverse is correct", secondTranslationValue, cardsOfDeck.reverse()[1].original.value)
+        assertEquals("new reverse is correct", 1, cardsOfDeck.reverse()[1].translations.size)
+        assertEquals("new reverse is correct", secondOriginalValue, cardsOfDeck.reverse()[1].translations[0].value)
     }
 
     @Test

@@ -3,8 +3,10 @@ package com.ashalmawia.coriolan.data
 import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.data.merger.CardsMerger
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 
 class DecksRegistry(context: Context, preferences: Preferences, val domain: Domain, private val repository: Repository) {
@@ -85,8 +87,12 @@ class DecksRegistry(context: Context, preferences: Preferences, val domain: Doma
         val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal())
         val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations()) }
 
-        repository.addCard(domain, cardData.deckId, original, translations)
-        translations.forEach { repository.addCard(domain, cardData.deckId, it, listOf(original)) }
+        val merger = CardsMerger.create(repository, domain, ExercisesRegistry)
+
+        merger.mergeOrAdd(original, translations, cardData.deckId)
+
+        val originalAsList = listOf(original)
+        translations.forEach { merger.mergeOrAdd(it, originalAsList, cardData.deckId) }
     }
 
     private fun findOrAddExpression(value: String, type: ExpressionType, language: Language): Expression {

@@ -160,7 +160,7 @@ class InMemoryCacheTest {
     @Test
     fun `test__updateCardState__stateIsPassed`() {
         // given
-        val card = mockCard()
+        val card = addMockCard(cache)
         val state = mockState()
 
         // when
@@ -187,6 +187,52 @@ class InMemoryCacheTest {
         // then
         assertEquals("state is updated", state, cached!!.state)
         verify(inner, never()).cardById(any(), any())
+    }
+
+    @Test
+    fun `test__allCards`() {
+        // given
+        val domain = mockDomain()
+        val cards = (0 until 9).map { addMockCard(cache, original = "original $it", translations = listOf("tr $it"), domain = domain) }
+
+        // when
+        val read = cache.allCards(domain, exercise)
+
+        // then
+        assertEquals(cards, read)
+        verify(inner, times(1)).allCards(any(), any())
+
+        // when
+        val read2 = cache.allCards(domain, exercise)
+
+        // then
+        assertEquals(cards, read2)
+        verify(inner, times(1)).allCards(any(), any())
+
+        // when
+        val cardById = cache.cardById(cards[1].id, domain)
+
+        // then
+        assertEquals(cards[1], cardById)
+        verify(inner, never()).cardById(any(), any())
+
+        // when
+        val mutable = cards.toMutableList()
+        val card = addMockCard(cache, original = "original X", translations = listOf("translation X1", "translation X2"), domain = domain)
+        mutable.add(card)
+        cache.deleteCard(mutable[5])
+        mutable.removeAt(5)
+        val updated = cache.updateCard(mutable[7], 8L, mockExpression("some word"), listOf(mockExpression("translation")))
+        assertNotNull(updated)
+        mutable[7] = updated!!
+        val readUpdated = cache.cardById(updated.id, domain)
+        val all = cache.allCards(domain, exercise)
+
+        // then
+        assertEquals(updated, readUpdated)
+        assertEquals(mutable, all)
+        verify(inner, never()).cardById(any(), any())
+        verify(inner, times(1)).allCards(any(), any())
     }
 
     @Test

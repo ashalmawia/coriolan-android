@@ -287,6 +287,36 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         )
     }
 
+    override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |FROM
+            |   $SQLITE_TABLE_CARDS AS Cards
+            |   LEFT JOIN ${sqliteTableExerciseState(exercise)} AS States
+            |       ON Cards.$SQLITE_COLUMN_ID = States.$SQLITE_COLUMN_CARD_ID
+            |WHERE
+            |   Cards.$SQLITE_COLUMN_DOMAIN_ID = ?
+        """.trimMargin(), arrayOf(domain.id.toString()))
+
+        val cards = mutableListOf<Card>()
+        while (cursor.moveToNext()) {
+            val state = extractState(cursor)
+            cards.add(Card(
+                    cursor.getId(),
+                    cursor.getDeckId(),
+                    domain,
+                    expressionById(cursor.getFrontId())!!,
+                    translationsByCardId(cursor.getId()),
+                    state
+            ))
+        }
+        cursor.close()
+
+        return cards
+    }
+
     override fun allDecks(domain: Domain): List<Deck> {
         val db = helper.readableDatabase
 

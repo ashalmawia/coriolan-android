@@ -76,6 +76,9 @@ class MockRepository : Repository {
     override fun deleteCard(card: Card) {
         cards.remove(card)
     }
+    override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
+        return cards
+    }
 
     val decks = mutableListOf<Deck>()
     override fun allDecks(domain: Domain): List<Deck> {
@@ -95,8 +98,15 @@ class MockRepository : Repository {
 
     val states = mutableMapOf<Long, State>()
     override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
+        if (!cards.contains(card)) {
+//            throw DataProcessingException("card is not in the repo: $card")
+            throw IllegalStateException("card is not in the repo: $card")
+        }
+
         states[card.id] = state
+        cards.remove(card)
         card.state = state
+        cards.add(card)
         return card
     }
     override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {

@@ -36,6 +36,14 @@ private fun `_assertCardCorrect`(card: Card?, data: CardData, langOriginal: Lang
         assertExpressionCorrect(card.translations[i], data.translations[i], data.contentType, langTranslations)
     }
 }
+fun assertCardCorrect(card: Card?, original: Expression, translations: List<Expression>, deckId: Long, domain: Domain) {
+    assertNotNull(card)
+    card!!
+    assertEquals(original, card.original)
+    assertEquals(translations, card.translations)
+    assertEquals(deckId, card.deckId)
+    assertEquals(domain, card.domain)
+}
 
 fun assertDeckCorrect(deck: Deck?, name: String, domain: Domain) {
     assertNotNull("deck is created", deck)

@@ -12,6 +12,8 @@ class InMemoryCache(private val inner: Repository) : Repository {
     private val cards = mutableMapOf<Long, Card?>()
     private val allDecks = mutableMapOf<Long, Deck?>()  // must be all decks as we have a function to return them all
 
+    private var allCardsLoaded = false
+
     override fun addLanguage(value: String): Language {
         // no need to cache languages as it's immutable data that isn't normally queried
         return inner.addLanguage(value)
@@ -90,6 +92,18 @@ class InMemoryCache(private val inner: Repository) : Repository {
         cards.remove(card.id)
     }
 
+    override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
+        return if (allCardsLoaded) {
+            cards.values.filterNotNull().distinctBy { it.id }
+        } else {
+            val read = inner.allCards(domain, exercise)
+            cards.clear()
+            cards.putAll(read.associateBy { it.id })
+            allCardsLoaded = true
+            read
+        }
+    }
+
     override fun allDecks(domain: Domain): List<Deck> {
         loadDecksIfNeeded(domain)
         return allDecks.values.filterNotNull().toList()
@@ -126,8 +140,9 @@ class InMemoryCache(private val inner: Repository) : Repository {
     }
 
     override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
-        // this does not need to be cached
-        return inner.updateCardState(card, state, exercise)
+        val updated = inner.updateCardState(card, state, exercise)
+        cards[updated.id] = updated     // todo: state should not be a part of a card, this should be removed
+        return updated
     }
 
     override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {

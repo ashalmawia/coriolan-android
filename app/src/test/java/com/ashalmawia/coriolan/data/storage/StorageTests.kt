@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.PERIOD_LEARNT
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.today
@@ -626,6 +625,12 @@ abstract class StorageTest {
 
         // then
         assertNull(read)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(0, cards.size)
     }
 
     @Test
@@ -668,6 +673,12 @@ abstract class StorageTest {
 
         // then
         assertFalse(cardsOfOldDeck.contains(read))
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(4, cards.size)
     }
 
     @Test
@@ -697,6 +708,12 @@ abstract class StorageTest {
 
         // then
         assertEquals(updated, read)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(4, cards.size)
     }
 
     @Test
@@ -727,6 +744,12 @@ abstract class StorageTest {
 
         // then
         assertEquals(updated, read)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(4, cards.size)
     }
 
     @Test
@@ -759,6 +782,12 @@ abstract class StorageTest {
 
         // then
         assertEquals(updated, read)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(4, cards.size)
     }
 
     @Test
@@ -790,6 +819,12 @@ abstract class StorageTest {
 
         // then
         assertEquals(updated, read)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(4, cards.size)
     }
 
     @Test
@@ -825,6 +860,12 @@ abstract class StorageTest {
 
         // then
         assertEquals(updated, read)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(4, cards.size)
     }
 
     @Test
@@ -858,6 +899,96 @@ abstract class StorageTest {
 
         // then
         assertNull("card is absent from the DB", read)
+    }
+
+    @Test
+    fun `test__allCards__emtpy`() {
+        // given
+        val storage = prefilledStoarge.value
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertTrue(cards.isEmpty())
+    }
+
+    @Test
+    fun `test__allCards__nonEmtpy`() {
+        // given
+        val storage = prefilledStoarge.value
+        val list = (0 until 10).map { addMockCard(storage, original = "original $it",
+                translations = listOf("translation $it - 1", "transition $it - 2"), domain = domain) }
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(list, cards)
+    }
+
+    @Test
+    fun `test__allCards__addDelete`() {
+        // given
+        val storage = prefilledStoarge.value
+        val card = addMockCard(storage, domain = domain)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(listOf(card), cards)
+
+        // when
+        storage.deleteCard(card)
+        val cards2 = storage.allCards(domain, exercise)
+
+        // then
+        assertTrue(cards2.isEmpty())
+    }
+
+    @Test
+    fun `test__allCards__updateCard`() {
+        // given
+        val storage = prefilledStoarge.value
+        val card = addMockCard(storage, domain = domain)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(listOf(card), cards)
+
+        // when
+        val newOriginal = addMockExpressionOriginal(storage, "new original")
+        val newTranslation = addMockExpressionTranslation(storage, "new translation")
+        val updated = storage.updateCard(card, 999L, newOriginal, listOf(newTranslation))
+
+        val cards2 = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(listOf(updated), cards2)
+    }
+
+    @Test
+    fun `test__allCards__updateState`() {
+        // given
+        val storage = prefilledStoarge.value
+        val card = addMockCard(storage, domain = domain)
+        val state = mockState(5)
+
+        // when
+        val cards = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(listOf(card), cards)
+
+        // when
+        val updated = storage.updateCardState(card, state, MockExercise())
+        val cards2 = storage.allCards(domain, exercise)
+
+        // then
+        assertEquals(listOf(updated), cards2)
     }
 
     @Test
@@ -1086,8 +1217,20 @@ abstract class StorageTest {
         assertEquals("no decks found", 0, allDecks.size)
     }
 
+//    @Test(expected = DataProcessingException::class)
+//    fun `test__updateCardState__nonExistent`() {
+//        // when
+//        val storage = prefilledStoarge.value
+//
+//        val card = mockCard(domain = domain)
+//        val newState = State(today().plusDays(8), 8)
+//
+//        // when
+//        storage.updateCardState(card, newState, exercise)
+//    }
+
     @Test
-    fun `test__updateCardState`() {
+    fun `test__updateCardState__existent`() {
         // when
         val storage = prefilledStoarge.value
 
