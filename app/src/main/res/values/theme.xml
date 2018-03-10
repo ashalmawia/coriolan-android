@@ -12,6 +12,10 @@
 
 		<item name="android:textColor">@color/textColorPrimary</item>
 		<item name="android:textColorPrimary">@color/textColorPrimary</item>
+
+		<item name="pref_categoryColor">@color/colorAccentContrast</item>
+
+		<item name="buttonBarButtonStyle">@style/Coriolan.ButtonBarButton</item>
 	</style>
 	
 	<style name="Coriolan.Theme.Splash">
@@ -37,6 +41,10 @@
 	<style name="Coriolan.Text.Caption.Label">
 		<item name="android:layout_marginLeft">@dimen/spacing__tiny</item>
 		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
+	</style>
+
+	<style name="Coriolan.ButtonBarButton" parent="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog">
+		<item name="android:textColor">@color/colorAccentContrast</item>
 	</style>
 
 </resources>

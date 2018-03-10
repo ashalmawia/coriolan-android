@@ -7,10 +7,10 @@
 	<color name="colorPrimaryDark">#421e39</color>
 
 	<color name="colorSecondary">#fbc02d</color>
-	<!--<color name="colorSecondaryDark">#c49000</color>-->
-	<!--<color name="colorSecondaryLight">#fff263</color>-->
+	<color name="colorSecondaryDark">#e8a704</color>
 
 	<color name="colorAccent">@color/colorSecondary</color>
+	<color name="colorAccentContrast">@color/colorSecondaryDark</color>
 
 	<color name="textColorPrimary">@color/colorPrimaryDark</color>
 
