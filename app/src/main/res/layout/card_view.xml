@@ -52,6 +52,15 @@
 				android:text="@string/cards_no"/>
 
 			<Button
+				android:id="@+id/buttonHard"
+				style="@style/CardButton"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:background="@color/hard"
+				android:text="@string/cards_hard"/>
+
+			<Button
 				android:id="@+id/buttonYes"
 				style="@style/CardButton"
 				android:layout_width="0dp"
@@ -59,6 +68,15 @@
 				android:layout_weight="1"
 				android:background="@color/correct"
 				android:text="@string/cards_yes"/>
+
+			<Button
+				android:id="@+id/buttonEasy"
+				style="@style/CardButton"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:background="@color/easy"
+				android:text="@string/cards_easy"/>
 
 		</LinearLayout>
 

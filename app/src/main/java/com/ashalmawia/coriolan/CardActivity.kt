@@ -128,14 +128,24 @@ class CardActivity : BaseActivity(), CardViewListener {
         flow().wrong(this)
     }
 
+    override fun onEasy() {
+        flow().easy(this)
+    }
+
+    override fun onHard() {
+        flow().hard(this)
+    }
+
     private fun bindToCurrent() {
+        val flow = flow()
+
         val view = cardView as CardView
-        view.bind(flow().card())
+        view.bind(flow.card(), flow.answers())
         view.listener = this
 
         updateProgressCounts()
 
-        maybeUpdateDebugView(flow().card())
+        maybeUpdateDebugView(flow.card())
     }
 
     private fun flow() = LearningFlow.current!!

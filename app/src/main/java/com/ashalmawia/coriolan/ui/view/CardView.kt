@@ -6,6 +6,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
+import com.ashalmawia.coriolan.learning.scheduler.Answer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Expression
 
@@ -25,13 +26,23 @@ class CardView : LinearLayout {
         showAnswerButton.setOnClickListener { showBack() }
         buttonYes.setOnClickListener { listener.onCorrect() }
         buttonNo.setOnClickListener { listener.onWrong() }
+        buttonHard.setOnClickListener { listener.onHard() }
+        buttonEasy.setOnClickListener { listener.onEasy() }
     }
 
-    fun bind(card: Card) {
+    fun bind(card: Card, answers: Array<Answer>) {
         front.text = card.original.value
         back.text = translationsToString(card.translations)
+        configureButtonsBar(answers)
 
         showFront()
+    }
+
+    private fun configureButtonsBar(answers: Array<Answer>) {
+        buttonNo.visible = answers.contains(Answer.WRONG)
+        buttonHard.visible = answers.contains(Answer.HARD)
+        buttonYes.visible = answers.contains(Answer.CORRECT)
+        buttonEasy.visible = answers.contains(Answer.EASY)
     }
 
     private fun showFront() {
@@ -65,7 +76,11 @@ class CardView : LinearLayout {
 
 interface CardViewListener {
 
+    fun onEasy()
+
     fun onCorrect()
+
+    fun onHard()
 
     fun onWrong()
 }

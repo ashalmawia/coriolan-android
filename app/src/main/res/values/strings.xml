@@ -31,6 +31,8 @@
 	<!-- Cards -->
 	<string name="cards_yes">Yes</string>
 	<string name="cards_no">No</string>
+	<string name="cards_hard">Hard</string>
+	<string name="cards_easy">Easy</string>
 	<string name="cards_click_to_show_answer">Click anywhere to show the answer</string>
 
 	<!-- Learning menu -->

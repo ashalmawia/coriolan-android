@@ -23,6 +23,8 @@
 	<color name="divider">@color/grey</color>
 
 	<color name="wrong">#c62828</color>
-	<color name="correct">#2e7d32</color>
+	<color name="correct">#369c3b</color>
+	<color name="hard">#474847</color>
+	<color name="easy">#7286be</color>
 	<color name="neutral">@color/grey</color>
 </resources>

@@ -7,10 +7,7 @@ import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.learning.mutation.MutationRegistry
-import com.ashalmawia.coriolan.learning.scheduler.Scheduler
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.scheduler.*
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 
@@ -56,6 +53,8 @@ class LearningFlow(
 
     fun card() = assignment.current!!
 
+    fun answers(): Array<Answer> = scheduler.answers(card().state)
+
     fun wrong(context: Context) {
         val card = card()
         assignment.pendingCounter.value.onCardWrong(card)
@@ -66,13 +65,26 @@ class LearningFlow(
         updateAndRescheduleIfNeeded(context, card, state)
     }
 
+    fun hard(context: Context) {
+        val card = card()
+        correctInner(context, card, scheduler.hard(card.state))
+    }
+
     fun correct(context: Context) {
         val card = card()
+        correctInner(context, card, scheduler.correct(card.state))
+    }
+
+    fun easy(context: Context) {
+        val card = card()
+        correctInner(context, card, scheduler.easy(card.state))
+    }
+
+    private fun correctInner(context: Context, card: Card, state: State) {
         assignment.pendingCounter.value.onCardCorrect(card)
 
         recordCardStudied(card.state, journal(context), true)
 
-        val state = scheduler.correct(card.state)
         updateAndRescheduleIfNeeded(context, card, state)
     }
 
