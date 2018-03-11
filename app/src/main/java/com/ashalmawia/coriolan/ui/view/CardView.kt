@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import com.ashalmawia.coriolan.learning.scheduler.Answer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
 
 class CardView : LinearLayout {
 
@@ -17,17 +18,17 @@ class CardView : LinearLayout {
     constructor(context: Context?) : this(context, null, 0)
     constructor(context: Context?, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
     constructor(context: Context?, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr) {
-        setOnClickListener { showBack() }
+        setOnSingleClickListener { showBack() }
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
 
-        showAnswerButton.setOnClickListener { showBack() }
-        buttonYes.setOnClickListener { listener.onCorrect() }
-        buttonNo.setOnClickListener { listener.onWrong() }
-        buttonHard.setOnClickListener { listener.onHard() }
-        buttonEasy.setOnClickListener { listener.onEasy() }
+        showAnswerButton.setOnSingleClickListener { showBack() }
+        buttonYes.setOnSingleClickListener { listener.onCorrect() }
+        buttonNo.setOnSingleClickListener { listener.onWrong() }
+        buttonHard.setOnSingleClickListener { listener.onHard() }
+        buttonEasy.setOnSingleClickListener { listener.onEasy() }
     }
 
     fun bind(card: Card, answers: Array<Answer>) {
