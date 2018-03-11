@@ -4,9 +4,9 @@ import android.content.Context
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.model.Card
 
-class MockExercise : Exercise {
+class MockExercise(private val name: String = "mock") : Exercise {
     override val stableId: String
-        get() = "mock"
+        get() = name
 
     override fun name(): Int = 0
 

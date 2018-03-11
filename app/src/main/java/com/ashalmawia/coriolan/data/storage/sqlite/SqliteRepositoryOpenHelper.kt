@@ -100,4 +100,13 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
     }
+
+    override fun onConfigure(db: SQLiteDatabase?) {
+        super.onConfigure(db)
+        if (db == null) {
+            return
+        }
+
+        db.setForeignKeyConstraintsEnabled(true)
+    }
 }

@@ -2,7 +2,9 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
+import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.*
@@ -19,11 +21,14 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
     override fun addLanguage(value: String): Language {
         val db = helper.writableDatabase
-
         val cv = createLanguageContentValues(value)
-        val id = db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null, cv)
 
-        return Language(id, value)
+        try {
+            val id = db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null, cv)
+            return Language(id, value)
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to add langauge [$value], constraint violation", e)
+        }
     }
 
     override fun languageById(id: Long): Language? {
@@ -44,10 +49,19 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     }
 
     override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
-        val id = helper.writableDatabase.insert(SQLITE_TABLE_EXPRESSIONS,
-                null,
-                createExpressionContentValues(value, type, language))
-        return Expression(id, value, type, language)
+        try {
+            val id = helper.writableDatabase.insert(SQLITE_TABLE_EXPRESSIONS,
+                    null,
+                    createExpressionContentValues(value, type, language))
+
+            if (id < 0) {
+                throw DataProcessingException("failed to add expression [$value] of type [$type], lang $language: maybe missing lang")
+            }
+
+            return Expression(id, value, type, language)
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to add expression [$value] of type [$type], lang $language: constraint violation, e")
+        }
     }
 
     override fun expressionById(id: Long): Expression? {
@@ -145,16 +159,26 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
     override fun deleteExpression(expression: Expression) {
         val db = helper.writableDatabase
-        db.delete(SQLITE_TABLE_EXPRESSIONS, "$SQLITE_COLUMN_ID = ?", arrayOf(expression.id.toString()))
+        try {
+            val result = db.delete(SQLITE_TABLE_EXPRESSIONS, "$SQLITE_COLUMN_ID = ?", arrayOf(expression.id.toString()))
+            if (result == 0) {
+                throw DataProcessingException("failed to delete expression $expression: not in the database")
+            }
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to delete expression $expression: constraint violation")
+        }
     }
 
     override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
         val db = helper.writableDatabase
-
         val cv = createDomainContentValues(name, langOriginal, langTranslations)
-        val id = db.insert(SQLITE_TABLE_DOMAINS, null, cv)
 
-        return Domain(id, name, langOriginal, langTranslations)
+        try {
+            val id = db.insertOrThrow(SQLITE_TABLE_DOMAINS, null, cv)
+            return Domain(id, name, langOriginal, langTranslations)
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to create domain $langOriginal -> $langTranslations, constraint violation", e)
+        }
     }
 
     override fun allDomains(): List<Domain> {
@@ -193,6 +217,10 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     }
 
     override fun addCard(domain: Domain, deckId: Long, original: Expression, translations: List<Expression>): Card {
+        if (translations.isEmpty()) {
+            throw DataProcessingException("failed to add card with original[$original]: translations were empty")
+        }
+
         val db = helper.writableDatabase
         db.beginTransaction()
         try {
@@ -201,10 +229,18 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                     null,
                     createCardContentValues(domain.id, deckId, original))
 
+            if (cardId < 0) {
+                throw DataProcessingException("failed to insert card ($original -> $translations)")
+            }
+
             // write the card-to-expression relation (many-to-many)
-            val cardsReversCV = generateCardsReverseContentValues(cardId, translations)
-            for (cv in cardsReversCV) {
-                db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
+            val cardsReverseCV = generateCardsReverseContentValues(cardId, translations)
+            for (cv in cardsReverseCV) {
+                val result = db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
+
+                if (result < 0) {
+                    throw DataProcessingException("failed to insert translation entry card ($original -> $translations)")
+                }
             }
 
             val card = Card(cardId, deckId, domain, original, translations, emptyState())
@@ -212,6 +248,8 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             db.setTransactionSuccessful()
 
             return card
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to add card ($original -> $translations), constraint violation", e)
         } finally {
             db.endTransaction()
         }
@@ -244,6 +282,10 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     }
 
     override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
+        if (translations.isEmpty()) {
+            throw DataProcessingException("failed to update card with id[$card.id]: translations were empty")
+        }
+
         val db = helper.writableDatabase
         db.beginTransaction()
 
@@ -252,8 +294,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
             val updated = db.update(SQLITE_TABLE_CARDS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(card.id.toString()))
 
             if (updated == 0) {
-                // the card is not presented in the database!
-                return null
+                throw DataProcessingException("failed to update card ${card.id}")
             }
 
             // delete all the old translations from the card
@@ -267,11 +308,18 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
             // add new translations to the card
             val reverseCV = generateCardsReverseContentValues(card.id, translations)
-            reverseCV.forEach { db.insertOrUpdate(SQLITE_TABLE_CARDS_REVERSE, it) }
+            reverseCV.forEach {
+                val result = db.insertOrUpdate(SQLITE_TABLE_CARDS_REVERSE, it)
+                if (result < 0) {
+                    throw DataProcessingException("failed to update card ${card.id}: translation not in the database")
+                }
+            }
 
             db.setTransactionSuccessful()
 
             return Card(card.id, deckId, card.domain, original, translations, card.state)
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to update card[$card.id], constraint violation", e)
         } finally {
             db.endTransaction()
         }
@@ -280,11 +328,19 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     override fun deleteCard(card: Card) {
         val db = helper.writableDatabase
 
-        db.delete(
-                SQLITE_TABLE_CARDS,
-                "$SQLITE_COLUMN_ID = ?",
-                arrayOf(card.id.toString())
-        )
+        try {
+            val result = db.delete(
+                    SQLITE_TABLE_CARDS,
+                    "$SQLITE_COLUMN_ID = ?",
+                    arrayOf(card.id.toString())
+            )
+
+            if (result == 0) {
+                throw DataProcessingException("failed to delete card[$card.id]: no such card")
+            }
+        } catch (e: Exception) {
+            throw DataProcessingException("failed to delete card[$card.id]", e)
+        }
     }
 
     override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
@@ -353,12 +409,19 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     }
 
     override fun addDeck(domain: Domain, name: String): Deck {
+        val db = helper.writableDatabase
         val cv = createDeckContentValues(domain.id, name)
 
-        val db = helper.writableDatabase
-        val id = db.insert(SQLITE_TABLE_DECKS, null, cv)
+        try {
+            val id = db.insert(SQLITE_TABLE_DECKS, null, cv)
+            if (id < 0) {
+                throw DataProcessingException("failed to add deck with name[$name] to domain[$domain.id]")
+            }
 
-        return Deck(id, domain, name)
+            return Deck(id, domain, name)
+        } catch (e: Exception) {
+            throw DataProcessingException("failed to add deck with name[$name] to domain[$domain.id], constraint violation", e)
+        }
     }
 
     override fun cardsOfDeck(deck: Deck): List<Card> {
@@ -409,9 +472,20 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
     override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
         val table = sqliteTableExerciseState(exercise)
         val cv = createStateContentValues(card.id, state)
-        helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
-        card.state = state
-        return card
+        try {
+            val result = helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+
+            if (result < 0) {
+                throw DataProcessingException("failed to updated card state for card ${card.id}, " +
+                        "exercise ${exercise.name()}: error occured")
+            }
+
+            card.state = state
+            return card
+        } catch (e: Exception) {
+            throw DataProcessingException("failed to updated card state for card $card.id, " +
+                    "exercise ${exercise.name()}: constraint violation", e)
+        }
     }
 
     override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {

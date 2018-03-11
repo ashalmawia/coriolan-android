@@ -61,3 +61,5 @@ interface Repository {
 
     fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card>
 }
+
+class DataProcessingException(message: String, causedBy: Throwable? = null) : RuntimeException(message, causedBy)

@@ -46,6 +46,6 @@ fun ContentValues.getAsDate(key: String): DateTime? {
     return if (timestamp == null) null else DateTime(timestamp)
 }
 
-fun SQLiteDatabase.insertOrUpdate(table: String, cv: ContentValues) {
-    insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+fun SQLiteDatabase.insertOrUpdate(table: String, cv: ContentValues): Long {
+    return insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
 }
