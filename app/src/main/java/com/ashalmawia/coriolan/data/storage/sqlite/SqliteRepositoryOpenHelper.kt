@@ -17,7 +17,7 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
 
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_LANGUAGES(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
-            |$SQLITE_COLUMN_LANG_VALUE TEXT NOT NULL
+            |$SQLITE_COLUMN_LANG_VALUE TEXT UNIQUE NOT NULL
             |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_EXPRESSIONS(
@@ -27,12 +27,14 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
             |$SQLITE_COLUMN_LANGUAGE_ID INTEGER NUL NULL,
             |FOREIGN KEY ($SQLITE_COLUMN_LANGUAGE_ID) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
             |   ON DELETE RESTRICT
-            |   ON UPDATE CASCADE
+            |   ON UPDATE CASCADE,
+            |UNIQUE ($SQLITE_COLUMN_VALUE, $SQLITE_COLUMN_LANGUAGE_ID)
+            |   ON CONFLICT ABORT
             |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DOMAINS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
-            |$SQLITE_COLUMN_NAME TEXT NOT NULL,
+            |$SQLITE_COLUMN_NAME TEXT UNIQUE NOT NULL,
             |$SQLITE_COLUMN_LANG_ORIGINAL INTEGER NOT NULL,
             |$SQLITE_COLUMN_LANG_TRANSLATIONS INTEGER NOT NULL,
             |FOREIGN KEY ($SQLITE_COLUMN_LANG_ORIGINAL) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
@@ -49,7 +51,9 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
             |$SQLITE_COLUMN_DOMAIN_ID INTEGER NOT NULL,
             |FOREIGN KEY ($SQLITE_COLUMN_DOMAIN_ID) REFERENCES $SQLITE_TABLE_DOMAINS ($SQLITE_COLUMN_ID)
             |   ON DELETE CASCADE
-            |   ON UPDATE CASCADE
+            |   ON UPDATE CASCADE,
+            |UNIQUE ($SQLITE_COLUMN_NAME, $SQLITE_COLUMN_DOMAIN_ID)
+            |   ON CONFLICT ABORT
             );""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARDS(

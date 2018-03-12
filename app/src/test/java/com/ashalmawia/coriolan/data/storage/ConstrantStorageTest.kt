@@ -29,30 +29,43 @@ class ConstrantStorageTest {
 
     private fun createStorage() = SqliteStorage(RuntimeEnvironment.application, exercises)
 
-//    @Test(expected = DataProcessingException::class)
-//    fun `test__addLanguage__nameUnique`() {
-//        // given
-//        val storage = emptyStorage.value
-//        val value = "Russian"
-//
-//        // when
-//        storage.addLanguage(value)
-//        storage.addLanguage(value)
-//    }
+    @Test(expected = DataProcessingException::class)
+    fun `test__addLanguage__nameUnique`() {
+        // given
+        val storage = emptyStorage.value
+        val value = "Russian"
 
-//    @Test(expected = DataProcessingException::class)
-//    fun `test__addExpression__valueUnique`() {
-//        // given
-//        val storage = prefilledStorage.value
-//
-//        val value = "shrimp"
-//        val type = ExpressionType.WORD
-//        val lang = domain.langOriginal()
-//
-//        // when
-//        storage.addExpression(value, type, lang)
-//        storage.addExpression(value, type, lang)
-//    }
+        // when
+        storage.addLanguage(value)
+        storage.addLanguage(value)
+    }
+
+    @Test(expected = DataProcessingException::class)
+    fun `test__addExpression__valueUnique`() {
+        // given
+        val storage = prefilledStorage.value
+
+        val value = "shrimp"
+        val type = ExpressionType.WORD
+        val lang = domain.langOriginal()
+
+        // when
+        storage.addExpression(value, type, lang)
+        storage.addExpression(value, type, lang)
+    }
+
+    @Test
+    fun `test__addExpression__sameValueDifferentLangs`() {
+        // given
+        val storage = prefilledStorage.value
+
+        val value = "shrimp"
+        val type = ExpressionType.WORD
+
+        // when
+        storage.addExpression(value, type, domain.langOriginal())
+        storage.addExpression(value, type, domain.langTranslations())
+    }
 
     @Test(expected = DataProcessingException::class)
     fun `test__addExpression__languageIncorrect`() {
@@ -95,16 +108,16 @@ class ConstrantStorageTest {
         storage.deleteExpression(expression)
     }
 
-//    @Test(expected = DataProcessingException::class)
-//    fun `test__createDomain__nameUnique`() {
-//        // given
-//        val storage = prefilledStorage.value
-//        val name = "My domain"
-//
-//        // when
-//        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
-//        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
-//    }
+    @Test(expected = DataProcessingException::class)
+    fun `test__createDomain__nameUnique`() {
+        // given
+        val storage = prefilledStorage.value
+        val name = "My domain"
+
+        // when
+        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
+        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
+    }
 
     @Test(expected = DataProcessingException::class)
     fun `test__createDomain__langOriginalIncorrect`() {
@@ -338,17 +351,35 @@ class ConstrantStorageTest {
         storage.addDeck(dummyDomain, name)
     }
 
-//    @Test(expected = DataProcessingException::class)
-//    fun `test__addDeck__nameUnique`() {
-//        // given
-//        val storage = prefilledStorage.value
-//
-//        val name = "My new deck"
-//
-//        // when
-//        storage.addDeck(domain, name)
-//        storage.addDeck(domain, name)
-//    }
+    @Test(expected = DataProcessingException::class)
+    fun `test__addDeck__nameUnique`() {
+        // given
+        val storage = prefilledStorage.value
+
+        val name = "My new deck"
+
+        // when
+        storage.addDeck(domain, name)
+        storage.addDeck(domain, name)
+    }
+
+    @Test
+    fun `test__addDeck__sameNameDifferentDomains`() {
+        // given
+        val storage = prefilledStorage.value
+        val lang = storage.addLanguage("French")
+        val domain2 = storage.createDomain("Another domain", lang, domain.langTranslations())
+
+        val name = "My new deck"
+
+        // when
+        val deck1 = storage.addDeck(domain, name)
+        val deck2 = storage.addDeck(domain2, name)
+
+        // assert
+        assertDeckCorrect(deck1, name, domain)
+        assertDeckCorrect(deck2, name, domain2)
+    }
 
     @Test(expected = DataProcessingException::class)
     fun `test__updateCardState__cardIncorrect`() {

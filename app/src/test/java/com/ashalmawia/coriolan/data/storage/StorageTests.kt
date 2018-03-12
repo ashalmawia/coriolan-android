@@ -31,8 +31,11 @@ abstract class StorageTest {
         return storage.addDeck(domain, "Mock")
     }
 
-    private fun addMockCard(storage: Repository, deckId: Long, original: String = "spring", translations: List<String> = listOf("весна", "источник")): Card {
-        return addMockCard(storage, deckId, original, translations, domain)
+    private fun addMockCard(storage: Repository, deckId: Long): Card {
+        return addMockCard(storage, deckId, "original ${System.nanoTime()}", listOf(
+                "translation first ${System.nanoTime()}",
+                "translation second ${System.nanoTime()}"
+        ), domain)
     }
 
     @Test
@@ -101,7 +104,7 @@ abstract class StorageTest {
 
         val value = "Shrimp is going out on Fridays."
         val type = ExpressionType.WORD
-        val lang = mockLanguage(value = "Russian")
+        val lang = domain.langTranslations()
 
         // when
         val expression = storage.addExpression(value, type, lang)
@@ -113,7 +116,7 @@ abstract class StorageTest {
     @Test
     fun `test__expressionById__Word`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val lang = storage.addLanguage("Russian")
 
@@ -131,7 +134,7 @@ abstract class StorageTest {
     @Test
     fun `test__expressionById__Sentence`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val lang = storage.addLanguage("Russian")
 
@@ -149,7 +152,7 @@ abstract class StorageTest {
     @Test
     fun `test__expressionByValues__DoesNotExist_Empty`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val lang = storage.addLanguage("Russian")
 
@@ -166,7 +169,7 @@ abstract class StorageTest {
     @Test
     fun `test__expressionByValues__DoesNotExist_WrongValue`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val lang = storage.addLanguage("Russian")
 
@@ -183,16 +186,14 @@ abstract class StorageTest {
     @Test
     fun `test__expressionByValues__DoesNotExist_WrongLanguage`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val value = "shrimp"
 
         val langRussian = storage.addLanguage("Russian")
-        val langEnglish = storage.addLanguage("English")
         val langFrench = storage.addLanguage("French")
 
         storage.addExpression(value, ExpressionType.WORD, langRussian)
-        storage.addExpression(value, ExpressionType.WORD, langEnglish)
 
         // when
         val expression = storage.expressionByValues(value, ExpressionType.WORD, langFrench)
@@ -204,12 +205,11 @@ abstract class StorageTest {
     @Test
     fun `test__expressionByValues__DoesNotExist_WrongContentType`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val value = "shrimp"
         val lang = storage.addLanguage("English")
 
-        storage.addExpression(value, ExpressionType.WORD, lang)
         storage.addExpression(value, ExpressionType.WORD, lang)
 
         // when
@@ -222,7 +222,7 @@ abstract class StorageTest {
     @Test
     fun `test__expressionByValues__DoesNotExist_WrongEverything`() {
         // given
-        val storage = prefilledStorage.value
+        val storage = emptyStorage.value
 
         val langRussian = storage.addLanguage("Russian")
         val langEnglish = storage.addLanguage("English")
@@ -591,10 +591,10 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val someDeck = storage.addDeck(domain, "some deck")
-        addMockCard(storage, someDeck.id, domain = domain)
-        addMockCard(storage, someDeck.id, domain = domain)
-        val card = addMockCard(storage, someDeck.id, domain = domain)
-        addMockCard(storage, someDeck.id, domain = domain)
+        addMockCard(storage, someDeck.id)
+        addMockCard(storage, someDeck.id)
+        val card = addMockCard(storage, someDeck.id)
+        addMockCard(storage, someDeck.id)
 
         val newDeck = storage.addDeck(domain, "new deck")
 
@@ -801,10 +801,10 @@ abstract class StorageTest {
 
         val newDeck = storage.addDeck(domain, "New deck")
 
-        val newOriginal = addMockExpressionOriginal(storage, "new value", domain = domain)
+        val newOriginal = addMockExpressionOriginal(storage, "new original", domain = domain)
 
         val toBeRemoved = card.translations.find { it.value == "my translation" }!!
-        val newTranslation = addMockExpressionTranslation(storage, "new value", domain = domain)
+        val newTranslation = addMockExpressionTranslation(storage, "new translation", domain = domain)
         val newTranslations = card.translations.minus(toBeRemoved).plus(newTranslation)
 
         // when
@@ -867,7 +867,7 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
         val list = (0 until 10).map { addMockCard(storage, deck.id, original = "original $it",
-                translations = listOf("translation $it - 1", "transition $it - 2")) }
+                translations = listOf("translation $it - 1", "transition $it - 2"), domain = domain) }
 
         // when
         val cards = storage.allCards(domain, exercise)
@@ -962,24 +962,6 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addDeck__sameNameDifferentDomains`() {
-        // given
-        val storage = prefilledStorage.value
-        val lang = storage.addLanguage("French")
-        val domain2 = storage.createDomain("Another domain", lang, domain.langTranslations())
-
-        val name = "My new deck"
-
-        // when
-        val deck1 = storage.addDeck(domain, name)
-        val deck2 = storage.addDeck(domain2, name)
-
-        // assert
-        assertDeckCorrect(deck1, name, domain)
-        assertDeckCorrect(deck2, name, domain2)
-    }
-
-    @Test
     fun `test__deckById__NoCards`() {
         // given
         val storage = prefilledStorage.value
@@ -1059,11 +1041,11 @@ abstract class StorageTest {
         val deck = storage.addDeck(domain, "Mock deck")
         val wrongDeck1 = storage.addDeck(domain, "wrong deck 1")
         for (i in 0 until 3) {
-            addMockCard(storage, wrongDeck1.id, domain = domain)
+            addMockCard(storage, wrongDeck1.id)
         }
         val wrongDeck2 = storage.addDeck(domain, "wrong deck 2")
         for (i in 0 until 3) {
-            addMockCard(storage, wrongDeck2.id, domain = domain)
+            addMockCard(storage, wrongDeck2.id)
         }
 
         // when
@@ -1084,8 +1066,8 @@ abstract class StorageTest {
             val deck = storage.addDeck(domain, "deck $i")
             decks.add(deck)
             cardData.add(listOf(
-                    mockCardData("original ${i*i}", "translation ${i*i}", deck.id),
-                    mockCardData("original ${i*i+1}", "translation ${i*i+1}", deck.id)
+                    mockCardData("original ${2*i}", "translation ${2*i}", deck.id),
+                    mockCardData("original ${2*i+1}", "translation ${2*i+1}", deck.id)
             ))
         }
         cardData.forEach { it.forEach { addMockCard(storage, it, domain) } }
@@ -1139,7 +1121,7 @@ abstract class StorageTest {
 
         val decks = mutableListOf<Deck>()
         for (i in 0 until 3) {
-            decks.add(storage.addDeck(domain, "deck $1"))
+            decks.add(storage.addDeck(domain, "deck $i"))
         }
 
         // when
