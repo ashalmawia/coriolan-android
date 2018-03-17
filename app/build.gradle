@@ -7,7 +7,10 @@ apply plugin: 'io.fabric'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystoreExists = keystorePropertiesFile.exists()
+if (keystoreExists) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
     compileSdkVersion COMMON__COMPILE_SDK
@@ -22,10 +25,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
+            storeFile (keystoreExists ? file(keystoreProperties['storeFile']) : null)
+            storePassword (keystoreExists ? keystoreProperties['storePassword'] : "")
+            keyAlias (keystoreExists ? keystoreProperties['keyAlias'] : "")
+            keyPassword (keystoreExists ? keystoreProperties['keyPassword'] : "")
         }
     }
     buildTypes {

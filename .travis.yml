@@ -7,6 +7,9 @@ android:
     - build-tools-27.0.0
     - android-26
 
+script:
+  - ./gradlew :app:assembleDebug :app:lintDebug :app:lintRelease :app:test
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
