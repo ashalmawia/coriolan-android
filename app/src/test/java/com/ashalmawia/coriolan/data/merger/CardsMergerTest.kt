@@ -2,9 +2,9 @@ package com.ashalmawia.coriolan.data.merger
 
 import com.ashalmawia.coriolan.data.storage.MockRepository
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.emptyState
+import com.ashalmawia.coriolan.learning.exercise.MockExerciseDescriptor
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.assertCardCorrect
 import com.ashalmawia.coriolan.model.mockDomain
@@ -22,8 +22,8 @@ class CardsMergerTest {
     private val exersicesRegistry = ExercisesRegistry
 
     private val deckId = 5L
-    private val mockState = State(today().plusDays(5), 8)
-    private val exercise = MockExercise()
+    private val mockState = SRState(today().plusDays(5), 8)
+    private val exercise = MockExerciseDescriptor()
 
     private val merger = CardsMergerImpl(repository, domain, exersicesRegistry)
 
@@ -52,7 +52,7 @@ class CardsMergerTest {
         val card = repository.addCard(domain, deckId, original("spring"), listOf(
                 translation("весна"), translation("источник")
         ))
-        val withState = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         val original = original("shrimp")
         val translations = listOf(
@@ -64,7 +64,8 @@ class CardsMergerTest {
 
         // then
         assertEquals(2, repository.cards.size)
-        assertEquals(withState, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
         assertCardCorrect(repository.cards[1], original, translations, deckId, domain)
     }
 
@@ -76,10 +77,11 @@ class CardsMergerTest {
         val translation2 = translation("источник")
 
         val card = repository.addCard(domain, deckId, original, listOf(translation1))
-        val updated = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         assertEquals(1, repository.cards.size)
-        assertEquals(updated, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
 
         // when
         merger.mergeOrAdd(original, listOf(translation2), deckId)
@@ -88,7 +90,7 @@ class CardsMergerTest {
         System.out.println(repository.cards)
         assertEquals(1, repository.cards.size)
         assertCardCorrect(repository.cards[0], original, listOf(translation1, translation2), deckId, domain)
-        assertEquals("progress is reset", emptyState(), repository.cards[0].state)
+        assertEquals("progress is reset", emptyState(), repository.getSRCardState(repository.cards[0], exercise.stableId))
     }
 
     @Test
@@ -97,7 +99,7 @@ class CardsMergerTest {
         val card = repository.addCard(domain, deckId, original("rocket"), listOf(
                 translation("ракета")
         ))
-        val withState = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         val original = original("missile")
         val translations = listOf(
@@ -109,7 +111,8 @@ class CardsMergerTest {
 
         // then
         assertEquals(2, repository.cards.size)
-        assertEquals(withState, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
         assertCardCorrect(repository.cards[1], original, translations, deckId, domain)
     }
 
@@ -119,7 +122,7 @@ class CardsMergerTest {
         val card = repository.addCard(domain, deckId, original("rocket"), listOf(
                 translation("ракета"), translation("космический корабль")
         ))
-        val withState = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         val original = original("missile")
         val translations = listOf(
@@ -131,7 +134,8 @@ class CardsMergerTest {
 
         // then
         assertEquals(2, repository.cards.size)
-        assertEquals(withState, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
         assertCardCorrect(repository.cards[1], original, translations, deckId, domain)
     }
 
@@ -143,10 +147,11 @@ class CardsMergerTest {
         val translation2 = translation("источник")
 
         val card = repository.addCard(domain, deckId, original, listOf(translation1))
-        val updated = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         assertEquals(1, repository.cards.size)
-        assertEquals(updated, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
 
         // when
         val translations = listOf(translation1, translation2)
@@ -155,7 +160,7 @@ class CardsMergerTest {
         // then
         assertEquals(1, repository.cards.size)
         assertCardCorrect(repository.cards[0], original, listOf(translation1, translation2), deckId, domain)
-        assertEquals("progress is reset", emptyState(), repository.cards[0].state)
+        assertEquals("progress is reset", emptyState(), repository.getSRCardState(repository.cards[0], exercise.stableId))
     }
 
     @Test
@@ -166,7 +171,7 @@ class CardsMergerTest {
         val translation2 = translation("источник")
 
         val card = repository.addCard(domain, deckId, original, listOf(translation1, translation2))
-        val withState = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         // when
         val translations = listOf(translation2)
@@ -174,7 +179,8 @@ class CardsMergerTest {
 
         // then
         assertEquals(1, repository.cards.size)
-        assertEquals(withState, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
     }
 
     @Test
@@ -185,7 +191,7 @@ class CardsMergerTest {
         val translation2 = translation("источник")
 
         val card = repository.addCard(domain, deckId, original, listOf(translation1, translation2))
-        val withState = repository.updateCardState(card, mockState, exercise)
+        repository.updateSRCardState(card, mockState, exercise.stableId)
 
         // when
         val translations = listOf(translation1, translation2)
@@ -193,6 +199,7 @@ class CardsMergerTest {
 
         // then
         assertEquals(1, repository.cards.size)
-        assertEquals(withState, repository.cards[0])
+        assertEquals(card, repository.cards[0])
+        assertEquals(mockState, repository.getSRCardState(repository.cards[0], exercise.stableId))
     }
 }

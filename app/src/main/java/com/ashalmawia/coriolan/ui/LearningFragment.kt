@@ -20,6 +20,8 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.model.Deck
@@ -29,7 +31,7 @@ import kotlinx.android.synthetic.main.decks_list.*
 
 class LearningFragment : Fragment(), TodayChangeListener {
 
-    private lateinit var exercise: Exercise
+    private lateinit var exercise: ExerciseDescriptor<*, *>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.decks_list, container, false)
@@ -65,7 +67,7 @@ class LearningFragment : Fragment(), TodayChangeListener {
     }
 
     private fun fetchData() {
-        (decksList.adapter as DecksAdapter).setData(decksList())
+        (decksList.adapter as DecksAdapter<*, *>).setData(decksList())
     }
 
     override fun onDayChanged() {
@@ -120,7 +122,9 @@ class LearningFragment : Fragment(), TodayChangeListener {
     }
 }
 
-private class DecksAdapter(private val context: Context, private val exercise: Exercise) : RecyclerView.Adapter<DeckViewHolder>() {
+private class DecksAdapter<S: State, E : Exercise>(
+        private val context: Context, private val exercise: ExerciseDescriptor<S, E>
+) : RecyclerView.Adapter<DeckViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
     private val counts: MutableMap<Long, Counts> = mutableMapOf()
@@ -175,15 +179,15 @@ private class DecksAdapter(private val context: Context, private val exercise: E
     }
 
     private fun studyDefault(deck: Deck) {
-        LearningFlow.initiate(deck, exercise = exercise).start(context)
+        LearningFlow.initiate(context, deck, exercise = exercise)
     }
 
     private fun studyStraightforward(deck: Deck) {
-        LearningFlow.initiate(deck, false, exercise).start(context)
+        LearningFlow.initiate(context, deck, false, exercise)
     }
 
     private fun studyRandom(deck: Deck) {
-        LearningFlow.initiate(deck, true, exercise).start(context)
+        LearningFlow.initiate(context, deck, true, exercise)
     }
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {

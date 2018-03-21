@@ -1,20 +1,20 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.LearningExerciseDescriptor
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert
 import org.junit.Test
 import org.robolectric.RuntimeEnvironment
-import com.ashalmawia.coriolan.learning.scheduler.State
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class ConstrantStorageTest {
 
-    private val exercise = MockExercise()
+    private val exercise = LearningExerciseDescriptor()
     private val exercises = listOf(exercise)
 
     private lateinit var domain: Domain
@@ -382,19 +382,19 @@ class ConstrantStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCardState__cardIncorrect`() {
+    fun `test__updateSRCardState__cardIncorrect`() {
         // when
         val storage = prefilledStorage.value
-        val newState = State(today().plusDays(8), 8)
+        val newState = SRState(today().plusDays(8), 8)
 
         val dummyCard = mockCard(domain = domain)
 
         // when
-        storage.updateCardState(dummyCard, newState, exercise)
+        storage.updateSRCardState(dummyCard, newState, exercise.stableId)
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCardState__exerciseIncorrect`() {
+    fun `test__updateSRCardState__exerciseIncorrect`() {
         // when
         val storage = prefilledStorage.value
 
@@ -404,11 +404,11 @@ class ConstrantStorageTest {
         val translation = storage.addExpression("креветка", ExpressionType.WORD, domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
-        val newState = State(today().plusDays(8), 8)
+        val newState = SRState(today().plusDays(8), 8)
 
-        val dummyExercise = MockExercise("dummy")
+        val dummyExerciseId = "dummy"
 
         // when
-        storage.updateCardState(card, newState, dummyExercise)
+        storage.updateSRCardState(card, newState, dummyExerciseId)
     }
 }

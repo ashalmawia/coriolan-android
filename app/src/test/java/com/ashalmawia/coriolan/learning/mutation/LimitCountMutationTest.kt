@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.data.journal.MockJournal
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
@@ -16,7 +17,7 @@ class LimitCountMutationTest {
     private val preferences = MockPreferences()
     private val journal = MockJournal()
     private val date = today()
-    private val cards = List(60, { i -> mockCard(procudeMockState(i)) })
+    private val cards = List(60, { i -> mockCardWithState(procudeMockState(i)) })
 
     private val mutation = lazy { LimitCountMutation(preferences, journal, date) }
 
@@ -212,10 +213,10 @@ class LimitCountMutationTest {
     }
 }
 
-private fun List<Card>.filter(vararg statuses: Status): List<Card> {
+private fun List<CardWithState<*>>.filter(vararg statuses: Status): List<CardWithState<*>> {
     return filter { statuses.contains(it.state.status) }
 }
 
-private fun List<Card>.count(vararg statuses: Status): Int {
+private fun List<CardWithState<*>>.count(vararg statuses: Status): Int {
     return count { statuses.contains(it.state.status) }
 }

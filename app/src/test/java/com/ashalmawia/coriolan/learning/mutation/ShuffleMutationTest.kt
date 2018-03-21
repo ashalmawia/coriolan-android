@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.model.mockCard
+import com.ashalmawia.coriolan.learning.assignment.MockState
+import com.ashalmawia.coriolan.model.mockCardWithState
 import junit.framework.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -9,7 +10,7 @@ import org.junit.runners.BlockJUnit4ClassRunner
 @RunWith(BlockJUnit4ClassRunner::class)
 class ShuffleMutationTest {
 
-    private val cards = List(50, { i -> mockCard(id = i.toLong()) })
+    private val cards = List(50, { i -> mockCardWithState(MockState(), id = i.toLong()) })
 
     private lateinit var mutation: ShuffleMutation
 
@@ -35,6 +36,6 @@ class ShuffleMutationTest {
 
         // then
         assertFalse(cards == processed)
-        assertEquals(cards.sortedBy { it.id }, processed.sortedBy { it.id })
+        assertEquals(cards.sortedBy { it.card.id }, processed.sortedBy { it.card.id })
     }
 }

@@ -1,7 +1,8 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
-import com.ashalmawia.coriolan.learning.assignment.MockAssignment
-import com.ashalmawia.coriolan.model.mockCard
+import com.ashalmawia.coriolan.learning.scheduler.sr.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -9,29 +10,20 @@ import org.junit.runner.RunWith
 import org.junit.runners.BlockJUnit4ClassRunner
 
 @RunWith(BlockJUnit4ClassRunner::class)
-class SpacedRepetitionSchedulerTest {
+class MultiplierBasedSchedulerTest {
 
-    private fun assignment(): MockAssignment {
-        return MockAssignment(listOf())
-    }
-
-    private fun scheduler() = SpacedRepetitionScheduler()
+    private fun scheduler() = MultiplierBasedScheduler()
 
     @Test
     fun `test__newCard__wrong`() {
         // given
         val scheduler = scheduler()
 
-        val assignment = assignment()
-
         val state = emptyState()
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.wrong(card.state)
+        val updated = scheduler.wrong(state)
 
         // then
         val today = today()
@@ -44,16 +36,11 @@ class SpacedRepetitionSchedulerTest {
         // given
         val scheduler = scheduler()
 
-        val assignment = assignment()
-
         val state = emptyState()
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.correct(card.state)
+        val updated = scheduler.correct(state)
 
         // then
         val today = today()
@@ -66,16 +53,11 @@ class SpacedRepetitionSchedulerTest {
         // given
         val scheduler = scheduler()
 
-        val assignment = assignment()
-
         val state = emptyState()
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.correct(scheduler.correct(card.state))
+        val updated = scheduler.correct(scheduler.correct(state))
 
         // then
         val today = today()
@@ -87,18 +69,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__wrong__dueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today, 4)
+        val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.wrong(card.state)
+        val updated = scheduler.wrong(state)
 
         // then
         assertEquals(0, updated.period)
@@ -109,18 +86,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__hard__dueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today, 4)
+        val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.hard(card.state)
+        val updated = scheduler.hard(state)
 
         // then
         assertEquals(2, updated.period)
@@ -131,18 +103,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__correct__dueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today, 4)
+        val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.correct(card.state)
+        val updated = scheduler.correct(state)
 
         // then
         assertEquals(8, updated.period)
@@ -153,18 +120,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__easy__dueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today, 4)
+        val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.easy(card.state)
+        val updated = scheduler.easy(state)
 
         // then
         assertEquals(16, updated.period)
@@ -175,18 +137,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__wrong__afterDueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(5), 8)
+        val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.wrong(card.state)
+        val updated = scheduler.wrong(state)
 
         // then
         assertEquals(0, updated.period)
@@ -197,18 +154,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__hard__afterDueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(5), 8)
+        val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.hard(card.state)
+        val updated = scheduler.hard(state)
 
         // then
         assertEquals(13 / 2, updated.period)
@@ -219,18 +171,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__correct__afterDueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(5), 8)
+        val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.correct(card.state)
+        val updated = scheduler.correct(state)
 
         // then
         assertEquals(13 * 2, updated.period)
@@ -241,18 +188,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__inProgressCard__easy__afterDueDate`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(5), 8)
+        val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.easy(card.state)
+        val updated = scheduler.easy(state)
 
         // then
         assertEquals(13 * 4, updated.period)
@@ -263,18 +205,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__learnt__wrong`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(217), 200)
+        val state = SRState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.wrong(card.state)
+        val updated = scheduler.wrong(state)
 
         // then
         assertEquals(0, updated.period)
@@ -285,18 +222,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__learnt__hard`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(216), 200)
+        val state = SRState(today.minusDays(216), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.hard(card.state)
+        val updated = scheduler.hard(state)
 
         // then
         assertEquals(416  / 2, updated.period)
@@ -308,18 +240,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__learnt__correct`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(217), 200)
+        val state = SRState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.correct(card.state)
+        val updated = scheduler.correct(state)
 
         // then
         assertEquals(417 * 2, updated.period)
@@ -331,18 +258,13 @@ class SpacedRepetitionSchedulerTest {
     fun `test__learnt__easy`() {
         // given
         val scheduler = scheduler()
-
-        val assignment = assignment()
         val today = today()
 
-        val state = State(today.minusDays(217), 200)
+        val state = SRState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
-        assignment.mockCurrent(mockCard(state))
-        val card = assignment.current!!
-
         // when
-        val updated = scheduler.easy(card.state)
+        val updated = scheduler.easy(state)
 
         // then
         assertEquals(417 * 4, updated.period)

@@ -4,7 +4,8 @@ import android.content.Context
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -47,7 +48,7 @@ interface Repository {
 
     fun deleteCard(card: Card)
 
-    fun allCards(domain: Domain, exercise: Exercise = ExercisesRegistry.defaultExercise()): List<Card>
+    fun allCards(domain: Domain): List<Card>
 
     fun allDecks(domain: Domain): List<Deck>
 
@@ -57,9 +58,11 @@ interface Repository {
 
     fun addDeck(domain: Domain, name: String): Deck
 
-    fun updateCardState(card: Card, state: State, exercise: Exercise): Card
+    fun updateSRCardState(card: Card, state: SRState, exerciseId: String)
 
-    fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card>
+    fun getSRCardState(card: Card, exerciseId: String): SRState
+
+    fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>>
 }
 
 class DataProcessingException(message: String, causedBy: Throwable? = null) : RuntimeException(message, causedBy)

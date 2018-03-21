@@ -1,5 +1,8 @@
 package com.ashalmawia.coriolan.data
 
+import com.ashalmawia.coriolan.learning.scheduler.Status
+import com.ashalmawia.coriolan.util.orZero
+
 interface Counts {
 
     fun countNew(): Int
@@ -8,6 +11,17 @@ interface Counts {
 
     fun isAnythingPending(): Boolean {
         return countNew() > 0 || countReview() > 0 || countRelearn() > 0
+    }
+
+    companion object {
+        fun createFrom(counts: Map<Status, Int>): Counts {
+            return SimpleCounts(counts[Status.NEW].orZero(),
+                    counts[Status.IN_PROGRESS].orZero() + counts[Status.LEARNT].orZero(),
+                    counts[Status.RELEARN].orZero())
+        }
+        fun createFrom(new: Int, review: Int, relearn: Int): Counts {
+            return SimpleCounts(new, review, relearn)
+        }
     }
 }
 

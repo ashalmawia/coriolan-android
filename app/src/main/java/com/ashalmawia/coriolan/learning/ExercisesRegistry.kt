@@ -2,18 +2,18 @@ package com.ashalmawia.coriolan.learning
 
 object ExercisesRegistry {
 
-    private val default = SimpleExercise()
+    private val default = LearningExerciseDescriptor()
 
     private val exercises = listOf(
             default
             // all others go here
     )
 
-    fun allExercises(): List<Exercise> {
+    fun allExercises(): List<ExerciseDescriptor<*, *>> {
         return exercises
     }
 
-    fun defaultExercise(): Exercise {
+    fun defaultExercise(): ExerciseDescriptor<*, *> {
         return default
     }
 }

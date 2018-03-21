@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.mockCard
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import org.joda.time.DateTime
 
 import org.junit.Assert.*
@@ -15,14 +14,14 @@ private val date = DateTime.now()
 @RunWith(BlockJUnit4ClassRunner::class)
 class AssignmentTest {
     
-    private fun create(date: DateTime, cards: List<Card>): Assignment {
+    private fun create(date: DateTime, cards: List<CardWithState<MockState>>): Assignment<MockState> {
         return Assignment(date, cards)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `assignmentTest__emptyCollection`() {
         // given
-        val cards = listOf<Card>()
+        val cards = listOf<CardWithState<MockState>>()
         val assignment = create(date, cards)
 
         // when
@@ -34,7 +33,7 @@ class AssignmentTest {
     @Test
     fun `assignmentTest__rescheduled`() {
         // given
-        val map = mutableMapOf<Card, Int>()
+        val map = mutableMapOf<CardWithState<MockState>, Int>()
         for (i in 0 until MAGIC_COLLECTION_LENGTH) {
             map.put(mockCard(), 0)
         }
@@ -67,7 +66,7 @@ class AssignmentTest {
     @Test(expected = IllegalStateException::class)
     fun `assignmentTest__halfRescheduled`() {
         // given
-        val map = mutableMapOf<Card, Boolean>()     // boolean means - to be rescheduled
+        val map = mutableMapOf<CardWithState<MockState>, Boolean>()     // boolean means - to be rescheduled
         for (i in 0 until MAGIC_COLLECTION_LENGTH) {
             map.put(mockCard(), i % 2 == 0)
         }
@@ -100,7 +99,7 @@ class AssignmentTest {
     fun `assignmentTest__rescheduledDoesNotAppearImmediately`() {
         // given
         val cards = listOf(mockCard(), mockCard())      // only 2 items
-        var lastMet: Card? = null
+        var lastMet: CardWithState<MockState>? = null
 
         // when
         val assignment = create(date, cards)
@@ -117,3 +116,5 @@ class AssignmentTest {
         }
     }
 }
+
+private fun mockCard() = CardWithState(com.ashalmawia.coriolan.model.mockCard(), MockState())

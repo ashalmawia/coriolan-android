@@ -2,9 +2,10 @@ package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.data.prefs.CardTypePreference
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.util.forward
-import com.ashalmawia.coriolan.util.reverse
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.util.forwardWithState
+import com.ashalmawia.coriolan.util.reverseWithState
 
 abstract class CardTypeFilterMutation : Mutation {
 
@@ -25,21 +26,23 @@ abstract class CardTypeFilterMutation : Mutation {
 }
 
 class CardTypeForwardFirstMutation : CardTypeFilterMutation() {
-    override fun apply(cards: List<Card>): List<Card> = cards.forward().plus(cards.reverse())
+    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>>
+            = cards.forwardWithState().plus(cards.reverseWithState())
 }
 
 class CardTypeReverseFirstMutation : CardTypeFilterMutation() {
-    override fun apply(cards: List<Card>): List<Card> = cards.reverse().plus(cards.forward())
+    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>>
+            = cards.reverseWithState().plus(cards.forwardWithState())
 }
 
 class CardTypeMixedMutation : CardTypeFilterMutation() {
-    override fun apply(cards: List<Card>): List<Card> = cards
+    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards
 }
 
 class CardTypeForwardOnlyMutation : CardTypeFilterMutation() {
-    override fun apply(cards: List<Card>): List<Card> = cards.forward()
+    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards.forwardWithState()
 }
 
 class CardTypeReverseOnlyMutation : CardTypeFilterMutation() {
-    override fun apply(cards: List<Card>): List<Card> = cards.reverse()
+    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards.reverseWithState()
 }

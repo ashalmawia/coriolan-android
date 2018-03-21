@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
 import com.nhaarman.mockito_kotlin.*
@@ -16,7 +16,7 @@ class InMemoryCacheTest {
     private lateinit var inner: MockRepository
     private lateinit var cache: InMemoryCache
 
-    private val exercise = MockExercise()
+    private val exercise = "mock"
 
     @Before
     fun before() {
@@ -164,7 +164,7 @@ class InMemoryCacheTest {
         val state = mockState()
 
         // when
-        cache.updateCardState(card, state, exercise)
+        cache.updateSRCardState(card, state, exercise)
 
         // then
         assertEquals("state is updated", state, inner.states[card.id])
@@ -181,11 +181,17 @@ class InMemoryCacheTest {
         val state = mockState()
 
         // when
-        cache.updateCardState(card, state, exercise)
+        cache.updateSRCardState(card, state, exercise)
         val cached = cache.cardById(card.id, domain)
 
         // then
-        assertEquals("state is updated", state, cached!!.state)
+        assertNotNull(cached)
+
+        // when
+        val cachedState = cache.getSRCardState(cached!!, exercise)
+
+        // then
+        assertEquals("state is updated", state, cachedState)
         verify(inner, never()).cardById(any(), any())
     }
 
@@ -196,18 +202,18 @@ class InMemoryCacheTest {
         val cards = (0 until 9).map { addMockCard(cache, original = "original $it", translations = listOf("tr $it"), domain = domain) }
 
         // when
-        val read = cache.allCards(domain, exercise)
+        val read = cache.allCards(domain)
 
         // then
         assertEquals(cards, read)
-        verify(inner, times(1)).allCards(any(), any())
+        verify(inner, times(1)).allCards(any())
 
         // when
-        val read2 = cache.allCards(domain, exercise)
+        val read2 = cache.allCards(domain)
 
         // then
         assertEquals(cards, read2)
-        verify(inner, times(1)).allCards(any(), any())
+        verify(inner, times(1)).allCards(any())
 
         // when
         val cardById = cache.cardById(cards[1].id, domain)
@@ -226,13 +232,13 @@ class InMemoryCacheTest {
         assertNotNull(updated)
         mutable[7] = updated!!
         val readUpdated = cache.cardById(updated.id, domain)
-        val all = cache.allCards(domain, exercise)
+        val all = cache.allCards(domain)
 
         // then
         assertEquals(updated, readUpdated)
         assertEquals(mutable, all)
         verify(inner, never()).cardById(any(), any())
-        verify(inner, times(1)).allCards(any(), any())
+        verify(inner, times(1)).allCards(any())
     }
 
     @Test
@@ -247,6 +253,7 @@ class InMemoryCacheTest {
 
         // then
         assertEquals("number of due cards is correct", 1, due.size)
-        assertTrue("the returned copy is the one from cache", due[0] == card)
+        assertTrue("the returned copy is the one from cache", due[0].card == card)
+        assertTrue("the returned copy is the one from cache", due[0].state == emptyState())
     }
 }

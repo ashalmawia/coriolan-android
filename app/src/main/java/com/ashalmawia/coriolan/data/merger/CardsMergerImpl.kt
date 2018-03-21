@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.merger
 
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.scheduler.emptyState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Expression
@@ -41,7 +40,7 @@ class CardsMergerImpl(
     }
 
     private fun resetProgress(card: Card) {
-        exercisesRegistry.allExercises().forEach { repository.updateCardState(card, emptyState(), it) }
+        exercisesRegistry.allExercises().forEach { it.onTranslationAdded(repository, card) }
     }
 
     private fun matchByOriginal(cards: List<Card>, expression: Expression): Card? {

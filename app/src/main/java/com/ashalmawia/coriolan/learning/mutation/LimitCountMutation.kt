@@ -2,8 +2,9 @@ package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.model.Card
 import org.joda.time.DateTime
 
 class LimitCountMutation(preferences: Preferences, journal: Journal, date: DateTime) : Mutation {
@@ -13,7 +14,7 @@ class LimitCountMutation(preferences: Preferences, journal: Journal, date: DateT
 
     private val counts = journal.cardsStudiedOnDate(date)
 
-    override fun apply(cards: List<Card>): List<Card> {
+    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
         if (limitNew == null && limitReview == null) {
             return cards
         }
@@ -24,7 +25,7 @@ class LimitCountMutation(preferences: Preferences, journal: Journal, date: DateT
     private fun limitNew() = limitNew?.minus(counts.countNew()) ?: Int.MAX_VALUE
     private fun limitReview() = limitReview?.minus(counts.countReview()) ?: Int.MAX_VALUE
 
-    private fun transformed(cards: List<Card>, limitNew: Int, limitReview: Int): List<Card> {
+    private fun <S : State> transformed(cards: List<CardWithState<S>>, limitNew: Int, limitReview: Int): List<CardWithState<S>> {
         var countNew = 0
         var countReview = 0
         return cards.filter {

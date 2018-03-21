@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
-import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.mockLanguage
@@ -145,10 +145,10 @@ class SqliteConvertersTest {
         val cardId = 1L
         val due = DateTime(1519529781000)
         val period = 16
-        val state = State(due, period)
+        val state = SRState(due, period)
 
         // when
-        val cv = createStateContentValues(cardId, state)
+        val cv = createSRStateContentValues(cardId, state)
 
         // then
         assertEquals("values count is correct", 3, cv.size())

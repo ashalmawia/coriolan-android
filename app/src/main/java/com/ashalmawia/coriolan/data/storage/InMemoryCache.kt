@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -92,11 +92,11 @@ class InMemoryCache(private val inner: Repository) : Repository {
         cards.remove(card.id)
     }
 
-    override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
+    override fun allCards(domain: Domain): List<Card> {
         return if (allCardsLoaded) {
             cards.values.filterNotNull().distinctBy { it.id }
         } else {
-            val read = inner.allCards(domain, exercise)
+            val read = inner.allCards(domain)
             cards.clear()
             cards.putAll(read.associateBy { it.id })
             allCardsLoaded = true
@@ -139,17 +139,15 @@ class InMemoryCache(private val inner: Repository) : Repository {
         }
     }
 
-    override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
-        val updated = inner.updateCardState(card, state, exercise)
-        cards[updated.id] = updated     // todo: state should not be a part of a card, this should be removed
-        return updated
+    override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {
+        return inner.updateSRCardState(card, state, exerciseId)
     }
 
-    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
-        val due = inner.cardsDueDate(exercise, deck, date)
-        for (card in due) {
-            cards[card.id] = card
-        }
-        return due
+    override fun getSRCardState(card: Card, exerciseId: String): SRState {
+        return inner.getSRCardState(card, exerciseId)
+    }
+
+    override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
+        return inner.cardsDueDate(exerciseId, deck, date)
     }
 }

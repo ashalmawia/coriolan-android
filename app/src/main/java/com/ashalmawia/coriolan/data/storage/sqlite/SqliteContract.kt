@@ -1,7 +1,5 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-import com.ashalmawia.coriolan.learning.Exercise
-
 const val SQLITE_TABLE_LANGUAGES = "Languages"
 const val SQLITE_TABLE_EXPRESSIONS = "Expressions"
 const val SQLITE_TABLE_DOMAINS = "Domains"
@@ -9,8 +7,8 @@ const val SQLITE_TABLE_CARDS = "Cards"
 const val SQLITE_TABLE_CARDS_REVERSE = "CardsReverse"
 const val SQLITE_TABLE_DECKS = "Decks"
 
-fun sqliteTableExerciseState(exercise: Exercise): String {
-    return "State_${exercise.stableId}"
+fun sqliteTableExerciseState(exerciseId: String): String {
+    return "State_$exerciseId"
 }
 
 const val SQLITE_COLUMN_ID = "_id"

@@ -1,14 +1,11 @@
 package com.ashalmawia.coriolan.model
 
-import com.ashalmawia.coriolan.learning.scheduler.State
-
 data class Card(
         val id: Long,
         val deckId: Long,
         val domain: Domain,
         val original: Expression,
-        val translations: List<Expression>,
-        var state: State
+        val translations: List<Expression>
 ) {
     val type: CardType
         get() {

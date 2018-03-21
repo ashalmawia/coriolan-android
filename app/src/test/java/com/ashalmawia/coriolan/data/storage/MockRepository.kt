@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.emptyState
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -37,7 +37,7 @@ class MockRepository : Repository {
         expressions.remove(expression)
     }
 
-    val domains = mutableListOf<Domain>()
+    private val domains = mutableListOf<Domain>()
     override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
         val domain = Domain(domains.size + 1L, name, langOriginal, langTranslations)
         domains.add(domain)
@@ -54,8 +54,7 @@ class MockRepository : Repository {
                 deckId,
                 domain,
                 original,
-                translations,
-                emptyState()
+                translations
         )
         cards.add(card)
         return card
@@ -68,7 +67,7 @@ class MockRepository : Repository {
             return null
         }
 
-        val updated = Card(card.id, deckId, card.domain, original, translations, card.state)
+        val updated = Card(card.id, deckId, card.domain, original, translations)
         cards.remove(card)
         cards.add(updated)
         return updated
@@ -76,7 +75,7 @@ class MockRepository : Repository {
     override fun deleteCard(card: Card) {
         cards.remove(card)
     }
-    override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
+    override fun allCards(domain: Domain): List<Card> {
         return cards
     }
 
@@ -96,20 +95,22 @@ class MockRepository : Repository {
         return deck
     }
 
-    val states = mutableMapOf<Long, State>()
-    override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
+    val states = mutableMapOf<Long, SRState>()
+    override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {
         if (!cards.contains(card)) {
-//            throw DataProcessingException("card is not in the repo: $card")
-            throw IllegalStateException("card is not in the repo: $card")
+            throw DataProcessingException("card is not in the repo: $card")
         }
 
         states[card.id] = state
-        cards.remove(card)
-        card.state = state
-        cards.add(card)
-        return card
     }
-    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
-        return cardsOfDeck(deck).filter { it.state.due <= date }
+    override fun getSRCardState(card: Card, exerciseId: String): SRState {
+        return states[card.id] ?: emptyState()
+    }
+    override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
+        return cardsOfDeck(deck)
+                .map { card -> CardWithState(card, getSRCardState(card, exerciseId)) }
+                .filter {
+                    it.state.due <= date
+                }
     }
 }

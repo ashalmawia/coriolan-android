@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExerciseDescriptor
 import com.ashalmawia.coriolan.learning.scheduler.*
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
@@ -15,7 +17,7 @@ import org.joda.time.DateTime
 
 private val TAG = SqliteStorage::class.java.simpleName
 
-class SqliteStorage(private val context: Context, exercises: List<Exercise>) : Repository {
+class SqliteStorage(private val context: Context, exercises: List<ExerciseDescriptor<*, *>>) : Repository {
 
     private val helper = SqliteRepositoryOpenHelper(context, exercises)
 
@@ -235,15 +237,15 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
             // write the card-to-expression relation (many-to-many)
             val cardsReverseCV = generateCardsReverseContentValues(cardId, translations)
-            for (cv in cardsReverseCV) {
-                val result = db.insert(SQLITE_TABLE_CARDS_REVERSE, null, cv)
+            cardsReverseCV.forEach {
+                val result = db.insert(SQLITE_TABLE_CARDS_REVERSE, null, it)
 
                 if (result < 0) {
                     throw DataProcessingException("failed to insert translation entry card ($original -> $translations)")
                 }
             }
 
-            val card = Card(cardId, deckId, domain, original, translations, emptyState())
+            val card = Card(cardId, deckId, domain, original, translations)
 
             db.setTransactionSuccessful()
 
@@ -271,9 +273,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                         cursor.getDeckId(),
                         domain,
                         storage().expressionById(cursor.getFrontId())!!,
-                        translationsByCardId(id),
-                        // todo: state should not be a part of a card
-                        State(today(), PERIOD_NEVER_SCHEDULED)
+                        translationsByCardId(id)
                 )
             } else {
                 null
@@ -317,7 +317,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
 
             db.setTransactionSuccessful()
 
-            return Card(card.id, deckId, card.domain, original, translations, card.state)
+            return Card(card.id, deckId, card.domain, original, translations)
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to update card[$card.id], constraint violation", e)
         } finally {
@@ -343,29 +343,25 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         }
     }
 
-    override fun allCards(domain: Domain, exercise: Exercise): List<Card> {
+    override fun allCards(domain: Domain): List<Card> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
             |FROM
             |   $SQLITE_TABLE_CARDS AS Cards
-            |   LEFT JOIN ${sqliteTableExerciseState(exercise)} AS States
-            |       ON Cards.$SQLITE_COLUMN_ID = States.$SQLITE_COLUMN_CARD_ID
             |WHERE
             |   Cards.$SQLITE_COLUMN_DOMAIN_ID = ?
         """.trimMargin(), arrayOf(domain.id.toString()))
 
         val cards = mutableListOf<Card>()
         while (cursor.moveToNext()) {
-            val state = extractState(cursor)
             cards.add(Card(
                     cursor.getId(),
                     cursor.getDeckId(),
                     domain,
                     expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cursor.getId()),
-                    state
+                    translationsByCardId(cursor.getId())
             ))
         }
         cursor.close()
@@ -440,9 +436,7 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
                     deck.id,
                     deck.domain,
                     storage().expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cardId),
-                    // todo: read state here
-                    State(today(), PERIOD_NEVER_SCHEDULED)
+                    translationsByCardId(cardId)
             ))
         }
 
@@ -469,33 +463,49 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         return translations
     }
 
-    override fun updateCardState(card: Card, state: State, exercise: Exercise): Card {
-        val table = sqliteTableExerciseState(exercise)
-        val cv = createStateContentValues(card.id, state)
-        try {
-            val result = helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+    override fun getSRCardState(card: Card, exerciseId: String): SRState {
+        val db = helper.readableDatabase
 
-            if (result < 0) {
-                throw DataProcessingException("failed to updated card state for card ${card.id}, " +
-                        "exercise ${exercise.name()}: error occured")
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |   FROM ${sqliteTableExerciseState(exerciseId)}
+            |   WHERE $SQLITE_COLUMN_CARD_ID = ?
+        """.trimMargin(), arrayOf(card.id.toString()))
+
+        cursor.use {
+            return if (cursor.moveToNext()) {
+                extractSRState(cursor)
+            } else {
+                emptyState()
             }
-
-            card.state = state
-            return card
-        } catch (e: Exception) {
-            throw DataProcessingException("failed to updated card state for card $card.id, " +
-                    "exercise ${exercise.name()}: constraint violation", e)
         }
     }
 
-    override fun cardsDueDate(exercise: Exercise, deck: Deck, date: DateTime): List<Card> {
+    override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {
+        val table = sqliteTableExerciseState(exerciseId)
+        val cv = createSRStateContentValues(card.id, state)
+        try {
+            val result = helper.writableDatabase.
+                    insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+
+            if (result < 0) {
+                throw DataProcessingException("failed to updated card state for card ${card.id}, " +
+                        "exercise $exerciseId: error occured")
+            }
+        } catch (e: Exception) {
+            throw DataProcessingException("failed to updated card state for card $card.id, " +
+                    "exercise $exerciseId: constraint violation", e)
+        }
+    }
+
+    override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
             |FROM
             |   $SQLITE_TABLE_CARDS AS Cards
-            |   LEFT JOIN ${sqliteTableExerciseState(exercise)} AS States
+            |   LEFT JOIN ${sqliteTableExerciseState(exerciseId)} AS States
             |       ON Cards.$SQLITE_COLUMN_ID = States.$SQLITE_COLUMN_CARD_ID
             |WHERE
             |   Cards.$SQLITE_COLUMN_DECK_ID = ?
@@ -504,25 +514,25 @@ class SqliteStorage(private val context: Context, exercises: List<Exercise>) : R
         """.trimMargin(),
                 arrayOf(deck.id.toString(), date.timespamp.toString()))
 
-        val cards = mutableListOf<Card>()
+        val cards = mutableListOf<CardWithState<SRState>>()
         while (cursor.moveToNext()) {
-            val state = extractState(cursor)
-            cards.add(Card(
+            val card = Card(
                     cursor.getId(),
                     deck.id,
                     deck.domain,
                     expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cursor.getId()),
-                    state
-            ))
+                    translationsByCardId(cursor.getId())
+            )
+            val state = extractSRState(cursor)
+            cards.add(CardWithState(card, state))
         }
         cursor.close()
 
         return cards
     }
 
-    private fun extractState(cursor: Cursor) =
-            if (cursor.hasSavedState()) State(cursor.getDateDue(), cursor.getPeriod()) else emptyState()
+    private fun extractSRState(cursor: Cursor) =
+            if (cursor.hasSavedState()) SRState(cursor.getDateDue(), cursor.getPeriod()) else emptyState()
 
     fun storage() = Repository.get(context)
 }

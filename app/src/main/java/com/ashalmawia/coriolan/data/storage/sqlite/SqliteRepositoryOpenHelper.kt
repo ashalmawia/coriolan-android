@@ -3,11 +3,12 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.scheduler.StateType
 
 private const val SQLITE_VERSION = 1
 
-class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<Exercise>)
+class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<ExerciseDescriptor<*, *>>)
     : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -87,19 +88,24 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
         createTablesForExercises(db, exercises)
     }
 
-    private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<Exercise>) {
-        exercises.forEach { createTableExerciseState(db, sqliteTableExerciseState(it)) }
+    private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<ExerciseDescriptor<*, *>>) {
+        exercises.forEach { createTableExerciseState(db, it.stateType, sqliteTableExerciseState(it.stableId)) }
     }
 
-    private fun createTableExerciseState(db: SQLiteDatabase, tableName: String) {
-        db.execSQL("""CREATE TABLE $tableName(
-                |$SQLITE_COLUMN_CARD_ID INTEGER PRIMARY KEY,
-                |$SQLITE_COLUMN_DUE INTEGER NOT NULL,
-                |$SQLITE_COLUMN_PERIOD INTEGER NOT NULL,
-                |FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
-                |   ON DELETE CASCADE
-                |   ON UPDATE CASCADE
+    private fun createTableExerciseState(db: SQLiteDatabase, type: StateType, tableName: String) {
+        when (type) {
+            StateType.SR_STATE -> db.execSQL("""
+                |CREATE TABLE $tableName(
+                |   $SQLITE_COLUMN_CARD_ID INTEGER PRIMARY KEY,
+                |   $SQLITE_COLUMN_DUE INTEGER NOT NULL,
+                |   $SQLITE_COLUMN_PERIOD INTEGER NOT NULL,
+                |   FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
+                |      ON DELETE CASCADE
+                |      ON UPDATE CASCADE
                 |);""".trimMargin())
+
+            else -> throw IllegalArgumentException("state type $type is not handled")
+        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

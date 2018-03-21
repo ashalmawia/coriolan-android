@@ -1,10 +1,11 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.mockForwardCard
-import com.ashalmawia.coriolan.model.mockReverseCard
-import com.ashalmawia.coriolan.util.forward
-import com.ashalmawia.coriolan.util.reverse
+import com.ashalmawia.coriolan.learning.assignment.MockState
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.model.mockForwardCardWithState
+import com.ashalmawia.coriolan.model.mockReverseCardWithState
+import com.ashalmawia.coriolan.util.forwardWithState
+import com.ashalmawia.coriolan.util.reverseWithState
 import junit.framework.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,7 +19,7 @@ class CardTypeReverseFirstMutationTest {
     @Test
     fun `test__empty`() {
         // given
-        val cards = emptyList<Card>()
+        val cards = emptyList<CardWithState<MockState>>()
 
         // when
         val processed = mutation.apply(cards)
@@ -30,7 +31,7 @@ class CardTypeReverseFirstMutationTest {
     @Test
     fun `test__forwardOnly`() {
         // given
-        val cards = (0..10).map { mockForwardCard() }
+        val cards = (0..10).map { mockForwardCardWithState() }
 
         // when
         val processed = mutation.apply(cards)
@@ -42,7 +43,7 @@ class CardTypeReverseFirstMutationTest {
     @Test
     fun `test__reverseOnly`() {
         // given
-        val cards = (0..10).map { mockReverseCard() }
+        val cards = (0..10).map { mockReverseCardWithState() }
 
         // when
         val processed = mutation.apply(cards)
@@ -54,14 +55,14 @@ class CardTypeReverseFirstMutationTest {
     @Test
     fun `test__mixed`() {
         // given
-        val cards = (0 until 20).mapIndexed { i, _ -> if (i % 2 == 0) mockForwardCard() else mockReverseCard() }
+        val cards = (0 until 20).mapIndexed { i, _ -> if (i % 2 == 0) mockForwardCardWithState() else mockReverseCardWithState() }
 
         // when
         val processed = mutation.apply(cards)
 
         // then
         assertEquals(cards.size, processed.size)
-        assertEquals(cards.reverse(), processed.subList(0, cards.size / 2))
-        assertEquals(cards.forward(), processed.subList(cards.size / 2, cards.size))
+        assertEquals(cards.reverseWithState(), processed.subList(0, cards.size / 2))
+        assertEquals(cards.forwardWithState(), processed.subList(cards.size / 2, cards.size))
     }
 }

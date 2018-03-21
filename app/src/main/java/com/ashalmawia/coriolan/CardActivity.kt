@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan
 
-import android.annotation.SuppressLint
 import android.content.Context
 
 import kotlinx.android.synthetic.main.card_activity.*
@@ -11,12 +10,10 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.debug.DEBUG_SHOW_SCHEDULER_STATUS
-import com.ashalmawia.coriolan.learning.FlowListener
+import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.learning.LearningExercise
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.CardView
@@ -26,14 +23,13 @@ import kotlinx.android.synthetic.main.deck_progress_bar.*
 
 private val REQUEST_CODE_EDIT_CARD = 1
 
-class CardActivity : BaseActivity(), CardViewListener {
+class CardActivity : BaseActivity(), CardViewListener, FinishListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.card_activity)
 
         adjustProgressCountsUI()
-        addDebugViewIfNeeded()
 
         setUpToolbar(flow().deck.name)
 
@@ -48,11 +44,11 @@ class CardActivity : BaseActivity(), CardViewListener {
     override fun onStart() {
         super.onStart()
 
-        flow().listener = object : FlowListener {
-            override fun onFinish() {
-                finish()
-            }
-        }
+        flow().finishListener = this
+    }
+
+    override fun onFinish() {
+        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -75,7 +71,7 @@ class CardActivity : BaseActivity(), CardViewListener {
     }
 
     private fun editCurrentCard() {
-        val intent = AddEditCardActivity.edit(this, flow().card())
+        val intent = AddEditCardActivity.edit(this, exercise.card().card)
         startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
     }
 
@@ -90,9 +86,9 @@ class CardActivity : BaseActivity(), CardViewListener {
     }
 
     private fun deleteCurrentCard() {
-        val current = flow().card()
-        flow().deleteCurrent(this)
-        DecksRegistry.get().deleteCard(current)
+        val current = exercise.card()
+        exercise.dropCard(current.card)
+        DecksRegistry.get().deleteCard(current.card)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -106,7 +102,7 @@ class CardActivity : BaseActivity(), CardViewListener {
     }
 
     private fun onCurrentCardUpdated() {
-        flow().onCurrentCardUpdated(this)
+        exercise.refetchCard(exercise.card().card)
         refresh()
     }
 
@@ -117,38 +113,36 @@ class CardActivity : BaseActivity(), CardViewListener {
     override fun onStop() {
         super.onStop()
 
-        LearningFlow.current?.listener = null
+        LearningFlow.current?.finishListener = null
     }
 
     override fun onCorrect() {
-        flow().correct(this)
+        exercise.correct()
     }
 
     override fun onWrong() {
-        flow().wrong(this)
+        exercise.wrong()
     }
 
     override fun onEasy() {
-        flow().easy(this)
+        exercise.easy()
     }
 
     override fun onHard() {
-        flow().hard(this)
+        exercise.hard()
     }
 
     private fun bindToCurrent() {
-        val flow = flow()
-
         val view = cardView as CardView
-        view.bind(flow.card(), flow.answers())
+        val card = exercise.card()
+        view.bind(card.card, exercise.answers(card.state))
         view.listener = this
 
         updateProgressCounts()
-
-        maybeUpdateDebugView(flow.card())
     }
 
     private fun flow() = LearningFlow.current!!
+    private val exercise = flow().exercise as LearningExercise
 
     companion object {
         fun intent(context: Context): Intent {
@@ -163,29 +157,9 @@ class CardActivity : BaseActivity(), CardViewListener {
     }
 
     private fun updateProgressCounts() {
-        val counts = flow().counts
+        val counts = exercise.counts
         deck_progress_bar__new.text = counts.countNew().toString()
         deck_progress_bar__review.text = counts.countReview().toString()
         deck_progress_bar__relearn.text = counts.countRelearn().toString()
-    }
-
-    private fun addDebugViewIfNeeded() {
-        if (DEBUG_SHOW_SCHEDULER_STATUS) {
-            val view = TextView(this)
-            view.tag = "DebugStatus"
-            view.setPadding(100, view.paddingTop, 10, view.paddingBottom)
-            root.addView(view)
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun maybeUpdateDebugView(card: Card) {
-        if (DEBUG_SHOW_SCHEDULER_STATUS) {
-            val scheduler = flow().scheduler
-            val view = root.findViewWithTag<TextView>("DebugStatus")
-            view.text = "now: ${card.state}\n\n" +
-                    "yes: ${scheduler.correct(card.state)}\n" +
-                    "no: ${scheduler.wrong(card.state)}"
-        }
     }
 }

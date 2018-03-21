@@ -1,22 +1,18 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+
 interface Scheduler {
 
-    companion object {
-        fun default(): Scheduler {
-            return SpacedRepetitionScheduler()
-        }
-    }
+    fun answers(state: SRState): Array<Answer>
 
-    fun answers(state: State): Array<Answer>
+    fun wrong(state: SRState): SRState
 
-    fun wrong(state: State): State
+    fun hard(state: SRState): SRState
 
-    fun hard(state: State): State
+    fun correct(state: SRState): SRState
 
-    fun correct(state: State): State
-
-    fun easy(state: State): State
+    fun easy(state: SRState): SRState
 }
 
 enum class Answer(private val value: Int) {

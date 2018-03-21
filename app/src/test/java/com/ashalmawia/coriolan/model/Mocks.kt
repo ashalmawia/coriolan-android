@@ -2,10 +2,12 @@ package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.scheduler.PERIOD_NEVER_SCHEDULED
+import com.ashalmawia.coriolan.learning.assignment.MockState
+import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.sr.PERIOD_NEVER_SCHEDULED
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.today
-import org.joda.time.DateTime
 
 // TODO: go over it's default usages and consider adding params and checking them
 fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
@@ -41,7 +43,6 @@ fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOr
 
 private var cardId = 1L
 fun mockCard(
-        state: State = mockState(),
         domain: Domain = mockDomain(),
         id: Long = cardId++,
         type: CardType = CardType.FORWARD
@@ -51,17 +52,24 @@ fun mockCard(
             deckId,
             domain,
             mockExpression(language = domain.langOriginal(type)),
-            listOf(mockExpression(language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type))),
-            state
+            listOf(mockExpression(language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type)))
     )
 }
-fun mockForwardCard(): Card = mockCard(type = CardType.FORWARD)
-fun mockReverseCard(): Card = mockCard(type = CardType.REVERSE)
+fun mockForwardCardWithState(): CardWithState<MockState> = mockCardWithState(MockState(), type = CardType.FORWARD)
+fun mockReverseCardWithState(): CardWithState<MockState> = mockCardWithState(MockState(), type = CardType.REVERSE)
+
+fun <T : State> mockCardWithState(
+        state: T,
+        domain: Domain = mockDomain(),
+        id: Long = cardId++,
+        type: CardType = CardType.FORWARD): CardWithState<T> {
+    return CardWithState(mockCard(domain, id, type), state)
+}
 
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain()) = Deck(deckId++, domain, name)
 
-fun mockState(period: Int = 0) = State(today(), period)
+fun mockState(period: Int = 0) = SRState(today(), period)
 fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)
 fun mockStateRelearn() = mockState(0)
 fun mockStateInProgress() = mockState(5)

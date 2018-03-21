@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
-import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
@@ -69,7 +69,7 @@ fun createDeckContentValues(domainId: Long, name: String): ContentValues {
 
 // ********** STATE ********************
 
-fun createStateContentValues(cardId: Long, state: State): ContentValues {
+fun createSRStateContentValues(cardId: Long, state: SRState): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_CARD_ID, cardId)
     cv.put(SQLITE_COLUMN_DUE, state.due)
