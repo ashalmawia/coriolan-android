@@ -16,10 +16,12 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import kotlinx.android.synthetic.main.domain_activity.*
 
-private const val TAB_LEARNING = 0
-private const val TAB_EDIT = 1
-private const val TAB_STATISTICS = 2
-private const val TAB_SETTINGS = 3
+private enum class Tab {
+    LEARNING,
+    EDIT,
+    STATISTICS,
+    SETTINGS
+}
 
 private const val FRAGMENT_LEARNING = "fragment_learning"
 private const val FRAGMENT_EDIT = "fragment_edit"
@@ -28,7 +30,7 @@ private const val FRAGMENT_SETTINGS = "fragment_settings"
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
 
-class DomainActivity : BaseActivity() {
+class DomainActivity : BaseActivity(), EditFragmentListener {
 
     private val TAG = DomainActivity::class.java.simpleName
 
@@ -61,24 +63,28 @@ class DomainActivity : BaseActivity() {
         bottomNavigation.defaultBackgroundColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
         bottomNavigation.setOnTabSelectedListener { position, _ -> onNavigationItemSelected(position) }
-        bottomNavigation.currentItem = TAB_LEARNING
+        selectTab(Tab.LEARNING)
+    }
+
+    private fun selectTab(tab: Tab) {
+        bottomNavigation.currentItem = tab.ordinal
     }
 
     private fun onNavigationItemSelected(position: Int): Boolean {
         return when (position) {
-            TAB_LEARNING -> {
+            Tab.LEARNING.ordinal -> {
                 switchToLearning()
                 true
             }
-            TAB_EDIT -> {
+            Tab.EDIT.ordinal -> {
                 switchToEdit()
                 true
             }
-            TAB_STATISTICS -> {
+            Tab.STATISTICS.ordinal -> {
                 switchToStatistics()
                 true
             }
-            TAB_SETTINGS -> {
+            Tab.SETTINGS.ordinal -> {
                 switchToSettings()
                 true
             }
@@ -115,6 +121,10 @@ class DomainActivity : BaseActivity() {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_SETTINGS)
                 .commit()
+    }
+
+    override fun onDataUpdated() {
+        selectTab(Tab.LEARNING)
     }
 
     companion object {

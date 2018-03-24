@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.ui.BaseActivity
 import kotlinx.android.synthetic.main.enter_file_path.*
@@ -17,6 +18,7 @@ import permissions.dispatcher.RuntimePermissions
 import java.io.File
 
 const val EXTRA_TEXT = "extra_text"
+const val EXTRA_DECK_ID = "deck_id"
 
 private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
@@ -29,12 +31,18 @@ class EnterFilePathActivity : BaseActivity() {
 
         setUpToolbar(R.string.import_from_file)
 
+        initalize()
+
         restore(savedInstanceState)
 
         buttonCancel.setOnClickListener { cancel() }
         buttonSubmit.setOnClickListener { validateAndSubmit(editText.text.toString()) }
 
         maybeSetDebugValues()
+    }
+
+    private fun initalize() {
+        deckSelector.initialize(DecksRegistry.get().allDecks())
     }
 
     @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -74,6 +82,8 @@ class EnterFilePathActivity : BaseActivity() {
             if (text != null) {
                 editText.setText(text)
             }
+            val deckId = savedInstanceState.getLong(EXTRA_DECK_ID)
+            deckSelector.selectDeckWithId(deckId)
         }
     }
 
@@ -83,8 +93,9 @@ class EnterFilePathActivity : BaseActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState!!.putString(EXTRA_TEXT, editText.text.toString())
+        super.onSaveInstanceState(outState!!)
+        outState.putString(EXTRA_TEXT, editText.text.toString())
+        outState.putLong(EXTRA_DECK_ID, deckSelector.selectedDeck().id)
     }
 
     companion object {

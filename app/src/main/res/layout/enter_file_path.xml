@@ -13,6 +13,7 @@
 		android:padding="10dp">
 
 		<TextView
+			style="@style/Coriolan.Text.Caption.Label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="5dp"
@@ -26,10 +27,24 @@
 			android:layout_marginBottom="10dp"
 			android:inputType="textUri"/>
 
+		<TextView
+			style="@style/Coriolan.Text.Caption.Label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="5dp"
+			android:text="@string/decks_select_deck"
+			android:labelFor="@id/deckSelector"/>
+
+		<com.ashalmawia.coriolan.ui.view.DeckSelector
+			android:id="@+id/deckSelector"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
 		<LinearLayout
 			style="?attr/buttonBarStyle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end">
 
 			<Button
 				android:id="@+id/buttonCancel"

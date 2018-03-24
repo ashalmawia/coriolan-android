@@ -47,6 +47,12 @@
 			android:name=".ui.CreateDomainActivity"
 			android:parentActivityName=".ui.DomainActivity"/>
 
+		<activity
+			android:name=".ui.CreateDeckActivity"
+			android:parentActivityName=".ui.DomainActivity"
+			android:theme="@style/Coriolan.Theme.Dialog"
+			android:label="@string/edit__add_new_deck"/>
+
 		<meta-data
 			android:name="io.fabric.ApiKey"
 			android:value="ca462037f58b6b70d20cae63e6a564f0569ef551"

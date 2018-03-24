@@ -13,7 +13,7 @@
 	<!-- Data import -->
 	<string name="import_from_file">Import from file</string>
 	<string name="import_success">Cards were imported successfully</string>
-	<string name="import_file_enter_file_path">Enter the path of the file to export from:</string>
+	<string name="import_file_enter_file_path">Enter the path of the file to import from:</string>
 	<string name="import_file_does_not_exist">File \"%s\" does not exist</string>
 	<string name="import_file_empty_path">Please enter the file path</string>
 
@@ -45,6 +45,7 @@
 
 	<!-- Edit screen -->
 	<string name="edit__add_new_cards">Add new cards</string>
+	<string name="edit__add_new_deck">Create new deck</string>
 
 	<!-- Add/edit a card -->
 	<string name="edit_card__original">Original (%s):</string>
@@ -53,6 +54,12 @@
 	<string name="edit_card__saved">Card updated successfully</string>
 	<string name="edit_card__deck">Deck:</string>
 	<string name="edit_card__add_translation">add another translation…</string>
+
+	<!-- Add/edit a deck -->
+	<string name="add_deck__enter_name">Enter the name of your new deck:</string>
+	<string name="add_deck__failed_to_create">Failed to create a deck with the name %s</string>
+	<string name="add_deck__failed_already_exists">Deck with the name \"%s\" already exists</string>
+	<string name="add_deck__empty_name">Please enter the name of the deck</string>
 
 	<!-- Create domain -->
 	<string name="create_domain__title">Create new domain</string>

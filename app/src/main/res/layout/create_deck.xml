@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:paddingTop="@dimen/spacing__large"
+			  android:paddingBottom="@dimen/spacing__large"
+			  android:paddingStart="@dimen/spacing__very_large"
+			  android:paddingEnd="@dimen/spacing__very_large">
+
+	<TextView
+		style="@style/Coriolan.Text.Subtitle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:labelFor="@id/nameField"
+		android:text="@string/add_deck__enter_name"/>
+
+	<EditText
+		android:id="@+id/nameField"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:inputType="text"/>
+
+	<LinearLayout
+		style="?attr/buttonBarStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="end">
+
+		<Button
+			android:id="@+id/buttonCancel"
+			style="?attr/buttonBarNegativeButtonStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/button_cancel"/>
+
+		<Button
+			android:id="@+id/buttonCreate"
+			style="?attr/buttonBarPositiveButtonStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/button_create"/>
+
+	</LinearLayout>
+
+</LinearLayout>

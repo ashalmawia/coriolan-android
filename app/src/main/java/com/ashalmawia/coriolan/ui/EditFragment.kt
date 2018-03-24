@@ -1,6 +1,8 @@
 package com.ashalmawia.coriolan.ui
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
@@ -14,11 +16,21 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import kotlinx.android.synthetic.main.edit.*
 
+private const val REQUEST_CODE_UPDATE = 1
+
 class EditFragment : Fragment() {
 
     private val items = listOf(
-            EditListItem(R.string.edit__add_new_cards, { addNewCards(it) })
+            EditListItem(R.string.edit__add_new_cards, { addNewCards(it) }),
+            EditListItem(R.string.edit__add_new_deck, { createNewDeck(it) })
     )
+
+    private lateinit var listener: EditFragmentListener
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        listener = context as EditFragmentListener
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.edit, container, false)
@@ -38,7 +50,26 @@ class EditFragment : Fragment() {
     private fun addNewCards(context: Context) {
         val domain = DecksRegistry.get().domain
         val intent = AddEditCardActivity.create(context, domain)
-        context.startActivity(intent)
+        startActivityForResult(intent, REQUEST_CODE_UPDATE)
+    }
+
+    private fun createNewDeck(context: Context) {
+        val intent = CreateDeckActivity.intent(context)
+        startActivityForResult(intent, REQUEST_CODE_UPDATE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_CODE_UPDATE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    notifyDataUpdated()
+                }
+            }
+        }
+    }
+
+    private fun notifyDataUpdated() {
+        listener.onDataUpdated()
     }
 }
 
@@ -62,4 +93,9 @@ private class EditListAdapter(private val options: List<EditListItem>) : Recycle
         holder!!.title.setText(item.title)
         holder.itemView.setOnClickListener { item.onClick.invoke(it.context) }
     }
+}
+
+interface EditFragmentListener {
+
+    fun onDataUpdated()
 }

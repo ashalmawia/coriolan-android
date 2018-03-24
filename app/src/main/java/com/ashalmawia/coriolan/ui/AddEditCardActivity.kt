@@ -4,11 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.TextView
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
@@ -16,7 +11,6 @@ import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.*
-import com.ashalmawia.errors.Errors
 import kotlinx.android.synthetic.main.add_edit_card.*
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
@@ -81,7 +75,7 @@ class AddEditCardActivity : BaseActivity() {
         buttonOk.setOnClickListener { onSaveClicked() }
         buttonOk.setText(if (isInEditMode) R.string.button_save else R.string.button_add)
 
-        initializeDecksDropDown()
+        deckSelector.initialize(decks())
 
         addTranslation.setOnClickListener { onAddNewTranslationClicked() }
         mockInputField.setOnClickListener { onAddNewTranslationClicked() }
@@ -94,8 +88,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun prefillData(card: Card) {
-        val position = (deckSelector.adapter as DecksSelectorAdapter).positionOfDeck(card.deckId)
-        deckSelector.setSelection(position, false)
+        deckSelector.selectDeckWithId(card.deckId)
 
         original.input = card.original.value
 
@@ -133,11 +126,6 @@ class AddEditCardActivity : BaseActivity() {
             val child = translationsContainer.getChildAt(i) as AddEditCardItemView
             child.ordinal = i + 1
         }
-    }
-
-    private fun initializeDecksDropDown() {
-        deckSelector.adapter = DecksSelectorAdapter(this, decks())
-        deckSelector.setSelection(0, false)
     }
 
     private fun decks(): List<Deck> {
@@ -178,7 +166,7 @@ class AddEditCardActivity : BaseActivity() {
             return null
         }
 
-        val deck = deckSelector.selectedItem as Deck
+        val deck = deckSelector.selectedDeck()
 
         return CardData(
                 original,
@@ -235,6 +223,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
         outState!!.putInt(KEY_DECK_SELECTION_POSITION, deckSelector.selectedItemPosition)
         outState.putString(KEY_ORIGINAL, original.input)
         val translations = collectTranslations()
@@ -264,47 +253,6 @@ class AddEditCardActivity : BaseActivity() {
             val intent = Intent(context, AddEditCardActivity::class.java)
             intent.putExtra(EXTRA_CARD_ID, card.id)
             return intent
-        }
-    }
-}
-
-private class DecksSelectorAdapter(val context: Context, val decks: List<Deck>) : BaseAdapter() {
-
-    private val TAG = DecksSelectorAdapter::class.java.simpleName
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view = convertView ?: createView(parent)
-        bindView(view, getItem(position))
-        return view
-    }
-
-    private fun createView(parent: ViewGroup?): View {
-        return LayoutInflater.from(context).inflate(android.R.layout.simple_dropdown_item_1line, parent, false)
-    }
-
-    private fun bindView(view: View, item: Deck) {
-        (view as TextView).text = item.name
-    }
-
-    override fun getItem(position: Int): Deck {
-        return decks[position]
-    }
-
-    override fun getItemId(position: Int): Long {
-        return decks[position].id
-    }
-
-    override fun getCount(): Int {
-        return decks.size
-    }
-
-    fun positionOfDeck(deckId: Long): Int {
-        val index = decks.indexOfFirst { it.id == deckId }
-        return if (index == -1) {
-            Errors.illegalState(TAG, "deck with id[$deckId] not in the adapter, falling back to default")
-            0
-        } else {
-            index
         }
     }
 }
