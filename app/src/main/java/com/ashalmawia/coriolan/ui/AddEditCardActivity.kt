@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
@@ -70,11 +73,6 @@ class AddEditCardActivity : BaseActivity() {
         findViewById<AddEditCardItemView>(R.id.original).canBeDeleted = false
         original.removeListener = { onRemoveClicked(it) }
 
-        buttonCancel.setOnClickListener { finish() }
-
-        buttonOk.setOnClickListener { onSaveClicked() }
-        buttonOk.setText(if (isInEditMode) R.string.button_save else R.string.button_add)
-
         deckSelector.initialize(decks())
 
         addTranslation.setOnClickListener { onAddNewTranslationClicked() }
@@ -95,6 +93,23 @@ class AddEditCardActivity : BaseActivity() {
         card.translations.forEach {
             val view = addTrasnlationField()
             view.input = it.value
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = MenuInflater(this)
+        inflater.inflate(R.menu.add_edit_card, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu__done -> {
+                onSaveClicked()
+                return true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

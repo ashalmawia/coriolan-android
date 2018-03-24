@@ -39,8 +39,8 @@ android {
         }
     }
     lintOptions {
-        disable 'ContentDescription'
-        disable 'RtlSymmetry'
+        disable 'ContentDescription', 'RtlSymmetry'
+        disable 'AppCompatResource', 'AlwaysShowAction'
     }
     testOptions {
         unitTests.includeAndroidResources = true
