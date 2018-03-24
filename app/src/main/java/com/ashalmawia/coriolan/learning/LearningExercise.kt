@@ -13,6 +13,7 @@ import com.ashalmawia.coriolan.learning.scheduler.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.Deck
 
 /**
  * Simple learning exercise which shows all the cards in the assignment: given front, guess back.
@@ -24,6 +25,7 @@ import com.ashalmawia.coriolan.model.Card
 class LearningExercise(
         private val context: Context,
         private val stableId: String,
+        private val deck: Deck,
         private val assignment: Assignment<SRState>,
         private val finishListener: FinishListener
 ) : Exercise {
@@ -36,10 +38,10 @@ class LearningExercise(
     override fun refetchCard(card: Card) {
         val updated = repository.cardById(card.id, card.domain)!!
         val state = repository.getSRCardState(card, stableId)
-        if (isPending(state)) {
+        if (updated.deckId == deck.id && isPending(state)) {
             assignment.replace(card, CardWithState(updated, state))
         } else {
-            assignment.delete(card)
+            dropCard(card)
         }
     }
 

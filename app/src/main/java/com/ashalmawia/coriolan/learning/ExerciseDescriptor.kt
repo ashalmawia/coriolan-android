@@ -34,7 +34,7 @@ interface ExerciseDescriptor<S : State, out T : Exercise> {
 
     fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<S>>
 
-    fun exercise(context: Context, assignment: Assignment<S>, finishListener: FinishListener): T
+    fun exercise(context: Context, deck: Deck, assignment: Assignment<S>, finishListener: FinishListener): T
 
     fun onTranslationAdded(repository: Repository, card: Card)
 }

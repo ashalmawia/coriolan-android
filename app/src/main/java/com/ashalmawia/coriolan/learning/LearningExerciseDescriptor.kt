@@ -30,8 +30,8 @@ class LearningExerciseDescriptor : ExerciseDescriptor<SRState, LearningExercise>
         return repository.cardsDueDate(stableId, deck, date)
     }
 
-    override fun exercise(context: Context, assignment: Assignment<SRState>, finishListener: FinishListener): LearningExercise
-            = LearningExercise(context, stableId, assignment, finishListener)
+    override fun exercise(context: Context, deck: Deck, assignment: Assignment<SRState>, finishListener: FinishListener): LearningExercise
+            = LearningExercise(context, stableId, deck, assignment, finishListener)
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
         repository.updateSRCardState(card, emptyState(), stableId)

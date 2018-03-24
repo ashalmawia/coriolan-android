@@ -37,7 +37,7 @@ class MockExerciseDescriptor(private val name: String = "mock") : ExerciseDescri
         return emptyList()
     }
 
-    override fun exercise(context: Context, assignment: Assignment<MockState>, finishListener: FinishListener): MockExercise {
+    override fun exercise(context: Context, deck: Deck, assignment: Assignment<MockState>, finishListener: FinishListener): MockExercise {
         return MockExercise()
     }
 

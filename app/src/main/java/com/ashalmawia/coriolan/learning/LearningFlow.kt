@@ -22,7 +22,7 @@ class LearningFlow<S : State, out E : Exercise>(
 
     init {
         val assignment = createAssignment(repository(context), Preferences.get(context), Journal.get(context), random, exerciseDescriptor, deck)
-        exercise = exerciseDescriptor.exercise(context, assignment, this)
+        exercise = exerciseDescriptor.exercise(context, deck, assignment, this)
         exercise.showNextOrComplete()
     }
 
