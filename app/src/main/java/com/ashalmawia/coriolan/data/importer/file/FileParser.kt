@@ -1,12 +1,12 @@
 package com.ashalmawia.coriolan.data.importer.file
 
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
+import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionType
 import java.io.File
 import java.util.regex.Pattern
 
-class FileParser(private val decksRegistry: DecksRegistry) {
+class FileParser(val deck: Deck) {
 
     fun parseFile(file: File): List<CardData> {
         val lines = file.readLines()
@@ -31,7 +31,7 @@ class FileParser(private val decksRegistry: DecksRegistry) {
             return CardData(
                     matcher.group(1),
                     extractTranslations(translationsData),
-                    decksRegistry.default().id,
+                    deck.id,
                     ExpressionType.WORD
             )
         }

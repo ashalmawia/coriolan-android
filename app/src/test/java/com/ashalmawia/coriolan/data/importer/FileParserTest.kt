@@ -1,17 +1,16 @@
 package com.ashalmawia.coriolan.data.importer
 
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.file.FileParser
 import com.ashalmawia.coriolan.data.importer.file.ParsingException
+import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.mockDeck
+import com.ashalmawia.coriolan.model.mockDomain
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import java.io.File
 
 @RunWith(JUnit4::class)
@@ -21,10 +20,20 @@ class FileParserTest {
 
     @Before
     fun before() {
-        val mockDecksRegistry = mock(DecksRegistry::class.java)
-        `when`(mockDecksRegistry.default()).thenReturn(mockDeck("Default"))
+        val mockDeck = mockDeck("Default")
+        parser = FileParser(mockDeck)
+    }
 
-        parser = FileParser(mockDecksRegistry)
+    fun testDeckIsCorrect() {
+        val deck = Deck(7L, mockDomain(), "My deck")
+        val parser = FileParser(deck)
+
+        // when
+        val card = parser.parseLine("{shrimp} {креветка}")
+
+        // then
+        assertNotNull("card is created", card)
+        assertEquals(deck.id, card!!.deckId)
     }
 
     @Test

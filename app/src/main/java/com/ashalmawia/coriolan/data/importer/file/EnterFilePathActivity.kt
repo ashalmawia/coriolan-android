@@ -68,7 +68,7 @@ class EnterFilePathActivity : BaseActivity() {
             return
         }
 
-        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(this, path)
+        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(path, deckSelector.selectedDeck())
         finish()
     }
 

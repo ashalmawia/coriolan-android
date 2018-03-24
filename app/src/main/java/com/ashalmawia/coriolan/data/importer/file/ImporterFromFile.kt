@@ -2,14 +2,12 @@ package com.ashalmawia.coriolan.data.importer.file
 
 import android.content.Context
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.importer.DataImporter
+import com.ashalmawia.coriolan.model.Deck
 import java.io.File
 
 class ImporterFromFile : DataImporter {
-
-    private val parser = FileParser(DecksRegistry.get())
 
     override fun label(): Int {
         return R.string.import_from_file
@@ -20,20 +18,21 @@ class ImporterFromFile : DataImporter {
         context.startActivity(intent)
     }
 
-    fun onFile(context: Context, path: String) {
+    fun onFile(path: String, deck: Deck) {
         val file = File(path)
         if (!file.exists()) {
             ongoing().onError("File should be located under $path")
             return
         }
 
-        val data = parseDataSafe(file)
+        val data = parseDataSafe(file, deck)
         if (data != null) {
             ongoing().onData(data)
         }
     }
 
-    private fun parseDataSafe(file: File): List<CardData>? {
+    private fun parseDataSafe(file: File, deck: Deck): List<CardData>? {
+        val parser = FileParser(deck)
         try {
             return parser.parseFile(file)
         } catch (e: ParsingException) {
