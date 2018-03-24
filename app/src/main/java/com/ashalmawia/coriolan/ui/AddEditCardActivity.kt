@@ -251,6 +251,7 @@ class AddEditCardActivity : BaseActivity() {
 
         fun edit(context: Context, card: Card): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
+            intent.putExtra(EXTRA_DOMAIN_ID, card.domain.id)
             intent.putExtra(EXTRA_CARD_ID, card.id)
             return intent
         }
