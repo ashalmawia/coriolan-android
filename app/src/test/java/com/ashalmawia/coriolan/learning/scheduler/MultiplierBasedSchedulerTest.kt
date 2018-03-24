@@ -7,9 +7,9 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
+import org.junit.runners.JUnit4
 
-@RunWith(BlockJUnit4ClassRunner::class)
+@RunWith(JUnit4::class)
 class MultiplierBasedSchedulerTest {
 
     private fun scheduler() = MultiplierBasedScheduler()

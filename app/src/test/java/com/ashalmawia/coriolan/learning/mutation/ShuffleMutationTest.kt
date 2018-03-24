@@ -5,9 +5,9 @@ import com.ashalmawia.coriolan.model.mockCardWithState
 import junit.framework.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
+import org.junit.runners.JUnit4
 
-@RunWith(BlockJUnit4ClassRunner::class)
+@RunWith(JUnit4::class)
 class ShuffleMutationTest {
 
     private val cards = List(50, { i -> mockCardWithState(MockState(), id = i.toLong()) })

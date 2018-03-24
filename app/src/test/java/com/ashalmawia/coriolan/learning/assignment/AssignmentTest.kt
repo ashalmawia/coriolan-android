@@ -6,12 +6,12 @@ import org.joda.time.DateTime
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
+import org.junit.runners.JUnit4
 
 private const val MAGIC_COLLECTION_LENGTH = 4   // this magic number exactly meets the min amount of turns before rescheduled go
 private val date = DateTime.now()
 
-@RunWith(BlockJUnit4ClassRunner::class)
+@RunWith(JUnit4::class)
 class AssignmentTest {
     
     private fun create(date: DateTime, cards: List<CardWithState<MockState>>): Assignment<MockState> {
