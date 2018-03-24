@@ -9,12 +9,9 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.importer.DataImportCallback
-import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
@@ -83,11 +80,7 @@ class LearningFragment : Fragment(), TodayChangeListener {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
-            R.id.menu_import_from_file -> importFromFile()
-        }
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (BuildConfig.DEBUG) {
             // handle debug options
             when (item.itemId) {
@@ -101,20 +94,6 @@ class LearningFragment : Fragment(), TodayChangeListener {
     private fun increaseDate() {
         val context = context ?: return
         DebugIncreaseDateActivity.launch(context)
-    }
-
-    private fun importFromFile() {
-        val context = context ?: return
-        DataImportFlow.start(context, DataImportFlow.default(), object : DataImportCallback {
-            override fun onSuccess() {
-                fetchData()
-                Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onError(message: String) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 
     private fun decksList(): List<Deck> {

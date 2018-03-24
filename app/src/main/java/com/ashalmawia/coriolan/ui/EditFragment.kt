@@ -12,8 +12,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.importer.DataImportCallback
+import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import kotlinx.android.synthetic.main.edit.*
 
 private const val REQUEST_CODE_UPDATE = 1
@@ -22,7 +25,8 @@ class EditFragment : Fragment() {
 
     private val items = listOf(
             EditListItem(R.string.edit__add_new_cards, { addNewCards(it) }),
-            EditListItem(R.string.edit__add_new_deck, { createNewDeck(it) })
+            EditListItem(R.string.edit__add_new_deck, { createNewDeck(it) }),
+            EditListItem(R.string.import_from_file, { importFromFile(it) })
     )
 
     private lateinit var listener: EditFragmentListener
@@ -56,6 +60,19 @@ class EditFragment : Fragment() {
     private fun createNewDeck(context: Context) {
         val intent = CreateDeckActivity.intent(context)
         startActivityForResult(intent, REQUEST_CODE_UPDATE)
+    }
+
+    private fun importFromFile(context: Context) {
+        DataImportFlow.start(context, DataImportFlow.default(), object : DataImportCallback {
+            override fun onSuccess() {
+                Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
+                notifyDataUpdated()
+            }
+
+            override fun onError(message: String) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:tools="http://schemas.android.com/tools"
-	  xmlns:android="http://schemas.android.com/apk/res/android"
-	  xmlns:app="http://schemas.android.com/apk/res-auto">
-
-	<item
-		android:id="@+id/menu_import_from_file"
-		android:title="@string/import_from_file"
-		app:showAsAction="never"
-		/>
+	  xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<group
 		android:id="@+id/menu_group_debug"

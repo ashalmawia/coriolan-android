@@ -99,28 +99,28 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_LEARNING) ?: LearningFragment()
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_LEARNING)
-                .commit()
+                .commitAllowingStateLoss()
     }
 
     private fun switchToEdit() {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_EDIT) ?: EditFragment()
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_EDIT)
-                .commit()
+                .commitAllowingStateLoss()
     }
 
     private fun switchToStatistics() {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_STATISTICS) ?: StatisticsFragment()
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_STATISTICS)
-                .commit()
+                .commitAllowingStateLoss()
     }
 
     private fun switchToSettings() {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_SETTINGS) ?: SettingsFragment()
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_SETTINGS)
-                .commit()
+                .commitAllowingStateLoss()
     }
 
     override fun onDataUpdated() {
