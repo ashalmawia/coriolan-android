@@ -119,27 +119,26 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun addTrasnlationField(): AddEditCardItemView {
-        val count = translationsContainer.childCount + 1
-
         val view = AddEditCardItemView(this)
-        view.canBeDeleted = count > 1       // the first translation can't be deleted
-        view.ordinal = count
         view.removeListener = { onRemoveClicked(it) }
 
         translationsContainer.addView(view)
+        updateTranslationViews()
 
         return view
     }
 
     private fun onRemoveClicked(view: AddEditCardItemView) {
         translationsContainer.removeView(view)
-        resetTranslationsOrdinals()
+        updateTranslationViews()
     }
 
-    private fun resetTranslationsOrdinals() {
-        for (i in 0 until translationsContainer.childCount) {
+    private fun updateTranslationViews() {
+        val translationsCount = translationsContainer.childCount
+        for (i in 0 until translationsCount) {
             val child = translationsContainer.getChildAt(i) as AddEditCardItemView
             child.ordinal = i + 1
+            child.canBeDeleted = translationsCount > 1
         }
     }
 
