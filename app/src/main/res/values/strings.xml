@@ -41,7 +41,6 @@
 
 	<string name="deleting_card__are_you_sure">Are you sure you want to permanently delete this card?
 		This action cannot be undone.</string>
-	<string name="button_delete">Delete</string>
 
 	<!-- Edit screen -->
 	<string name="edit__add_new_cards">Add new cards</string>
@@ -62,6 +61,10 @@
 	<string name="add_deck__failed_already_exists">Deck with the name \"%s\" already exists</string>
 	<string name="add_deck__empty_name">Please enter the name of the deck</string>
 	<string name="edit_deck__title">Edit</string>
+	<string name="delete_deck__title">Delete deck</string>
+	<string name="delete_deck__message">Are you sure you want to delete the deck \"%s"\? This action cannot be undone.</string>
+	<string name="delete_deck__failed">Failed to delete the deck \"%s\": this deck is not empty. Move all its cards to
+	other decks first and then retry.</string>
 
 	<!-- Create domain -->
 	<string name="create_domain__title">Create new domain</string>
@@ -94,10 +97,12 @@
 	<string name="settings__card_types_reverse_only">Learn reverse only</string>
 
 	<!-- General -->
+	<string name="button_ok">OK</string>
 	<string name="button_submit">Submit</string>
 	<string name="button_add">Add</string>
 	<string name="button_save">Save</string>
 	<string name="button_create">Create</string>
 	<string name="button_next">Next</string>
 	<string name="button_cancel">Cancel</string>
+	<string name="button_delete">Delete</string>
 </resources>

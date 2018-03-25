@@ -4,12 +4,11 @@ import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.merger.CardsMerger
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 
-class DecksRegistry(context: Context, preferences: Preferences, val domain: Domain, private val repository: Repository) {
+class DecksRegistry(context: Context, val domain: Domain, private val repository: Repository) {
 
     companion object {
         private lateinit var instance: DecksRegistry
@@ -18,26 +17,17 @@ class DecksRegistry(context: Context, preferences: Preferences, val domain: Doma
             return instance
         }
 
-        fun initialize(context: Context, preferences: Preferences, domain: Domain, repository: Repository) {
-            instance = DecksRegistry(context, preferences, domain, repository)
+        fun initialize(context: Context, domain: Domain, repository: Repository) {
+            instance = DecksRegistry(context, domain, repository)
         }
     }
-
-    private val def: Deck
 
     init {
         // TODO: must be per domain
-        val defaultDeckId = preferences.getDefaultDeckId()
-        if (defaultDeckId != null) {
-            def = repository.deckById(defaultDeckId, domain)!!
-        } else {
-            def = addDefaultDeck(context, repository)
-            preferences.setDefaultDeckId(def.id)
+        val decksCount = repository.allDecks(domain).size
+        if (decksCount == 0) {
+            addDefaultDeck(context, repository)
         }
-    }
-
-    fun default(): Deck {
-        return def
     }
 
     fun allDecks(): List<Deck> {
@@ -50,6 +40,10 @@ class DecksRegistry(context: Context, preferences: Preferences, val domain: Doma
 
     fun updateDeck(deck: Deck, name: String) {
         repository.updateDeck(deck, name)
+    }
+
+    fun deleteDeck(deck: Deck): Boolean {
+        return repository.deleteDeck(deck)
     }
 
     fun addCardToDeck(data: CardData) {

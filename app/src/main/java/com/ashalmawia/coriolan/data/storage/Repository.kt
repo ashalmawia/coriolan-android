@@ -59,6 +59,8 @@ interface Repository {
 
     fun updateDeck(deck: Deck, name: String): Deck?
 
+    fun deleteDeck(deck: Deck): Boolean
+
     fun updateSRCardState(card: Card, state: SRState, exerciseId: String)
 
     fun getSRCardState(card: Card, exerciseId: String): SRState

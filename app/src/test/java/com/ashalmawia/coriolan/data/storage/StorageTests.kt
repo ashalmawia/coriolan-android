@@ -980,6 +980,35 @@ abstract class StorageTest {
     }
 
     @Test
+    fun `test__deleteDeck__nonEmpty`() {
+        // given
+        val storage = prefilledStorage.value
+        val deck = storage.addDeck(domain, "Some deck")
+        addMockCard(storage, deck.id)
+
+        // when
+        val result = storage.deleteDeck(deck)
+
+        // then
+        assertFalse(result)
+        assertEquals(1, storage.allDecks(domain).size)
+    }
+
+    @Test
+    fun `test__deleteDeck__empty`() {
+        // given
+        val storage = prefilledStorage.value
+        val deck = storage.addDeck(domain, "Some deck")
+
+        // when
+        val result = storage.deleteDeck(deck)
+
+        // then
+        assertTrue(result)
+        assertEquals(0, storage.allDecks(domain).size)
+    }
+
+    @Test
     fun `test__deckById__NoCards`() {
         // given
         val storage = prefilledStorage.value

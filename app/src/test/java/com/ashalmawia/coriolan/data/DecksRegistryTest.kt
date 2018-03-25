@@ -43,27 +43,24 @@ class DecksRegistryTest {
     @Test
     fun preinitializeTestNoDefaultDeck() {
         // when
-        val registry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        DecksRegistry(context, domain, mockRepository)
 
         // then
-        assertNotNull("Default deck is initialized", registry.default())
-        assertEquals("Default deck is initialized correctly", DEFAULT_DECK_NAME, registry.default().name)
+        assertEquals("Default deck is initialized", 1, mockRepository.decks.size)
+        assertEquals("Default deck is initialized correctly", DEFAULT_DECK_NAME, mockRepository.decks[0].name)
     }
 
     @Test
     fun preinitializeTestHasDefaultDeck() {
         // given
-        mockRepository.addDeck(domain, "Some deck")
-        val defaultDeck = mockRepository.addDeck(domain, DEFAULT_DECK_NAME)
-        mockRepository.addDeck(domain, "Some other deck")
-
-        mockPrefs.setDefaultDeckId(defaultDeck.id)
+        val deck = mockRepository.addDeck(domain, "Some deck")
 
         // when
-        val registry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        DecksRegistry(context, domain, mockRepository)
 
         // then
-        assertEquals("Default deck is set correctly", defaultDeck, registry.default())
+        assertEquals("Default deck is not added", 1, mockRepository.decks.size)
+        assertEquals("Default deck is not added", deck, mockRepository.decks[0])
     }
 
     @Test
@@ -75,7 +72,7 @@ class DecksRegistryTest {
                 mockCardData("original2", "translation2", deck.id)
         )
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         mockRegistry.addCardsToDeck(cardsData)
@@ -94,7 +91,7 @@ class DecksRegistryTest {
                 mockCardData("spring", listOf("весна", "источник"), deck.id)
         )
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         mockRegistry.addCardsToDeck(cardsData)
@@ -124,7 +121,7 @@ class DecksRegistryTest {
                 mockCardData(uniqueOriginalValue, repeatedTranslationValue, deck.id)
         )
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         mockRegistry.addCardsToDeck(cardsData)
@@ -162,7 +159,7 @@ class DecksRegistryTest {
                         deck.id)
         )
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         mockRegistry.addCardsToDeck(cardsData)
@@ -189,7 +186,7 @@ class DecksRegistryTest {
         val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         val secondTranslationValue = "источник"
         val cardData = CardData(repeatedOriginalValue, listOf(secondTranslationValue), deck.id, type)
@@ -216,7 +213,7 @@ class DecksRegistryTest {
         val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         val secondTranslationValue = "источник"
         val cardData = CardData(repeatedOriginalValue, listOf(firstTranslationValue, secondTranslationValue), deck.id, type)
@@ -257,7 +254,7 @@ class DecksRegistryTest {
         val forward = mockRepository.addCard(domain, deck.id, firstOriginal, listOf(repeatedTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, repeatedTranslation, listOf(firstOriginal))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         val secondOriginalValue = "источник"
         val cardData = CardData(secondOriginalValue, listOf(repeatedTranslationValue), deck.id, type)
@@ -291,7 +288,7 @@ class DecksRegistryTest {
         val forward = mockRepository.addCard(domain, deck.id, firstOriginal, listOf(firstTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(firstOriginal))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         val secondOriginalValue = "shrimp"
         val secondTranslationValue = "креветка"
@@ -327,7 +324,7 @@ class DecksRegistryTest {
         mockRepository.addCard(domain, deckId, expression1, listOf(expression2, expression4))
         val card = mockRepository.addCard(domain, deckId, expression3, listOf(expression1))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         val edited = mockRegistry.editCard(card,
@@ -353,7 +350,7 @@ class DecksRegistryTest {
         val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2))
         mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         val edited = mockRegistry.editCard(card,
@@ -378,7 +375,7 @@ class DecksRegistryTest {
 
         mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         val card = Card(77L, deckId, domain, expression1, listOf(expression2))
 
@@ -403,7 +400,7 @@ class DecksRegistryTest {
         val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2, expression3))
         val card2 = mockRepository.addCard(domain, deckId, expression3, listOf(expression1))
 
-        val mockRegistry = DecksRegistry(context, mockPrefs, domain, mockRepository)
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
         mockRegistry.deleteCard(card)

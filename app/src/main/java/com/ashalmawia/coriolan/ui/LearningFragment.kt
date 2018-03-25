@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.ui
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
@@ -26,7 +27,7 @@ import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.decks_list.*
 
-class LearningFragment : Fragment(), TodayChangeListener {
+class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
 
     private lateinit var exercise: ExerciseDescriptor<*, *>
 
@@ -64,10 +65,10 @@ class LearningFragment : Fragment(), TodayChangeListener {
         val context = context ?: return
 
         decksList.layoutManager = LinearLayoutManager(context)
-        decksList.adapter = DecksAdapter(context, exercise)
+        decksList.adapter = DecksAdapter(context, exercise, this)
     }
 
-    private fun fetchData() {
+    override fun fetchData() {
         (decksList.adapter as DecksAdapter<*, *>).setData(decksList())
     }
 
@@ -106,7 +107,7 @@ class LearningFragment : Fragment(), TodayChangeListener {
 }
 
 private class DecksAdapter<S: State, E : Exercise>(
-        private val context: Context, private val exercise: ExerciseDescriptor<S, E>
+        private val context: Context, private val exercise: ExerciseDescriptor<S, E>, private val dataFetcher: DataFetcher
 ) : RecyclerView.Adapter<DeckViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -156,6 +157,7 @@ private class DecksAdapter<S: State, E : Exercise>(
                 R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
                 R.id.decks_study_options_popup__random -> studyRandom(deck)
                 R.id.rename_deck -> rename(deck)
+                R.id.delete_deck -> delete(deck)
             }
             true
         }
@@ -179,6 +181,32 @@ private class DecksAdapter<S: State, E : Exercise>(
         context.startActivity(intent)
     }
 
+    private fun delete(deck: Deck) {
+        val dialog = AlertDialog.Builder(context)
+                .setTitle(R.string.delete_deck__title)
+                .setMessage(context.getString(R.string.delete_deck__message, deck.name))
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(R.string.button_delete, { _, _ -> performDeleteDeck(deck) })
+        dialog.show()
+    }
+
+    private fun performDeleteDeck(deck: Deck) {
+        val deleted = DecksRegistry.get().deleteDeck(deck)
+        if (deleted) {
+            dataFetcher.fetchData()
+        } else {
+            showDeleteFailedDialog(deck)
+        }
+    }
+
+    private fun showDeleteFailedDialog(deck: Deck) {
+        val dialog = AlertDialog.Builder(context)
+                .setTitle(R.string.delete_deck__title)
+                .setMessage(context.getString(R.string.delete_deck__failed, deck.name))
+                .setNegativeButton(R.string.button_ok, null)
+        dialog.show()
+    }
+
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
         if (counts.isAnythingPending()) {
             val new = counts.countNew()
@@ -200,4 +228,8 @@ class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val pending = view.findViewById<ViewGroup>(R.id.deck_list_item__pending)!!
     val countNew = view.findViewById<TextView>(R.id.pending_counter__new)!!
     val countReview = view.findViewById<TextView>(R.id.pending_counter__review)!!
+}
+
+interface DataFetcher {
+    fun fetchData()
 }

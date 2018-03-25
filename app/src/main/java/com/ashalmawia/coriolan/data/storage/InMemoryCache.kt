@@ -139,6 +139,14 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return updated
     }
 
+    override fun deleteDeck(deck: Deck): Boolean {
+        val deleted = inner.deleteDeck(deck)
+        if (deleted) {
+            allDecks.remove(deck.id)
+        }
+        return deleted
+    }
+
     private fun loadDecksIfNeeded(domain: Domain) {
         if (allDecks.isEmpty()) {
             allDecks.putAll(inner.allDecks(domain).associateBy { it.id })

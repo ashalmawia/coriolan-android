@@ -2,12 +2,6 @@ package com.ashalmawia.coriolan.data.prefs
 
 class MockPreferences : Preferences {
 
-    private var defaultDeckId: Long? = null
-    override fun getDefaultDeckId(): Long? = defaultDeckId
-    override fun setDefaultDeckId(id: Long) {
-        defaultDeckId = id
-    }
-
     private var newCardsDailyLimit: Int? = null
     override fun getNewCardsDailyLimit(): Int? = newCardsDailyLimit
     override fun setNewCardsDailyLimit(limit: Int) {

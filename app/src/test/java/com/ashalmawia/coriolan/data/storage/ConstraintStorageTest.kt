@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ConstrantStorageTest {
+class ConstraintStorageTest {
 
     private val exercise = LearningExerciseDescriptor()
     private val exercises = listOf(exercise)
@@ -422,6 +422,16 @@ class ConstrantStorageTest {
         // assert
         assertDeckCorrect(updated1, name, domain)
         assertDeckCorrect(updated2, name, domain2)
+    }
+
+    @Test(expected = DataProcessingException::class)
+    fun `test__deleteDeck__wrongDeck`() {
+        // given
+        val storage = prefilledStorage.value
+        val deck = mockDeck(id = 77L)
+
+        // when
+        storage.deleteDeck(deck)
     }
 
     @Test(expected = DataProcessingException::class)

@@ -18,9 +18,6 @@ interface Preferences {
     fun isFirstStart(): Boolean
     fun recordFirstStart()
 
-    fun getDefaultDeckId(): Long?
-    fun setDefaultDeckId(id: Long)
-
     fun getNewCardsDailyLimit(): Int?
     fun setNewCardsDailyLimit(limit: Int)
     fun clearNewCardsDailyLimit()

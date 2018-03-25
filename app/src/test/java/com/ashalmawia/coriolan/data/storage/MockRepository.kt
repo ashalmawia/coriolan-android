@@ -104,6 +104,17 @@ class MockRepository : Repository {
         decks.add(updated)
         return updated
     }
+    override fun deleteDeck(deck: Deck): Boolean {
+        if (!decks.contains(deck)) {
+            throw DataProcessingException("deck $deck was not found")
+        }
+        return if (cardsOfDeck(deck).isEmpty()) {
+            decks.remove(deck)
+            true
+        } else {
+            false
+        }
+    }
 
     val states = mutableMapOf<Long, SRState>()
     override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {

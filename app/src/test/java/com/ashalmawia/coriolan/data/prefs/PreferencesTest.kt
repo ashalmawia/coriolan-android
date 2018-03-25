@@ -27,24 +27,6 @@ abstract class PreferencesTest {
     }
 
     @Test
-    fun `test__defaultDeckId`() {
-        // given
-        val preferences = this.prefereces.value
-        val defaultDeckId = 7L
-
-        // then
-        assertNull(preferences.getDefaultDeckId())
-        assertNull(preferences.getDefaultDeckId())
-
-        // when
-        preferences.setDefaultDeckId(defaultDeckId)
-
-        // then
-        assertEquals(defaultDeckId, preferences.getDefaultDeckId())
-        assertEquals(defaultDeckId, preferences.getDefaultDeckId())
-    }
-
-    @Test
     fun `test__newCardsLimit`() {
         // given
         val preferences = this.prefereces.value

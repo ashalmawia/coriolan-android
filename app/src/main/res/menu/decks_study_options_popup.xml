@@ -9,4 +9,7 @@
 	<item
 		android:id="@+id/rename_deck"
 		android:title="@string/edit_deck__title" />
+	<item
+		android:id="@+id/delete_deck"
+		android:title="@string/delete_deck__title" />
 </menu>

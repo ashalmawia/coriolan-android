@@ -7,7 +7,6 @@ import android.support.v4.content.res.ResourcesCompat
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.settings.SettingsFragment
@@ -53,7 +52,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     private fun initializeDecksRegistry(domainId: Long) {
         val domain = DomainsRegistry.domain() ?: throw IllegalStateException("domain was not initialized")
         // TODO: handle actual domain when we get multiple domains
-        DecksRegistry.initialize(this, Preferences.get(this), domain, Repository.get(this))
+        DecksRegistry.initialize(this, domain, Repository.get(this))
     }
 
     private fun setUpBottomBarNavigation() {

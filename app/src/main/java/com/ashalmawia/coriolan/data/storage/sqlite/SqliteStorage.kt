@@ -437,6 +437,21 @@ class SqliteStorage(private val context: Context, exercises: List<ExerciseDescri
         }
     }
 
+    override fun deleteDeck(deck: Deck): Boolean {
+        val db = helper.writableDatabase
+
+        try {
+            val deleted = db.delete(SQLITE_TABLE_DECKS, "$SQLITE_COLUMN_ID = ?", arrayOf(deck.id.toString()))
+            if (deleted == 0) {
+                throw DataProcessingException("deck with the id ${deck.id} was not in the database")
+            }
+            return true
+        } catch (e: SQLiteConstraintException) {
+            // deck is not empty
+            return false
+        }
+    }
+
     override fun cardsOfDeck(deck: Deck): List<Card> {
         val db = helper.readableDatabase
 
