@@ -7,6 +7,9 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.util.OpenForTesting
 import org.joda.time.DateTime
 import java.util.*
+import kotlin.math.min
+
+private const val RESCHEDULING_STEP = 10
 
 @OpenForTesting
 class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
@@ -24,8 +27,8 @@ class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
     }
 
     fun reschedule(card: CardWithState<T>) {
-        // todo: reschedule not to the very end https://trello.com/c/02EhW776
-        queue.offer(card)
+        val index = min(RESCHEDULING_STEP, queue.size)
+        queue.add(index, card)
     }
 
     fun delete(card: Card) {
