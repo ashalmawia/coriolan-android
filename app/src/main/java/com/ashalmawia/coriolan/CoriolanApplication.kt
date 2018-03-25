@@ -5,12 +5,14 @@ import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
+import com.ashalmawia.coriolan.util.OpenForTesting
 import com.ashalmawia.errors.Errors
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import io.fabric.sdk.android.Fabric
 
-open class CoriolanApplication : Application() {
+@OpenForTesting
+class CoriolanApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -39,11 +41,11 @@ open class CoriolanApplication : Application() {
         TodayManager.initialize(this)
     }
 
-    protected open fun domainsRegistry() {
+    protected fun domainsRegistry() {
         DomainsRegistry.preinitialize(Repository.get(this))
     }
 
-    protected open fun firstStartJobs() {
+    protected fun firstStartJobs() {
         FirstStart.preinitializeIfFirstStart(Preferences.get(this))
     }
 }

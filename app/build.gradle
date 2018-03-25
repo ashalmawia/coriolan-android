@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "kotlin-allopen"
 apply plugin: 'io.fabric'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -45,6 +46,10 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
     }
+}
+
+allOpen {
+    annotation("com.ashalmawia.coriolan.util.OpenForTesting")
 }
 
 dependencies {

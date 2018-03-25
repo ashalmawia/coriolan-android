@@ -4,10 +4,12 @@ import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.util.OpenForTesting
 import org.joda.time.DateTime
 import java.util.*
 
-open class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
+@OpenForTesting
+class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
     private val queue = LinkedList(cards)
 
     var current: CardWithState<T>? = null
