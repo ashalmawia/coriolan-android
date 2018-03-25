@@ -45,9 +45,13 @@ class LearningFragment : Fragment(), TodayChangeListener {
 
     override fun onStart() {
         super.onStart()
-        fetchData()
 
         TodayManager.register(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchData()
     }
 
     override fun onStop() {
@@ -151,6 +155,7 @@ private class DecksAdapter<S: State, E : Exercise>(
             when (it.itemId) {
                 R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
                 R.id.decks_study_options_popup__random -> studyRandom(deck)
+                R.id.rename_deck -> rename(deck)
             }
             true
         }
@@ -167,6 +172,11 @@ private class DecksAdapter<S: State, E : Exercise>(
 
     private fun studyRandom(deck: Deck) {
         LearningFlow.initiate(context, deck, true, exercise)
+    }
+
+    private fun rename(deck: Deck) {
+        val intent = AddEditDeckActivity.edit(context, deck)
+        context.startActivity(intent)
     }
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {

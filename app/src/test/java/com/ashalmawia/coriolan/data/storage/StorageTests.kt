@@ -958,8 +958,25 @@ abstract class StorageTest {
         // when
         val deck = storage.addDeck(domain, name)
 
-        // assert
+        // then
         assertDeckCorrect(deck, name, domain)
+    }
+
+    @Test
+    fun `test__updateDeck`() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "My new deck")
+        val name = "Updated name"
+
+        // when
+        val updated = storage.updateDeck(deck, name)
+
+        // then
+        assertDeckCorrect(updated, name, domain)
+        assertEquals(deck.id, updated!!.id)
+        assertEquals(1, storage.allDecks(domain).size)
     }
 
     @Test

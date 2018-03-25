@@ -420,6 +420,23 @@ class SqliteStorage(private val context: Context, exercises: List<ExerciseDescri
         }
     }
 
+    override fun updateDeck(deck: Deck, name: String): Deck? {
+        val db = helper.writableDatabase
+        val cv = createDeckContentValues(deck.domain.id, name)
+
+        try {
+            val updated = db.update(SQLITE_TABLE_DECKS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(deck.id.toString()))
+
+            if (updated == 0) {
+                throw DataProcessingException("failed to updated deck [${deck.name}] -> [$name]")
+            }
+
+            return Deck(deck.id, deck.domain, name)
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to updated deck [${deck.name}] -> [$name], constraint violation")
+        }
+    }
+
     override fun cardsOfDeck(deck: Deck): List<Card> {
         val db = helper.readableDatabase
 

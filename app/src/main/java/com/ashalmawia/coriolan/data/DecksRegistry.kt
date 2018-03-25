@@ -48,6 +48,10 @@ class DecksRegistry(context: Context, preferences: Preferences, val domain: Doma
         repository.addDeck(domain, name)
     }
 
+    fun updateDeck(deck: Deck, name: String) {
+        repository.updateDeck(deck, name)
+    }
+
     fun addCardToDeck(data: CardData) {
         addCard(data)
     }

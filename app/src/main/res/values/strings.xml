@@ -56,10 +56,12 @@
 	<string name="edit_card__add_translation">add another translation…</string>
 
 	<!-- Add/edit a deck -->
-	<string name="add_deck__enter_name">Enter the name of your new deck:</string>
+	<string name="add_deck__enter_name">Enter the name:</string>
 	<string name="add_deck__failed_to_create">Failed to create a deck with the name %s</string>
+	<string name="add_deck__failed_to_update">Failed to rename the deck</string>
 	<string name="add_deck__failed_already_exists">Deck with the name \"%s\" already exists</string>
 	<string name="add_deck__empty_name">Please enter the name of the deck</string>
+	<string name="edit_deck__title">Edit</string>
 
 	<!-- Create domain -->
 	<string name="create_domain__title">Create new domain</string>

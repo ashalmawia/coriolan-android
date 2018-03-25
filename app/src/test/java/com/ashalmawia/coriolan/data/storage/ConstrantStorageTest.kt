@@ -382,6 +382,49 @@ class ConstrantStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
+    fun `test__updateDeck__wrongDeck`() {
+        // given
+        val storage = prefilledStorage.value
+        val deck = mockDeck(id = 777L)
+
+        // when
+        storage.updateDeck(deck, "some name")
+    }
+
+    @Test(expected = DataProcessingException::class)
+    fun `test__updateDeck__nameUnique`() {
+        // given
+        val storage = prefilledStorage.value
+        val name = "My new deck"
+        storage.addDeck(domain, name)
+        val deck = storage.addDeck(domain, "Some deck")
+
+        // when
+        storage.updateDeck(deck, name)
+    }
+
+    @Test
+    fun `test__updateDeck__sameNameDifferentDomains`() {
+        // given
+        val storage = prefilledStorage.value
+        val lang = storage.addLanguage("French")
+        val domain2 = storage.createDomain("Another domain", lang, domain.langTranslations())
+
+        val deck1 = storage.addDeck(domain, "Some deck")
+        val deck2 = storage.addDeck(domain2, "A deck")
+
+        val name = "My new deck"
+
+        // when
+        val updated1 = storage.updateDeck(deck1, name)
+        val updated2 = storage.updateDeck(deck2, name)
+
+        // assert
+        assertDeckCorrect(updated1, name, domain)
+        assertDeckCorrect(updated2, name, domain2)
+    }
+
+    @Test(expected = DataProcessingException::class)
     fun `test__updateSRCardState__cardIncorrect`() {
         // when
         val storage = prefilledStorage.value

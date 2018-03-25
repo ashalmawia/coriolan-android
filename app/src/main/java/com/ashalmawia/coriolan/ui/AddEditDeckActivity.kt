@@ -1,0 +1,125 @@
+package com.ashalmawia.coriolan.ui
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.text.TextUtils
+import android.widget.Toast
+import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.storage.DataProcessingException
+import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.errors.Errors
+import kotlinx.android.synthetic.main.create_deck.*
+
+private const val TAG = "AddEditDeckActivity"
+
+private const val EXTRA_DECK_ID = "deck_id"
+
+class AddEditDeckActivity : BaseActivity() {
+
+    private var deck: Deck? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.create_deck)
+        initialize()
+    }
+
+    private fun initialize() {
+        buttonCancel.setOnClickListener { finish() }
+        buttonOk.setOnClickListener { saveWithValidation() }
+
+        extractData()
+    }
+
+    private fun extractData() {
+        val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
+        if (deckId != -1L) {
+            val repository = Repository.get(this)
+            val deck = repository.deckById(deckId, DecksRegistry.get().domain)
+            if (deck != null) {
+                this.deck = deck
+                prefillValues(deck)
+            } else {
+                finishWithError("deck with id $deckId was not in the repository")
+            }
+        }
+    }
+
+    private fun prefillValues(deck: Deck) {
+        nameField.setText(deck.name)
+        buttonOk.setText(R.string.button_save)
+    }
+
+    private fun saveWithValidation() {
+        val name = nameField.text.toString()
+        if (!validate(name)) {
+            return
+        }
+
+        val deck = deck
+        if (deck != null) {
+            updateDeckAndFinish(deck, name)
+        } else {
+            createDeckAndFinish(name)
+        }
+    }
+
+    private fun createDeckAndFinish(name: String) {
+        try {
+            DecksRegistry.get().addDeck(name)
+            finishOk()
+        } catch (e: DataProcessingException) {
+            showError(getString(R.string.add_deck__failed_already_exists, name))
+        } catch (e: Exception) {
+            Errors.error(TAG, e)
+            showError(getString(R.string.add_deck__failed_to_create, name))
+        }
+    }
+
+    private fun updateDeckAndFinish(deck: Deck, name: String) {
+        try {
+            if (name != deck.name) {
+                DecksRegistry.get().updateDeck(deck, name)
+            }
+            finishOk()
+        } catch (e: DataProcessingException) {
+            showError(getString(R.string.add_deck__failed_already_exists, name))
+        } catch (e: Exception) {
+            Errors.error(TAG, e)
+            showError(getString(R.string.add_deck__failed_to_update))
+        }
+    }
+
+    private fun validate(name: String): Boolean {
+        if (TextUtils.isEmpty(name)) {
+            showError(getString(R.string.add_deck__empty_name))
+            return false
+        }
+
+        return true
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun finishWithError(message: String) {
+        Errors.illegalState(TAG, message)
+        finish()
+    }
+
+    companion object {
+        fun create(context: Context): Intent {
+            return Intent(context, AddEditDeckActivity::class.java)
+        }
+
+        fun edit(context: Context, deck: Deck): Intent {
+            val intent = Intent(context, AddEditDeckActivity::class.java)
+            intent.putExtra(EXTRA_DECK_ID, deck.id)
+            return intent
+        }
+    }
+}

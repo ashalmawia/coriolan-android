@@ -67,7 +67,7 @@ fun <T : State> mockCardWithState(
 }
 
 private var deckId = 1L
-fun mockDeck(name: String = "My deck", domain: Domain = mockDomain()) = Deck(deckId++, domain, name)
+fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
 fun mockState(period: Int = 0) = SRState(today(), period)
 fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)

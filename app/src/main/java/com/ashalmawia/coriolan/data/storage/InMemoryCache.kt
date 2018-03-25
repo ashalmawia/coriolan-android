@@ -133,6 +133,12 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return deck
     }
 
+    override fun updateDeck(deck: Deck, name: String): Deck? {
+        val updated = inner.updateDeck(deck, name)
+        allDecks[deck.id] = updated
+        return updated
+    }
+
     private fun loadDecksIfNeeded(domain: Domain) {
         if (allDecks.isEmpty()) {
             allDecks.putAll(inner.allDecks(domain).associateBy { it.id })

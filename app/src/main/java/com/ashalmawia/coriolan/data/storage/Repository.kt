@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.storage
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
-import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
@@ -57,6 +56,8 @@ interface Repository {
     fun cardsOfDeck(deck: Deck): List<Card>
 
     fun addDeck(domain: Domain, name: String): Deck
+
+    fun updateDeck(deck: Deck, name: String): Deck?
 
     fun updateSRCardState(card: Card, state: SRState, exerciseId: String)
 

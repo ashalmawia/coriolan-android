@@ -48,7 +48,7 @@
 			android:parentActivityName=".ui.DomainActivity"/>
 
 		<activity
-			android:name=".ui.CreateDeckActivity"
+			android:name=".ui.AddEditDeckActivity"
 			android:parentActivityName=".ui.DomainActivity"
 			android:theme="@style/Coriolan.Theme.Dialog"
 			android:label="@string/edit__add_new_deck"/>

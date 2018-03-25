@@ -94,6 +94,16 @@ class MockRepository : Repository {
         decks.add(deck)
         return deck
     }
+    override fun updateDeck(deck: Deck, name: String): Deck? {
+        if (!decks.contains(deck)) {
+            throw DataProcessingException("deck is not in the repo: $deck")
+        }
+
+        val updated = Deck(deck.id, deck.domain, name)
+        decks.remove(deck)
+        decks.add(updated)
+        return updated
+    }
 
     val states = mutableMapOf<Long, SRState>()
     override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {

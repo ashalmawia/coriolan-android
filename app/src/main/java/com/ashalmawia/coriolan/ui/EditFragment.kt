@@ -58,7 +58,7 @@ class EditFragment : Fragment() {
     }
 
     private fun createNewDeck(context: Context) {
-        val intent = CreateDeckActivity.intent(context)
+        val intent = AddEditDeckActivity.create(context)
         startActivityForResult(intent, REQUEST_CODE_UPDATE)
     }
 
