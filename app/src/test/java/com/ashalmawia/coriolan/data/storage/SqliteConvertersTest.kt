@@ -29,6 +29,21 @@ class SqliteConvertersTest {
     }
 
     @Test
+    fun `createLanguageContentValuesTest__hasId`() {
+        // given
+        val value = "Russian"
+        val id = 5L
+
+        // when
+        val cv = createLanguageContentValues(value, id)
+
+        // then
+        assertEquals("values count is correct", 2, cv.size())
+        assertEquals("$SQLITE_COLUMN_ID is correct", id, cv.get(SQLITE_COLUMN_ID))
+        assertEquals("$SQLITE_COLUMN_LANG_VALUE is correct", value, cv.get(SQLITE_COLUMN_LANG_VALUE))
+    }
+
+    @Test
     fun createExpressionContentValuesTest() {
         // given
         val value = "some value"
@@ -43,6 +58,17 @@ class SqliteConvertersTest {
         assertEquals("$SQLITE_COLUMN_VALUE is correct", value, cv.get(SQLITE_COLUMN_VALUE))
         assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, cv.get(SQLITE_COLUMN_TYPE))
         assertEquals("$SQLITE_COLUMN_LANGUAGE_ID is correct", lang.id, cv.get(SQLITE_COLUMN_LANGUAGE_ID))
+
+        // when
+        val id = 7L
+        val cv1 = createExpressionContentValues(value, type, lang.id, id)
+
+        // then
+        assertEquals("values count is correct", 4, cv1.size())
+        assertEquals("$SQLITE_COLUMN_ID is correct", id, cv1.get(SQLITE_COLUMN_ID))
+        assertEquals("$SQLITE_COLUMN_VALUE is correct", value, cv1.get(SQLITE_COLUMN_VALUE))
+        assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, cv1.get(SQLITE_COLUMN_TYPE))
+        assertEquals("$SQLITE_COLUMN_LANGUAGE_ID is correct", lang.id, cv1.get(SQLITE_COLUMN_LANGUAGE_ID))
     }
 
     @Test
@@ -60,10 +86,21 @@ class SqliteConvertersTest {
         assertEquals("$SQLITE_COLUMN_NAME is correct", name, cv.get(SQLITE_COLUMN_NAME))
         assertEquals("$SQLITE_COLUMN_LANG_ORIGINAL is correct", langOriginal.id, cv.get(SQLITE_COLUMN_LANG_ORIGINAL))
         assertEquals("$SQLITE_COLUMN_LANG_TRANSLATIONS is correct", langTranslations.id, cv.get(SQLITE_COLUMN_LANG_TRANSLATIONS))
+
+        // when
+        val id = 5L
+        val cv1 = createDomainContentValues(name, langOriginal.id, langTranslations.id, id)
+
+        // then
+        assertEquals("values count is correct", 4, cv1.size())
+        assertEquals("$SQLITE_COLUMN_ID is correct", id, cv1.get(SQLITE_COLUMN_ID))
+        assertEquals("$SQLITE_COLUMN_NAME is correct", name, cv1.get(SQLITE_COLUMN_NAME))
+        assertEquals("$SQLITE_COLUMN_LANG_ORIGINAL is correct", langOriginal.id, cv1.get(SQLITE_COLUMN_LANG_ORIGINAL))
+        assertEquals("$SQLITE_COLUMN_LANG_TRANSLATIONS is correct", langTranslations.id, cv1.get(SQLITE_COLUMN_LANG_TRANSLATIONS))
     }
 
     @Test
-    fun cardDataToContentValuesTest() {
+    fun createCardContentValuesTest() {
         // given
         val deckId = 5L
         val domainId = 2L
@@ -81,7 +118,7 @@ class SqliteConvertersTest {
     }
 
     @Test
-    fun `cardDataToContentValuesTest__hasCardId`() {
+    fun `createCardContentValuesTest__hasCardId`() {
         // given
         val deckId = 5L
         val domainId = 1L
@@ -98,6 +135,16 @@ class SqliteConvertersTest {
         assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv.get(SQLITE_COLUMN_FRONT_ID))
         assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv.get(SQLITE_COLUMN_DECK_ID))
         assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv.get(SQLITE_COLUMN_DOMAIN_ID))
+
+        // when
+        val cv1 = createCardContentValues(domainId, deckId, original.id, cardId)
+
+        // then
+        assertEquals("values count is correct", 4, cv1.size())
+        assertEquals("$SQLITE_COLUMN_ID is correct", cardId, cv1.get(SQLITE_COLUMN_ID))
+        assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv1.get(SQLITE_COLUMN_FRONT_ID))
+        assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv1.get(SQLITE_COLUMN_DECK_ID))
+        assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv1.get(SQLITE_COLUMN_DOMAIN_ID))
     }
 
     @Test
@@ -111,6 +158,23 @@ class SqliteConvertersTest {
 
         // then
         assertEquals("values count is correct", 2, cv.size())
+        assertEquals("$SQLITE_COLUMN_NAME is correct", name, cv.get(SQLITE_COLUMN_NAME))
+        assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv.get(SQLITE_COLUMN_DOMAIN_ID))
+    }
+
+    @Test
+    fun `createDeckContentValuesTest__hasId`() {
+        // given
+        val name = "New Deck"
+        val domainId = 3L
+        val deckId = 5L
+
+        // when
+        val cv = createDeckContentValues(domainId, name, deckId)
+
+        // then
+        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("$SQLITE_COLUMN_ID is correct", deckId, cv.get(SQLITE_COLUMN_ID))
         assertEquals("$SQLITE_COLUMN_NAME is correct", name, cv.get(SQLITE_COLUMN_NAME))
         assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv.get(SQLITE_COLUMN_DOMAIN_ID))
     }
@@ -137,6 +201,18 @@ class SqliteConvertersTest {
             assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
             assertEquals("$SQLITE_COLUMN_EXPRESSION_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_EXPRESSION_ID))
         }
+
+        // when
+        val cvList1 = generateCardsReverseContentValues(cardId, translations.map { it.id })
+
+        // then
+        assertEquals("entries count is correct", 3, cvList1.size)
+        for (i in 0 until 3) {
+            val cv = cvList1[i]
+            assertEquals("values count is correct", 2, cv.size())
+            assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
+            assertEquals("$SQLITE_COLUMN_EXPRESSION_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_EXPRESSION_ID))
+        }
     }
 
     @Test
@@ -155,5 +231,14 @@ class SqliteConvertersTest {
         assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
         assertEquals("$SQLITE_COLUMN_DUE is correct", due, cv.getAsDate(SQLITE_COLUMN_DUE))
         assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv.get(SQLITE_COLUMN_PERIOD))
+
+        // when
+        val cv1 = createSRStateContentValues(cardId, state.due, state.period)
+
+        // then
+        assertEquals("values count is correct", 3, cv1.size())
+        assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv1.get(SQLITE_COLUMN_CARD_ID))
+        assertEquals("$SQLITE_COLUMN_DUE is correct", due, cv1.getAsDate(SQLITE_COLUMN_DUE))
+        assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv1.get(SQLITE_COLUMN_PERIOD))
     }
 }

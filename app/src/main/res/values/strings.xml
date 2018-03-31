@@ -96,6 +96,19 @@
 	<string name="settings__card_types_forward_only">Learn forward only</string>
 	<string name="settings__card_types_reverse_only">Learn reverse only</string>
 
+	<!-- Back up -->
+	<string name="backup__create_title">Create backup</string>
+	<string name="backup__create_rationale">Back up is a full copy of your Coriolan data.
+		It is wise to create backups from time to time and store them somewhere else (e.g. in your Google Drive) for the case
+		if something goes wrong with the app or with your device. Making backups regularly, you will make sure that in case
+		something upleasant happens, the data you lose will be minimal.\n\nBe mindful that creating a backup might take
+		some time (up to a couple of minutes) depending on how large your collection is.
+	</string>
+	<string name="backup__create_backup_button">Create backup now</string>
+	<string name="backup__creating">We are creating you backup. It may take some time. Please be patient…</string>
+	<string name="backup__created">Done! You backup was created under:</string>
+	<string name="backup__creation_failed">Failed to create backup :(</string>
+
 	<!-- General -->
 	<string name="button_ok">OK</string>
 	<string name="button_submit">Submit</string>

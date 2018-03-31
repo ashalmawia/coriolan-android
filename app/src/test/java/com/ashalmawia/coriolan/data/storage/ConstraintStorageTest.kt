@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.LearningExerciseDescriptor
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
@@ -27,7 +28,10 @@ class ConstraintStorageTest {
     }
     private val emptyStorage: Lazy<Repository> = lazy { createStorage() }
 
-    private fun createStorage() = SqliteStorage(RuntimeEnvironment.application, exercises)
+    private fun createStorage(): Repository {
+        val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application, exercises)
+        return SqliteStorage(RuntimeEnvironment.application, exercises, helper)
+    }
 
     @Test(expected = DataProcessingException::class)
     fun `test__addLanguage__nameUnique`() {

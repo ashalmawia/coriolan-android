@@ -8,8 +8,24 @@ import com.ashalmawia.coriolan.learning.scheduler.StateType
 
 private const val SQLITE_VERSION = 1
 
+/**
+ * Production classes should never instantiate this class directly but prefer using
+ * Companion object's get() function instead, otherwise having multiple instances of SQLiteOpenHelper
+ * will be a well-known sourse of bugs.
+ */
 class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<ExerciseDescriptor<*, *>>)
     : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
+
+    companion object {
+        private var value: SqliteRepositoryOpenHelper? = null
+
+        fun get(context: Context, exercises: List<ExerciseDescriptor<*, *>>): SqliteRepositoryOpenHelper {
+            if (value == null) {
+                value = SqliteRepositoryOpenHelper(context, exercises)
+            }
+            return value!!
+        }
+    }
 
     override fun onCreate(db: SQLiteDatabase?) {
         if (db == null) {

@@ -24,12 +24,7 @@ class MockExercise : Exercise {
     }
 }
 
-class MockExerciseDescriptor(private val name: String = "mock") : ExerciseDescriptor<MockState, MockExercise> {
-    override val stableId: String
-        get() = name
-
-    override val stateType: StateType
-        get() = StateType.UNKNOWN
+class MockExerciseDescriptor(override val stableId: String = "mock", override val stateType: StateType = StateType.UNKNOWN) : ExerciseDescriptor<MockState, MockExercise> {
 
     override fun name(): Int = 0
 

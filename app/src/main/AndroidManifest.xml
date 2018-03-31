@@ -2,6 +2,7 @@
 		  package="com.ashalmawia.coriolan">
 
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 	<application
 		android:name=".CoriolanApplication"
@@ -52,6 +53,11 @@
 			android:parentActivityName=".ui.DomainActivity"
 			android:theme="@style/Coriolan.Theme.Dialog"
 			android:label="@string/edit__add_new_deck"/>
+
+		<activity
+			android:name=".data.backup.ui.BackupActivity"
+			android:parentActivityName=".ui.DomainActivity"
+			/>
 
 		<meta-data
 			android:name="io.fabric.ApiKey"

@@ -19,9 +19,13 @@ fun Cursor.getName(alias: String? = null): String { return getString(SQLITE_COLU
 
 fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID, alias) }
 fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }
-//fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
+fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
 fun Cursor.getFrontId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_FRONT_ID, alias) }
 fun Cursor.getExpressionId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID, alias) }
+fun Cursor.getOriginalLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_ORIGINAL, alias) }
+fun Cursor.getTranslationsLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_TRANSLATIONS, alias) }
+fun Cursor.getLanguageId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANGUAGE_ID, alias) }
+fun Cursor.getCardId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_CARD_ID, alias) }
 
 fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE, alias) }
 fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }

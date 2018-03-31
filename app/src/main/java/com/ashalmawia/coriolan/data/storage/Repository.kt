@@ -14,7 +14,7 @@ interface Repository {
         private lateinit var instance: Repository
 
         fun get(context: Context): Repository {
-            if (!this::instance.isInitialized) {
+            if (!Repository.Companion::instance.isInitialized) {
                 instance = InMemoryCache(SqliteStorage(context.applicationContext, ExercisesRegistry.allExercises()))
             }
             return instance

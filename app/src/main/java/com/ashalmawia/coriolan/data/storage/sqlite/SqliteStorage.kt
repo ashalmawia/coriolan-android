@@ -17,9 +17,11 @@ import org.joda.time.DateTime
 
 private val TAG = SqliteStorage::class.java.simpleName
 
-class SqliteStorage(private val context: Context, exercises: List<ExerciseDescriptor<*, *>>) : Repository {
-
-    private val helper = SqliteRepositoryOpenHelper(context, exercises)
+class SqliteStorage(
+        private val context: Context,
+        exercises: List<ExerciseDescriptor<*, *>>,
+        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercises)
+) : Repository {
 
     override fun addLanguage(value: String): Language {
         val db = helper.writableDatabase
