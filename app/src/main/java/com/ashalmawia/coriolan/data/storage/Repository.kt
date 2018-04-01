@@ -66,6 +66,8 @@ interface Repository {
     fun getSRCardState(card: Card, exerciseId: String): SRState
 
     fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>>
+
+    fun invalidateCache()
 }
 
 class DataProcessingException(message: String, causedBy: Throwable? = null) : RuntimeException(message, causedBy)

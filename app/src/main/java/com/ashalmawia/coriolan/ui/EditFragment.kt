@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.backup.ui.BackupActivity
+import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import kotlinx.android.synthetic.main.edit.*
@@ -28,7 +29,8 @@ class EditFragment : Fragment() {
             EditListItem(R.string.edit__add_new_cards, { addNewCards(it) }),
             EditListItem(R.string.edit__add_new_deck, { createNewDeck(it) }),
             EditListItem(R.string.import_from_file, { importFromFile(it) }),
-            EditListItem(R.string.backup__create_title, { createBackup(it) })
+            EditListItem(R.string.backup__create_title, { createBackup(it) }),
+            EditListItem(R.string.backup__restore_title, { restoreFromBackup(it) })
     )
 
     private lateinit var listener: EditFragmentListener
@@ -80,6 +82,11 @@ class EditFragment : Fragment() {
     private fun createBackup(context: Context) {
         val intent = BackupActivity.intent(context)
         context.startActivity(intent)
+    }
+
+    private fun restoreFromBackup(context: Context) {
+        val intent = RestoreFromBackupActivity.intent(context)
+        startActivityForResult(intent, REQUEST_CODE_UPDATE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

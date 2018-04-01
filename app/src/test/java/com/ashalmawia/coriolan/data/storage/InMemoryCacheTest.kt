@@ -46,6 +46,16 @@ class InMemoryCacheTest {
         assertExpressionCorrect(cached, value, type, lang)
         // expressionById() must not be called as the value is expected to be cached while adding
         verify(inner, never()).expressionById(any())
+
+        // when
+        cache.invalidateCache()
+        val cached2 = cache.expressionById(added.id)
+
+        // then
+        assertNotNull("expression is found", cached2)
+        assertExpressionCorrect(cached2, value, type, lang)
+        // expressionById() must be called as the cache was cleared
+        verify(inner, times(1)).expressionById(any())
     }
 
     @Test
@@ -57,6 +67,7 @@ class InMemoryCacheTest {
         cache.expressionById(expression.id)     // caching is expected to happen here
 
         // when
+        cache.expressionById(expression.id)
         val cached = cache.expressionById(expression.id)
 
         // then
@@ -65,6 +76,16 @@ class InMemoryCacheTest {
         // expressionById() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
         verify(inner, times(1)).expressionById(any())
+
+        // when
+        cache.invalidateCache()
+        val cached2 = cache.expressionById(expression.id)
+
+        // then
+        assertNotNull("expression is found", cached2)
+        assertExpressionCorrect(cached, expression.value, expression.type, lang)
+        // expressionById() must be called as the cache was cleared
+        verify(inner, times(2)).expressionById(any())
     }
 
     @Test
@@ -88,6 +109,16 @@ class InMemoryCacheTest {
         assertCardCorrect(cached, data, domain)
         // cardById() must not be called as the value is expected to be cached while adding
         verify(inner, never()).cardById(any(), any())
+
+        // when
+        cache.invalidateCache()
+        val cached2 = cache.cardById(card.id, domain)
+
+        // then
+        assertNotNull("expression is found", cached2)
+        assertCardCorrect(cached2, data, domain)
+        // cardById() must be called as the cache was cleared
+        verify(inner, times(1)).cardById(any(), any())
     }
 
     @Test
@@ -105,12 +136,26 @@ class InMemoryCacheTest {
 
         // when
         val cached = cache.deckById(deck.id, domain)
+        cache.deckById(deck.id, domain)
+        cache.deckById(deck.id, domain)
 
         // then
         assertNotNull("deck is found", cached)
         assertDeckCorrect(cached, name, domain)
-        // expressionById() must not be called as the value is expected to be cached while adding
-        verify(inner, never()).deckById(deck.id, domain)
+        // deckById() must not be called as the value is expected to be cached while adding
+        verify(inner, times(1)).allDecks(any())
+
+        // when
+        cache.invalidateCache()
+        val cached2 = cache.deckById(deck.id, domain)
+        cache.deckById(deck.id, domain)
+        cache.deckById(deck.id, domain)
+
+        // then
+        assertNotNull("expression is found", cached2)
+        assertDeckCorrect(cached2, name, domain)
+        // deckById() must be called as the cache was cleared
+        verify(inner, times(2)).allDecks(any())
     }
 
     @Test
@@ -124,13 +169,25 @@ class InMemoryCacheTest {
 
         // when
         val cached = cache.deckById(deck.id, domain)
+        cache.deckById(deck.id, domain)
 
         // then
         assertNotNull("deck is found", cached)
         assertDeckCorrect(cached, deck.name, domain)
-        // deckById() must be called once during the first call,
+        // allDecks() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
-        verify(inner, times(1)).allDecks(domain)
+        verify(inner, times(1)).allDecks(any())
+
+        // when
+        cache.invalidateCache()
+        val cached2 = cache.deckById(deck.id, domain)
+        cache.deckById(deck.id, domain)
+
+        // then
+        assertNotNull("expression is found", cached2)
+        assertDeckCorrect(cached2, deck.name, domain)
+        // allDecks() must be called as the cache was cleared
+        verify(inner, times(2)).allDecks(any())
     }
 
     @Test
@@ -155,6 +212,19 @@ class InMemoryCacheTest {
         // allDecks() must be called once during the first call,
         // as after that the value is expected to be kept in the cache
         verify(inner, times(1)).allDecks(domain)
+
+        // when
+        cache.invalidateCache()
+        val cached2 = cache.allDecks(domain)
+        cache.allDecks(domain)
+
+        // then
+        assertEquals("number of decks is correct", decks.size, cached2.size)
+        for (i in 0 until decks.size) {
+            assertDeckCorrect(cached2[i], decks[i].name, domain)
+        }
+        // allDecks() must be called as the cache was cleared
+        verify(inner, times(2)).allDecks(any())
     }
 
     @Test
@@ -168,31 +238,6 @@ class InMemoryCacheTest {
 
         // then
         assertEquals("state is updated", state, inner.states[card.id])
-    }
-
-    @Test
-    fun `test__updateCardState__updatedStateIsCachedCorrectly`() {
-        // given
-        val cardData = mockCardData()
-        val domain = mockDomain()
-
-        val card = addMockCard(cache, cardData, domain)
-
-        val state = mockState()
-
-        // when
-        cache.updateSRCardState(card, state, exercise)
-        val cached = cache.cardById(card.id, domain)
-
-        // then
-        assertNotNull(cached)
-
-        // when
-        val cachedState = cache.getSRCardState(cached!!, exercise)
-
-        // then
-        assertEquals("state is updated", state, cachedState)
-        verify(inner, never()).cardById(any(), any())
     }
 
     @Test
@@ -239,6 +284,13 @@ class InMemoryCacheTest {
         assertEquals(mutable, all)
         verify(inner, never()).cardById(any(), any())
         verify(inner, times(1)).allCards(any())
+
+        // when
+        cache.invalidateCache()
+        cache.allCards(domain)
+
+        // then
+        verify(inner, times(2)).allCards(any())
     }
 
     @Test

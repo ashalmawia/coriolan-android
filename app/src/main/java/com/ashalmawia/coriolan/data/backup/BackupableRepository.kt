@@ -14,6 +14,12 @@ interface BackupableRepository {
         }
     }
 
+    fun beginTransaction()
+
+    fun commitTransaction()
+
+    fun rollbackTransaction()
+
     fun allLanguages(offset: Int, limit: Int): List<LanguageInfo>
 
     fun allDomains(offset: Int, limit: Int): List<DomainInfo>
@@ -39,6 +45,8 @@ interface BackupableRepository {
     fun writeDecks(decks: List<DeckInfo>)
 
     fun writeSRStates(exerciseId: String, states: List<SRStateInfo>)
+
+    fun hasAtLeastOneCard(): Boolean
 }
 
 data class LanguageInfo(

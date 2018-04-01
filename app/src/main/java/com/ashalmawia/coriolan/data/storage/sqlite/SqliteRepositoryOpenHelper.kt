@@ -6,15 +6,16 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.ashalmawia.coriolan.learning.ExerciseDescriptor
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 
-private const val SQLITE_VERSION = 1
+private const val SCHEMA_VERSION = 1
+private const val DATABASE_NAME = "data.db"
 
 /**
  * Production classes should never instantiate this class directly but prefer using
  * Companion object's get() function instead, otherwise having multiple instances of SQLiteOpenHelper
  * will be a well-known sourse of bugs.
  */
-class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<ExerciseDescriptor<*, *>>)
-    : SQLiteOpenHelper(context, "data.db", null, SQLITE_VERSION) {
+class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<ExerciseDescriptor<*, *>>, dbName: String = DATABASE_NAME)
+    : SQLiteOpenHelper(context, dbName, null, SCHEMA_VERSION) {
 
     companion object {
         private var value: SqliteRepositoryOpenHelper? = null
@@ -105,7 +106,8 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
     }
 
     private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<ExerciseDescriptor<*, *>>) {
-        exercises.forEach { createTableExerciseState(db, it.stateType, sqliteTableExerciseState(it.stableId)) }
+        exercises.filterNot { it.stateType == StateType.UNKNOWN }
+                .forEach { createTableExerciseState(db, it.stateType, sqliteTableExerciseState(it.stableId)) }
     }
 
     private fun createTableExerciseState(db: SQLiteDatabase, type: StateType, tableName: String) {

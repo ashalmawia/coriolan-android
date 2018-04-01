@@ -164,4 +164,12 @@ class InMemoryCache(private val inner: Repository) : Repository {
     override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
         return inner.cardsDueDate(exerciseId, deck, date)
     }
+
+    override fun invalidateCache() {
+        expressions.clear()
+        domains.clear()
+        cards.clear()
+        allDecks.clear()
+        allCardsLoaded = false
+    }
 }

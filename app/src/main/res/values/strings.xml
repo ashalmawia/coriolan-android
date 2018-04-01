@@ -108,6 +108,25 @@
 	<string name="backup__creating">We are creating you backup. It may take some time. Please be patient…</string>
 	<string name="backup__created">Done! You backup was created under:</string>
 	<string name="backup__creation_failed">Failed to create backup :(</string>
+	<string name="backup__restore_title">Restore from backup</string>
+	<string name="backup__restore_rationale">If you have a copy of your data stored on your device and don\'t have it
+		in Coriolan for some reason, you can easily restore you data from there.
+		This can also be used for migrating data from one device to another. \n\nWarning!
+		Restoring from a backup will override all your current data with the one from the backup,
+		so any additional changes will be lost.
+	</string>
+	<string name="backup__restore_select_and_restore">Select file and restore</string>
+	<string name="backup__restore_select_file">Select backup file:</string>
+	<string name="backup__restoring_1">Selected backup to restore from:</string>
+	<string name="backup__restoring_2">We are now restroing your data. It may take some time. Please be patient…</string>
+	<string name="backup__restore_failed">Failed to restore data from this backup. You local data was not changed.</string>
+	<string name="backup__restore_final_warning_title">Possible data loss!</string>
+	<string name="backup__restore_final_warning_message">Restoring from a backup will overwrite all the data you have locally!
+	If there are some differences between your local data and the backup, they will be lost.\n\nAre you sure you want to
+	continue?</string>
+	<string name="backup__restore_confirm">Restore</string>
+	<string name="backup__restore_success">Restored successfully from the following backup:</string>
+	<string name="backup__restore_failed_no_backup">Looks like you don\'t have any Coriolan backups yet.</string>
 
 	<!-- General -->
 	<string name="button_ok">OK</string>

@@ -25,8 +25,15 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
     }
 
     override fun restoreFrom(stream: InputStream, repository: BackupableRepository) {
-        repository.clearAll()
-        restoreFrom(stream, repository, JacksonDeserializer.instance())
+        repository.beginTransaction()
+        try {
+            repository.clearAll()
+            restoreFrom(stream, repository, JacksonDeserializer.instance())
+            repository.commitTransaction()
+        } catch (e: Throwable) {
+            repository.rollbackTransaction()
+            throw e
+        }
     }
 
     private fun restoreFrom(stream: InputStream, repository: BackupableRepository, deserializer: JacksonDeserializer) {
@@ -59,8 +66,8 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         write(FIELD_LANGUAGES, repository::allLanguages, json, serializer::writeLanguage)
         write(FIELD_DOMAINS, repository::allDomains, json, serializer::writeDomain)
         write(FIELD_EXPRESSIONS, repository::allExpressions, json, serializer::writeExpression)
-        write(FIELD_CARDS, repository::allCards, json, serializer::writeCard)
         write(FIELD_DECKS, repository::allDecks, json, serializer::writeDeck)
+        write(FIELD_CARDS, repository::allCards, json, serializer::writeCard)
         writeSRStates(repository, exercises, json, serializer::writeCardStateSR)
 
         json.writeEndObject()

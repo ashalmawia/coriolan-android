@@ -38,4 +38,12 @@ class MockExerciseDescriptor(override val stableId: String = "mock", override va
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other is MockExerciseDescriptor && stableId == other.stableId
+    }
+
+    override fun hashCode(): Int {
+        return stableId.hashCode()
+    }
 }

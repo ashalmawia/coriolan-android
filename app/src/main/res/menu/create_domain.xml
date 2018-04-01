@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:id="@+id/create_domain_menu__restore_from_backup"
+		  android:title="@string/backup__restore_title"
+		  />
+
+</menu>

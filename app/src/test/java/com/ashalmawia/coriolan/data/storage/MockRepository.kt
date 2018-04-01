@@ -134,4 +134,8 @@ class MockRepository : Repository {
                     it.state.due <= date
                 }
     }
+
+    override fun invalidateCache() {
+        // nothing to do here
+    }
 }

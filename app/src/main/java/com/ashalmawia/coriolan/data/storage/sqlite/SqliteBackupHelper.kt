@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.scheduler.StateType
 
 class SqliteBackupHelper(
         context: Context,
@@ -10,12 +11,26 @@ class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercises)
 ) : BackupableRepository {
 
+    override fun beginTransaction() {
+        helper.writableDatabase.beginTransaction()
+    }
+
+    override fun commitTransaction() {
+        helper.writableDatabase.setTransactionSuccessful()
+        helper.writableDatabase.endTransaction()
+    }
+
+    override fun rollbackTransaction() {
+        helper.writableDatabase.endTransaction()
+    }
+
     override fun allLanguages(offset: Int, limit: Int): List<LanguageInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
             |   FROM $SQLITE_TABLE_LANGUAGES
+            |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -34,6 +49,7 @@ class SqliteBackupHelper(
         val cursor = db.rawQuery("""
             |SELECT *
             |   FROM $SQLITE_TABLE_DOMAINS
+            |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -52,6 +68,7 @@ class SqliteBackupHelper(
         val cursor = db.rawQuery("""
             |SELECT *
             |   FROM $SQLITE_TABLE_EXPRESSIONS
+            |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -70,6 +87,7 @@ class SqliteBackupHelper(
         val cursor = db.rawQuery("""
             |SELECT *
             |   FROM $SQLITE_TABLE_CARDS
+            |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -108,6 +126,7 @@ class SqliteBackupHelper(
         val cursor = db.rawQuery("""
             |SELECT *
             |   FROM $SQLITE_TABLE_DECKS
+            |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -126,6 +145,7 @@ class SqliteBackupHelper(
         val cursor = db.rawQuery("""
             |SELECT *
             |   FROM ${sqliteTableExerciseState(exerciseId)}
+            |   ORDER BY $SQLITE_COLUMN_CARD_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -141,121 +161,96 @@ class SqliteBackupHelper(
     override fun clearAll() {
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-
-        try {
-            exercises.forEach {
-                db.execSQL("DELETE FROM ${sqliteTableExerciseState(it.stableId)}")
-            }
-            db.execSQL("DELETE FROM $SQLITE_TABLE_DECKS")
-            db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS_REVERSE")
-            db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS")
-            db.execSQL("DELETE FROM $SQLITE_TABLE_EXPRESSIONS")
-            db.execSQL("DELETE FROM $SQLITE_TABLE_DOMAINS")
-            db.execSQL("DELETE FROM $SQLITE_TABLE_LANGUAGES")
-
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        exercises.filterNot { it.stateType == StateType.UNKNOWN }.forEach {
+            db.execSQL("DELETE FROM ${sqliteTableExerciseState(it.stableId)}")
         }
+        db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS_REVERSE")
+        db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS")
+        db.execSQL("DELETE FROM $SQLITE_TABLE_DECKS")
+        db.execSQL("DELETE FROM $SQLITE_TABLE_EXPRESSIONS")
+        db.execSQL("DELETE FROM $SQLITE_TABLE_DOMAINS")
+        db.execSQL("DELETE FROM $SQLITE_TABLE_LANGUAGES")
     }
 
     override fun writeLanguages(languages: List<LanguageInfo>) {
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-        try {
-            languages.forEach {
-                db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null,
-                        createLanguageContentValues(id = it.id, value = it.value)
-                )
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        languages.forEach {
+            db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null,
+                    createLanguageContentValues(id = it.id, value = it.value)
+            )
         }
     }
 
     override fun writeDomains(domains: List<DomainInfo>) {
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-        try {
-            domains.forEach {
-                db.insertOrThrow(SQLITE_TABLE_DOMAINS, null,
-                        createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
-                )
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        domains.forEach {
+            db.insertOrThrow(SQLITE_TABLE_DOMAINS, null,
+                    createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
+            )
         }
     }
 
     override fun writeExpressions(expressions: List<ExpressionInfo>) {
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-        try {
-            expressions.forEach {
-                db.insertOrThrow(SQLITE_TABLE_EXPRESSIONS, null,
-                        createExpressionContentValues(it.value, it.type, it.languageId, it.id)
-                )
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        expressions.forEach {
+            db.insertOrThrow(SQLITE_TABLE_EXPRESSIONS, null,
+                    createExpressionContentValues(it.value, it.type, it.languageId, it.id)
+            )
         }
     }
 
     override fun writeCards(cards: List<CardInfo>) {
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-        try {
-            cards.forEach {
-                db.insertOrThrow(SQLITE_TABLE_CARDS, null,
-                        createCardContentValues(it.domainId, it.deckId, it.originalId, it.id)
-                )
-                generateCardsReverseContentValues(it.id, it.translationIds).forEach {
-                    db.insertOrThrow(SQLITE_TABLE_CARDS_REVERSE, null, it)
-                }
+        cards.forEach {
+            db.insertOrThrow(SQLITE_TABLE_CARDS, null,
+                    createCardContentValues(it.domainId, it.deckId, it.originalId, it.id)
+            )
+            generateCardsReverseContentValues(it.id, it.translationIds).forEach {
+                db.insertOrThrow(SQLITE_TABLE_CARDS_REVERSE, null, it)
             }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
         }
     }
 
     override fun writeDecks(decks: List<DeckInfo>) {
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-        try {
-            decks.forEach {
-                db.insertOrThrow(SQLITE_TABLE_DECKS, null,
-                        createDeckContentValues(it.domainId, it.name, it.id)
-                )
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        decks.forEach {
+            db.insertOrThrow(SQLITE_TABLE_DECKS, null,
+                    createDeckContentValues(it.domainId, it.name, it.id)
+            )
         }
     }
 
     override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) {
+        if (exercises.find { it.stableId == exerciseId } == null) {
+            // skip this exercise as we don't know it in the current version
+            return
+        }
+
         val db = helper.writableDatabase
 
-        db.beginTransaction()
-        try {
-            states.forEach {
-                db.insertOrThrow(sqliteTableExerciseState(exerciseId), null,
-                        createSRStateContentValues(it.cardId, it.due, it.period)
-                )
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        states.forEach {
+            db.insertOrThrow(sqliteTableExerciseState(exerciseId), null,
+                    createSRStateContentValues(it.cardId, it.due, it.period)
+            )
+        }
+    }
+
+    override fun hasAtLeastOneCard(): Boolean {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT count(*)
+            |   FROM $SQLITE_TABLE_CARDS
+        """.trimMargin(), arrayOf())
+
+        cursor.use {
+            cursor.moveToNext()
+            return cursor.getInt(0) > 0
         }
     }
 }

@@ -565,6 +565,10 @@ class SqliteStorage(
         return cards
     }
 
+    override fun invalidateCache() {
+        // nothing to do here
+    }
+
     private fun extractSRState(cursor: Cursor) =
             if (cursor.hasSavedState()) SRState(cursor.getDateDue(), cursor.getPeriod()) else emptyState()
 

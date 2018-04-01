@@ -77,6 +77,15 @@ abstract class BackupableRepositoryTest {
             CardInfo(11L, 2L, 1L, 11L, listOf(3L)),
             CardInfo(12L, 1L, 1L, 12L, listOf(4L))
     )
+    private val srstates = listOf(
+            SRStateInfo(5L, today().minusDays(10), 44),
+            SRStateInfo(3L, today().minusDays(5), 52),
+            SRStateInfo(12L, today().plusDays(11), 22),
+            SRStateInfo(11L, today().minusDays(88), 12),
+            SRStateInfo(9L, today().plusDays(23), 50),
+            SRStateInfo(8L, today().minusDays(1), 1),
+            SRStateInfo(6L, today(), 0)
+    )
 
     @Before
     fun before() {
@@ -176,20 +185,72 @@ abstract class BackupableRepositoryTest {
         val exerciseId = exercise.stableId
 
         // then
-        val srstates = listOf(
-                SRStateInfo(5L, today().minusDays(10), 44),
-                SRStateInfo(3L, today().minusDays(5), 52),
-                SRStateInfo(12L, today().plusDays(11), 22),
-                SRStateInfo(11L, today().minusDays(88), 12),
-                SRStateInfo(9L, today().plusDays(23), 50),
-                SRStateInfo(8L, today().minusDays(1), 1),
-                SRStateInfo(6L, today(), 0)
-        )
         testNonEmpty(
                 srstates.sortedBy { it.cardId },
                 { states -> repo.writeSRStates(exerciseId, states) },
                 { offset, limit -> repo.allSRStates(exerciseId, offset, limit).sortedBy { it.cardId } }
         )
+    }
+
+    @Test
+    fun `test__clear`() {
+        // given
+        val exerciseId = exercise.stableId
+
+        repo.writeLanguages(languages)
+        repo.writeDomains(domains)
+        repo.writeExpressions(expressions)
+        repo.writeDecks(decks)
+        repo.writeCards(cards)
+        repo.writeSRStates(exerciseId, srstates)
+
+        // when
+        repo.clearAll()
+
+        // then
+        assertTrue(repo.allLanguages(0, 500).isEmpty())
+        assertTrue(repo.allDomains(0, 500).isEmpty())
+        assertTrue(repo.allExpressions(0, 500).isEmpty())
+        assertTrue(repo.allCards(0, 500).isEmpty())
+        assertTrue(repo.allDecks(0, 500).isEmpty())
+        assertTrue(repo.allSRStates(exerciseId, 0, 500).isEmpty())
+    }
+
+    @Test
+    fun `test__hasAtLeastOneCard`() {
+        // clean repo
+        assertFalse(repo.hasAtLeastOneCard())
+
+        // given
+        repo.writeLanguages(languages)
+        repo.writeDomains(domains)
+        repo.writeExpressions(expressions)
+        repo.writeDecks(decks)
+
+        // then
+        assertFalse(repo.hasAtLeastOneCard())
+
+        // given
+        repo.writeCards(cards.subList(0, 1))
+
+        // then
+        assertTrue(repo.hasAtLeastOneCard())
+
+        // given
+        repo.clearAll()
+
+        // then
+        assertFalse(repo.hasAtLeastOneCard())
+
+        // given
+        repo.writeLanguages(languages)
+        repo.writeDomains(domains)
+        repo.writeExpressions(expressions)
+        repo.writeDecks(decks)
+        repo.writeCards(cards)
+
+        // then
+        assertTrue(repo.hasAtLeastOneCard())
     }
 
     private fun <T> testEmpty(writer: (List<T>) -> Unit, reader: (Int, Int) -> List<T>) {
