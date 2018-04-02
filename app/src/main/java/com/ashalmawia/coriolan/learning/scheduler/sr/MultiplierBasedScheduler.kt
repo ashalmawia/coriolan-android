@@ -8,11 +8,14 @@ private const val MULTIPLIER_HARD = 0.5f
 private const val MULTIPLIER_CORRECT = 2f
 private const val MULTIPLIER_EASY = 4f
 
+private const val NEW_RESPONDED_EASY_DAYS = 4
+
 class MultiplierBasedScheduler : Scheduler {
 
     override fun answers(state: SRState): Array<Answer> {
         return when (state.status) {
-            Status.NEW, Status.RELEARN -> arrayOf(Answer.WRONG, Answer.CORRECT)
+            Status.NEW -> arrayOf(Answer.WRONG, Answer.CORRECT, Answer.EASY)
+            Status.RELEARN -> arrayOf(Answer.WRONG, Answer.CORRECT)
             Status.IN_PROGRESS, Status.LEARNT -> arrayOf(Answer.WRONG, Answer.HARD, Answer.CORRECT, Answer.EASY)
         }
     }
@@ -29,7 +32,14 @@ class MultiplierBasedScheduler : Scheduler {
 
     override fun correct(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_CORRECT)
 
-    override fun easy(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_EASY)
+    override fun easy(state: SRState): SRState {
+        return if (state.period == PERIOD_NEVER_SCHEDULED) {
+            // a special rule for easy for a new card, don't show it in this assignment
+            SRState(today().plusDays(NEW_RESPONDED_EASY_DAYS), NEW_RESPONDED_EASY_DAYS)
+        } else {
+            stateForCorrect(state, MULTIPLIER_EASY)
+        }
+    }
 
     private fun stateForRelearn(): SRState = SRState(today(), 0)
 

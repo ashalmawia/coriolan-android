@@ -105,7 +105,7 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__newCard__correct__twice`() {
+    fun `test__newCard__easy`() {
         // given
         val scheduler = scheduler()
 
@@ -113,12 +113,12 @@ class MultiplierBasedSchedulerTest {
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
         // when
-        val updated = scheduler.correct(scheduler.correct(state))
+        val updated = scheduler.easy(state)
 
         // then
         val today = today()
-        assertEquals(1, updated.period)
-        assertEquals(today.plusDays(1), updated.due)
+        assertEquals(4, updated.period)
+        assertEquals(today.plusDays(4), updated.due)
     }
 
     @Test
