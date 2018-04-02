@@ -15,37 +15,93 @@ class MultiplierBasedSchedulerTest {
     private fun scheduler() = MultiplierBasedScheduler()
 
     @Test
-    fun `test__newCard__wrong`() {
+    fun `test__newCard__wrong__shouldMeetAtLeastTwoMoreTimes`() {
         // given
         val scheduler = scheduler()
 
-        val state = emptyState()
+        var state = emptyState()
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
         // when
-        val updated = scheduler.wrong(state)
+        state = scheduler.wrong(state)
 
         // then
         val today = today()
-        assertEquals(0, updated.period)
-        assertEquals(today, updated.due)
+        assertEquals(today, state.due)
+
+        // when
+        state = scheduler.correct(state)
+
+        // then
+        assertEquals(today, state.due)
+
+        // when
+        state = scheduler.correct(state)
+
+        // then
+        assertEquals(1, state.period)
+        assertEquals(today.plusDays(1), state.due)
     }
 
     @Test
-    fun `test__newCard__correct`() {
+    fun `test__newCard__wrongMultipleTimes__shouldMeetAtLeastTwoMoreTimes`() {
         // given
         val scheduler = scheduler()
 
-        val state = emptyState()
+        var state = emptyState()
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
         // when
-        val updated = scheduler.correct(state)
+        state = scheduler.wrong(state)
 
         // then
         val today = today()
-        assertEquals(0, updated.period)
-        assertEquals(today, updated.due)
+        assertEquals(today, state.due)
+
+        // when
+        state = scheduler.wrong(state)
+        state = scheduler.wrong(state)
+        state = scheduler.wrong(state)
+
+        // then
+        assertEquals(today, state.due)
+
+        // when
+        state = scheduler.correct(state)
+
+        // then
+        assertEquals(today, state.due)
+
+        // when
+        state = scheduler.correct(state)
+
+        // then
+        assertEquals(1, state.period)
+        assertEquals(today.plusDays(1), state.due)
+    }
+
+    @Test
+    fun `test__newCard__correct__shouldMeetOneMoreTime`() {
+        // given
+        val scheduler = scheduler()
+
+        var state = emptyState()
+        assertEquals(Status.NEW, state.status)       // test requirement, update if needed
+
+        // when
+        state = scheduler.correct(state)
+
+        // then
+        val today = today()
+        assertEquals(0, state.period)
+        assertEquals(today, state.due)
+
+        // when
+        state = scheduler.correct(state)
+
+        // then
+        assertEquals(1, state.period)
+        assertEquals(today.plusDays(1), state.due)
     }
 
     @Test

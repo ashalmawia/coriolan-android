@@ -8,6 +8,7 @@ import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 const val PERIOD_NEVER_SCHEDULED = -1
+const val PERIOD_FIRST_ASNWER_WRONG = -2
 const val PERIOD_LEARNT = 30 * 4               // 4 months
 
 private val format = DateTimeFormat.forPattern("dd MMM hh:mm").withLocale(Locale.ENGLISH)
@@ -19,16 +20,12 @@ data class SRState(
 
     override val status: Status
         get() {
-            if (period == PERIOD_NEVER_SCHEDULED) {
-                return Status.NEW
+            return when (period) {
+                PERIOD_NEVER_SCHEDULED -> Status.NEW
+                0, PERIOD_FIRST_ASNWER_WRONG -> Status.RELEARN
+                in 1 until PERIOD_LEARNT -> Status.IN_PROGRESS
+                else /* >= PERIOD_LEARNT */ -> Status.LEARNT
             }
-            if (period == 0) {
-                return Status.RELEARN
-            }
-            if (period >= PERIOD_LEARNT) {
-                return Status.LEARNT
-            }
-            return Status.IN_PROGRESS
         }
 
 

@@ -17,7 +17,13 @@ class MultiplierBasedScheduler : Scheduler {
         }
     }
 
-    override fun wrong(state: SRState): SRState = stateForWrong()
+    override fun wrong(state: SRState): SRState {
+        return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
+            SRState(today(), PERIOD_FIRST_ASNWER_WRONG)
+        } else {
+            stateForRelearn()
+        }
+    }
 
     override fun hard(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_HARD)
 
@@ -25,13 +31,13 @@ class MultiplierBasedScheduler : Scheduler {
 
     override fun easy(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_EASY)
 
-    private fun stateForWrong(): SRState = SRState(today(), 0)
+    private fun stateForRelearn(): SRState = SRState(today(), 0)
 
     private fun stateForCorrect(state: SRState, multiplier: Float): SRState {
-        return if (state.period == PERIOD_NEVER_SCHEDULED) {
+        return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
             // the card is completely new
-            // the first answer actually counts like "wrong"
-            stateForWrong()
+            // the first correct answer actually counts like "wrong"
+            stateForRelearn()
         } else {
             val expectedPeriod = state.period
             val actualPeriod = abs(Days.daysBetween(state.due.minusDays(state.period), today()).days)
