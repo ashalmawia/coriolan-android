@@ -27,7 +27,7 @@ class EditFragment : Fragment() {
 
     private val items = listOf(
             EditListItem(R.string.edit__add_new_cards, { addNewCards(it) }),
-            EditListItem(R.string.edit__add_new_deck, { createNewDeck(it) }),
+            EditListItem(R.string.add_deck__title, { createNewDeck(it) }),
             EditListItem(R.string.import_from_file, { importFromFile(it) }),
             EditListItem(R.string.backup__create_title, { createBackup(it) }),
             EditListItem(R.string.backup__restore_title, { restoreFromBackup(it) })

@@ -44,7 +44,6 @@
 
 	<!-- Edit screen -->
 	<string name="edit__add_new_cards">Add new cards</string>
-	<string name="edit__add_new_deck">Create new deck</string>
 
 	<!-- Add/edit a card -->
 	<string name="edit_card__original">Original (%s):</string>
@@ -55,12 +54,14 @@
 	<string name="edit_card__add_translation">add another translation…</string>
 
 	<!-- Add/edit a deck -->
+	<string name="add_deck__title">Create new deck</string>
 	<string name="add_deck__enter_name">Enter the name:</string>
 	<string name="add_deck__failed_to_create">Failed to create a deck with the name %s</string>
 	<string name="add_deck__failed_to_update">Failed to rename the deck</string>
 	<string name="add_deck__failed_already_exists">Deck with the name \"%s\" already exists</string>
 	<string name="add_deck__empty_name">Please enter the name of the deck</string>
-	<string name="edit_deck__title">Edit</string>
+	<string name="edit_deck__option_title">Edit</string>
+	<string name="edit_deck__title">Edit deck</string>
 	<string name="delete_deck__title">Delete deck</string>
 	<string name="delete_deck__message">Are you sure you want to delete the deck \"%s"\? This action cannot be undone.</string>
 	<string name="delete_deck__failed">Failed to delete the deck \"%s\": this deck is not empty. Move all its cards to

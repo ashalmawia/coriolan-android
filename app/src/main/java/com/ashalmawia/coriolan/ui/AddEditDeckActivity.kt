@@ -25,26 +25,30 @@ class AddEditDeckActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.create_deck)
         initialize()
+
+        val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
+        val editMode = deckId != -1L
+        if (editMode) {
+            setTitle(R.string.edit_deck__title)
+            extractData(deckId)
+        } else {
+            setTitle(R.string.add_deck__title)
+        }
     }
 
     private fun initialize() {
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { saveWithValidation() }
-
-        extractData()
     }
 
-    private fun extractData() {
-        val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
-        if (deckId != -1L) {
-            val repository = Repository.get(this)
-            val deck = repository.deckById(deckId, DecksRegistry.get().domain)
-            if (deck != null) {
-                this.deck = deck
-                prefillValues(deck)
-            } else {
-                finishWithError("deck with id $deckId was not in the repository")
-            }
+    private fun extractData(deckId: Long) {
+        val repository = Repository.get(this)
+        val deck = repository.deckById(deckId, DecksRegistry.get().domain)
+        if (deck != null) {
+            this.deck = deck
+            prefillValues(deck)
+        } else {
+            finishWithError("deck with id $deckId was not in the repository")
         }
     }
 

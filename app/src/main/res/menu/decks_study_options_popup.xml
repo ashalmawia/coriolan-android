@@ -8,7 +8,7 @@
 		android:title="@string/deck_options_study_random"/>
 	<item
 		android:id="@+id/rename_deck"
-		android:title="@string/edit_deck__title" />
+		android:title="@string/edit_deck__option_title" />
 	<item
 		android:id="@+id/delete_deck"
 		android:title="@string/delete_deck__title" />
