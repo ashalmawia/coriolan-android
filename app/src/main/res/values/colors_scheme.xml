@@ -14,8 +14,9 @@
 
 	<color name="textColorPrimary">@color/colorPrimaryDark</color>
 
-	<color name="grey">#999999</color>
-	<color name="grey_light">#99999999</color>
+	<color name="grey">#BBBBBB</color>
+	<color name="grey_light">#EEEEEE</color>
+	<color name="grey_lightest">#33EEEEEE</color>
 
 	<color name="white">#FFFFFF</color>
 	<color name="while__65">#A6FFFFFF</color>

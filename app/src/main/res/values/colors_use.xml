@@ -11,4 +11,6 @@
 
 	<color name="domain_navigation_foreground">@color/colorPrimary</color>
 
+	<color name="card_cover_bg">#e6dfe5</color>
+
 </resources>

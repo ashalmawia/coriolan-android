@@ -17,12 +17,13 @@ class CardView : LinearLayout {
 
     constructor(context: Context?) : this(context, null, 0)
     constructor(context: Context?, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
-    constructor(context: Context?, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr) {
-        setOnSingleClickListener { showBack() }
-    }
+    constructor(context: Context?, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr)
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+
+        frontCover.setOnSingleClickListener { showBack() }
+        backCover.setOnSingleClickListener { showBack() }
 
         showAnswerButton.setOnSingleClickListener { showBack() }
         buttonYes.setOnSingleClickListener { listener.onCorrect() }
@@ -32,8 +33,8 @@ class CardView : LinearLayout {
     }
 
     fun bind(card: Card, answers: Array<Answer>) {
-        front.text = card.original.value
-        back.text = translationsToString(card.translations)
+        frontText.text = card.original.value
+        backText.text = translationsToString(card.translations)
         configureButtonsBar(answers)
 
         showFront()
@@ -47,15 +48,14 @@ class CardView : LinearLayout {
     }
 
     private fun showFront() {
-        divider.visibility = View.INVISIBLE
-        back.visibility = View.INVISIBLE
+        frontCover.visibility = View.GONE
+        backCover.visibility = View.VISIBLE
         buttonsBar.visibility = View.GONE
         showAnswerButton.visibility = View.VISIBLE
     }
 
     private fun showBack() {
-        divider.visibility = View.VISIBLE
-        back.visibility = View.VISIBLE
+        backCover.visibility = View.GONE
         buttonsBar.visibility = View.VISIBLE
         showAnswerButton.visibility = View.GONE
     }
