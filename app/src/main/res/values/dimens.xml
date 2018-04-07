@@ -12,7 +12,7 @@
 
 	<dimen name="pending_item_size">14dp</dimen>
 
-	<dimen name="deck_progress_bar_margin_horizontal">5dp</dimen>
+	<dimen name="deck_progress_bar_items_spacing">@dimen/spacing__large</dimen>
 
 	<dimen name="card_margin_horizontal">@dimen/spacing__large</dimen>
 	<dimen name="card_margin_vertical">@dimen/spacing__largest</dimen>

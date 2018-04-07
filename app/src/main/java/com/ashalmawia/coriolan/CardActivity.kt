@@ -151,9 +151,9 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     private fun adjustProgressCountsUI() {
-        deck_progress_bar__new.setStartDrawableTint(R.color.deck_progress_bar__foregreound)
-        deck_progress_bar__review.setStartDrawableTint(R.color.deck_progress_bar__foregreound)
-        deck_progress_bar__relearn.setStartDrawableTint(R.color.deck_progress_bar__foregreound)
+        deck_progress_bar__new.setStartDrawableTint(R.color.card_activity__pending_counters)
+        deck_progress_bar__review.setStartDrawableTint(R.color.card_activity__pending_counters)
+        deck_progress_bar__relearn.setStartDrawableTint(R.color.card_activity__pending_counters)
     }
 
     private fun updateProgressCounts() {

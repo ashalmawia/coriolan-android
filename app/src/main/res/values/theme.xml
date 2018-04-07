@@ -31,6 +31,12 @@
 		<item name="buttonBarButtonStyle">@style/Coriolan.ButtonBarButton</item>
 	</style>
 
+	<style name="Coriolan.Toolbar">
+		<item name="android:background">@color/colorPrimary</item>
+		<item name="popupTheme">@style/Theme.AppCompat.Light</item>
+		<item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+	</style>
+
 	<style name="Coriolan.Text" />
 
 	<style name="Coriolan.Text.Title">

@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.ui
 
 import android.app.Activity
-import android.content.Intent
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import com.ashalmawia.coriolan.R

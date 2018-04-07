@@ -5,6 +5,7 @@
 	<color name="colorPrimary__40">#405b2a4f</color>
 
 	<color name="colorPrimaryDark">#49223F</color>
+	<color name="colorPrimaryLightest">#e6dfe5</color>
 
 	<color name="colorSecondary">#fbc02d</color>
 	<color name="colorSecondaryDark">#e8a704</color>
