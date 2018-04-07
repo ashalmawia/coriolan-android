@@ -32,6 +32,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         adjustProgressCountsUI()
 
         setUpToolbar(flow().deck.name)
+        toolbarTitle.text = flow().deck.name
 
         bindToCurrent()
     }
