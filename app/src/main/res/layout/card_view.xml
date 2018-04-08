@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.ashalmawia.coriolan.ui.view.CardView
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical">
@@ -12,7 +12,7 @@
 		android:layout_height="0dp"
 		android:layout_marginLeft="@dimen/card_margin_horizontal"
 		android:layout_marginRight="@dimen/card_margin_horizontal"
-		android:layout_marginTop="@dimen/spacing__largest"
+		android:layout_marginTop="@dimen/spacing__large"
 		android:layout_weight="1"
 		app:cardElevation="@dimen/card_elevation">
 
@@ -36,10 +36,10 @@
 	<android.support.v7.widget.CardView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_marginBottom="@dimen/spacing__largest"
+		android:layout_marginBottom="@dimen/spacing__medium"
 		android:layout_marginLeft="@dimen/card_margin_horizontal"
 		android:layout_marginRight="@dimen/card_margin_horizontal"
-		android:layout_marginTop="@dimen/spacing__very_large"
+		android:layout_marginTop="@dimen/spacing__medium"
 		android:layout_weight="1"
 		app:cardElevation="@dimen/card_elevation">
 
@@ -64,56 +64,100 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
-		<Button
-			android:id="@+id/showAnswerButton"
-			style="@style/CardButton"
-			android:layout_width="match_parent"
+		<TextView
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:background="@color/neutral"
-			android:text="@string/cards_click_to_show_answer"/>
+			android:layout_gravity="center"
+			android:text="@string/cards_click_to_show_answer"
+			android:textColor="@color/colorPrimary__60"
+			android:textSize="14sp"
+			android:textStyle="italic"/>
 
-		<LinearLayout
+		<android.support.v7.widget.CardView
 			android:id="@+id/buttonsBar"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+			android:layout_height="wrap_content"
+			android:visibility="invisible"
+			app:cardElevation="15dp">
 
-			<Button
-				android:id="@+id/buttonNo"
-				style="@style/CardButton"
-				android:layout_width="0dp"
+			<android.support.v7.widget.GridLayout
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:background="@color/wrong"
-				android:text="@string/cards_no"/>
+				android:background="@color/white"
+				android:paddingLeft="@dimen/spacing__large"
+				android:paddingRight="@dimen/spacing__large"
+				android:paddingTop="@dimen/spacing__small"
+				app:columnCount="2"
+				app:rowCount="2">
 
-			<Button
-				android:id="@+id/buttonHard"
-				style="@style/CardButton"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:background="@color/hard"
-				android:text="@string/cards_hard"/>
+				<FrameLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					app:layout_columnWeight="1">
 
-			<Button
-				android:id="@+id/buttonYes"
-				style="@style/CardButton"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:background="@color/correct"
-				android:text="@string/cards_yes"/>
+					<Button
+						android:id="@+id/buttonHard"
+						style="@style/CardButton"
+						android:layout_width="match_parent"
+						android:background="@drawable/answer_additional_bg"
+						android:text="@string/cards_hard"
+						android:textColor="@color/answer_additional_text_color"/>
 
-			<Button
-				android:id="@+id/buttonEasy"
-				style="@style/CardButton"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:background="@color/easy"
-				android:text="@string/cards_easy"/>
+					<ImageView
+						android:id="@+id/buttonHardCover"
+						style="@style/CardButton"
+						android:layout_width="match_parent"
+						android:background="@drawable/answer_disabled_bg"
+						android:scaleType="centerInside"
+						android:src="@drawable/ic_answer_disabled_fg"
+						tools:visibility="gone"/>
 
-		</LinearLayout>
+				</FrameLayout>
+
+				<FrameLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					app:layout_columnWeight="1">
+
+					<Button
+						android:id="@+id/buttonEasy"
+						style="@style/CardButton"
+						android:layout_width="match_parent"
+						android:background="@drawable/answer_additional_bg"
+						android:text="@string/cards_easy"
+						android:textColor="@color/answer_additional_text_color"/>
+
+					<ImageView
+						android:id="@+id/buttonEasyCover"
+						style="@style/CardButton"
+						android:layout_width="match_parent"
+						android:background="@drawable/answer_disabled_bg"
+						android:scaleType="centerInside"
+						android:src="@drawable/ic_answer_disabled_fg"/>
+
+				</FrameLayout>
+
+				<Button
+					android:id="@+id/buttonNo"
+					style="@style/CardButton"
+					android:layout_width="0dp"
+					android:background="@drawable/answer_wrong_bg"
+					android:text="@string/cards_no"
+					android:textColor="@color/white"
+					app:layout_columnWeight="1"/>
+
+				<Button
+					android:id="@+id/buttonYes"
+					style="@style/CardButton"
+					android:layout_width="0dp"
+					android:background="@drawable/answer_correct_bg"
+					android:text="@string/cards_yes"
+					android:textColor="@color/white"
+					app:layout_columnWeight="1"/>
+
+			</android.support.v7.widget.GridLayout>
+
+		</android.support.v7.widget.CardView>
 
 	</FrameLayout>
 

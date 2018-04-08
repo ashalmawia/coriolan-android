@@ -18,4 +18,7 @@
 	<dimen name="card_margin_vertical">@dimen/spacing__largest</dimen>
 	<dimen name="card_elevation">3dp</dimen>
 
+	<dimen name="answer_button_bg_stroke_width">2dp</dimen>
+	<dimen name="answer_button_bg_corners_radius">8dp</dimen>
+
 </resources>

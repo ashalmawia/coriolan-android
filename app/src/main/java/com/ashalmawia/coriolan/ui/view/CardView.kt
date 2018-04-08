@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.ui.view
 
+import android.animation.ObjectAnimator
 import kotlinx.android.synthetic.main.card_view.view.*
 
 import android.content.Context
@@ -10,6 +11,8 @@ import com.ashalmawia.coriolan.learning.scheduler.Answer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
+
+private const val BUTTON_BAR_ANIMATION_DURATION = 200L
 
 class CardView : LinearLayout {
 
@@ -25,7 +28,6 @@ class CardView : LinearLayout {
         frontCover.setOnSingleClickListener { showBack() }
         backCover.setOnSingleClickListener { showBack() }
 
-        showAnswerButton.setOnSingleClickListener { showBack() }
         buttonYes.setOnSingleClickListener { listener.onCorrect() }
         buttonNo.setOnSingleClickListener { listener.onWrong() }
         buttonHard.setOnSingleClickListener { listener.onHard() }
@@ -41,23 +43,48 @@ class CardView : LinearLayout {
     }
 
     private fun configureButtonsBar(answers: Array<Answer>) {
-        buttonNo.visible = answers.contains(Answer.WRONG)
-        buttonHard.visible = answers.contains(Answer.HARD)
-        buttonYes.visible = answers.contains(Answer.CORRECT)
-        buttonEasy.visible = answers.contains(Answer.EASY)
+        if (!answers.contains(Answer.WRONG) || !answers.contains(Answer.CORRECT)) {
+            throw IllegalStateException("no wrong or correct state, unsupported")
+        }
+
+        val hasHard = answers.contains(Answer.HARD)
+        buttonHard.visible = hasHard
+        buttonHardCover.visible = !hasHard
+
+        val hasEasy = answers.contains(Answer.EASY)
+        buttonEasy.visible = hasEasy
+        buttonEasyCover.visible = !hasEasy
     }
 
     private fun showFront() {
-        frontCover.visibility = View.GONE
-        backCover.visibility = View.VISIBLE
-        buttonsBar.visibility = View.GONE
-        showAnswerButton.visibility = View.VISIBLE
+        frontCover.visible = false
+        backCover.visible = true
+        hideButtonBarAnimated()
     }
 
     private fun showBack() {
         backCover.visibility = View.GONE
-        buttonsBar.visibility = View.VISIBLE
-        showAnswerButton.visibility = View.GONE
+
+        showButtonBarAnimated()
+    }
+
+    private fun showButtonBarAnimated() {
+        if (!buttonsBar.visible) {
+            buttonsBar.y += buttonsBar.measuredHeight
+            buttonsBar.visible = true
+        }
+
+        val animator = ObjectAnimator.ofFloat(buttonsBar, "y", buttonsBar.y, buttonsBar.y - buttonsBar.measuredHeight)
+        animator.duration = BUTTON_BAR_ANIMATION_DURATION
+        animator.start()
+    }
+
+    private fun hideButtonBarAnimated() {
+        if (!buttonsBar.visible) return
+
+        val animator = ObjectAnimator.ofFloat(buttonsBar, "y", buttonsBar.y, buttonsBar.y + buttonsBar.measuredHeight)
+        animator.duration = BUTTON_BAR_ANIMATION_DURATION
+        animator.start()
     }
 
     private fun translationsToString(translations: List<Expression>): String {
@@ -68,7 +95,7 @@ class CardView : LinearLayout {
             // for multiple translations, let's concatenate
             val builder = StringBuilder()
             for ((i, value) in translations.withIndex()) {
-                builder.append("${i+1}. ${value.value}\n")
+                builder.append("${i + 1}. ${value.value}\n")
             }
             builder.toString()
         }
