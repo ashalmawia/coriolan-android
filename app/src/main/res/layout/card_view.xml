@@ -5,6 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:paddingTop="@dimen/spacing__tiny"
 	android:orientation="vertical">
 
 	<android.support.v7.widget.CardView
@@ -12,7 +13,7 @@
 		android:layout_height="0dp"
 		android:layout_marginLeft="@dimen/card_margin_horizontal"
 		android:layout_marginRight="@dimen/card_margin_horizontal"
-		android:layout_marginTop="@dimen/spacing__large"
+		android:layout_marginTop="@dimen/card_margin_vertical"
 		android:layout_weight="1"
 		app:cardElevation="@dimen/card_elevation">
 
@@ -36,10 +37,10 @@
 	<android.support.v7.widget.CardView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_marginBottom="@dimen/spacing__medium"
+		android:layout_marginBottom="@dimen/card_margin_vertical"
 		android:layout_marginLeft="@dimen/card_margin_horizontal"
 		android:layout_marginRight="@dimen/card_margin_horizontal"
-		android:layout_marginTop="@dimen/spacing__medium"
+		android:layout_marginTop="@dimen/card_margin_vertical"
 		android:layout_weight="1"
 		app:cardElevation="@dimen/card_elevation">
 
@@ -70,7 +71,7 @@
 			android:layout_gravity="center"
 			android:text="@string/cards_click_to_show_answer"
 			android:textColor="@color/colorPrimary__60"
-			android:textSize="14sp"
+			android:textSize="@dimen/card_click_to_show_text_size"
 			android:textStyle="italic"/>
 
 		<android.support.v7.widget.CardView

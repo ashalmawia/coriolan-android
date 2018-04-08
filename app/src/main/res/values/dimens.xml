@@ -14,9 +14,11 @@
 
 	<dimen name="deck_progress_bar_items_spacing">@dimen/spacing__large</dimen>
 
-	<dimen name="card_margin_horizontal">@dimen/spacing__large</dimen>
-	<dimen name="card_margin_vertical">@dimen/spacing__largest</dimen>
+	<dimen name="card_margin_horizontal">@dimen/spacing__medium</dimen>
+	<dimen name="card_margin_vertical">@dimen/spacing__medium</dimen>
 	<dimen name="card_elevation">3dp</dimen>
+	<dimen name="card_text_size">18sp</dimen>
+	<dimen name="card_click_to_show_text_size">14sp</dimen>
 
 	<dimen name="answer_button_bg_stroke_width">2dp</dimen>
 	<dimen name="answer_button_bg_corners_radius">8dp</dimen>
