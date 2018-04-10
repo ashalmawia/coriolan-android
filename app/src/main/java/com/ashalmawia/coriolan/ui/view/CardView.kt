@@ -6,7 +6,7 @@ import kotlinx.android.synthetic.main.card_view.view.*
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.LinearLayout
+import android.widget.FrameLayout
 import com.ashalmawia.coriolan.learning.scheduler.Answer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Expression
@@ -14,7 +14,7 @@ import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
 
 private const val BUTTON_BAR_ANIMATION_DURATION = 200L
 
-class CardView : LinearLayout {
+class CardView : FrameLayout {
 
     lateinit var listener: CardViewListener
 
@@ -30,8 +30,13 @@ class CardView : LinearLayout {
 
         buttonYes.setOnSingleClickListener { listener.onCorrect() }
         buttonNo.setOnSingleClickListener { listener.onWrong() }
+
         buttonHard.setOnSingleClickListener { listener.onHard() }
         buttonEasy.setOnSingleClickListener { listener.onEasy() }
+
+        touchFeedbackWrong.addAnchor(buttonNo)
+        touchFeedbackCorrect.addAnchor(buttonYes)
+        touchFeedbackEasy.addAnchor(buttonEasy, buttonHard)
     }
 
     fun bind(card: Card, answers: Array<Answer>) {

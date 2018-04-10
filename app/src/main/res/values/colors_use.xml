@@ -12,6 +12,6 @@
 	<color name="card_cover_bg">@color/colorPrimaryLightest</color>
 
 	<color name="answer_button_bg_color">@color/white</color>
-	<color name="answer_additional_text_color">@color/colorPrimary</color>
+	<color name="answer_additional_text_color">@color/additional</color>
 
 </resources>

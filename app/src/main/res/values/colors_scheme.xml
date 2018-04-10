@@ -22,8 +22,11 @@
 	<color name="white">#FFFFFF</color>
 	<color name="while__65">#A6FFFFFF</color>
 
+	<color name="transparent">#00000000</color>
+
 	<color name="divider">@color/grey</color>
 
 	<color name="wrong">#c62828</color>
 	<color name="correct">#369c3b</color>
+	<color name="additional">@color/colorPrimary</color>
 </resources>

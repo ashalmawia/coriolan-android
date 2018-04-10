@@ -4,162 +4,207 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:paddingTop="@dimen/spacing__tiny"
-	android:orientation="vertical">
+	android:layout_height="match_parent">
 
-	<android.support.v7.widget.CardView
+	<RelativeLayout
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_marginLeft="@dimen/card_margin_horizontal"
-		android:layout_marginRight="@dimen/card_margin_horizontal"
-		android:layout_marginTop="@dimen/card_margin_vertical"
-		android:layout_weight="1"
-		app:cardElevation="@dimen/card_elevation">
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
-		<TextView
-			android:id="@+id/frontText"
-			style="@style/CardText"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			tools:text="shrimp"/>
-
-		<ImageView
-			android:id="@+id/frontCover"
-			style="@style/CardCover"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			tools:visibility="gone"
-			/>
-
-	</android.support.v7.widget.CardView>
-
-	<android.support.v7.widget.CardView
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_marginBottom="@dimen/card_margin_vertical"
-		android:layout_marginLeft="@dimen/card_margin_horizontal"
-		android:layout_marginRight="@dimen/card_margin_horizontal"
-		android:layout_marginTop="@dimen/card_margin_vertical"
-		android:layout_weight="1"
-		app:cardElevation="@dimen/card_elevation">
-
-		<TextView
-			android:id="@+id/backText"
-			style="@style/CardText"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			tools:text="креветка"/>
-
-		<ImageView
-			android:id="@+id/backCover"
-			style="@style/CardCover"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			tools:visibility="visible"
-			/>
-
-	</android.support.v7.widget.CardView>
-
-	<FrameLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:text="@string/cards_click_to_show_answer"
-			android:textColor="@color/colorPrimary__60"
-			android:textSize="@dimen/card_click_to_show_text_size"
-			android:textStyle="italic"/>
-
-		<android.support.v7.widget.CardView
-			android:id="@+id/buttonsBar"
+		<FrameLayout
+			android:id="@+id/bottomArea"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:visibility="invisible"
-			app:cardElevation="15dp">
+			android:layout_alignParentBottom="true">
 
-			<android.support.v7.widget.GridLayout
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:text="@string/cards_click_to_show_answer"
+				android:textColor="@color/colorPrimary__60"
+				android:textSize="@dimen/card_click_to_show_text_size"
+				android:textStyle="italic"/>
+
+			<android.support.v7.widget.CardView
+				android:id="@+id/buttonsBar"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:background="@color/white"
-				android:paddingLeft="@dimen/spacing__large"
-				android:paddingRight="@dimen/spacing__large"
-				android:paddingTop="@dimen/spacing__small"
-				app:columnCount="2"
-				app:rowCount="2">
+				android:visibility="invisible"
+				app:cardElevation="15dp">
 
-				<FrameLayout
-					android:layout_width="0dp"
+				<android.support.v7.widget.GridLayout
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					app:layout_columnWeight="1">
+					android:background="@color/white"
+					android:paddingLeft="@dimen/spacing__large"
+					android:paddingRight="@dimen/spacing__large"
+					android:paddingTop="@dimen/spacing__small"
+					app:columnCount="2"
+					app:rowCount="2">
+
+					<FrameLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						app:layout_columnWeight="1">
+
+						<Button
+							android:id="@+id/buttonHard"
+							style="@style/CardButton"
+							android:layout_width="match_parent"
+							android:background="@drawable/answer_additional_bg"
+							android:text="@string/cards_hard"
+							android:textColor="@color/answer_additional_text_color"/>
+
+						<ImageView
+							android:id="@+id/buttonHardCover"
+							style="@style/CardButton"
+							android:layout_width="match_parent"
+							android:background="@drawable/answer_disabled_bg"
+							android:scaleType="centerInside"
+							android:src="@drawable/ic_answer_disabled_fg"
+							tools:visibility="gone"/>
+
+					</FrameLayout>
+
+					<FrameLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						app:layout_columnWeight="1">
+
+						<Button
+							android:id="@+id/buttonEasy"
+							style="@style/CardButton"
+							android:layout_width="match_parent"
+							android:background="@drawable/answer_additional_bg"
+							android:text="@string/cards_easy"
+							android:textColor="@color/answer_additional_text_color"/>
+
+						<ImageView
+							android:id="@+id/buttonEasyCover"
+							style="@style/CardButton"
+							android:layout_width="match_parent"
+							android:background="@drawable/answer_disabled_bg"
+							android:scaleType="centerInside"
+							android:src="@drawable/ic_answer_disabled_fg"/>
+
+					</FrameLayout>
 
 					<Button
-						android:id="@+id/buttonHard"
+						android:id="@+id/buttonNo"
 						style="@style/CardButton"
-						android:layout_width="match_parent"
-						android:background="@drawable/answer_additional_bg"
-						android:text="@string/cards_hard"
-						android:textColor="@color/answer_additional_text_color"/>
-
-					<ImageView
-						android:id="@+id/buttonHardCover"
-						style="@style/CardButton"
-						android:layout_width="match_parent"
-						android:background="@drawable/answer_disabled_bg"
-						android:scaleType="centerInside"
-						android:src="@drawable/ic_answer_disabled_fg"
-						tools:visibility="gone"/>
-
-				</FrameLayout>
-
-				<FrameLayout
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					app:layout_columnWeight="1">
+						android:layout_width="0dp"
+						android:background="@drawable/answer_wrong_bg"
+						android:text="@string/cards_no"
+						android:textColor="@color/white"
+						app:layout_columnWeight="1"/>
 
 					<Button
-						android:id="@+id/buttonEasy"
+						android:id="@+id/buttonYes"
 						style="@style/CardButton"
-						android:layout_width="match_parent"
-						android:background="@drawable/answer_additional_bg"
-						android:text="@string/cards_easy"
-						android:textColor="@color/answer_additional_text_color"/>
+						android:layout_width="0dp"
+						android:background="@drawable/answer_correct_bg"
+						android:text="@string/cards_yes"
+						android:textColor="@color/white"
+						app:layout_columnWeight="1"/>
 
-					<ImageView
-						android:id="@+id/buttonEasyCover"
-						style="@style/CardButton"
-						android:layout_width="match_parent"
-						android:background="@drawable/answer_disabled_bg"
-						android:scaleType="centerInside"
-						android:src="@drawable/ic_answer_disabled_fg"/>
+				</android.support.v7.widget.GridLayout>
 
-				</FrameLayout>
+			</android.support.v7.widget.CardView>
 
-				<Button
-					android:id="@+id/buttonNo"
-					style="@style/CardButton"
-					android:layout_width="0dp"
-					android:background="@drawable/answer_wrong_bg"
-					android:text="@string/cards_no"
-					android:textColor="@color/white"
-					app:layout_columnWeight="1"/>
+		</FrameLayout>
 
-				<Button
-					android:id="@+id/buttonYes"
-					style="@style/CardButton"
-					android:layout_width="0dp"
-					android:background="@drawable/answer_correct_bg"
-					android:text="@string/cards_yes"
-					android:textColor="@color/white"
-					app:layout_columnWeight="1"/>
+		<com.ashalmawia.coriolan.ui.view.TouchInterceptorView
+			android:id="@+id/touchFeedbackWrong"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@drawable/answer_wrong_bg_ripple"
+			/>
 
-			</android.support.v7.widget.GridLayout>
+		<com.ashalmawia.coriolan.ui.view.TouchInterceptorView
+			android:id="@+id/touchFeedbackCorrect"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@drawable/answer_correct_bg_ripple"
+			/>
 
-		</android.support.v7.widget.CardView>
+		<com.ashalmawia.coriolan.ui.view.TouchInterceptorView
+			android:id="@+id/touchFeedbackEasy"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@drawable/answer_additional_bg_ripple"
+			/>
 
-	</FrameLayout>
+		<com.ashalmawia.coriolan.ui.view.TouchInterceptorView
+			android:id="@+id/touchFeedbackHard"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@drawable/answer_additional_bg_ripple"
+			/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/bottomArea"
+			android:layout_alignParentTop="true"
+			android:orientation="vertical"
+			android:paddingTop="@dimen/spacing__tiny">
+
+			<android.support.v7.widget.CardView
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_marginLeft="@dimen/card_margin_horizontal"
+				android:layout_marginRight="@dimen/card_margin_horizontal"
+				android:layout_marginTop="@dimen/card_margin_vertical"
+				android:layout_weight="1"
+				app:cardElevation="@dimen/card_elevation">
+
+				<TextView
+					android:id="@+id/frontText"
+					style="@style/CardText"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					tools:text="shrimp"/>
+
+				<ImageView
+					android:id="@+id/frontCover"
+					style="@style/CardCover"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					tools:visibility="gone"
+					/>
+
+			</android.support.v7.widget.CardView>
+
+			<android.support.v7.widget.CardView
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_marginBottom="@dimen/card_margin_vertical"
+				android:layout_marginLeft="@dimen/card_margin_horizontal"
+				android:layout_marginRight="@dimen/card_margin_horizontal"
+				android:layout_marginTop="@dimen/card_margin_vertical"
+				android:layout_weight="1"
+				app:cardElevation="@dimen/card_elevation">
+
+				<TextView
+					android:id="@+id/backText"
+					style="@style/CardText"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					tools:text="креветка"/>
+
+				<ImageView
+					android:id="@+id/backCover"
+					style="@style/CardCover"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					tools:visibility="visible"
+					/>
+
+			</android.support.v7.widget.CardView>
+
+		</LinearLayout>
+
+	</RelativeLayout>
 
 </com.ashalmawia.coriolan.ui.view.CardView>
