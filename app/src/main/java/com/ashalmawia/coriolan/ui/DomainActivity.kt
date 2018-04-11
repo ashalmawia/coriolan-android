@@ -4,12 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
+import android.view.Menu
+import android.view.MenuItem
+import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.ui.settings.SettingsFragment
+import com.ashalmawia.coriolan.ui.settings.SettingsActivity
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
@@ -18,14 +22,12 @@ import kotlinx.android.synthetic.main.domain_activity.*
 private enum class Tab {
     LEARNING,
     EDIT,
-    STATISTICS,
-    SETTINGS
+    STATISTICS
 }
 
 private const val FRAGMENT_LEARNING = "fragment_learning"
 private const val FRAGMENT_EDIT = "fragment_edit"
 private const val FRAGMENT_STATISTICS = "fragment_statistics"
-private const val FRAGMENT_SETTINGS = "fragment_settings"
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
 
@@ -83,10 +85,6 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
                 switchToStatistics()
                 true
             }
-            Tab.SETTINGS.ordinal -> {
-                switchToSettings()
-                true
-            }
             else -> {
                 Errors.illegalState(TAG, "unknown option[$position]")
                 false
@@ -115,11 +113,35 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
                 .commitAllowingStateLoss()
     }
 
-    private fun switchToSettings() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_SETTINGS) ?: SettingsFragment()
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.content, fragment, FRAGMENT_SETTINGS)
-                .commitAllowingStateLoss()
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.domain, menu)
+
+        if (BuildConfig.DEBUG) {
+            menu.setGroupVisible(R.id.menu_group_debug, true)
+        }
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (BuildConfig.DEBUG) {
+            // handle debug options
+            when (item.itemId) {
+                R.id.menu_debug_increase_date -> increaseDate()
+                R.id.menu_settings -> openSettings()
+            }
+        }
+
+        return true
+    }
+
+    private fun increaseDate() {
+        DebugIncreaseDateActivity.launch(this)
+    }
+
+    private fun openSettings() {
+        val intent = SettingsActivity.intent(this)
+        startActivity(intent)
     }
 
     override fun onDataUpdated() {

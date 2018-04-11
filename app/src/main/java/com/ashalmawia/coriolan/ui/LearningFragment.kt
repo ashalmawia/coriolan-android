@@ -10,10 +10,8 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
@@ -75,30 +73,6 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
     override fun onDayChanged() {
         // to update pending counters on deck items
         fetchData()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, menuInflater: MenuInflater?) {
-        menuInflater!!.inflate(R.menu.decks_list_menu, menu)
-
-        if (BuildConfig.DEBUG) {
-            menu!!.setGroupVisible(R.id.menu_group_debug, true)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (BuildConfig.DEBUG) {
-            // handle debug options
-            when (item.itemId) {
-                R.id.menu_debug_increase_date -> increaseDate()
-            }
-        }
-
-        return true
-    }
-
-    private fun increaseDate() {
-        val context = context ?: return
-        DebugIncreaseDateActivity.launch(context)
     }
 
     private fun decksList(): List<Deck> {
