@@ -21,6 +21,7 @@ import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.decks_list.*
@@ -114,6 +115,7 @@ private class DecksAdapter<S: State, E : Exercise>(
         val holder = DeckViewHolder(view)
 
         setTint(holder.countNew)
+        setTint(holder.countRelearn)
         setTint(holder.countReview)
 
         return holder
@@ -183,11 +185,14 @@ private class DecksAdapter<S: State, E : Exercise>(
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
         if (counts.isAnythingPending()) {
-            val new = counts.countNew()
-            holder.countNew.text = new.toString()
+            holder.countNew.text = counts.countNew().toString()
+            holder.countNew.visible = counts.countNew() > 0
 
-            val review = counts.countReview() + counts.countRelearn()
-            holder.countReview.text = review.toString()
+            holder.countRelearn.text = counts.countRelearn().toString()
+            holder.countRelearn.visible = counts.countRelearn() > 0
+
+            holder.countReview.text = counts.countReview().toString()
+            holder.countReview.visible = counts.countReview() > 0
 
             holder.pending.visibility = View.VISIBLE
         } else {
@@ -201,6 +206,7 @@ class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val more = view.findViewById<ImageView>(R.id.deck_list_item__more)!!
     val pending = view.findViewById<ViewGroup>(R.id.deck_list_item__pending)!!
     val countNew = view.findViewById<TextView>(R.id.pending_counter__new)!!
+    val countRelearn = view.findViewById<TextView>(R.id.pending_counter__relearn)
     val countReview = view.findViewById<TextView>(R.id.pending_counter__review)!!
 }
 
