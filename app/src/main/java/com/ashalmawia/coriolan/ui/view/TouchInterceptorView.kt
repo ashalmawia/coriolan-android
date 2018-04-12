@@ -17,7 +17,10 @@ import android.view.View
  */
 class TouchInterceptorView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private val anchors = mutableListOf<View>()
+    /**
+     * View -> is being touched (has received ACTION_DOWN)
+     */
+    private val anchors = mutableMapOf<View, Boolean>()
 
     init {
         isClickable = true
@@ -27,15 +30,23 @@ class TouchInterceptorView(context: Context, attrs: AttributeSet) : View(context
      * Anchor views must not overlap each other.
      */
     fun addAnchor(vararg anchor: View) {
-        anchors.addAll(anchor)
+        anchors.putAll(anchor.associate { view -> Pair(view, false) })
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        for (anchor in anchors) {
+        for ((anchor, touched) in anchors) {
             if (isInsideAnchorView(event, anchor)) {
+                anchors[anchor] = true
+
                 super.onTouchEvent(event)
                 return anchor.onTouchEvent(adaptToAnchorView(event, anchor))
+            } else if (touched) {
+                anchors[anchor] = false
+
+                val cancelEvent = cancelEvent(event)
+                super.onTouchEvent(cancelEvent)
+                return anchor.onTouchEvent(adaptToAnchorView(cancelEvent, anchor))
             }
         }
 
@@ -59,5 +70,9 @@ class TouchInterceptorView(context: Context, attrs: AttributeSet) : View(context
         val y = event.rawY - array[1]
 
         return MotionEvent.obtain(event.downTime, event.eventTime, event.action, x, y, event.metaState)
+    }
+
+    private fun cancelEvent(event: MotionEvent): MotionEvent {
+        return MotionEvent.obtain(event.downTime, event.eventTime, MotionEvent.ACTION_CANCEL, event.x, event.y, event.metaState)
     }
 }
