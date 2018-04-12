@@ -11,6 +11,7 @@
 	<string name="exercise_simple">Simple exercise</string>
 
 	<!-- Data import -->
+	<string name="import__category_title">Import</string>
 	<string name="import_from_file">Import from file</string>
 	<string name="import_success">Cards were imported successfully</string>
 	<string name="import_file_enter_file_path">Enter the path of the file to import from:</string>
@@ -20,6 +21,7 @@
 	<!-- Decks -->
 	<string name="decks_default">Default</string>
 	<string name="decks_select_deck">Select deck:</string>
+	<string name="decks__category_title">Decks</string>
 
 	<string name="deck_content_cards">Cards:</string>
 
@@ -98,6 +100,7 @@
 	<string name="settings__card_types_reverse_only">Learn reverse only</string>
 
 	<!-- Back up -->
+	<string name="backup__category_title">Backup</string>
 	<string name="backup__create_title">Create backup</string>
 	<string name="backup__create_rationale">Back up is a full copy of your Coriolan data.
 		It is wise to create backups from time to time and store them somewhere else (e.g. in your Google Drive) for the case

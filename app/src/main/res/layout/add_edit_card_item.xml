@@ -28,6 +28,8 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
 		android:layout_marginStart="@dimen/spacing__medium"
-		android:src="@drawable/ic_cross"/>
+		android:src="@drawable/ic_cross"
+		android:tint="@color/colorPrimary"
+		android:alpha="0.6"/>
 
 </merge>

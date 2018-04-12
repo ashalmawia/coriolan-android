@@ -51,4 +51,15 @@
 
 	<style name="EditCardSubtitle" parent="Coriolan.Text.Caption.Label" />
 
+	<style name="DeckList" />
+
+	<style name="DeckList.Item">
+		<item name="android:padding">@dimen/spacing__small</item>
+		<item name="android:textSize">18sp</item>
+	</style>
+
+	<style name="DeckList.Category" parent="Coriolan.Text.Caption">
+		<item name="android:padding">@dimen/spacing__small</item>
+	</style>
+
 </resources>

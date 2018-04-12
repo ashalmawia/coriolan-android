@@ -14,6 +14,11 @@
 
 	<dimen name="deck_progress_bar_items_spacing">@dimen/spacing__large</dimen>
 
+	<dimen name="deck_list_item_padding_horizontal">13dp</dimen>
+	<dimen name="deck_list_item_padding_horizontal_summary">23dp</dimen>
+
+	<dimen name="edit_list_deck_item__icon_size">20dp</dimen>
+
 	<dimen name="card_margin_horizontal">@dimen/spacing__medium</dimen>
 	<dimen name="card_margin_vertical">@dimen/spacing__medium</dimen>
 	<dimen name="card_elevation">3dp</dimen>

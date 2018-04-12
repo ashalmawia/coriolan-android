@@ -17,6 +17,7 @@ import com.ashalmawia.coriolan.model.*
 import kotlinx.android.synthetic.main.add_edit_card.*
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
+private const val EXTRA_DECK_ID = "deck_id"
 private const val EXTRA_CARD_ID = "card_id"
 
 private const val KEY_ORIGINAL = "original"
@@ -38,8 +39,8 @@ class AddEditCardActivity : BaseActivity() {
         setUpToolbar(R.string.edit__add_new_cards)
 
         extractData()
-
         initialize()
+        prefill()
     }
 
     private val isInEditMode
@@ -77,15 +78,27 @@ class AddEditCardActivity : BaseActivity() {
 
         addTranslation.setOnClickListener { onAddNewTranslationClicked() }
         mockInputField.setOnClickListener { onAddNewTranslationClicked() }
+    }
 
+    private fun prefill() {
         if (isInEditMode) {
-            prefillData(card!!)
+            prefillDataEdit(card!!)
         } else {
+            prefillDataAdd()
             addTrasnlationField()
         }
     }
 
-    private fun prefillData(card: Card) {
+    private fun prefillDataAdd() {
+        val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
+        if (deckId == -1L) {
+            return
+        }
+
+        deckSelector.selectDeckWithId(deckId)
+    }
+
+    private fun prefillDataEdit(card: Card) {
         deckSelector.selectDeckWithId(card.deckId)
 
         original.input = card.original.value
@@ -257,9 +270,10 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     companion object {
-        fun create(context: Context, domain: Domain): Intent {
+        fun add(context: Context, domain: Domain, deck: Deck): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
             intent.putExtra(EXTRA_DOMAIN_ID, domain.id)
+            intent.putExtra(EXTRA_DECK_ID, deck.id)
             return intent
         }
 

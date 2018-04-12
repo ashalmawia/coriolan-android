@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.ui
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
@@ -64,7 +63,7 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
         val context = context ?: return
 
         decksList.layoutManager = LinearLayoutManager(context)
-        decksList.adapter = DecksAdapter(context, exercise, this)
+        decksList.adapter = DecksAdapter(context, exercise)
     }
 
     override fun fetchData() {
@@ -82,7 +81,7 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
 }
 
 private class DecksAdapter<S: State, E : Exercise>(
-        private val context: Context, private val exercise: ExerciseDescriptor<S, E>, private val dataFetcher: DataFetcher
+        private val context: Context, private val exercise: ExerciseDescriptor<S, E>
 ) : RecyclerView.Adapter<DeckViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -132,8 +131,6 @@ private class DecksAdapter<S: State, E : Exercise>(
             when (it.itemId) {
                 R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
                 R.id.decks_study_options_popup__random -> studyRandom(deck)
-                R.id.rename_deck -> rename(deck)
-                R.id.delete_deck -> delete(deck)
             }
             true
         }
@@ -150,37 +147,6 @@ private class DecksAdapter<S: State, E : Exercise>(
 
     private fun studyRandom(deck: Deck) {
         LearningFlow.initiate(context, deck, true, exercise)
-    }
-
-    private fun rename(deck: Deck) {
-        val intent = AddEditDeckActivity.edit(context, deck)
-        context.startActivity(intent)
-    }
-
-    private fun delete(deck: Deck) {
-        val dialog = AlertDialog.Builder(context)
-                .setTitle(R.string.delete_deck__title)
-                .setMessage(context.getString(R.string.delete_deck__message, deck.name))
-                .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(R.string.button_delete, { _, _ -> performDeleteDeck(deck) })
-        dialog.show()
-    }
-
-    private fun performDeleteDeck(deck: Deck) {
-        val deleted = DecksRegistry.get().deleteDeck(deck)
-        if (deleted) {
-            dataFetcher.fetchData()
-        } else {
-            showDeleteFailedDialog(deck)
-        }
-    }
-
-    private fun showDeleteFailedDialog(deck: Deck) {
-        val dialog = AlertDialog.Builder(context)
-                .setTitle(R.string.delete_deck__title)
-                .setMessage(context.getString(R.string.delete_deck__failed, deck.name))
-                .setNegativeButton(R.string.button_ok, null)
-        dialog.show()
     }
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
