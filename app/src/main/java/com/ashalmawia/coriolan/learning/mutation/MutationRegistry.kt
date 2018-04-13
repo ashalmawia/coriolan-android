@@ -9,9 +9,9 @@ object MutationRegistry {
     fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations {
         return Mutations(listOf(
                 // order matters
-                ShuffleMutation(random),
-                CardTypeFilterMutation.from(preferences),
-                LimitCountMutation(preferences, journal, date)
+                Mutation.Shuffle(random),
+                Mutation.CardTypeFilter.from(preferences),
+                Mutation.LimitCount(preferences, journal, date)
         ))
     }
 }

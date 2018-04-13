@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.PopupMenu
@@ -24,6 +25,8 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.decks_list.*
+
+private const val TAG = "LearningFragment"
 
 class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
 
@@ -76,7 +79,10 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
     }
 
     private fun decksList(): List<Deck> {
-        return DecksRegistry.get().allDecks()
+        val timeStart = System.currentTimeMillis()
+        val decks = DecksRegistry.get().allDecks()
+        Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
+        return decks
     }
 }
 
@@ -91,7 +97,9 @@ private class DecksAdapter<S: State, E : Exercise>(
         decks.clear()
         decks.addAll(data)
 
+        val timeStart = System.currentTimeMillis()
         decks.forEach { counts[it.id] = LearningFlow.peekCounts(context, exercise, it) }
+        Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
 
         notifyDataSetChanged()
     }
@@ -172,7 +180,7 @@ class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val more = view.findViewById<ImageView>(R.id.deck_list_item__more)!!
     val pending = view.findViewById<ViewGroup>(R.id.deck_list_item__pending)!!
     val countNew = view.findViewById<TextView>(R.id.pending_counter__new)!!
-    val countRelearn = view.findViewById<TextView>(R.id.pending_counter__relearn)
+    val countRelearn: TextView = view.findViewById(R.id.pending_counter__relearn)
     val countReview = view.findViewById<TextView>(R.id.pending_counter__review)!!
 }
 

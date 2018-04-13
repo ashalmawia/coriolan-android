@@ -19,7 +19,7 @@ class LimitCountMutationTest {
     private val date = today()
     private val cards = List(60, { i -> mockCardWithState(procudeMockState(i)) })
 
-    private val mutation = lazy { LimitCountMutation(preferences, journal, date) }
+    private val mutation = lazy { Mutation.LimitCount(preferences, journal, date) }
 
     private fun procudeMockState(i: Int) =
             when (i % 4) {

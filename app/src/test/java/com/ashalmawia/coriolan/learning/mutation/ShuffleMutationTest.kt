@@ -12,12 +12,12 @@ class ShuffleMutationTest {
 
     private val cards = List(50, { i -> mockCardWithState(MockState(), id = i.toLong()) })
 
-    private lateinit var mutation: ShuffleMutation
+    private lateinit var mutation: Mutation.Shuffle
 
     @Test
     fun testNoShuffle() {
         // given
-        mutation = ShuffleMutation(false)
+        mutation = Mutation.Shuffle(false)
 
         // when
         val processed = mutation.apply(cards)
@@ -29,7 +29,7 @@ class ShuffleMutationTest {
     @Test
     fun testYesShuffle() {
         // given
-        mutation = ShuffleMutation(true)
+        mutation = Mutation.Shuffle(true)
 
         // when
         val processed = mutation.apply(cards)
