@@ -138,14 +138,10 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (BuildConfig.DEBUG) {
-            // handle debug options
-            when (item.itemId) {
-                R.id.menu_debug_increase_date -> increaseDate()
-                R.id.menu_settings -> openSettings()
-            }
+        when (item.itemId) {
+            R.id.menu_debug_increase_date -> increaseDate()
+            R.id.menu_settings -> openSettings()
         }
-
         return true
     }
 
