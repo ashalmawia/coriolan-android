@@ -33,6 +33,8 @@ private const val FRAGMENT_STATISTICS = "fragment_statistics"
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
 
+private const val KEY_SELECTED_TAB = "selected_tag"
+
 class DomainActivity : BaseActivity(), EditFragmentListener {
 
     private val TAG = DomainActivity::class.java.simpleName
@@ -51,6 +53,16 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         initializeDecksRegistry(domainId)
 
         setUpBottomBarNavigation()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_SELECTED_TAB, bottomNavigation.currentItem)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        bottomNavigation.currentItem = savedInstanceState.getInt(KEY_SELECTED_TAB)
     }
 
     private fun initializeDecksRegistry(domainId: Long) {
