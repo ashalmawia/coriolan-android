@@ -71,24 +71,29 @@ class SqliteStorage(
     override fun expressionById(id: Long): Expression? {
         val db = helper.readableDatabase
 
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
         val cursor = db.rawQuery("""
-            |SELECT *
-            |FROM $SQLITE_TABLE_EXPRESSIONS AS E
-            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS L
-            |       ON E.$SQLITE_COLUMN_LANGUAGE_ID = L.$SQLITE_COLUMN_ID
+            |SELECT
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
             |
-            |WHERE E.$SQLITE_COLUMN_ID = ?
-            |""".trimMargin(),
-                arrayOf(id.toString()))
+            |   FROM $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |   WHERE ${SQLITE_COLUMN_ID.from(EXPRESSIONS)} = ?
+            |
+            |""".trimMargin(), arrayOf(id.toString()))
 
         if (cursor.count == 0) return null
         if (cursor.count > 1) throw IllegalStateException("more that one expression for id $id")
 
-        cursor.moveToFirst()
-        val expression = Expression(id, cursor.getValue(), cursor.getExpressionType(), cursor.getLanguage())
-        cursor.close()
-
-        return expression
+        cursor.use {
+            it.moveToFirst()
+            return it.getExpression(EXPRESSIONS, LANGUAGES)
+        }
     }
 
     override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
@@ -124,12 +129,7 @@ class SqliteStorage(
             }
 
             it.moveToFirst()
-            return Expression(
-                    it.getId(EXPRESSIONS),
-                    it.getValue(EXPRESSIONS),
-                    it.getExpressionType(EXPRESSIONS),
-                    it.getLanguage(LANGUAGES)
-            )
+            return it.getExpression(EXPRESSIONS, LANGUAGES)
         }
     }
 
@@ -262,19 +262,34 @@ class SqliteStorage(
     override fun cardById(id: Long, domain: Domain): Card? {
         val db = helper.readableDatabase
 
+        val CARDS = "Cards"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
         val cursor = db.rawQuery("""
-            |SELECT *
-            |FROM $SQLITE_TABLE_CARDS
-            |WHERE $SQLITE_COLUMN_ID = ?
+            |SELECT
+            |   ${allColumnsCards(CARDS)},
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
+            |
+            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |
+            |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+            |
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |   WHERE ${SQLITE_COLUMN_ID.from(CARDS)} = ?
         """.trimMargin(), arrayOf(id.toString()))
 
         cursor.use {
             return if (cursor.moveToNext()) {
                 Card(
                         id,
-                        cursor.getDeckId(),
+                        it.getDeckId(CARDS),
                         domain,
-                        storage().expressionById(cursor.getFrontId())!!,
+                        it.getExpression(EXPRESSIONS, LANGUAGES),
                         translationsByCardId(id)
                 )
             } else {
@@ -348,27 +363,45 @@ class SqliteStorage(
     override fun allCards(domain: Domain): List<Card> {
         val db = helper.readableDatabase
 
+        val reverse = allCardsReverse(db)
+
+        val CARDS = "Cards"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
         val cursor = db.rawQuery("""
-            |SELECT *
-            |FROM
-            |   $SQLITE_TABLE_CARDS AS Cards
-            |WHERE
-            |   Cards.$SQLITE_COLUMN_DOMAIN_ID = ?
+            |SELECT
+            |   ${allColumnsCards(CARDS)},
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
+            |
+            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |
+            |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+            |
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |   WHERE
+            |       ${SQLITE_COLUMN_DOMAIN_ID.from(CARDS)} = ?
         """.trimMargin(), arrayOf(domain.id.toString()))
 
         val cards = mutableListOf<Card>()
-        while (cursor.moveToNext()) {
-            cards.add(Card(
-                    cursor.getId(),
-                    cursor.getDeckId(),
-                    domain,
-                    expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cursor.getId())
-            ))
-        }
-        cursor.close()
 
-        return cards
+        cursor.use {
+            while (it.moveToNext()) {
+                val cardId = it.getId(CARDS)
+                cards.add(Card(
+                        cardId,
+                        it.getDeckId(CARDS),
+                        domain,
+                        it.getExpression(EXPRESSIONS, LANGUAGES),
+                        reverse[cardId]!!
+                ))
+            }
+            return cards
+        }
     }
 
     override fun allDecks(domain: Domain): List<Deck> {
@@ -457,44 +490,109 @@ class SqliteStorage(
     override fun cardsOfDeck(deck: Deck): List<Card> {
         val db = helper.readableDatabase
 
+        val reverse = allCardsReverse(db)
+
+        val CARDS = "Cards"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
         val cursor = db.rawQuery("""
-            |SELECT * FROM $SQLITE_TABLE_CARDS
-            |WHERE $SQLITE_COLUMN_DECK_ID = ?
+            |SELECT
+            |   ${allColumnsCards(CARDS)},
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
+            |
+            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |
+            |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+            |
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |   WHERE $SQLITE_COLUMN_DECK_ID = ?
+            |
             |""".trimMargin(), arrayOf(deck.id.toString()))
 
         val list = mutableListOf<Card>()
-        while (cursor.moveToNext()) {
-            val cardId = cursor.getId()
-            list.add(Card(
-                    cardId,
-                    deck.id,
-                    deck.domain,
-                    storage().expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cardId)
-            ))
-        }
+        cursor.use {
+            while (it.moveToNext()) {
+                val cardId = it.getId(CARDS)
+                list.add(Card(
+                        cardId,
+                        deck.id,
+                        deck.domain,
+                        it.getExpression(EXPRESSIONS, LANGUAGES),
+                        reverse[cardId]!!
+                ))
+            }
 
-        cursor.close()
-        return list
+            return list
+        }
     }
 
     private fun translationsByCardId(id: Long): List<Expression> {
         val db = helper.readableDatabase
 
+        val REVERSE = "Reverse"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
         val cursor = db.rawQuery("""
-                |SELECT * FROM $SQLITE_TABLE_CARDS_REVERSE
-                |WHERE $SQLITE_COLUMN_CARD_ID = ?
-            """.trimMargin(),
-                arrayOf(id.toString()))
+                |SELECT
+                |   ${allColumnsReverse(REVERSE)},
+                |   ${allColumnsExpressions(EXPRESSIONS)},
+                |   ${allColumnsLanguages(LANGUAGES)}
+                |
+                |   FROM $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
+                |
+                |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+                |           ON ${SQLITE_COLUMN_EXPRESSION_ID.from(REVERSE)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+                |
+                |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+                |
+                |   WHERE ${SQLITE_COLUMN_CARD_ID.from(REVERSE)} = ?
+                |
+            """.trimMargin(), arrayOf(id.toString()))
 
-        // TODO: this is disastrously inoptimal, but who cares? https://trello.com/c/fkgQn5KD
         val translations = mutableListOf<Expression>()
-        while (cursor.moveToNext()) {
-            translations.add(storage().expressionById(cursor.getExpressionId())!!)
+        cursor.use {
+            while (it.moveToNext()) {
+                translations.add(it.getExpression(EXPRESSIONS, LANGUAGES))
+            }
+            return translations
         }
+    }
 
-        cursor.close()
-        return translations
+    private fun allCardsReverse(db: SQLiteDatabase): Map<Long, List<Expression>> {
+        val REVERSE = "Reverse"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
+        val cursor = db.rawQuery("""
+                |SELECT
+                |   ${allColumnsReverse(REVERSE)},
+                |   ${allColumnsExpressions(EXPRESSIONS)},
+                |   ${allColumnsLanguages(LANGUAGES)}
+                |
+                |   FROM $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
+                |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+                |       ON ${SQLITE_COLUMN_EXPRESSION_ID.from(REVERSE)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+                |
+                |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                |       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            """.trimMargin(), null)
+
+        val reverse = mutableMapOf<Long, MutableList<Expression>>()
+        cursor.use {
+            while (it.moveToNext()) {
+                reverse
+                        .getOrPut(it.getCardId(REVERSE), { mutableListOf() })
+                        .add(it.getExpression(EXPRESSIONS, LANGUAGES))
+            }
+            return reverse
+        }
     }
 
     override fun getSRCardState(card: Card, exerciseId: String): SRState {
@@ -535,42 +633,64 @@ class SqliteStorage(
     override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
         val db = helper.readableDatabase
 
+        val reverse = allCardsReverse(db)
+
+        val CARDS = "Cards"
+        val STATES = "States"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
         val cursor = db.rawQuery("""
-            |SELECT *
-            |FROM
-            |   $SQLITE_TABLE_CARDS AS Cards
-            |   LEFT JOIN ${sqliteTableExerciseState(exerciseId)} AS States
-            |       ON Cards.$SQLITE_COLUMN_ID = States.$SQLITE_COLUMN_CARD_ID
-            |WHERE
-            |   Cards.$SQLITE_COLUMN_DECK_ID = ?
-            |   AND
-            |   (States.$SQLITE_COLUMN_DUE IS NULL OR States.$SQLITE_COLUMN_DUE <= ?)
+            |SELECT
+            |   ${allColumnsCards(CARDS)},
+            |   ${allColumnsSRStates(STATES)},
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
+            |
+            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |
+            |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+            |
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |       LEFT JOIN ${sqliteTableExerciseState(exerciseId)} AS $STATES
+            |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
+            |
+            |   WHERE
+            |       ${SQLITE_COLUMN_DECK_ID.from(CARDS)} = ?
+            |           AND
+            |       ${onlyPending(STATES)}
         """.trimMargin(),
                 arrayOf(deck.id.toString(), date.timespamp.toString()))
 
         val cards = mutableListOf<CardWithState<SRState>>()
-        while (cursor.moveToNext()) {
-            val card = Card(
-                    cursor.getId(),
-                    deck.id,
-                    deck.domain,
-                    expressionById(cursor.getFrontId())!!,
-                    translationsByCardId(cursor.getId())
-            )
-            val state = extractSRState(cursor)
-            cards.add(CardWithState(card, state))
+        cursor.use {
+            while (cursor.moveToNext()) {
+                val cardId = cursor.getId(CARDS)
+                val card = Card(
+                        cardId,
+                        deck.id,
+                        deck.domain,
+                        it.getExpression(EXPRESSIONS, LANGUAGES),
+                        reverse[cardId]!!
+                )
+                val state = extractSRState(cursor, STATES)
+                cards.add(CardWithState(card, state))
+            }
+            return cards
         }
-        cursor.close()
-
-        return cards
     }
+
+    private fun onlyPending(statesTableAlias: String) =
+            "(${SQLITE_COLUMN_DUE.from(statesTableAlias)} IS NULL OR ${SQLITE_COLUMN_DUE.from(statesTableAlias)} <= ?)"
+
 
     override fun invalidateCache() {
         // nothing to do here
     }
 
-    private fun extractSRState(cursor: Cursor) =
-            if (cursor.hasSavedState()) SRState(cursor.getDateDue(), cursor.getPeriod()) else emptyState()
-
-    fun storage() = Repository.get(context)
+    private fun extractSRState(cursor: Cursor, alias: String? = null) =
+            if (cursor.hasSavedState(alias)) SRState(cursor.getDateDue(alias), cursor.getPeriod(alias)) else emptyState()
 }

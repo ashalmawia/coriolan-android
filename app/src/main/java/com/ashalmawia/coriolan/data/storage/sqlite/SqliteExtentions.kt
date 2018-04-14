@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.toExpressionType
@@ -39,6 +40,15 @@ fun Cursor.getLanguage(alias: String? = null): Language {
     return Language(
             getLong(SQLITE_COLUMN_ID, alias),
             getString(SQLITE_COLUMN_LANG_VALUE, alias)
+    )
+}
+
+fun Cursor.getExpression(aliasExpressions: String, aliasLanguages: String): Expression {
+    return Expression(
+            getId(aliasExpressions),
+            getValue(aliasExpressions),
+            getExpressionType(aliasExpressions),
+            getLanguage(aliasLanguages)
     )
 }
 
