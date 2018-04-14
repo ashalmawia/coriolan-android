@@ -113,7 +113,7 @@ private class DecksAdapter<S: State, E : Exercise>(
         holder!!.text.text = item.name
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
-        holder.text.setOnClickListener { studyDefault(item) }
+        holder.itemView.setOnClickListener { studyDefault(item) }
         setPendingStatus(holder, counts[item.id]!!)
     }
 
