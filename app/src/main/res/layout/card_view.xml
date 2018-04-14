@@ -129,14 +129,7 @@
 			/>
 
 		<com.ashalmawia.coriolan.ui.view.TouchInterceptorView
-			android:id="@+id/touchFeedbackEasy"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@drawable/answer_additional_bg_ripple"
-			/>
-
-		<com.ashalmawia.coriolan.ui.view.TouchInterceptorView
-			android:id="@+id/touchFeedbackHard"
+			android:id="@+id/touchFeedbackAdditional"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:background="@drawable/answer_additional_bg_ripple"

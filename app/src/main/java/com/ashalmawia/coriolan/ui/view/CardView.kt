@@ -36,7 +36,7 @@ class CardView : FrameLayout {
 
         touchFeedbackWrong.addAnchor(buttonNo)
         touchFeedbackCorrect.addAnchor(buttonYes)
-        touchFeedbackEasy.addAnchor(buttonEasy, buttonHard)
+        touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
     }
 
     fun bind(card: Card, answers: Array<Answer>) {

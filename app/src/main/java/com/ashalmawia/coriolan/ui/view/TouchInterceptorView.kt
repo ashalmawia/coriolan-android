@@ -37,7 +37,8 @@ class TouchInterceptorView(context: Context, attrs: AttributeSet) : View(context
     override fun onTouchEvent(event: MotionEvent): Boolean {
         for ((anchor, touched) in anchors) {
             if (isInsideAnchorView(event, anchor)) {
-                anchors[anchor] = true
+                anchors[anchor] = event.action != MotionEvent.ACTION_CANCEL
+                        && event.action != MotionEvent.ACTION_UP
 
                 super.onTouchEvent(event)
                 return anchor.onTouchEvent(adaptToAnchorView(event, anchor))
