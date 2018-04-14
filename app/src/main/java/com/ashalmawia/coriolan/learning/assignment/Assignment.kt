@@ -9,7 +9,7 @@ import org.joda.time.DateTime
 import java.util.*
 import kotlin.math.min
 
-private const val RESCHEDULING_STEP = 10
+private const val RESCHEDULING_STEP = 20
 
 @OpenForTesting
 class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
