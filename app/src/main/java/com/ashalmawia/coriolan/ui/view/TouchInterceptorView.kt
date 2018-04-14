@@ -36,7 +36,7 @@ class TouchInterceptorView(context: Context, attrs: AttributeSet) : View(context
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         for ((anchor, touched) in anchors) {
-            if (isInsideAnchorView(event, anchor)) {
+            if (anchor.visible && isInsideAnchorView(event, anchor)) {
                 anchors[anchor] = event.action != MotionEvent.ACTION_CANCEL
                         && event.action != MotionEvent.ACTION_UP
 
