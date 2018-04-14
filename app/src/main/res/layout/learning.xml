@@ -4,18 +4,10 @@
 			  android:layout_width="match_parent"
 			  android:layout_height="match_parent">
 
-	<TextView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/spacing__tiny"
-		style="@style/DeckList.Category"
-		android:text="@string/decks_select_deck"/>
-
 	<android.support.v7.widget.RecyclerView
 		android:id="@+id/decksList"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="5dp"
+		android:layout_height="match_parent"
 		/>
 
 </LinearLayout>

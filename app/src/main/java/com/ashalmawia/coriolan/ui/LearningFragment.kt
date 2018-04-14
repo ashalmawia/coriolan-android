@@ -24,7 +24,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
-import kotlinx.android.synthetic.main.decks_list.*
+import kotlinx.android.synthetic.main.learning.*
 
 private const val TAG = "LearningFragment"
 
@@ -33,7 +33,7 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
     private lateinit var exercise: ExerciseDescriptor<*, *>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.decks_list, container, false)
+        return inflater.inflate(R.layout.learning, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,9 +86,12 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
     }
 }
 
+private const val TYPE_HEADER = 1
+private const val TYPE_ITEM = 2
+
 private class DecksAdapter<S: State, E : Exercise>(
         private val context: Context, private val exercise: ExerciseDescriptor<S, E>
-) : RecyclerView.Adapter<DeckViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
     private val counts: MutableMap<Long, Counts> = mutableMapOf()
@@ -105,20 +108,45 @@ private class DecksAdapter<S: State, E : Exercise>(
     }
 
     override fun getItemCount(): Int {
-        return decks.size
+        return decks.size + 1
     }
 
-    override fun onBindViewHolder(holder: DeckViewHolder?, position: Int) {
-        val item = decks[position]
-        holder!!.text.text = item.name
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0) TYPE_HEADER else TYPE_ITEM
+    }
+
+    private fun positionToIndex(position: Int): Int = position - 1
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (getItemViewType(position) == TYPE_HEADER) {
+            // skip
+            return
+        }
+
+        holder as DeckViewHolder
+        val item = decks[positionToIndex(position)]
+
+        holder.text.text = item.name
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
         holder.itemView.setOnClickListener { studyDefault(item) }
         setPendingStatus(holder, counts[item.id]!!)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DeckViewHolder {
-        val view = parent!!.inflate(R.layout.deck_list_item, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == TYPE_HEADER) {
+            createHeaderViewHolder(parent)
+        } else {
+            createItemViewHolder(parent)
+        }
+    }
+
+    private fun createHeaderViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+        return HeaderViewHolder(parent.inflate(R.layout.learning_list_header, false))
+    }
+
+    private fun createItemViewHolder(parent: ViewGroup): DeckViewHolder {
+        val view = parent.inflate(R.layout.deck_list_item, false)
         val holder = DeckViewHolder(view)
 
         setTint(holder.countNew)
@@ -174,6 +202,8 @@ private class DecksAdapter<S: State, E : Exercise>(
         }
     }
 }
+
+class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val text = view.findViewById<TextView>(R.id.deck_list_item__text)!!
