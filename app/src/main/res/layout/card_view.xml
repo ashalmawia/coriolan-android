@@ -21,7 +21,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
-				android:text="@string/cards_click_to_show_answer"
+				android:text="@string/cards_tap_to_show_answer"
 				android:textColor="@color/colorPrimary__60"
 				android:textSize="@dimen/card_click_to_show_text_size"
 				android:textStyle="italic"/>
