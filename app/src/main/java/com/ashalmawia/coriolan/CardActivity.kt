@@ -35,6 +35,8 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         toolbarTitle.text = flow().deck.name
 
         bindToCurrent()
+
+        delegate.isHandleNativeActionModesEnabled = false
     }
 
     override fun onNewIntent(intent: Intent?) {
