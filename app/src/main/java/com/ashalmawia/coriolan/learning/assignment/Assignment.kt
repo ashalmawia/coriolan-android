@@ -13,7 +13,9 @@ private const val RESCHEDULING_STEP = 20
 
 @OpenForTesting
 class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
+
     private val queue = LinkedList(cards)
+    private val history = History.create<T>()
 
     var current: CardWithState<T>? = null
         protected set
@@ -36,8 +38,13 @@ class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
     }
 
     fun next(): CardWithState<T> {
+        val current = this.current
+        if (current != null) {
+            history.record(current)
+        }
+
         val next = getNext()
-        current = next
+        this.current = next
         return next
     }
 
@@ -56,6 +63,20 @@ class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
             }
         }
     }
+
+    fun undo(): CardWithState<T> {
+        if (!canUndo()) {
+            throw IllegalStateException("can not undo")
+        }
+
+        queue.add(0, current!!)
+        val previous = history.goBack()
+        queue.removeAll { it.card == previous.card }        // remove reschedules
+        current = previous
+        return previous
+    }
+
+    fun canUndo() = history.canGoBack()
 
     private fun cards(): List<CardWithState<T>> {
         val cur = current

@@ -31,4 +31,16 @@ class MockJournal : Journal {
     override fun recordCardRelearned(date: DateTime) {
         relearn[date] = relearn[date].orZero() + 1
     }
+
+    override fun undoNewCardStudied(date: DateTime) {
+        new[date] = new[date]!!.dec()
+    }
+
+    override fun undoReviewStudied(date: DateTime) {
+        review[date] = review[date]!!.dec()
+    }
+
+    override fun undoCardRelearned(date: DateTime) {
+        relearn[date] = relearn[date]!!.dec()
+    }
 }

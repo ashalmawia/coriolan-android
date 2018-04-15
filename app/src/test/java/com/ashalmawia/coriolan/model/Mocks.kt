@@ -45,14 +45,16 @@ private var cardId = 1L
 fun mockCard(
         domain: Domain = mockDomain(),
         id: Long = cardId++,
-        type: CardType = CardType.FORWARD
+        type: CardType = CardType.FORWARD,
+        front: String = "mock front",
+        back: String = "mock back"
 ): Card {
     return Card(
             id,
             deckId,
             domain,
-            mockExpression(language = domain.langOriginal(type)),
-            listOf(mockExpression(language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type)))
+            mockExpression(front, language = domain.langOriginal(type)),
+            listOf(mockExpression(back, language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type)))
     )
 }
 fun mockForwardCardWithState(): CardWithState<MockState> = mockCardWithState(MockState(), type = CardType.FORWARD)

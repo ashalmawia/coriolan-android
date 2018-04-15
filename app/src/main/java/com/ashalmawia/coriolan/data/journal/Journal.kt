@@ -23,4 +23,8 @@ interface Journal {
     fun recordNewCardStudied(date: DateTime)
     fun recordReviewStudied(date: DateTime)
     fun recordCardRelearned(date: DateTime)
+
+    fun undoNewCardStudied(date: DateTime)
+    fun undoReviewStudied(date: DateTime)
+    fun undoCardRelearned(date: DateTime)
 }

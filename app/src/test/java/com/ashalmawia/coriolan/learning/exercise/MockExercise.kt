@@ -22,6 +22,11 @@ class MockExercise : Exercise {
 
     override fun showNextOrComplete() {
     }
+
+    override fun canUndo(): Boolean = false
+
+    override fun undo() {
+    }
 }
 
 class MockExerciseDescriptor(override val stableId: String = "mock", override val stateType: StateType = StateType.UNKNOWN) : ExerciseDescriptor<MockState, MockExercise> {

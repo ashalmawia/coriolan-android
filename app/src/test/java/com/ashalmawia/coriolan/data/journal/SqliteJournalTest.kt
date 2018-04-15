@@ -44,6 +44,13 @@ class SqliteJournalTest {
 
         // then
         assertValues(2, 0, 0, counts2)
+
+        // when
+        journal.undoNewCardStudied(date)
+        val counts3 = journal.cardsStudiedOnDate(date)
+
+        // then
+        assertValues(1, 0, 0, counts3)
     }
 
     @Test
@@ -64,6 +71,13 @@ class SqliteJournalTest {
 
         // then
         assertValues(0, 2, 0, counts2)
+
+        // when
+        journal.undoReviewStudied(date)
+        val counts3 = journal.cardsStudiedOnDate(date)
+
+        // then
+        assertValues(0, 1, 0, counts3)
     }
 
     @Test
@@ -84,6 +98,13 @@ class SqliteJournalTest {
 
         // then
         assertValues(0, 0, 2, counts2)
+
+        // when
+        journal.undoCardRelearned(date)
+        val counts3 = journal.cardsStudiedOnDate(date)
+
+        // then
+        assertValues(0, 0, 1, counts3)
     }
 
     @Test
@@ -108,13 +129,16 @@ class SqliteJournalTest {
         journal.recordCardRelearned(date)
         journal.recordReviewStudied(date)
         journal.recordReviewStudied(date)
+        journal.undoNewCardStudied(date)
         journal.recordNewCardStudied(date)
         journal.recordCardRelearned(date)
+        journal.undoReviewStudied(date)
         journal.recordReviewStudied(date)
+        journal.undoNewCardStudied(date)
         val counts2 = journal.cardsStudiedOnDate(date)
 
         // then
-        assertValues(counts.countNew() + 1, counts.countReview() + 3, 2, counts2)
+        assertValues(counts.countNew() - 1, counts.countReview() + 2, 2, counts2)
     }
 }
 

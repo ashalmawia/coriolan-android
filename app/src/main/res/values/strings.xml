@@ -38,6 +38,7 @@
 	<string name="cards_tap_to_show_answer">Tap on the question mark to show the answer</string>
 
 	<!-- Learning menu -->
+	<string name="learning_menu_undo">Undo</string>
 	<string name="learning_menu_edit_card">Edit card</string>
 	<string name="learning_menu_delete_card">Delete card</string>
 

@@ -9,4 +9,8 @@ interface Exercise {
     fun dropCard(card: Card)
 
     fun showNextOrComplete()
+
+    fun canUndo(): Boolean
+
+    fun undo()
 }

@@ -64,6 +64,15 @@ class LearningExercise(
         }
     }
 
+    override fun canUndo(): Boolean = assignment.canUndo()
+
+    override fun undo() {
+        val newState = assignment.current!!.state
+        val undone = assignment.undo()
+        updateCardState(undone, undone.state)
+        undoCardStudied(undone.state, journal, newState.status != Status.RELEARN)
+    }
+
     private fun finish() {
         finishListener.onFinish()
     }
@@ -122,6 +131,25 @@ class LearningExercise(
                     journal.recordReviewStudied(date)
                 } else {
                     journal.recordCardRelearned(date)
+                }
+            }
+
+            Status.RELEARN -> {} // ignore all relearns as if they appear they have been already counted somehow
+        }
+    }
+
+    private fun undoCardStudied(state: SRState, journal: Journal, correct: Boolean) {
+        val date = assignment.date
+        when (state.status) {
+            Status.NEW -> {
+                journal.undoNewCardStudied(date)
+            }
+
+            Status.IN_PROGRESS, Status.LEARNT -> {
+                if (correct) {
+                    journal.undoReviewStudied(date)
+                } else {
+                    journal.undoCardRelearned(date)
                 }
             }
 

@@ -62,9 +62,11 @@ class CardView : FrameLayout {
     }
 
     private fun showFront() {
+        if (backShown()) {
+            hideButtonBarAnimated()
+        }
         frontCover.visible = false
         backCover.visible = true
-        hideButtonBarAnimated()
     }
 
     private fun showBack() {
@@ -72,6 +74,8 @@ class CardView : FrameLayout {
 
         showButtonBarAnimated()
     }
+
+    private fun backShown() = !frontCover.visible && !backCover.visible
 
     private fun showButtonBarAnimated() {
         if (!buttonsBar.visible) {

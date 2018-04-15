@@ -47,7 +47,27 @@ class SqliteJournal(context: Context) : Journal {
         incrementColumn(SQLITE_COLUMN_CARDS_RELEARN, date)
     }
 
+    override fun undoNewCardStudied(date: DateTime) {
+        decrementColumn(SQLITE_COLUMN_CARDS_NEW, date)
+    }
+
+    override fun undoReviewStudied(date: DateTime) {
+        decrementColumn(SQLITE_COLUMN_CARDS_REVIEW, date)
+    }
+
+    override fun undoCardRelearned(date: DateTime) {
+        decrementColumn(SQLITE_COLUMN_CARDS_RELEARN, date)
+    }
+
     private fun incrementColumn(columnName: String, date: DateTime) {
+        changeColumn(columnName, date, "+ 1")
+    }
+
+    private fun decrementColumn(columnName: String, date: DateTime) {
+        changeColumn(columnName, date, "- 1")
+    }
+
+    private fun changeColumn(columnName: String, date: DateTime, modifier: String) {
         val db = helper.writableDatabase
 
         // todo: use unique constraint on date
@@ -56,7 +76,7 @@ class SqliteJournal(context: Context) : Journal {
         try {
             val statement = db.compileStatement("""
                 |UPDATE $SQLITE_TABLE_JOURNAL
-                |   SET $columnName = $columnName + 1
+                |   SET $columnName = $columnName $modifier
                 |   WHERE $SQLITE_COLUMN_DATE = ?
             """.trimMargin())
             statement.bindLong(1, date.timespamp)

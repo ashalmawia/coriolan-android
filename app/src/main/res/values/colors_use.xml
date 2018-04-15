@@ -14,4 +14,7 @@
 	<color name="answer_button_bg_color">@color/white</color>
 	<color name="answer_additional_text_color">@color/additional</color>
 
+	<color name="action_bar_icon_enabled">@color/white</color>
+	<color name="action_bar_icon_disabled">@color/while__65</color>
+
 </resources>

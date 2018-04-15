@@ -5,8 +5,14 @@ import android.content.Context
 import kotlinx.android.synthetic.main.card_activity.*
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 
 import android.os.Bundle
+import android.support.annotation.ColorRes
+import android.support.annotation.DrawableRes
+import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.content.res.ResourcesCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
@@ -53,13 +59,29 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         finish()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    private lateinit var undoIcon: VectorDrawableSelector
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        undoIcon = VectorDrawableSelector.create(this,
+                R.drawable.ic_undo, R.color.action_bar_icon_enabled, R.color.action_bar_icon_disabled
+        )
+
         menuInflater.inflate(R.menu.learning_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val canUndo = exercise.canUndo()
+        menu.findItem(R.id.learning_menu__undo).isEnabled = canUndo
+        menu.findItem(R.id.learning_menu__undo).icon = undoIcon.get(canUndo)
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.learning_menu__undo -> {
+                undo()
+                return true
+            }
             R.id.learning_menu__edit_card -> {
                 editCurrentCard()
                 return true
@@ -72,6 +94,11 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun undo() {
+        exercise.undo()
+        refresh()
+    }
+
     private fun editCurrentCard() {
         val intent = AddEditCardActivity.edit(this, exercise.card().card)
         startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
@@ -82,7 +109,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
                 .setTitle(R.string.learning_menu_delete_card)
                 .setMessage(R.string.deleting_card__are_you_sure)
                 .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(R.string.button_delete) { _, _ -> deleteCurrentCard()}
+                .setPositiveButton(R.string.button_delete) { _, _ -> deleteCurrentCard() }
                 .create()
         dialog.show()
     }
@@ -141,6 +168,8 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         view.listener = this
 
         updateProgressCounts()
+
+        invalidateOptionsMenu()
     }
 
     private fun flow() = LearningFlow.current!!
@@ -163,5 +192,30 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         deck_progress_bar__new.text = counts.countNew().toString()
         deck_progress_bar__review.text = counts.countReview().toString()
         deck_progress_bar__relearn.text = counts.countRelearn().toString()
+    }
+}
+
+private data class VectorDrawableSelector(val enabled: Drawable, val disabled: Drawable) {
+
+    fun get(isEnabled: Boolean): Drawable = if (isEnabled) enabled else disabled
+
+    companion object {
+        fun create(
+                context: Context,
+                @DrawableRes drawableRes: Int,
+                @ColorRes enabledColorRes: Int,
+                @ColorRes disabledColorRes: Int
+        ): VectorDrawableSelector {
+
+            val resources = context.resources
+
+            val enabled = VectorDrawableCompat.create(resources, drawableRes, null)!!
+            DrawableCompat.setTint(enabled, ResourcesCompat.getColor(resources, enabledColorRes, null))
+
+            val disabled = enabled.constantState.newDrawable(resources).mutate()
+            DrawableCompat.setTint(disabled, ResourcesCompat.getColor(resources, disabledColorRes, null))
+
+            return VectorDrawableSelector(enabled, disabled)
+        }
     }
 }
