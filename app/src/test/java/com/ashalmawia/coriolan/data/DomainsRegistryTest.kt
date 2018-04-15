@@ -27,7 +27,7 @@ class DomainsRegistryTest {
 
         // then
         assertEquals(0, repository.allDomains().size)
-        assertNull(registry.domain())
+        assertNull(registry.domainIfExists())
     }
 
     @Test
@@ -37,7 +37,7 @@ class DomainsRegistryTest {
 
         // when
         registry.preinitialize(repository)
-        val default = registry.domain()
+        val default = registry.domainIfExists()
 
         // then
         assertNotNull(default)
