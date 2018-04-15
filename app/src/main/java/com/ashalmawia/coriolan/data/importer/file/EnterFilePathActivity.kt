@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.widget.Toast
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.ui.BaseActivity
 import kotlinx.android.synthetic.main.enter_file_path.*
@@ -42,7 +41,7 @@ class EnterFilePathActivity : BaseActivity() {
     }
 
     private fun initalize() {
-        deckSelector.initialize(DecksRegistry.get().allDecks())
+        deckSelector.initialize(decksRegistry().allDecks())
     }
 
     @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -68,7 +67,7 @@ class EnterFilePathActivity : BaseActivity() {
             return
         }
 
-        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(path, deckSelector.selectedDeck())
+        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(applicationContext, path, deckSelector.selectedDeck())
         finish()
     }
 

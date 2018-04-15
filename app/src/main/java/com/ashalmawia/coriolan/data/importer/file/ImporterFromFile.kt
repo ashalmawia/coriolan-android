@@ -18,7 +18,7 @@ class ImporterFromFile : DataImporter {
         context.startActivity(intent)
     }
 
-    fun onFile(path: String, deck: Deck) {
+    fun onFile(context: Context, path: String, deck: Deck) {
         val file = File(path)
         if (!file.exists()) {
             ongoing().onError("File should be located under $path")
@@ -27,7 +27,7 @@ class ImporterFromFile : DataImporter {
 
         val data = parseDataSafe(file, deck)
         if (data != null) {
-            ongoing().onData(data)
+            ongoing().onData(context, data)
         }
     }
 

@@ -13,7 +13,7 @@ class StartActivity : BaseActivity() {
         // refetch data in the domains registry
         DomainsRegistry.preinitialize(Repository.get(this))
 
-        val defaultDomain = DomainsRegistry.domain()
+        val defaultDomain = DomainsRegistry.domainIfExists()
         if (defaultDomain != null) {
             openDomain(defaultDomain)
         } else {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Deck
@@ -43,7 +42,7 @@ class AddEditDeckActivity : BaseActivity() {
 
     private fun extractData(deckId: Long) {
         val repository = Repository.get(this)
-        val deck = repository.deckById(deckId, DecksRegistry.get().domain)
+        val deck = repository.deckById(deckId, decksRegistry().domain)
         if (deck != null) {
             this.deck = deck
             prefillValues(deck)
@@ -73,7 +72,7 @@ class AddEditDeckActivity : BaseActivity() {
 
     private fun createDeckAndFinish(name: String) {
         try {
-            DecksRegistry.get().addDeck(name)
+            decksRegistry().addDeck(name)
             finishOk()
         } catch (e: DataProcessingException) {
             showError(getString(R.string.add_deck__failed_already_exists, name))
@@ -86,7 +85,7 @@ class AddEditDeckActivity : BaseActivity() {
     private fun updateDeckAndFinish(deck: Deck, name: String) {
         try {
             if (name != deck.name) {
-                DecksRegistry.get().updateDeck(deck, name)
+                decksRegistry().updateDeck(deck, name)
             }
             finishOk()
         } catch (e: DataProcessingException) {

@@ -11,14 +11,21 @@ import com.ashalmawia.coriolan.model.*
 class DecksRegistry(context: Context, val domain: Domain, private val repository: Repository) {
 
     companion object {
-        private lateinit var instance: DecksRegistry
+        private var instance: DecksRegistry? = null
 
-        fun get(): DecksRegistry {
+        fun get(context: Context): DecksRegistry {
+            var instance = this.instance
+            if (instance == null) {
+                instance = create(context)
+            }
+            this.instance = instance
             return instance
         }
 
-        fun initialize(context: Context, domain: Domain, repository: Repository) {
-            instance = DecksRegistry(context, domain, repository)
+        private fun create(context: Context): DecksRegistry {
+            val domain = DomainsRegistry.domain()
+            val repository = Repository.get(context)
+            return DecksRegistry(context, domain, repository)
         }
     }
 

@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.ui.edit
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.backup.ui.BackupActivity
 import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
@@ -18,10 +16,11 @@ import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.AddEditDeckActivity
+import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.DataFetcher
 import kotlinx.android.synthetic.main.edit.*
 
-class EditFragment : Fragment(), EditDeckCallback, DataFetcher {
+class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
     private lateinit var listener: EditFragmentListener
 
@@ -73,11 +72,11 @@ class EditFragment : Fragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun decks(): List<Deck> {
-        return DecksRegistry.get().allDecks()
+        return decksRegistry().allDecks()
     }
 
     override fun addCards(context: Context, deck: Deck) {
-        val domain = DecksRegistry.get().domain
+        val domain = decksRegistry().domain
         val intent = AddEditCardActivity.add(context, domain, deck)
         startActivity(intent)
     }
@@ -97,7 +96,7 @@ class EditFragment : Fragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun performDeleteDeck(context: Context, deck: Deck) {
-        val deleted = DecksRegistry.get().deleteDeck(deck)
+        val deleted = decksRegistry().deleteDeck(deck)
         if (deleted) {
             fetchData()
         } else {

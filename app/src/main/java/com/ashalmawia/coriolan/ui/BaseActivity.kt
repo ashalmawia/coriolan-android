@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DecksRegistry
 import kotlinx.android.synthetic.main.app_toolbar.*
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -34,4 +35,6 @@ abstract class BaseActivity : AppCompatActivity() {
         setResult(Activity.RESULT_OK)
         finish()
     }
+
+    protected fun decksRegistry(): DecksRegistry = DecksRegistry.get(applicationContext)
 }

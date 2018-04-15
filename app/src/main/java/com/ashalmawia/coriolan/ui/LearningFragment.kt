@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -11,7 +10,6 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
@@ -28,7 +26,7 @@ import kotlinx.android.synthetic.main.learning.*
 
 private const val TAG = "LearningFragment"
 
-class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
+class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
     private lateinit var exercise: ExerciseDescriptor<*, *>
 
@@ -80,7 +78,7 @@ class LearningFragment : Fragment(), TodayChangeListener, DataFetcher {
 
     private fun decksList(): List<Deck> {
         val timeStart = System.currentTimeMillis()
-        val decks = DecksRegistry.get().allDecks()
+        val decks = decksRegistry().allDecks()
         Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
         return decks
     }

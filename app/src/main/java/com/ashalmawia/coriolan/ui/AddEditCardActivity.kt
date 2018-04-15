@@ -9,7 +9,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -51,7 +50,7 @@ class AddEditCardActivity : BaseActivity() {
             throw IllegalStateException("activity was not properly initialized - missing domain id")
         }   // todo: use it
 
-        domain = DomainsRegistry.domain()!!
+        domain = DomainsRegistry.domain()
 
         if (intent.hasExtra(EXTRA_CARD_ID)) {
             extractDataEditCard()
@@ -170,14 +169,14 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun add(data: CardData) {
-        DecksRegistry.get().addCardToDeck(data)
+        decksRegistry().addCardToDeck(data)
 
         confirm()
         clear()
     }
 
     private fun save(data: CardData) {
-        DecksRegistry.get().editCard(card!!, data)
+        decksRegistry().editCard(card!!, data)
 
         confirm()
 

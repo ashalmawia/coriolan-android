@@ -8,9 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.DomainsRegistry
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.edit.EditFragment
@@ -49,8 +46,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
             throw IllegalStateException("missing domain id")
         }
 
-        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
-        initializeDecksRegistry(domainId)
+//        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
 
         setUpBottomBarNavigation()
     }
@@ -63,12 +59,6 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         bottomNavigation.currentItem = savedInstanceState.getInt(KEY_SELECTED_TAB)
-    }
-
-    private fun initializeDecksRegistry(domainId: Long) {
-        val domain = DomainsRegistry.domain() ?: throw IllegalStateException("domain was not initialized")
-        // TODO: handle actual domain when we get multiple domains
-        DecksRegistry.initialize(this, domain, Repository.get(this))
     }
 
     private fun setUpBottomBarNavigation() {

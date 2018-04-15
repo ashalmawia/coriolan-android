@@ -14,7 +14,11 @@ object DomainsRegistry {
         }
     }
 
-    fun domain(): Domain? {
+    fun domain(): Domain {
+        return domainIfExists() ?: throw IllegalStateException("domain expected to have beeen initialized was not")
+    }
+
+    fun domainIfExists(): Domain? {
         return domain
     }
 

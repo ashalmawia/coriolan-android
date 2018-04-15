@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.LearningExercise
@@ -91,7 +90,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     private fun deleteCurrentCard() {
         val current = exercise.card()
         exercise.dropCard(current.card)
-        DecksRegistry.get().deleteCard(current.card)
+        decksRegistry().deleteCard(current.card)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
