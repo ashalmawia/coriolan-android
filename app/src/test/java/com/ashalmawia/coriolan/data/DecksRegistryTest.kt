@@ -192,9 +192,10 @@ class DecksRegistryTest {
         val cardData = CardData(repeatedOriginalValue, listOf(secondTranslationValue), deck.id, type)
 
         // when
-        mockRegistry.addCardToDeck(cardData)
+        val result = mockRegistry.addCardToDeck(cardData)
 
         // then
+        assertTrue(result is AddCardResult.Success)
         assertCardsMerged(deck, forward, repeatedOriginal, firstTranslation, secondTranslationValue, reverse)
     }
 
@@ -219,9 +220,10 @@ class DecksRegistryTest {
         val cardData = CardData(repeatedOriginalValue, listOf(firstTranslationValue, secondTranslationValue), deck.id, type)
 
         // when
-        mockRegistry.addCardToDeck(cardData)
+        val result = mockRegistry.addCardToDeck(cardData)
 
         // then
+        assertTrue(result is AddCardResult.Success)
         assertCardsMerged(deck, forward, repeatedOriginal, firstTranslation, secondTranslationValue, reverse)
     }
 
@@ -260,9 +262,11 @@ class DecksRegistryTest {
         val cardData = CardData(secondOriginalValue, listOf(repeatedTranslationValue), deck.id, type)
 
         // when
-        mockRegistry.addCardToDeck(cardData)
+        val result = mockRegistry.addCardToDeck(cardData)
 
         // then
+        assertTrue(result is AddCardResult.Success)
+
         val cardsOfDeck = mockRepository.cardsOfDeck(deck)
         assertEquals("new forward card was added", 2, cardsOfDeck.forward().size)
         assertEquals("old forward is kept", forward, cardsOfDeck.forward()[0])
@@ -295,9 +299,11 @@ class DecksRegistryTest {
         val cardData = CardData(secondOriginalValue, listOf(secondTranslationValue), deck.id, type)
 
         // when
-        mockRegistry.addCardToDeck(cardData)
+        val result = mockRegistry.addCardToDeck(cardData)
 
         // then
+        assertTrue(result is AddCardResult.Success)
+
         val cardsOfDeck = mockRepository.cardsOfDeck(deck)
         assertEquals("new cards are added", 4, cardsOfDeck.size)
         assertEquals("old forward is kept", forward, cardsOfDeck.forward()[0])
@@ -308,6 +314,33 @@ class DecksRegistryTest {
         assertEquals("new reverse is correct", secondTranslationValue, cardsOfDeck.reverse()[1].original.value)
         assertEquals("new reverse is correct", 1, cardsOfDeck.reverse()[1].translations.size)
         assertEquals("new reverse is correct", secondOriginalValue, cardsOfDeck.reverse()[1].translations[0].value)
+    }
+
+    @Test
+    fun `addCardToDeck__testMatching__duplicate`() {
+        // given
+        val deck = mockRepository.addDeck(domain, "Mock")
+        val type = ExpressionType.WORD
+
+        val repeatedOriginalValue = "spring"
+        val repeatedOriginal = mockRepository.addExpression(repeatedOriginalValue, type, domain.langOriginal())
+
+        val firstTranslationValue = "весна"
+        val firstTranslation = mockRepository.addExpression(firstTranslationValue, type, domain.langTranslations())
+
+        val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
+        mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
+
+        val mockRegistry = DecksRegistry(context, domain, mockRepository)
+
+        val cardData = CardData(repeatedOriginalValue, listOf(firstTranslationValue), deck.id, type)
+
+        // when
+        val result = mockRegistry.addCardToDeck(cardData)
+
+        // then
+        assertTrue(result is AddCardResult.Duplicate)
+        assertEquals(forward, (result as AddCardResult.Duplicate).card)
     }
 
     @Test

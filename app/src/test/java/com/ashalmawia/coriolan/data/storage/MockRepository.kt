@@ -62,6 +62,9 @@ class MockRepository : Repository {
     override fun cardById(id: Long, domain: Domain): Card? {
         return cards.find { it.id == id }
     }
+    override fun cardByValues(domain: Domain, original: Expression, translations: List<Expression>): Card? {
+        return cards.find { it.original == original && it.translations == translations }
+    }
     override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
         if (!cards.contains(card)) {
             return null

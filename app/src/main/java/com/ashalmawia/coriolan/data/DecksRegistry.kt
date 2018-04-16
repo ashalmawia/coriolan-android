@@ -53,8 +53,8 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         return repository.deleteDeck(deck)
     }
 
-    fun addCardToDeck(data: CardData) {
-        addCard(data)
+    fun addCardToDeck(data: CardData): AddCardResult {
+        return addCard(data)
     }
 
     fun addCardsToDeck(data: List<CardData>) {
@@ -92,10 +92,20 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
      * 2. reverse: "весна -- spring"
      * 3. reverse: "источник -- spring"
      */
-    private fun addCard(cardData: CardData) {
+    private fun addCard(cardData: CardData): AddCardResult {
         val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal())
         val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations()) }
 
+        val duplicate = repository.cardByValues(domain, original, translations)
+        return if (duplicate != null) {
+            AddCardResult.Duplicate(duplicate)
+        } else {
+            addForwardAndReverseWithMerging(original, translations, cardData)
+            AddCardResult.Success
+        }
+    }
+
+    private fun addForwardAndReverseWithMerging(original: Expression, translations: List<Expression>, cardData: CardData) {
         val merger = CardsMerger.create(repository, domain, ExercisesRegistry)
 
         merger.mergeOrAdd(original, translations, cardData.deckId)
@@ -112,4 +122,9 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {
         return repository.addDeck(domain, context.getString(R.string.decks_default))
     }
+}
+
+sealed class AddCardResult {
+    object Success : AddCardResult()
+    class Duplicate(val card: Card) : AddCardResult()
 }

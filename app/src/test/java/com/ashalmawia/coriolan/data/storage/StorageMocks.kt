@@ -22,9 +22,9 @@ fun addMockCard(storage: Repository, cardData: CardData, domain: Domain = mockDo
 }
 
 fun addMockExpressionOriginal(storage: Repository, value: String = "some value", type: ExpressionType = ExpressionType.WORD, domain: Domain): Expression {
-    return storage.addExpression(value, type, langOriginal())
+    return storage.addExpression(value, type, domain.langOriginal())
 }
 
 fun addMockExpressionTranslation(storage: Repository, value: String = "some value", type: ExpressionType = ExpressionType.WORD, domain: Domain): Expression {
-    return storage.addExpression(value, type, langTranslations())
+    return storage.addExpression(value, type, domain.langTranslations())
 }

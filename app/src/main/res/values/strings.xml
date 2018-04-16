@@ -55,6 +55,7 @@
 	<string name="edit_card__saved">Card updated successfully</string>
 	<string name="edit_card__deck">Deck:</string>
 	<string name="edit_card__add_translation">add another translation…</string>
+	<string name="add_card__duplicate">Such a card already exists in the deck \"%s\"</string>
 
 	<!-- Add/edit a deck -->
 	<string name="add_deck__title">Create new deck</string>

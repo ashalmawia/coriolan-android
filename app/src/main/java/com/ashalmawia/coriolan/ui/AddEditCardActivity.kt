@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.AddCardResult
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -169,10 +170,17 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun add(data: CardData) {
-        decksRegistry().addCardToDeck(data)
+        val result = decksRegistry().addCardToDeck(data)
 
-        confirm()
-        clear()
+        when (result) {
+            AddCardResult.Success -> {
+                confirm()
+                clear()
+            }
+            is AddCardResult.Duplicate -> {
+                notifyDuplicate(result.card)
+            }
+        }
     }
 
     private fun save(data: CardData) {
@@ -242,6 +250,12 @@ class AddEditCardActivity : BaseActivity() {
         }
 
         return true
+    }
+
+    private fun notifyDuplicate(duplicate: Card) {
+        val deck = repository.deckById(duplicate.deckId, duplicate.domain)!!
+        val message = resources.getString(R.string.add_card__duplicate, deck.name)
+        showError(message)
     }
 
     private fun showError(error: String) {

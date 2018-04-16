@@ -298,6 +298,51 @@ class SqliteStorage(
         }
     }
 
+    override fun cardByValues(domain: Domain, original: Expression, translations: List<Expression>): Card? {
+        val db = helper.readableDatabase
+
+        val reverse = allCardsReverse(db)
+
+        val CARDS = "Cards"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Languages"
+
+        // find all cards with the same original
+        val cursor = db.rawQuery("""
+            |SELECT
+            |   ${allColumnsCards(CARDS)},
+            |   ${allColumnsExpressions(EXPRESSIONS)},
+            |   ${allColumnsLanguages(LANGUAGES)}
+            |
+            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |
+            |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+            |
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |
+            |   WHERE
+            |       ${SQLITE_COLUMN_DOMAIN_ID.from(CARDS)} = ?
+            |           AND
+            |       ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ?
+        """.trimMargin(), arrayOf(domain.id.toString(), original.id.toString()))
+
+        cursor.use {
+            // go over these cards
+            while (cursor.moveToNext()) {
+                val id = cursor.getId(CARDS)
+                if (reverse[id] == translations) {
+                    // we found the card we need
+                    // we can assume that there are no other cards like this due to merging
+                    return Card(id, cursor.getDeckId(CARDS), domain, original, translations)
+                }
+            }
+
+            return null
+        }
+    }
+
     override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
         if (translations.isEmpty()) {
             throw DataProcessingException("failed to update card with id[$card.id]: translations were empty")
