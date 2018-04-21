@@ -96,8 +96,10 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal())
         val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations()) }
 
-        val duplicate = repository.cardByValues(domain, original, translations)
-        return if (duplicate != null) {
+        val duplicate = repository.cardByValues(domain, original)
+        fun Card.containsAll(translationValues: List<String>): Boolean
+                = translationValues.all { value -> this.translations.any { it.value == value } }
+        return if (duplicate != null && duplicate.containsAll(cardData.translations)) {
             AddCardResult.Duplicate(duplicate)
         } else {
             addForwardAndReverseWithMerging(original, translations, cardData)
