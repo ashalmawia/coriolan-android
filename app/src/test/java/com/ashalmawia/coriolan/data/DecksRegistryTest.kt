@@ -429,22 +429,33 @@ class DecksRegistryTest {
         val expression1 = mockRepository.addExpression("spring", type, domain.langOriginal())
         val expression2 = mockRepository.addExpression("весна", type, domain.langTranslations())
         val expression3 = mockRepository.addExpression("источник", type, domain.langTranslations())
+        val expression4 = mockRepository.addExpression("rocket", type, domain.langOriginal())
+        val expression5 = mockRepository.addExpression("ракета", type, domain.langTranslations())
 
-        val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2, expression3))
-        val card2 = mockRepository.addCard(domain, deckId, expression3, listOf(expression1))
+        val forward = mockRepository.addCard(domain, deckId, expression1, listOf(expression2, expression3))
+        val reverse1 = mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
+        val reverse2 = mockRepository.addCard(domain, deckId, expression3, listOf(expression1))
+        val otherForward = mockRepository.addCard(domain, deckId, expression4, listOf(expression5))
+        val otherReverse = mockRepository.addCard(domain, deckId, expression5, listOf(expression4))
 
         val mockRegistry = DecksRegistry(context, domain, mockRepository)
 
         // when
-        mockRegistry.deleteCard(card)
+        mockRegistry.deleteCard(forward)
 
         // then
-        assertNull("card is deleted", mockRepository.cardById(card.id, domain))
-        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression2.id))
+        assertNull("forward is deleted", mockRepository.cardById(forward.id, domain))
+        assertNull("reverses are deleted", mockRepository.cardById(reverse1.id, domain))
+        assertNull("reverses are deleted", mockRepository.cardById(reverse2.id, domain))
 
-        assertNotNull("other cards are preserved", mockRepository.cardById(card2.id, domain))
-        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression1.id))
-        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression3.id))
+        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression1.id))
+        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression2.id))
+        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression3.id))
+
+        assertNotNull("other cards are preserved", mockRepository.cardById(otherForward.id, domain))
+        assertNotNull("other cards are preserved", mockRepository.cardById(otherReverse.id, domain))
+        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression4.id))
+        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression5.id))
     }
 }
 

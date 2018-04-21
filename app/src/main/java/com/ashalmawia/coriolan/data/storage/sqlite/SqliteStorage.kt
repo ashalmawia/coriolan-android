@@ -298,7 +298,7 @@ class SqliteStorage(
         }
     }
 
-    override fun cardByValues(domain: Domain, original: Expression, translations: List<Expression>): Card? {
+    override fun cardByValues(domain: Domain, original: Expression): Card? {
         val db = helper.readableDatabase
 
         val reverse = allCardsReverse(db)
@@ -332,11 +332,10 @@ class SqliteStorage(
             // go over these cards
             while (cursor.moveToNext()) {
                 val id = cursor.getId(CARDS)
-                if (reverse[id] == translations) {
-                    // we found the card we need
-                    // we can assume that there are no other cards like this due to merging
-                    return Card(id, cursor.getDeckId(CARDS), domain, original, translations)
-                }
+
+                // we found the card we need
+                // we can assume that there are no other cards like this due to merging
+                return Card(id, cursor.getDeckId(CARDS), domain, original, reverse[id]!!)
             }
 
             return null

@@ -81,10 +81,10 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return value
     }
 
-    override fun cardByValues(domain: Domain, original: Expression, translations: List<Expression>): Card? {
+    override fun cardByValues(domain: Domain, original: Expression): Card? {
         val cached = cards.values.filterNotNull()
-                .find { it.domain == domain && it.original == original && it.translations == translations }
-        return cached ?: inner.cardByValues(domain, original, translations)
+                .find { it.domain == domain && it.original == original }
+        return cached ?: inner.cardByValues(domain, original)
     }
 
     override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
