@@ -65,11 +65,13 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal(card.type))
         val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations(card.type)) }
 
-        val updated = repository.updateCard(card, cardData.deckId, original, translations)
+        val updated = repository.updateCard(card, cardData.deckId, original, translations) ?: return null
 
-        if (updated != null) {
-            deleteOrphanExpressions(card.translations.plus(card.original))
+        card.translations.forEach {
+            val reverse = repository.cardByValues(domain, it)
+//            repository.updateCard(reverse, cardData.deckId, )
         }
+        deleteOrphanExpressions(card.translations.plus(card.original))
 
         return updated
     }
