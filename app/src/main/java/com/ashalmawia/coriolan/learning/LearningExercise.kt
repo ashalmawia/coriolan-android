@@ -127,14 +127,14 @@ class LearningExercise(
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
-                if (correct) {
-                    journal.recordReviewStudied(date)
-                } else {
+                journal.recordReviewStudied(date)
+                if (!correct) {
                     journal.recordCardRelearned(date)
                 }
             }
 
-            Status.RELEARN -> {} // ignore all relearns as if they appear they have been already counted somehow
+            Status.RELEARN -> {
+            } // ignore all relearns as if they appear they have been already counted somehow
         }
     }
 
@@ -153,7 +153,8 @@ class LearningExercise(
                 }
             }
 
-            Status.RELEARN -> {} // ignore all relearns as if they appear they have been already counted somehow
+            Status.RELEARN -> {
+            } // ignore all relearns as if they appear they have been already counted somehow
         }
     }
 }
