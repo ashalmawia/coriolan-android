@@ -606,7 +606,7 @@ abstract class StorageTest {
         addMockCard(storage, deck.id)
 
         // when
-        val read = storage.cardByValues(domain, original, translations)
+        val read = storage.cardByValues(domain, original)
 
         // then
         assertEquals(card, read)
@@ -631,34 +631,7 @@ abstract class StorageTest {
         addMockCard(storage, deck.id)
 
         // when
-        val read = storage.cardByValues(domain, original, translations)
-
-        // then
-        assertNull(read)
-    }
-
-    @Test
-    fun `test__cardByValues__partialDuplicate`() {
-        // given
-        val storage = prefilledStorage.value
-
-        val deck = addMockDeck(storage)
-
-        addMockCard(storage, deck.id)
-
-        val original = addMockExpressionOriginal(storage, "my original", domain = domain)
-        val translations = listOf(
-                addMockExpressionTranslation(storage, "translation 1", domain = domain),
-                addMockExpressionTranslation(storage, "translation 2", domain = domain),
-                addMockExpressionTranslation(storage, "translation 3", domain = domain)
-        )
-        storage.addCard(domain, deck.id, original, translations.subList(0, 2))
-
-        addMockCard(storage, deck.id)
-        addMockCard(storage, deck.id)
-
-        // when
-        val read = storage.cardByValues(domain, original, translations)
+        val read = storage.cardByValues(domain, original)
 
         // then
         assertNull(read)
@@ -681,7 +654,7 @@ abstract class StorageTest {
         addMockCard(storage, deck.id)
 
         // when
-        val read = storage.cardByValues(domain, original, listOf(translation))
+        val read = storage.cardByValues(domain, original)
 
         // then
         assertNull(read)
