@@ -10,6 +10,8 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.ui.view.showKeyboard
 import kotlinx.android.synthetic.main.add_edit_card_item.view.*
 
+private val killDoubleWhitespacesRegex = "\\s+".toRegex()
+
 class AddEditCardItemView : LinearLayout {
 
     constructor(context: Context) : this(context, null)
@@ -33,7 +35,7 @@ class AddEditCardItemView : LinearLayout {
     }
 
     var input
-        get() = inputField.text.toString()
+        get() = inputField.text.toString().trim().replace(killDoubleWhitespacesRegex, " ")
         set(value) { inputField.setText(value) }
 
     var removeListener: ((AddEditCardItemView) -> Unit)? = null
