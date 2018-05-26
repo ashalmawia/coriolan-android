@@ -62,9 +62,29 @@ sealed class Mutation<S : State> {
 
         override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
             return if (shuffle) {
-                cards.shuffled()
+                shuffle(cards)
             } else {
                 cards
+            }
+        }
+
+        private fun shuffle(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+            val reviewOnlySize = cards.size / 3
+            val newCardsAllowedSize = cards.size - reviewOnlySize
+
+            val new = cards.filter { it.state.status == Status.NEW }
+            val review = cards.filter { it.state.status != Status.NEW }
+
+            if (new.size >= newCardsAllowedSize) {
+                return new.shuffled().plus(review.shuffled())
+            } else {
+                // otherwise, keep the last X cards review only, to make sure all new cards are seen in advance
+                val extraReviewsCount = newCardsAllowedSize - new.size
+
+                val newCardsAllowed = new.plus(review.subList(0, extraReviewsCount))
+                val reviewsOnly = review.subList(extraReviewsCount, review.size)
+
+                return newCardsAllowed.shuffled().plus(reviewsOnly.shuffled())
             }
         }
     }
