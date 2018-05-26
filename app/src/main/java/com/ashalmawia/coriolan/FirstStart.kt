@@ -6,7 +6,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 private const val NEW_CARDS_DAILY_LIMIT_DEFAULT = 15
 private const val REVIEW_CARDS_DAILY_LIMIT_DEFAULT = 30
 
-private val CARD_TYPE_PREFERENCE_DEFAULT = CardTypePreference.FORWARD_FIRST
+private val CARD_TYPE_PREFERENCE_DEFAULT = CardTypePreference.MIXED
 
 object FirstStart {
 

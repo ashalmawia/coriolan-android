@@ -15,11 +15,9 @@ sealed class Mutation {
         companion object {
             fun from(preferences: Preferences): CardTypeFilter {
                 val cardType = preferences.getCardTypePreference()
-                        ?: CardTypePreference.MIXED  // does no effect
+                        ?: CardTypePreference.MIXED  // has no effect
 
                 return when (cardType) {
-                    CardTypePreference.FORWARD_FIRST -> CardTypeForwardFirstMutation()
-                    CardTypePreference.REVERSE_FIRST -> CardTypeReverseFirstMutation()
                     CardTypePreference.MIXED -> CardTypeMixedMutation()
                     CardTypePreference.FORWARD_ONLY -> CardTypeForwardOnlyMutation()
                     CardTypePreference.REVERSE_ONLY -> CardTypeReverseOnlyMutation()
@@ -62,10 +60,10 @@ sealed class Mutation {
     class Shuffle(private val shuffle: Boolean) : Mutation() {
 
         override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
-            if (shuffle) {
-                return cards.shuffled()
+            return if (shuffle) {
+                cards.shuffled()
             } else {
-                return cards
+                cards
             }
         }
     }

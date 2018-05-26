@@ -92,7 +92,7 @@ abstract class PreferencesTest {
     fun `test__cardTypePreference`() {
         // given
         val preferences = this.prefereces.value
-        val cardType = CardTypePreference.REVERSE_FIRST
+        val cardType = CardTypePreference.REVERSE_ONLY
 
         // then
         assertNull(preferences.getCardTypePreference())

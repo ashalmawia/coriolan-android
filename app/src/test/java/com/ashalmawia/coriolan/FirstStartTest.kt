@@ -26,7 +26,7 @@ class FirstStartTest {
         assertFalse(preferences.isFirstStart())
         assertEquals(15, preferences.getNewCardsDailyLimit())
         assertEquals(30, preferences.getReviewCardsDailyLimit())
-        assertEquals(CardTypePreference.FORWARD_FIRST, preferences.getCardTypePreference())
+        assertEquals(CardTypePreference.MIXED, preferences.getCardTypePreference())
     }
 
     @Test

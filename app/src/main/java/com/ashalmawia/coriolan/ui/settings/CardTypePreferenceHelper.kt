@@ -11,8 +11,6 @@ object CardTypePreferenceHelper {
     private val VALUES = CardTypePreference.values().map { it.value }.toTypedArray()
 
     private val ENTRIES = arrayOf(
-            R.string.settings__card_types_forward_first,
-            R.string.settings__card_types_reverse_first,
             R.string.settings__card_types_mixed,
             R.string.settings__card_types_forward_only,
             R.string.settings__card_types_reverse_only
