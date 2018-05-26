@@ -1,12 +1,15 @@
 package com.ashalmawia.coriolan.learning.exercise
 
 import android.content.Context
+import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExerciseDescriptor
 import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.MockState
+import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.model.Card
@@ -50,5 +53,9 @@ class MockExerciseDescriptor(override val stableId: String = "mock", override va
 
     override fun hashCode(): Int {
         return stableId.hashCode()
+    }
+
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations<MockState> {
+        return Mutations(listOf())
     }
 }

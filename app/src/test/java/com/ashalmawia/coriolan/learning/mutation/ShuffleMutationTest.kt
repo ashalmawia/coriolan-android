@@ -12,7 +12,7 @@ class ShuffleMutationTest {
 
     private val cards = List(50, { i -> mockCardWithState(MockState(), id = i.toLong()) })
 
-    private lateinit var mutation: Mutation.Shuffle
+    private lateinit var mutation: Mutation.Shuffle<MockState>
 
     @Test
     fun testNoShuffle() {

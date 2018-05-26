@@ -3,8 +3,12 @@ package com.ashalmawia.coriolan.learning
 import android.content.Context
 import android.support.annotation.StringRes
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.mutation.Mutation
+import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
@@ -35,5 +39,15 @@ class LearningExerciseDescriptor : ExerciseDescriptor<SRState, LearningExercise>
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
         repository.updateSRCardState(card, emptyState(), stableId)
+    }
+
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations<SRState> {
+        return Mutations(listOf(
+                // order matters
+                Mutation.CardTypeFilter.from(preferences),
+                Mutation.SortByPeriod(),
+                Mutation.LimitCount(preferences, journal, date),
+                Mutation.Shuffle(random)
+        ))
     }
 }

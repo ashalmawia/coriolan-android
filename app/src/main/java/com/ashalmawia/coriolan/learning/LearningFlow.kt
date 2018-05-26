@@ -6,7 +6,6 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.learning.assignment.Assignment
-import com.ashalmawia.coriolan.learning.mutation.MutationRegistry
 import com.ashalmawia.coriolan.learning.scheduler.*
 import com.ashalmawia.coriolan.model.Deck
 
@@ -56,7 +55,7 @@ private fun <S: State, E : Exercise> createAssignment(
 ): Assignment<S> {
     val date = today()
     val cards = exercise.pendingCards(repository, deck, date)
-    val mutations = MutationRegistry.mutations(preferences, journal, date, random)
+    val mutations = exercise.mutations(preferences, journal, date, random)
     return Assignment(date, mutations.apply(cards))
 }
 

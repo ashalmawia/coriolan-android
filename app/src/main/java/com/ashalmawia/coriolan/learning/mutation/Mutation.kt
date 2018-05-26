@@ -6,14 +6,15 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import org.joda.time.DateTime
 
-sealed class Mutation {
-    abstract fun <S : State>  apply(cards: List<CardWithState<S>>): List<CardWithState<S>>
+sealed class Mutation<S : State> {
+    abstract fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>>
 
-    abstract class CardTypeFilter : Mutation() {
+    abstract class CardTypeFilter<S : State> : Mutation<S>() {
         companion object {
-            fun from(preferences: Preferences): CardTypeFilter {
+            fun <S : State> from(preferences: Preferences): CardTypeFilter<S> {
                 val cardType = preferences.getCardTypePreference()
                         ?: CardTypePreference.MIXED  // has no effect
 
@@ -26,14 +27,14 @@ sealed class Mutation {
         }
     }
 
-    class LimitCount(preferences: Preferences, journal: Journal, date: DateTime) : Mutation() {
+    class LimitCount<S : State>(preferences: Preferences, journal: Journal, date: DateTime) : Mutation<S>() {
 
         private val limitNew = preferences.getNewCardsDailyLimit()
         private val limitReview = preferences.getReviewCardsDailyLimit()
 
         private val counts = journal.cardsStudiedOnDate(date)
 
-        override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+        override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
             if (limitNew == null && limitReview == null) {
                 return cards
             }
@@ -57,14 +58,21 @@ sealed class Mutation {
         }
     }
 
-    class Shuffle(private val shuffle: Boolean) : Mutation() {
+    class Shuffle<S : State>(private val shuffle: Boolean) : Mutation<S>() {
 
-        override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+        override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
             return if (shuffle) {
                 cards.shuffled()
             } else {
                 cards
             }
+        }
+    }
+
+    class SortByPeriod : Mutation<SRState>() {
+
+        override fun apply(cards: List<CardWithState<SRState>>): List<CardWithState<SRState>> {
+            return cards.sortedBy { it.state.period }
         }
     }
 }

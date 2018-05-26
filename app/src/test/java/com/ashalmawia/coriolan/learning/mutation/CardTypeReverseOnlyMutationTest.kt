@@ -14,7 +14,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class CardTypeReverseOnlyMutationTest {
 
-    private val mutation = CardTypeReverseOnlyMutation()
+    private val mutation = CardTypeReverseOnlyMutation<MockState>()
 
     @Test
     fun `test__empty`() {

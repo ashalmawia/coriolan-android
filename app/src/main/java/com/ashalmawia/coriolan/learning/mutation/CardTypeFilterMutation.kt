@@ -5,14 +5,14 @@ import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.util.forwardWithState
 import com.ashalmawia.coriolan.util.reverseWithState
 
-class CardTypeMixedMutation : Mutation.CardTypeFilter() {
-    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards
+class CardTypeMixedMutation<S : State> : Mutation.CardTypeFilter<S>() {
+    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards
 }
 
-class CardTypeForwardOnlyMutation : Mutation.CardTypeFilter() {
-    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards.forwardWithState()
+class CardTypeForwardOnlyMutation<S : State> : Mutation.CardTypeFilter<S>() {
+    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards.forwardWithState()
 }
 
-class CardTypeReverseOnlyMutation : Mutation.CardTypeFilter() {
-    override fun <S : State> apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards.reverseWithState()
+class CardTypeReverseOnlyMutation<S : State> : Mutation.CardTypeFilter<S>() {
+    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> = cards.reverseWithState()
 }

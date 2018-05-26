@@ -2,8 +2,11 @@ package com.ashalmawia.coriolan.learning
 
 import android.content.Context
 import android.support.annotation.StringRes
+import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.StateType
@@ -37,4 +40,6 @@ interface ExerciseDescriptor<S : State, out T : Exercise> {
     fun exercise(context: Context, deck: Deck, assignment: Assignment<S>, finishListener: FinishListener): T
 
     fun onTranslationAdded(repository: Repository, card: Card)
+
+    fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations<S>
 }
