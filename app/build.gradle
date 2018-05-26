@@ -76,11 +76,11 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.47'
     testImplementation "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation "com.android.support:support-annotations:$support_version"
 
-    implementation ("com.github.hotchemi:permissionsdispatcher:3.0.1") {
+    implementation ("com.github.hotchemi:permissionsdispatcher:3.2.0") {
         exclude module: "support-v13"
     }
-    kapt "com.github.hotchemi:permissionsdispatcher-processor:3.0.1"
+    kapt "com.github.hotchemi:permissionsdispatcher-processor:3.2.0"
 }

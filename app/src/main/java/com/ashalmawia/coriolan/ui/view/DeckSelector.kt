@@ -1,17 +1,17 @@
 package com.ashalmawia.coriolan.ui.view
 
 import android.content.Context
+import android.support.v7.widget.AppCompatSpinner
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.Spinner
 import android.widget.TextView
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.errors.Errors
 
-class DeckSelector(context: Context, attributeSet: AttributeSet?) : Spinner(context, attributeSet) {
+class DeckSelector(context: Context, attributeSet: AttributeSet?) : AppCompatSpinner(context, attributeSet) {
 
     fun initialize(decks: List<Deck>) {
         adapter = DecksSelectorAdapter(context, decks)
