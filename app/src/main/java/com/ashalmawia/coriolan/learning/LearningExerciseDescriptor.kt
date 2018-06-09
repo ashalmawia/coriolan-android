@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.Mutations
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
@@ -41,13 +42,13 @@ class LearningExerciseDescriptor : ExerciseDescriptor<SRState, LearningExercise>
         repository.updateSRCardState(card, emptyState(), stableId)
     }
 
-    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations<SRState> {
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder): Mutations<SRState> {
         return Mutations(listOf(
-                // order matters
                 Mutation.CardTypeFilter.from(preferences),
-                Mutation.SortByPeriod(),
+                Mutation.SortReviewsByPeriod(),
+                Mutation.NewCardsOrder.from(order),
                 Mutation.LimitCount(preferences, journal, date),
-                Mutation.Shuffle(random)
+                Mutation.Shuffle(order == StudyOrder.RANDOM)
         ))
     }
 }

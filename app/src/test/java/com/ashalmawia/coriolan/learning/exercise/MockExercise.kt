@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.mutation.Mutations
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.model.Card
@@ -55,7 +56,7 @@ class MockExerciseDescriptor(override val stableId: String = "mock", override va
         return stableId.hashCode()
     }
 
-    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations<MockState> {
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder): Mutations<MockState> {
         return Mutations(listOf())
     }
 }

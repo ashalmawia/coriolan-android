@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
@@ -165,6 +166,7 @@ private class DecksAdapter<S: State, E : Exercise>(
             when (it.itemId) {
                 R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
                 R.id.decks_study_options_popup__random -> studyRandom(deck)
+                R.id.decks_study_options_popup__newest_first -> studyNewestFirst(deck)
             }
             true
         }
@@ -176,11 +178,15 @@ private class DecksAdapter<S: State, E : Exercise>(
     }
 
     private fun studyStraightforward(deck: Deck) {
-        LearningFlow.initiate(context, deck, false, exercise)
+        LearningFlow.initiate(context, deck, StudyOrder.ORDER_ADDED, exercise)
     }
 
     private fun studyRandom(deck: Deck) {
-        LearningFlow.initiate(context, deck, true, exercise)
+        LearningFlow.initiate(context, deck, StudyOrder.RANDOM, exercise)
+    }
+
+    private fun studyNewestFirst(deck: Deck) {
+        LearningFlow.initiate(context, deck, StudyOrder.NEWEST_FIRST, exercise)
     }
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {

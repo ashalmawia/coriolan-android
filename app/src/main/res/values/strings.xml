@@ -27,6 +27,7 @@
 
 	<string name="deck_options_study_random">Study in random order</string>
 	<string name="deck_options_study_straightforward">Study in order added</string>
+	<string name="deck_options_study_newest_first">Study in reverse order (newest first)</string>
 
 	<string name="decks_pending">new: {%1$d}, review: {%2$d}</string>
 

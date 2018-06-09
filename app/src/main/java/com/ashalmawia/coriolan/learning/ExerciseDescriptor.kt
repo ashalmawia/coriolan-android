@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.mutation.Mutations
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.StateType
@@ -41,5 +42,5 @@ interface ExerciseDescriptor<S : State, out T : Exercise> {
 
     fun onTranslationAdded(repository: Repository, card: Card)
 
-    fun mutations(preferences: Preferences, journal: Journal, date: DateTime, random: Boolean): Mutations<S>
+    fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder): Mutations<S>
 }

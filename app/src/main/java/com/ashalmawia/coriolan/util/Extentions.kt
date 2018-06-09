@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import org.joda.time.DateTime
@@ -37,3 +38,6 @@ fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
 
 fun <S : State> List<CardWithState<S>>.forwardWithState() = filter { it.card.type == CardType.FORWARD }
 fun <S : State> List<CardWithState<S>>.reverseWithState() = filter { it.card.type == CardType.REVERSE }
+
+fun <S : State> List<CardWithState<S>>.new() = this.filter { it.state.status == Status.NEW }
+fun <S : State> List<CardWithState<S>>.review() = this.filter { it.state.status != Status.NEW }

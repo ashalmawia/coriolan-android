@@ -6,4 +6,7 @@
 	<item
 		android:id="@+id/decks_study_options_popup__random"
 		android:title="@string/deck_options_study_random"/>
+	<item
+		android:id="@+id/decks_study_options_popup__newest_first"
+		android:title="@string/deck_options_study_newest_first"/>
 </menu>

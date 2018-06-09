@@ -7,6 +7,8 @@ import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.util.new
+import com.ashalmawia.coriolan.util.review
 import org.joda.time.DateTime
 
 sealed class Mutation<S : State> {
@@ -72,8 +74,8 @@ sealed class Mutation<S : State> {
             val reviewOnlySize = cards.size / 3
             val newCardsAllowedSize = cards.size - reviewOnlySize
 
-            val new = cards.filter { it.state.status == Status.NEW }
-            val review = cards.filter { it.state.status != Status.NEW }
+            val new = cards.new()
+            val review = cards.review()
 
             if (new.size >= newCardsAllowedSize) {
                 return new.shuffled().plus(review.shuffled())
@@ -89,7 +91,19 @@ sealed class Mutation<S : State> {
         }
     }
 
-    class SortByPeriod : Mutation<SRState>() {
+    abstract class NewCardsOrder<S : State> : Mutation<S>() {
+        companion object {
+            fun <S : State> from(order: StudyOrder) : NewCardsOrder<S> {
+                return when (order) {
+                    StudyOrder.ORDER_ADDED -> OrderAdded()
+                    StudyOrder.RANDOM -> Random()
+                    StudyOrder.NEWEST_FIRST -> NewestFirst()
+                }
+            }
+        }
+    }
+
+    class SortReviewsByPeriod : Mutation<SRState>() {
 
         override fun apply(cards: List<CardWithState<SRState>>): List<CardWithState<SRState>> {
             return cards.sortedBy { it.state.period }
