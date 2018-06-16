@@ -3,34 +3,32 @@ package com.ashalmawia.coriolan.data
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.util.orZero
 
-interface Counts {
-
-    fun countNew(): Int
-    fun countReview(): Int
-    fun countRelearn(): Int
+data class Counts(val new: Int, val review: Int, val relearn: Int, val total: Int) {
 
     fun isAnythingPending(): Boolean {
-        return countNew() > 0 || countReview() > 0 || countRelearn() > 0
+        return new > 0 || review > 0 || relearn > 0
     }
 
     companion object {
-        fun createFrom(counts: Map<Status, Int>): Counts {
-            return SimpleCounts(counts[Status.NEW].orZero(),
+        fun createFrom(counts: Map<Status, Int>, total: Int): Counts {
+            return Counts(
+                    counts[Status.NEW].orZero(),
                     counts[Status.IN_PROGRESS].orZero() + counts[Status.LEARNT].orZero(),
-                    counts[Status.RELEARN].orZero())
+                    counts[Status.RELEARN].orZero(),
+                    total
+            )
         }
-        fun createFrom(new: Int, review: Int, relearn: Int): Counts {
-            return SimpleCounts(new, review, relearn)
-        }
+
+        fun empty() = Counts(0, 0, 0, 0)
     }
 }
 
-data class SimpleCounts(private val new: Int, private val review: Int, private val relearn: Int) : Counts {
-    override fun countNew(): Int = new
+data class CountsSummary(val forward: Counts, val reverse: Counts) {
 
-    override fun countReview(): Int = review
-
-    override fun countRelearn(): Int = relearn
+    val total = Counts(
+            forward.new + reverse.new,
+            forward.review + reverse.review,
+            forward.relearn + reverse.relearn,
+            forward.total + reverse.total
+    )
 }
-
-fun emptyCounts(): Counts = SimpleCounts(0, 0, 0)

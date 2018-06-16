@@ -19,6 +19,7 @@ import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
+import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
@@ -167,6 +168,7 @@ private class DecksAdapter<S: State, E : Exercise>(
                 R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
                 R.id.decks_study_options_popup__random -> studyRandom(deck)
                 R.id.decks_study_options_popup__newest_first -> studyNewestFirst(deck)
+                R.id.deck_study_options_popup__details -> showDeckDetails(deck)
             }
             true
         }
@@ -189,16 +191,21 @@ private class DecksAdapter<S: State, E : Exercise>(
         LearningFlow.initiate(context, deck, StudyOrder.NEWEST_FIRST, exercise)
     }
 
+    private fun showDeckDetails(deck: Deck) {
+        val dialog = DeckDetailsDialog(context, deck, exercise, today())
+        dialog.show()
+    }
+
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
         if (counts.isAnythingPending()) {
-            holder.countNew.text = counts.countNew().toString()
-            holder.countNew.visible = counts.countNew() > 0
+            holder.countNew.text = counts.new.toString()
+            holder.countNew.visible = counts.new > 0
 
-            holder.countRelearn.text = counts.countRelearn().toString()
-            holder.countRelearn.visible = counts.countRelearn() > 0
+            holder.countRelearn.text = counts.relearn.toString()
+            holder.countRelearn.visible = counts.relearn > 0
 
-            holder.countReview.text = counts.countReview().toString()
-            holder.countReview.visible = counts.countReview() > 0
+            holder.countReview.text = counts.review.toString()
+            holder.countReview.visible = counts.review > 0
 
             holder.pending.visibility = View.VISIBLE
         } else {

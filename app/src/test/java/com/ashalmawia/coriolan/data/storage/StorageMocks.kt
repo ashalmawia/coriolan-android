@@ -11,13 +11,13 @@ fun addMockCard(storage: Repository, deckId: Long = 1L, original: String = "spri
             translations.map { storage.addExpression(it, ExpressionType.WORD, domain.langTranslations()) })
 }
 
-fun addMockCard(storage: Repository, cardData: CardData, domain: Domain = mockDomain()): Card {
-    val original = storage.addExpression(cardData.original, cardData.contentType, domain.langOriginal())
+fun addMockCard(storage: Repository, cardData: CardData, domain: Domain = mockDomain(), type: CardType = CardType.FORWARD): Card {
+    val original = storage.addExpression(cardData.original, cardData.contentType, domain.langOriginal(type))
     return storage.addCard(
             domain,
             cardData.deckId,
             original,
-            cardData.translations.map { storage.addExpression(it, cardData.contentType, domain.langTranslations()) }
+            cardData.translations.map { storage.addExpression(it, cardData.contentType, domain.langTranslations(type)) }
     )
 }
 

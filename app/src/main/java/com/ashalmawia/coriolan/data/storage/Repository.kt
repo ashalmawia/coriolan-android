@@ -1,9 +1,12 @@
 package com.ashalmawia.coriolan.data.storage
 
 import android.content.Context
+import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.CountsSummary
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
@@ -62,6 +65,28 @@ interface Repository {
     fun updateDeck(deck: Deck, name: String): Deck?
 
     fun deleteDeck(deck: Deck): Boolean
+
+    fun deckPendingCounts(exerciseId: String, deck: Deck, date: DateTime): CountsSummary {
+        val due = cardsDueDate(exerciseId, deck, date)
+        val total = cardsOfDeck(deck)
+
+        val (forward, reverse) = due.partition { it.card.type == CardType.FORWARD }
+
+        return CountsSummary(
+                Counts(
+                        forward.count { it.state.status == Status.NEW },
+                        forward.count { it.state.status == Status.IN_PROGRESS },
+                        forward.count { it.state.status == Status.RELEARN },
+                        total.count { it.type == CardType.FORWARD }
+                ),
+                Counts(
+                        reverse.count { it.state.status == Status.NEW },
+                        reverse.count { it.state.status == Status.IN_PROGRESS },
+                        reverse.count { it.state.status == Status.RELEARN },
+                        total.count { it.type == CardType.REVERSE }
+                )
+        )
+    }
 
     fun updateSRCardState(card: Card, state: SRState, exerciseId: String)
 

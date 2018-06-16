@@ -15,7 +15,7 @@ class SqliteJournalTest {
     private val journal = SqliteJournal(RuntimeEnvironment.application)
 
     @Test
-    fun `test__cardsStudiedOnDate__noEntry`() {
+    fun test__cardsStudiedOnDate__noEntry() {
         // given
         val date = today()
 
@@ -27,7 +27,7 @@ class SqliteJournalTest {
     }
 
     @Test
-    fun `test__recordNewCardStudied`() {
+    fun test__recordNewCardStudied() {
         // given
         val date = today()
 
@@ -54,7 +54,7 @@ class SqliteJournalTest {
     }
 
     @Test
-    fun `test__recordReviewStudied`() {
+    fun test__recordReviewStudied() {
         // given
         val date = today()
 
@@ -81,7 +81,7 @@ class SqliteJournalTest {
     }
 
     @Test
-    fun `test__recordCardRelearned`() {
+    fun test__recordCardRelearned() {
         // given
         val date = today()
 
@@ -108,7 +108,7 @@ class SqliteJournalTest {
     }
 
     @Test
-    fun `test__recordsCombination`() {
+    fun test__recordsCombination() {
         // given
         val date = today()
 
@@ -138,14 +138,14 @@ class SqliteJournalTest {
         val counts2 = journal.cardsStudiedOnDate(date)
 
         // then
-        assertValues(counts.countNew() - 1, counts.countReview() + 2, 2, counts2)
+        assertValues(counts.new - 1, counts.review + 2, 2, counts2)
     }
 }
 
 private fun assertValues(expectedNew: Int, expectedReview: Int, expectedRelearn: Int, counts: Counts) {
-    assertEquals(expectedNew, counts.countNew())
-    assertEquals(expectedReview, counts.countReview())
-    assertEquals(expectedRelearn, counts.countRelearn())
+    assertEquals(expectedNew, counts.new)
+    assertEquals(expectedReview, counts.review)
+    assertEquals(expectedRelearn, counts.relearn)
 }
 private fun assertEmpty(counts: Counts) {
     assertValues(0, 0, 0, counts)

@@ -3,8 +3,6 @@ package com.ashalmawia.coriolan.data.journal.sqlite
 import android.content.ContentValues
 import android.content.Context
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.data.SimpleCounts
-import com.ashalmawia.coriolan.data.emptyCounts
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
@@ -24,13 +22,17 @@ class SqliteJournal(context: Context) : Journal {
 
         cursor.use {
             return if (it.moveToNext()) {
-                SimpleCounts(
-                        it.getCardsNew(),
-                        it.getCardsReview(),
-                        it.getCardsRelearn()
+                val new = it.getCardsNew()
+                val review = it.getCardsReview()
+                val relearn = it.getCardsRelearn()
+                Counts(
+                        new,
+                        review,
+                        relearn,
+                        new + review + relearn
                 )
             } else {
-                emptyCounts()
+                Counts.empty()
             }
         }
     }

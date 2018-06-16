@@ -40,7 +40,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addLanguage`() {
+    fun test__addLanguage() {
         // given
         val storage = emptyStorage.value
         val value = "Russian"
@@ -53,7 +53,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__languageById__languageExists`() {
+    fun test__languageById__languageExists() {
         // given
         val storage = emptyStorage.value
 
@@ -71,7 +71,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__languageById__languageDoesNotExist`() {
+    fun test__languageById__languageDoesNotExist() {
         // given
         val storage = emptyStorage.value
 
@@ -83,7 +83,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addExpression__Word`() {
+    fun test__addExpression__Word() {
         // given
         val storage = prefilledStorage.value
 
@@ -99,7 +99,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addExpression__Sentence`() {
+    fun test__addExpression__Sentence() {
         // given
         val storage = prefilledStorage.value
 
@@ -115,7 +115,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionById__Word`() {
+    fun test__expressionById__Word() {
         // given
         val storage = emptyStorage.value
 
@@ -133,7 +133,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionById__Sentence`() {
+    fun test__expressionById__Sentence() {
         // given
         val storage = emptyStorage.value
 
@@ -151,7 +151,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionByValues__DoesNotExist_Empty`() {
+    fun test__expressionByValues__DoesNotExist_Empty() {
         // given
         val storage = emptyStorage.value
 
@@ -168,7 +168,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionByValues__DoesNotExist_WrongValue`() {
+    fun test__expressionByValues__DoesNotExist_WrongValue() {
         // given
         val storage = emptyStorage.value
 
@@ -185,7 +185,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionByValues__DoesNotExist_WrongLanguage`() {
+    fun test__expressionByValues__DoesNotExist_WrongLanguage() {
         // given
         val storage = emptyStorage.value
 
@@ -204,7 +204,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionByValues__DoesNotExist_WrongContentType`() {
+    fun test__expressionByValues__DoesNotExist_WrongContentType() {
         // given
         val storage = emptyStorage.value
 
@@ -221,7 +221,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionByValues__DoesNotExist_WrongEverything`() {
+    fun test__expressionByValues__DoesNotExist_WrongEverything() {
         // given
         val storage = emptyStorage.value
 
@@ -240,7 +240,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__expressionByValues__Exists`() {
+    fun test__expressionByValues__Exists() {
         // given
         val storage = prefilledStorage.value
 
@@ -260,7 +260,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__emptyStorage`() {
+    fun test__isUsed__emptyStorage() {
         // given
         val storage = prefilledStorage.value
 
@@ -276,7 +276,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__isNotPresent`() {
+    fun test__isUsed__isNotPresent() {
         // given
         val storage = prefilledStorage.value
 
@@ -294,7 +294,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__isNotUsed`() {
+    fun test__isUsed__isNotUsed() {
         // given
         val storage = prefilledStorage.value
 
@@ -311,7 +311,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__used`() {
+    fun test__isUsed__used() {
         // given
         val storage = prefilledStorage.value
 
@@ -333,7 +333,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__addAndRemove`() {
+    fun test__isUsed__addAndRemove() {
         // given
         val storage = prefilledStorage.value
 
@@ -353,7 +353,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__addAndRemoveMultipleExpressions`() {
+    fun test__isUsed__addAndRemoveMultipleExpressions() {
         // given
         val storage = prefilledStorage.value
 
@@ -375,7 +375,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__isUsed__addAndRemoveMultipleCards`() {
+    fun test__isUsed__addAndRemoveMultipleCards() {
         // given
         val storage = prefilledStorage.value
 
@@ -399,7 +399,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deleteExpression__present`() {
+    fun test__deleteExpression__present() {
         // given
         val storage = prefilledStorage.value
 
@@ -424,7 +424,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__createDomain__prefilledLanguages`() {
+    fun test__createDomain__prefilledLanguages() {
         // given
         val storage = prefilledStorage.value
         val name = "Some deck"
@@ -437,7 +437,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__createDomain__newLanguages`() {
+    fun test__createDomain__newLanguages() {
         // given
         val storage = emptyStorage.value
 
@@ -453,7 +453,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allDomains__empty`() {
+    fun test__allDomains__empty() {
         // given
         val storage = emptyStorage.value
 
@@ -465,7 +465,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allDomains__one`() {
+    fun test__allDomains__one() {
         // given
         val storage = emptyStorage.value
 
@@ -483,7 +483,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allDomains__many`() {
+    fun test__allDomains__many() {
         // given
         val storage = emptyStorage.value
 
@@ -508,7 +508,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addCard__Word__SingleTranslation`() {
+    fun test__addCard__Word__SingleTranslation() {
         // given
         val storage = prefilledStorage.value
         val deck = addMockDeck(storage)
@@ -525,7 +525,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addCard__Word__MultipleTranslations`() {
+    fun test__addCard__Word__MultipleTranslations() {
         // given
         val storage = prefilledStorage.value
 
@@ -542,7 +542,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addCard__Sentence`() {
+    fun test__addCard__Sentence() {
         // given
         val storage = prefilledStorage.value
 
@@ -559,7 +559,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardById__present`() {
+    fun test__cardById__present() {
         // given
         val storage = prefilledStorage.value
 
@@ -575,7 +575,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardById__absent`() {
+    fun test__cardById__absent() {
         // given
         val storage = prefilledStorage.value
 
@@ -587,7 +587,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardByValues__present`() {
+    fun test__cardByValues__present() {
         // given
         val storage = prefilledStorage.value
 
@@ -613,7 +613,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardByValues__absent`() {
+    fun test__cardByValues__absent() {
         // given
         val storage = prefilledStorage.value
 
@@ -622,10 +622,9 @@ abstract class StorageTest {
         addMockCard(storage, deck.id)
 
         val original = addMockExpressionOriginal(storage, "my original", domain = domain)
-        val translations = listOf(
-                addMockExpressionTranslation(storage, "translation 1", domain = domain),
-                addMockExpressionTranslation(storage, "translation 2", domain = domain)
-        )
+
+        addMockExpressionTranslation(storage, "translation 1", domain = domain)
+        addMockExpressionTranslation(storage, "translation 2", domain = domain)
 
         addMockCard(storage, deck.id)
         addMockCard(storage, deck.id)
@@ -638,7 +637,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardByValues__reverseIsDuplicate`() {
+    fun test__cardByValues__reverseIsDuplicate() {
         // given
         val storage = prefilledStorage.value
 
@@ -661,7 +660,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateCard__moveToAnotherDeck`() {
+    fun test__updateCard__moveToAnotherDeck() {
         // given
         val storage = prefilledStorage.value
 
@@ -709,7 +708,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateCard__changeOriginal`() {
+    fun test__updateCard__changeOriginal() {
         // given
         val storage = prefilledStorage.value
 
@@ -746,7 +745,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateCard__addTranslation`() {
+    fun test__updateCard__addTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -784,7 +783,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateCard__replaceTranslation`() {
+    fun test__updateCard__replaceTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -824,7 +823,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateCard__removeTranslation`() {
+    fun test__updateCard__removeTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -863,7 +862,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateCard__updateAllInfo`() {
+    fun test__updateCard__updateAllInfo() {
         // given
         val storage = prefilledStorage.value
 
@@ -906,7 +905,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deleteCard__present`() {
+    fun test__deleteCard__present() {
         // given
         val storage = prefilledStorage.value
 
@@ -924,7 +923,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allCards__emtpy`() {
+    fun test__allCards__emtpy() {
         // given
         val storage = prefilledStorage.value
 
@@ -936,7 +935,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allCards__nonEmtpy`() {
+    fun test__allCards__nonEmtpy() {
         // given
         val storage = prefilledStorage.value
 
@@ -952,7 +951,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allCards__addDelete`() {
+    fun test__allCards__addDelete() {
         // given
         val storage = prefilledStorage.value
 
@@ -974,7 +973,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allCards__updateCard`() {
+    fun test__allCards__updateCard() {
         // given
         val storage = prefilledStorage.value
 
@@ -1000,7 +999,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allCards__updateState`() {
+    fun test__allCards__updateState() {
         // given
         val storage = prefilledStorage.value
 
@@ -1023,7 +1022,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__addDeck`() {
+    fun test__addDeck() {
         // given
         val storage = prefilledStorage.value
 
@@ -1037,7 +1036,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateDeck`() {
+    fun test__updateDeck() {
         // given
         val storage = prefilledStorage.value
 
@@ -1054,7 +1053,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deleteDeck__nonEmpty`() {
+    fun test__deleteDeck__nonEmpty() {
         // given
         val storage = prefilledStorage.value
         val deck = storage.addDeck(domain, "Some deck")
@@ -1069,7 +1068,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deleteDeck__empty`() {
+    fun test__deleteDeck__empty() {
         // given
         val storage = prefilledStorage.value
         val deck = storage.addDeck(domain, "Some deck")
@@ -1083,7 +1082,118 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deckById__NoCards`() {
+    fun test__deckPendingCounts__empty() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val today = today()
+
+        // when
+        val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
+
+        // then
+        assertEquals(0, counts.forward.new)
+        assertEquals(0, counts.forward.review)
+        assertEquals(0, counts.forward.relearn)
+        assertEquals(0, counts.forward.total)
+
+        assertEquals(0, counts.reverse.new)
+        assertEquals(0, counts.reverse.review)
+        assertEquals(0, counts.reverse.relearn)
+        assertEquals(0, counts.reverse.total)
+    }
+
+    @Test
+    fun test__deckPendingCounts__noPendingCards() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val forward = (0 until 3)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse = (0 until 5)
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck.id) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+        val today = today()
+
+        storage.updateSRCardState(forward[0], SRState(today.plusDays(3), 4), exercise.stableId)
+        storage.updateSRCardState(forward[1], SRState(today.plusDays(1), 4), exercise.stableId)
+        storage.updateSRCardState(forward[2], SRState(today.plusDays(10), 4), exercise.stableId)
+
+        storage.updateSRCardState(reverse[0], SRState(today.plusDays(3), 4), exercise.stableId)
+        storage.updateSRCardState(reverse[1], SRState(today.plusDays(1), 4), exercise.stableId)
+        storage.updateSRCardState(reverse[2], SRState(today.plusDays(10), 4), exercise.stableId)
+        storage.updateSRCardState(reverse[3], SRState(today.plusDays(10), 4), exercise.stableId)
+        storage.updateSRCardState(reverse[4], SRState(today.plusDays(10), 4), exercise.stableId)
+
+        // when
+        val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
+
+        // then
+        assertEquals(0, counts.forward.new)
+        assertEquals(0, counts.forward.review)
+        assertEquals(0, counts.forward.relearn)
+        assertEquals(forward.count(), counts.forward.total)
+
+        assertEquals(0, counts.reverse.new)
+        assertEquals(0, counts.reverse.review)
+        assertEquals(0, counts.reverse.relearn)
+        assertEquals(reverse.count(), counts.reverse.total)
+    }
+
+    @Test
+    fun test__deckPendingCounts__hasPendingCards() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val forward = (0 until 4)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse = (0 until 6)
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck.id) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+        val today = today()
+
+        storage.updateSRCardState(forward[0], SRState(today.plusDays(3), 4), exercise.stableId)
+        storage.updateSRCardState(forward[1], SRState(today.minusDays(1), 4), exercise.stableId)
+        storage.updateSRCardState(forward[2], SRState(today, -1), exercise.stableId)
+        storage.updateSRCardState(forward[3], SRState(today.plusDays(1), 4), exercise.stableId)
+
+        storage.updateSRCardState(reverse[0], SRState(today, 0), exercise.stableId)
+        storage.updateSRCardState(reverse[1], SRState(today.plusDays(1), 4), exercise.stableId)
+        storage.updateSRCardState(reverse[2], SRState(today.minusDays(10), 4), exercise.stableId)
+        storage.updateSRCardState(reverse[3], SRState(today, 0), exercise.stableId)
+        storage.updateSRCardState(reverse[4], emptyState(), exercise.stableId)
+        storage.updateSRCardState(reverse[5], emptyState(), exercise.stableId)
+
+        // when
+        val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
+
+        // then
+        assertEquals(1, counts.forward.new)
+        assertEquals(1, counts.forward.review)
+        assertEquals(0, counts.forward.relearn)
+        assertEquals(forward.count(), counts.forward.total)
+
+        assertEquals(2, counts.reverse.new)
+        assertEquals(1, counts.reverse.review)
+        assertEquals(2, counts.reverse.relearn)
+        assertEquals(reverse.count(), counts.reverse.total)
+    }
+
+    @Test
+    fun test__deckById__NoCards() {
         // given
         val storage = prefilledStorage.value
 
@@ -1100,7 +1210,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deckById__HasCards`() {
+    fun test__deckById__HasCards() {
         // given
         val storage = prefilledStorage.value
 
@@ -1126,7 +1236,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__deckById__DoesNotExist`() {
+    fun test__deckById__DoesNotExist() {
         // given
         val storage = prefilledStorage.value
 
@@ -1142,7 +1252,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsOfDeck__NewDeck`() {
+    fun test__cardsOfDeck__NewDeck() {
         // given
         val storage = prefilledStorage.value
 
@@ -1155,7 +1265,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsOfDeck__EmptyDeck`() {
+    fun test__cardsOfDeck__EmptyDeck() {
         // given
         val storage = prefilledStorage.value
 
@@ -1177,7 +1287,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsOfDeck__NonEmptyDeck`() {
+    fun test__cardsOfDeck__NonEmptyDeck() {
         // given
         val storage = prefilledStorage.value
 
@@ -1203,7 +1313,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsOfDeck__NonEmptyDeck__differentCount`() {
+    fun test__cardsOfDeck__NonEmptyDeck__differentCount() {
         // given
         val storage = prefilledStorage.value
 
@@ -1236,7 +1346,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allDecks__DecksAreEmpty`() {
+    fun test__allDecks__DecksAreEmpty() {
         // given
         val storage = prefilledStorage.value
 
@@ -1256,7 +1366,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allDecks__DecksAreNonEmpty`() {
+    fun test__allDecks__DecksAreNonEmpty() {
         // given
         val storage = prefilledStorage.value
 
@@ -1283,7 +1393,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__allDecks__NoDecks`() {
+    fun test__allDecks__NoDecks() {
         // given
         val storage = prefilledStorage.value
 
@@ -1295,7 +1405,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateSRCardState__nonExistent`() {
+    fun test__updateSRCardState__nonExistent() {
         // given
         val storage = prefilledStorage.value
 
@@ -1309,7 +1419,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateSRCardState__stateNeverUpdated`() {
+    fun test__updateSRCardState__stateNeverUpdated() {
         // given
         val storage = prefilledStorage.value
 
@@ -1324,7 +1434,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__updateSRCardState__existent`() {
+    fun test__updateSRCardState__existent() {
         // given
         val storage = prefilledStorage.value
 
@@ -1351,7 +1461,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsDueDate__newCards`() {
+    fun test__cardsDueDate__newCards() {
         // given
         val storage = prefilledStorage.value
 
@@ -1377,7 +1487,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsDueDate__cardsInProgress`() {
+    fun test__cardsDueDate__cardsInProgress() {
         // given
         val storage = prefilledStorage.value
 
@@ -1407,7 +1517,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun `test__cardsDueDate__noPendingCards`() {
+    fun test__cardsDueDate__noPendingCards() {
         // given
         val storage = prefilledStorage.value
 

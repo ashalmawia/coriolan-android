@@ -44,8 +44,8 @@ sealed class Mutation<S : State> {
             return transformed(cards, limitNew(), limitReview())
         }
 
-        private fun limitNew() = limitNew?.minus(counts.countNew()) ?: Int.MAX_VALUE
-        private fun limitReview() = limitReview?.minus(counts.countReview()) ?: Int.MAX_VALUE
+        private fun limitNew() = limitNew?.minus(counts.new) ?: Int.MAX_VALUE
+        private fun limitReview() = limitReview?.minus(counts.review) ?: Int.MAX_VALUE
 
         private fun <S : State> transformed(cards: List<CardWithState<S>>, limitNew: Int, limitReview: Int): List<CardWithState<S>> {
             var countNew = 0

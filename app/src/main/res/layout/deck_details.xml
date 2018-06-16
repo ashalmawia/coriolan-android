@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:layout_width="match_parent"
+			 android:layout_height="match_parent"
+			 android:orientation="vertical"
+			 android:padding="@dimen/spacing__medium"
+			 android:stretchColumns="*">
+
+	<TableRow>
+
+		<Space/>
+
+		<TextView
+			style="@style/DeckDetails.Caption"
+			android:text="@string/card_type_forward"
+			/>
+
+		<TextView
+			style="@style/DeckDetails.Caption"
+			android:text="@string/card_type_reverse"
+			/>
+
+	</TableRow>
+
+	<TableRow>
+
+		<TextView
+			style="@style/DeckDetails.Caption.Vertical"
+			android:text="@string/deck_details_new"
+			/>
+
+		<TextView
+			android:id="@+id/cellNewForward"
+			style="@style/DeckDetails.Cell"
+			/>
+
+		<TextView
+			android:id="@+id/cellNewReverse"
+			style="@style/DeckDetails.Cell"
+			/>
+
+	</TableRow>
+
+	<TableRow>
+
+		<TextView
+			style="@style/DeckDetails.Caption.Vertical"
+			android:text="@string/deck_details_review"
+			/>
+
+		<TextView
+			android:id="@+id/cellReviewForward"
+			style="@style/DeckDetails.Cell"
+			/>
+
+		<TextView
+			android:id="@+id/cellReviewReverse"
+			style="@style/DeckDetails.Cell"
+			/>
+
+	</TableRow>
+
+	<TableRow>
+
+		<TextView
+			style="@style/DeckDetails.Caption.Vertical"
+			android:text="@string/deck_details_total"
+			/>
+
+		<TextView
+			android:id="@+id/cellTotalForward"
+			style="@style/DeckDetails.Cell"
+			/>
+
+		<TextView
+			android:id="@+id/cellTotalReverse"
+			style="@style/DeckDetails.Cell"
+			/>
+
+	</TableRow>
+
+</TableLayout>

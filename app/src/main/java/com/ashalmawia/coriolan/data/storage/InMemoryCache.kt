@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
+import com.ashalmawia.coriolan.data.CountsSummary
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.model.*
@@ -157,6 +158,10 @@ class InMemoryCache(private val inner: Repository) : Repository {
         if (allDecks.isEmpty()) {
             allDecks.putAll(inner.allDecks(domain).associateBy { it.id })
         }
+    }
+
+    override fun deckPendingCounts(exerciseId: String, deck: Deck, date: DateTime): CountsSummary {
+        return inner.deckPendingCounts(exerciseId, deck, date)
     }
 
     override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {

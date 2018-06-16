@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.journal
 
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.data.SimpleCounts
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
 
@@ -17,7 +16,7 @@ class MockJournal : Journal {
     }
 
     override fun cardsStudiedOnDate(date: DateTime): Counts {
-        return SimpleCounts(new[date].orZero(), review[date].orZero(), relearn[date].orZero())
+        return Counts(new[date].orZero(), review[date].orZero(), relearn[date].orZero(), -1)
     }
 
     override fun recordNewCardStudied(date: DateTime) {

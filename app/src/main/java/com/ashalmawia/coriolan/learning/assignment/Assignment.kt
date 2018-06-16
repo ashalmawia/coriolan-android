@@ -21,8 +21,9 @@ class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
         protected set
 
     fun counts(): Counts {
-        val counts = cards().groupBy { it.state.status }.mapValues { it.value.size }
-        return Counts.createFrom(counts)
+        val cards = cards()
+        val counts = cards.groupBy { it.state.status }.mapValues { it.value.size }
+        return Counts.createFrom(counts, cards.size)
     }
     fun hasNext(): Boolean {
         return queue.size > 0

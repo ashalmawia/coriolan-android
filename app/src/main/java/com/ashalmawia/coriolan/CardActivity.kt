@@ -189,9 +189,9 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
 
     private fun updateProgressCounts() {
         val counts = exercise.counts
-        deck_progress_bar__new.text = counts.countNew().toString()
-        deck_progress_bar__review.text = counts.countReview().toString()
-        deck_progress_bar__relearn.text = counts.countRelearn().toString()
+        deck_progress_bar__new.text = counts.new.toString()
+        deck_progress_bar__review.text = counts.review.toString()
+        deck_progress_bar__relearn.text = counts.relearn.toString()
     }
 }
 
