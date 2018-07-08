@@ -103,10 +103,10 @@ class CoriolanPreferencesDataStore(val prefs: Preferences) : PreferenceDataStore
     override fun putString(key: String?, value: String?) {
         when (key ?: return) {
             PREFERENCE_DAILY_LIMITS_NEW ->
-                if (!TextUtils.isEmpty(value)) prefs.setNewCardsDailyLimit(value!!.toInt()) else prefs.clearNewCardsDailyLimit()
+                if (!TextUtils.isEmpty(value)) prefs.setNewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearNewCardsDailyLimit()
 
             PREFERENCE_DAILY_LIMITS_REVIEW ->
-                if (!TextUtils.isEmpty(value)) prefs.setReviewCardsDailyLimit(value!!.toInt()) else prefs.clearReviewCardsDailyLimit()
+                if (!TextUtils.isEmpty(value)) prefs.setReviewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearReviewCardsDailyLimit()
 
             PREFERENCE_CARD_TYPES ->
                 CardTypePreferenceHelper.saveValue(prefs, value)
@@ -116,10 +116,10 @@ class CoriolanPreferencesDataStore(val prefs: Preferences) : PreferenceDataStore
     override fun getString(key: String?, defValue: String?): String? {
         return when (key ?: return null) {
             PREFERENCE_DAILY_LIMITS_NEW ->
-               prefs.getNewCardsDailyLimit()?.toString()
+               prefs.getNewCardsDailyLimitDefault()?.toString()
 
             PREFERENCE_DAILY_LIMITS_REVIEW ->
-                prefs.getReviewCardsDailyLimit()?.toString()
+                prefs.getReviewCardsDailyLimitDefault()?.toString()
 
             PREFERENCE_CARD_TYPES ->
                 CardTypePreferenceHelper.getCurrentValue(prefs)

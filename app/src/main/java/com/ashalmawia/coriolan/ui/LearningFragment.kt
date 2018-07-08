@@ -14,6 +14,8 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.ExerciseDescriptor
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.State
@@ -66,7 +68,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
         val context = context ?: return
 
         decksList.layoutManager = LinearLayoutManager(context)
-        decksList.adapter = DecksAdapter(context, exercise)
+        decksList.adapter = DecksAdapter(context, exercise, this)
     }
 
     override fun fetchData() {
@@ -90,7 +92,9 @@ private const val TYPE_HEADER = 1
 private const val TYPE_ITEM = 2
 
 private class DecksAdapter<S: State, E : Exercise>(
-        private val context: Context, private val exercise: ExerciseDescriptor<S, E>
+        private val context: Context,
+        private val exercise: ExerciseDescriptor<S, E>,
+        private val dataFetcher: DataFetcher
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -168,6 +172,7 @@ private class DecksAdapter<S: State, E : Exercise>(
                 R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
                 R.id.decks_study_options_popup__random -> studyRandom(deck)
                 R.id.decks_study_options_popup__newest_first -> studyNewestFirst(deck)
+                R.id.decks_study_options_popup__study_more -> studyMore(deck)
                 R.id.deck_study_options_popup__details -> showDeckDetails(deck)
             }
             true
@@ -189,6 +194,15 @@ private class DecksAdapter<S: State, E : Exercise>(
 
     private fun studyNewestFirst(deck: Deck) {
         LearningFlow.initiate(context, deck, StudyOrder.NEWEST_FIRST, exercise)
+    }
+
+    private fun studyMore(deck: Deck) {
+        val repository = Repository.get(context)
+        val preferences = Preferences.get(context)
+
+        val dialog = IncreaseLimitsDialog(context, deck, exercise, today(), repository, preferences).build()
+        dialog.setOnDismissListener { dataFetcher.fetchData() }
+        dialog.show()
     }
 
     private fun showDeckDetails(deck: Deck) {

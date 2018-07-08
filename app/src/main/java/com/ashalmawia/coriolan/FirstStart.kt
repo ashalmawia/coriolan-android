@@ -15,8 +15,8 @@ object FirstStart {
             return
         }
 
-        preferences.setNewCardsDailyLimit(NEW_CARDS_DAILY_LIMIT_DEFAULT)
-        preferences.setReviewCardsDailyLimit(REVIEW_CARDS_DAILY_LIMIT_DEFAULT)
+        preferences.setNewCardsDailyLimitDefault(NEW_CARDS_DAILY_LIMIT_DEFAULT)
+        preferences.setReviewCardsDailyLimitDefault(REVIEW_CARDS_DAILY_LIMIT_DEFAULT)
         preferences.setCardTypePreference(CARD_TYPE_PREFERENCE_DEFAULT)
 
         preferences.recordFirstStart()

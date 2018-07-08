@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="@dimen/spacing__large">
+
+
+	<TableLayout android:layout_width="match_parent"
+				 android:layout_height="wrap_content">
+
+		<TableRow>
+
+			<TextView
+				style="@style/IncreaseLimits.Caption"
+				android:labelFor="@id/countNew"
+				android:text="@string/increase_limits__new"
+				/>
+
+			<EditText
+				android:id="@+id/countNew"
+				style="@style/IncreaseLimits.Input"
+				/>
+
+			<TextView
+				style="@style/IncreaseLimits.Info.Of"
+				/>
+
+			<TextView
+				android:id="@+id/countNewMax"
+				style="@style/IncreaseLimits.Info"
+				/>
+
+		</TableRow>
+
+		<TableRow>
+
+			<TextView
+				style="@style/IncreaseLimits.Caption"
+				android:labelFor="@id/countReview"
+				android:text="@string/increase_limits__review"
+				/>
+
+			<EditText
+				android:id="@+id/countReview"
+				style="@style/IncreaseLimits.Input"
+				/>
+
+			<TextView
+				style="@style/IncreaseLimits.Info.Of"
+				/>
+
+			<TextView
+				android:id="@+id/countReviewMax"
+				style="@style/IncreaseLimits.Info"
+				/>
+
+		</TableRow>
+
+	</TableLayout>
+
+</LinearLayout>

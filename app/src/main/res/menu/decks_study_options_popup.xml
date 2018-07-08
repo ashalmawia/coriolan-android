@@ -10,6 +10,9 @@
 		android:id="@+id/decks_study_options_popup__newest_first"
 		android:title="@string/deck_options_study_newest_first"/>
 	<item
+		android:id="@+id/decks_study_options_popup__study_more"
+		android:title="@string/deck_options_study_more"/>
+	<item
 		android:id="@+id/deck_study_options_popup__details"
 		android:title="@string/deck_options_details"/>
 </menu>

@@ -1,10 +1,13 @@
 package com.ashalmawia.coriolan.data.prefs
 
 import android.content.Context
+import org.joda.time.DateTime
 
 class SharedPreferencesImpl(context: Context) : Preferences {
 
     private val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    private val dailyLimitsNew = context.getSharedPreferences("daily_limits_new", Context.MODE_PRIVATE)
+    private val dailyLimitsReview = context.getSharedPreferences("daily_limits_review", Context.MODE_PRIVATE)
 
     override fun isFirstStart(): Boolean {
         return prefs.getBoolean(IS_FIRST_START, true)
@@ -14,28 +17,46 @@ class SharedPreferencesImpl(context: Context) : Preferences {
         prefs.edit().putBoolean(IS_FIRST_START, false).apply()
     }
 
-    override fun getNewCardsDailyLimit(): Int? {
-        return prefs.getIntOrNull(DAILY_LIMIT_NEW_CARDS)
+    override fun getNewCardsDailyLimitDefault(): Int? {
+        return dailyLimitsNew.getIntOrNull(DEFAULT)
     }
 
-    override fun setNewCardsDailyLimit(limit: Int) {
-        prefs.edit().putInt(DAILY_LIMIT_NEW_CARDS, limit).apply()
+    override fun getNewCardsDailyLimit(date: DateTime): Int? {
+        val overriden = dailyLimitsNew.getIntOrNull(date.toString())
+        return overriden ?: getNewCardsDailyLimitDefault()
+    }
+
+    override fun setNewCardsDailyLimitDefault(limit: Int) {
+        dailyLimitsNew.edit().putInt(DEFAULT, limit).apply()
+    }
+
+    override fun setNewCardsDailyLimit(limit: Int, date: DateTime) {
+        dailyLimitsNew.edit().putInt(date.toString(), limit).apply()
     }
 
     override fun clearNewCardsDailyLimit() {
-        prefs.edit().remove(DAILY_LIMIT_NEW_CARDS).apply()
+        dailyLimitsNew.edit().clear().apply()
     }
 
-    override fun getReviewCardsDailyLimit(): Int? {
-        return prefs.getIntOrNull(DAILY_LIMIT_REVIEW_CARDS)
+    override fun getReviewCardsDailyLimitDefault(): Int? {
+        return dailyLimitsReview.getIntOrNull(DEFAULT)
     }
 
-    override fun setReviewCardsDailyLimit(limit: Int) {
-        prefs.edit().putInt(DAILY_LIMIT_REVIEW_CARDS, limit).apply()
+    override fun getReviewCardsDailyLimit(date: DateTime): Int? {
+        val overriden = dailyLimitsReview.getIntOrNull(date.toString())
+        return overriden ?: getReviewCardsDailyLimitDefault()
+    }
+
+    override fun setReviewCardsDailyLimitDefault(limit: Int) {
+        dailyLimitsReview.edit().putInt(DEFAULT, limit).apply()
+    }
+
+    override fun setReviewCardsDailyLimit(limit: Int, date: DateTime) {
+        dailyLimitsReview.edit().putInt(date.toString(), limit).apply()
     }
 
     override fun clearReviewCardsDailyLimit() {
-        prefs.edit().remove(DAILY_LIMIT_REVIEW_CARDS).apply()
+        dailyLimitsReview.edit().clear().apply()
     }
 
     override fun getCardTypePreference(): CardTypePreference? {
@@ -53,6 +74,5 @@ class SharedPreferencesImpl(context: Context) : Preferences {
 }
 
 private const val IS_FIRST_START = "is_first_start"
-private const val DAILY_LIMIT_NEW_CARDS = "daily_limit_new_cards"
-private const val DAILY_LIMIT_REVIEW_CARDS = "daily_limit_review_cards"
+private const val DEFAULT = "default"
 private const val CARDY_TYPE_PREFERENCE = "card_type_preference"

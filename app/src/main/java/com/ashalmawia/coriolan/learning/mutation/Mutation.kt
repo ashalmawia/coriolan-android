@@ -31,8 +31,8 @@ sealed class Mutation<S : State> {
 
     class LimitCount<S : State>(preferences: Preferences, journal: Journal, date: DateTime) : Mutation<S>() {
 
-        private val limitNew = preferences.getNewCardsDailyLimit()
-        private val limitReview = preferences.getReviewCardsDailyLimit()
+        private val limitNew = preferences.getNewCardsDailyLimit(date)
+        private val limitReview = preferences.getReviewCardsDailyLimit(date)
 
         private val counts = journal.cardsStudiedOnDate(date)
 

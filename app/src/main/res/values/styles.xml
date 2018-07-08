@@ -80,4 +80,32 @@
 		<item name="android:layout_margin">@dimen/spacing__small</item>
 	</style>
 
+	<style name="IncreaseLimits">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_weight">2</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginLeft">@dimen/spacing__tiny</item>
+		<item name="android:layout_marginRight">@dimen/spacing__tiny</item>
+	</style>
+
+	<style name="IncreaseLimits.Caption">
+		<item name="android:textStyle">bold</item>
+		<item name="android:gravity">end</item>
+	</style>
+
+	<style name="IncreaseLimits.Input">
+		<item name="android:inputType">numberSigned</item>
+		<item name="android:gravity">start</item>
+	</style>
+
+	<style name="IncreaseLimits.Info" parent="IncreaseLimits.Caption">
+		<item name="android:gravity">start</item>
+	</style>
+
+	<style name="IncreaseLimits.Info.Of">
+		<item name="android:layout_weight">1</item>
+		<item name="android:gravity">center</item>
+		<item name="android:text">/</item>
+	</style>
+
 </resources>

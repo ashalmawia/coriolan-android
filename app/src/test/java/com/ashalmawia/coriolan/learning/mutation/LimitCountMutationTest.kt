@@ -42,7 +42,7 @@ class LimitCountMutationTest {
     @Test
     fun `test__noNew`() {
         // given
-        preferences.setNewCardsDailyLimit(0)
+        preferences.setNewCardsDailyLimitDefault(0)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -55,7 +55,7 @@ class LimitCountMutationTest {
     @Test
     fun `test__noReview`() {
         // given
-        preferences.setReviewCardsDailyLimit(0)
+        preferences.setReviewCardsDailyLimitDefault(0)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -68,8 +68,8 @@ class LimitCountMutationTest {
     @Test
     fun `test__allZero`() {
         // given
-        preferences.setNewCardsDailyLimit(0)
-        preferences.setReviewCardsDailyLimit(0)
+        preferences.setNewCardsDailyLimitDefault(0)
+        preferences.setReviewCardsDailyLimitDefault(0)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -81,7 +81,7 @@ class LimitCountMutationTest {
     @Test
     fun `test__limitOnlyNew`() {
         // given
-        preferences.setNewCardsDailyLimit(3)
+        preferences.setNewCardsDailyLimitDefault(3)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -96,7 +96,7 @@ class LimitCountMutationTest {
     @Test
     fun `test__limitOnlyReview`() {
         // given
-        preferences.setReviewCardsDailyLimit(5)
+        preferences.setReviewCardsDailyLimitDefault(5)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -111,8 +111,8 @@ class LimitCountMutationTest {
     @Test
     fun `test__limitsTooHigh`() {
         // given
-        preferences.setNewCardsDailyLimit(cards.size * 2)
-        preferences.setReviewCardsDailyLimit(cards.size * 2)
+        preferences.setNewCardsDailyLimitDefault(cards.size * 2)
+        preferences.setReviewCardsDailyLimitDefault(cards.size * 2)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -124,8 +124,8 @@ class LimitCountMutationTest {
     @Test
     fun `test__limitsEqual`() {
         // given
-        preferences.setNewCardsDailyLimit(15)
-        preferences.setReviewCardsDailyLimit(15)
+        preferences.setNewCardsDailyLimitDefault(15)
+        preferences.setReviewCardsDailyLimitDefault(15)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -139,8 +139,8 @@ class LimitCountMutationTest {
     @Test
     fun `test__realLimits__less`() {
         // given
-        preferences.setNewCardsDailyLimit(5)
-        preferences.setReviewCardsDailyLimit(12)
+        preferences.setNewCardsDailyLimitDefault(5)
+        preferences.setReviewCardsDailyLimitDefault(12)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -155,8 +155,8 @@ class LimitCountMutationTest {
     fun `test__withJournal__allLearned`() {
         // given
         journal.setTodayLearned(100, 100, date)
-        preferences.setNewCardsDailyLimit(20)
-        preferences.setReviewCardsDailyLimit(20)
+        preferences.setNewCardsDailyLimitDefault(20)
+        preferences.setReviewCardsDailyLimitDefault(20)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -169,8 +169,8 @@ class LimitCountMutationTest {
     fun `test__withJournal__allNewLearned`() {
         // given
         journal.setTodayLearned(100, 0, date)
-        preferences.setNewCardsDailyLimit(20)
-        preferences.setReviewCardsDailyLimit(20)
+        preferences.setNewCardsDailyLimitDefault(20)
+        preferences.setReviewCardsDailyLimitDefault(20)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -185,8 +185,8 @@ class LimitCountMutationTest {
     fun `test__withJournal__allReviewLearned`() {
         // given
         journal.setTodayLearned(0, 100, date)
-        preferences.setNewCardsDailyLimit(5)
-        preferences.setReviewCardsDailyLimit(10)
+        preferences.setNewCardsDailyLimitDefault(5)
+        preferences.setReviewCardsDailyLimitDefault(10)
 
         // when
         val processed = mutation.value.apply(cards)
@@ -201,8 +201,8 @@ class LimitCountMutationTest {
     fun `test__withJournal__partlyLearned`() {
         // given
         journal.setTodayLearned(5, 7, date)
-        preferences.setNewCardsDailyLimit(12)
-        preferences.setReviewCardsDailyLimit(10)
+        preferences.setNewCardsDailyLimitDefault(12)
+        preferences.setReviewCardsDailyLimitDefault(10)
 
         // when
         val processed = mutation.value.apply(cards)

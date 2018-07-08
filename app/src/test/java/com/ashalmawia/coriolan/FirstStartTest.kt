@@ -15,8 +15,8 @@ class FirstStartTest {
     @Test
     fun testFirstStart() {
         // given
-        assertNull(preferences.getNewCardsDailyLimit())
-        assertNull(preferences.getReviewCardsDailyLimit())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
+        assertNull(preferences.getReviewCardsDailyLimitDefault())
         assertTrue(preferences.isFirstStart())
 
         // when
@@ -24,8 +24,8 @@ class FirstStartTest {
 
         // then
         assertFalse(preferences.isFirstStart())
-        assertEquals(15, preferences.getNewCardsDailyLimit())
-        assertEquals(30, preferences.getReviewCardsDailyLimit())
+        assertEquals(15, preferences.getNewCardsDailyLimitDefault())
+        assertEquals(30, preferences.getReviewCardsDailyLimitDefault())
         assertEquals(CardTypePreference.MIXED, preferences.getCardTypePreference())
     }
 
@@ -35,7 +35,7 @@ class FirstStartTest {
         preferences.recordFirstStart()
         assertFalse(preferences.isFirstStart())
 
-        preferences.setReviewCardsDailyLimit(5)
+        preferences.setReviewCardsDailyLimitDefault(5)
         preferences.setCardTypePreference(CardTypePreference.REVERSE_ONLY)
 
         // when
@@ -43,8 +43,8 @@ class FirstStartTest {
 
         // then
         assertFalse(preferences.isFirstStart())
-        assertNull(preferences.getNewCardsDailyLimit())
-        assertEquals(5, preferences.getReviewCardsDailyLimit())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
+        assertEquals(5, preferences.getReviewCardsDailyLimitDefault())
         assertEquals(CardTypePreference.REVERSE_ONLY, preferences.getCardTypePreference())
     }
 

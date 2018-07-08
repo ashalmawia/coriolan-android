@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.errors.Errors
+import kotlinx.android.synthetic.main.button_bar.*
 import kotlinx.android.synthetic.main.create_deck.*
 
 private const val TAG = "AddEditDeckActivity"

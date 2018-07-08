@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.prefs
 
+import com.ashalmawia.coriolan.learning.scheduler.today
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -10,7 +11,7 @@ abstract class PreferencesTest {
     private val prefereces = lazy { create() }
 
     @Test
-    fun `test__isFirstStart__recordFirstStart`() {
+    fun `test isFirstStart recordFirstStart`() {
         // given
         val preferences = this.prefereces.value
 
@@ -27,69 +28,129 @@ abstract class PreferencesTest {
     }
 
     @Test
-    fun `test__newCardsLimit`() {
+    fun `test newCardsLimit default`() {
         // given
         val preferences = this.prefereces.value
         val newCardsLimit = 8
 
         // then
-        assertNull(preferences.getNewCardsDailyLimit())
-        assertNull(preferences.getNewCardsDailyLimit())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
 
         // when
-        preferences.setReviewCardsDailyLimit(5)
+        preferences.setReviewCardsDailyLimitDefault(5)
 
         // then
-        assertNull(preferences.getNewCardsDailyLimit())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
 
         // when
-        preferences.setNewCardsDailyLimit(newCardsLimit)
+        preferences.setNewCardsDailyLimitDefault(newCardsLimit)
 
         // then
-        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimit())
-        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimit())
+        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimitDefault())
+        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimitDefault())
 
         // when
         preferences.clearNewCardsDailyLimit()
 
         // then
-        assertNull(preferences.getNewCardsDailyLimit())
-        assertNull(preferences.getNewCardsDailyLimit())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
+        assertNull(preferences.getNewCardsDailyLimitDefault())
     }
 
     @Test
-    fun `test__reviewCardsLimit`() {
+    fun `test newCardsLimit`() {
+        // given
+        val preferences = this.prefereces.value
+        val newCardsLimit = 8
+        val newCardsLimitToday = 20
+        val today = today()
+
+        // when
+        preferences.setNewCardsDailyLimitDefault(newCardsLimit)
+
+        // then
+        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimitDefault())
+        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimit(today))
+
+        // when
+        preferences.setNewCardsDailyLimit(newCardsLimitToday, today)
+
+        // then
+        assertEquals(newCardsLimitToday, preferences.getNewCardsDailyLimit(today))
+        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimit(today.minusDays(1)))
+        assertEquals(newCardsLimit, preferences.getNewCardsDailyLimit(today.plusDays(1)))
+
+        // when
+        preferences.clearNewCardsDailyLimit()
+
+        // then
+        assertNull(preferences.getNewCardsDailyLimit(today))
+    }
+
+    @Test
+    fun `test reviewCardsLimit default`() {
         // given
         val preferences = this.prefereces.value
         val reviewCardsLimit = 6
 
         // then
-        assertNull(preferences.getReviewCardsDailyLimit())
-        assertNull(preferences.getReviewCardsDailyLimit())
+        assertNull(preferences.getReviewCardsDailyLimitDefault())
+        assertNull(preferences.getReviewCardsDailyLimitDefault())
 
         // when
-        preferences.setNewCardsDailyLimit(3)
+        preferences.setNewCardsDailyLimitDefault(3)
 
         // then
-        assertNull(preferences.getReviewCardsDailyLimit())
+        assertNull(preferences.getReviewCardsDailyLimitDefault())
 
         // when
-        preferences.setReviewCardsDailyLimit(reviewCardsLimit)
+        preferences.setReviewCardsDailyLimitDefault(reviewCardsLimit)
 
         // then
-        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimit())
-        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimit())
+        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimitDefault())
+        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimitDefault())
 
         // when
         preferences.clearReviewCardsDailyLimit()
 
         // then
-        assertNull(preferences.getReviewCardsDailyLimit())
-        assertNull(preferences.getReviewCardsDailyLimit())
+        assertNull(preferences.getReviewCardsDailyLimitDefault())
+        assertNull(preferences.getReviewCardsDailyLimitDefault())
     }
 
     @Test
-    fun `test__cardTypePreference`() {
+    fun `test reviewCardsLimit`() {
+        // given
+        val preferences = this.prefereces.value
+        val reviewCardsLimit = 8
+        val reviewCardsLimitToday = 20
+        val today = today()
+
+        // when
+        preferences.setReviewCardsDailyLimitDefault(reviewCardsLimit)
+
+        // then
+        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimitDefault())
+        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimit(today))
+
+        // when
+        preferences.setReviewCardsDailyLimit(reviewCardsLimitToday, today)
+
+        // then
+        assertEquals(reviewCardsLimitToday, preferences.getReviewCardsDailyLimit(today))
+        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimit(today.minusDays(1)))
+        assertEquals(reviewCardsLimit, preferences.getReviewCardsDailyLimit(today.plusDays(1)))
+
+        // when
+        preferences.clearReviewCardsDailyLimit()
+
+        // then
+        assertNull(preferences.getReviewCardsDailyLimit(today))
+    }
+
+    @Test
+    fun `test cardTypePreference`() {
         // given
         val preferences = this.prefereces.value
         val cardType = CardTypePreference.REVERSE_ONLY

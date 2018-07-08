@@ -1,23 +1,41 @@
 package com.ashalmawia.coriolan.data.prefs
 
+import org.joda.time.DateTime
+
 class MockPreferences : Preferences {
 
-    private var newCardsDailyLimit: Int? = null
-    override fun getNewCardsDailyLimit(): Int? = newCardsDailyLimit
-    override fun setNewCardsDailyLimit(limit: Int) {
-        newCardsDailyLimit = limit
+    private var newCardsDailyLimitDefault: Int? = null
+    override fun getNewCardsDailyLimitDefault(): Int? = newCardsDailyLimitDefault
+    override fun setNewCardsDailyLimitDefault(limit: Int) {
+        newCardsDailyLimitDefault = limit
     }
     override fun clearNewCardsDailyLimit() {
-        newCardsDailyLimit = null
+        newCardsDailyLimitDefault = null
+        newCardsDailyLimits.clear()
     }
 
-    private var reviewCardsDailyLimit: Int? = null
-    override fun getReviewCardsDailyLimit(): Int? = reviewCardsDailyLimit
-    override fun setReviewCardsDailyLimit(limit: Int) {
-        reviewCardsDailyLimit = limit
+    private val newCardsDailyLimits = mutableMapOf<String, Int>()
+    override fun getNewCardsDailyLimit(date: DateTime): Int?
+            = newCardsDailyLimits[date.toString()] ?: getNewCardsDailyLimitDefault()
+    override fun setNewCardsDailyLimit(limit: Int, date: DateTime) {
+        newCardsDailyLimits[date.toString()] = limit
+    }
+
+    private var reviewCardsDailyLimitDefault: Int? = null
+    override fun getReviewCardsDailyLimitDefault(): Int? = reviewCardsDailyLimitDefault
+    override fun setReviewCardsDailyLimitDefault(limit: Int) {
+        reviewCardsDailyLimitDefault = limit
     }
     override fun clearReviewCardsDailyLimit() {
-        reviewCardsDailyLimit = null
+        reviewCardsDailyLimitDefault = null
+        reviewCardsDailyLimits.clear()
+    }
+
+    private val reviewCardsDailyLimits = mutableMapOf<String, Int>()
+    override fun getReviewCardsDailyLimit(date: DateTime): Int?
+            = reviewCardsDailyLimits[date.toString()] ?: getReviewCardsDailyLimitDefault()
+    override fun setReviewCardsDailyLimit(limit: Int, date: DateTime) {
+        reviewCardsDailyLimits[date.toString()] = limit
     }
 
     private var firstStart: Boolean? = null
