@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.new
 import com.ashalmawia.coriolan.util.review
 import org.joda.time.DateTime
@@ -107,6 +108,13 @@ sealed class Mutation<S : State> {
 
         override fun apply(cards: List<CardWithState<SRState>>): List<CardWithState<SRState>> {
             return cards.sortedBy { it.state.period }
+        }
+    }
+
+    class SplitDeck<S : State>(private val deck: Deck) : Mutation<S>() {
+
+        override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+            return cards.filter { it.card.type == deck.type }
         }
     }
 }

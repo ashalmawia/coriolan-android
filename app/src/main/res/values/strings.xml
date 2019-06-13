@@ -22,6 +22,8 @@
 	<string name="decks_default">Default</string>
 	<string name="decks_select_deck">Select deck:</string>
 	<string name="decks__category_title">Decks</string>
+	<string name="decks__type__passive">Passive vocabulary</string>
+	<string name="decks__type__active">Active vocabulary</string>
 
 	<string name="deck_content_cards">Cards:</string>
 
@@ -37,6 +39,7 @@
 
 	<string name="card_type_forward">Forward</string>
 	<string name="card_type_reverse">Reverse</string>
+
 	<string name="deck_details_new">New:</string>
 	<string name="deck_details_review">Pending review:</string>
 	<string name="deck_details_total">Total</string>

@@ -27,7 +27,7 @@ class LearningFlow<S : State, out E : Exercise>(
     }
 
     override fun onFinish() {
-        LearningFlow.current = null
+        current = null
         finishListener?.onFinish()
     }
 
@@ -46,17 +46,24 @@ class LearningFlow<S : State, out E : Exercise>(
 
         fun <S: State, E : Exercise> peekCounts(context: Context, exercise: ExerciseDescriptor<S, E>, deck: Deck): Counts {
             val preferences = Preferences.get(context)
-            return createAssignment(repository(context), preferences, journal(context), StudyOrder.ORDER_ADDED, exercise, deck).counts()
+            return createAssignment(
+                    repository(context), preferences, journal(context), StudyOrder.ORDER_ADDED, exercise, deck
+            ).counts()
         }
     }
 }
 
 private fun <S: State, E : Exercise> createAssignment(
-        repository: Repository, preferences: Preferences, journal: Journal, order: StudyOrder, exercise: ExerciseDescriptor<S, E>, deck: Deck
+        repository: Repository,
+        preferences: Preferences,
+        journal: Journal,
+        order: StudyOrder,
+        exercise: ExerciseDescriptor<S, E>,
+        deck: Deck
 ): Assignment<S> {
     val date = today()
     val cards = exercise.pendingCards(repository, deck, date)
-    val mutations = exercise.mutations(preferences, journal, date, order)
+    val mutations = exercise.mutations(preferences, journal, date, order, deck)
     return Assignment(date, mutations.apply(cards))
 }
 

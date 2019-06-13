@@ -42,9 +42,10 @@ class LearningExerciseDescriptor : ExerciseDescriptor<SRState, LearningExercise>
         repository.updateSRCardState(card, emptyState(), stableId)
     }
 
-    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder): Mutations<SRState> {
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<SRState> {
         return Mutations(listOf(
                 Mutation.CardTypeFilter.from(preferences),
+                Mutation.SplitDeck(deck),
                 Mutation.SortReviewsByPeriod(),
                 Mutation.NewCardsOrder.from(order),
                 Mutation.LimitCount(preferences, journal, date),

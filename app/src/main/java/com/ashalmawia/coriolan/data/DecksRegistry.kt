@@ -41,6 +41,15 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         return repository.allDecks(domain)
     }
 
+    fun allDecksForLearning(): List<Deck> {
+        val realList = repository.allDecks(domain)
+        return realList.flatMap { it.splitInfoForwardAndReverse() }
+    }
+
+    private fun Deck.splitInfoForwardAndReverse(): List<Deck> {
+        return listOf(this.copy(type = CardType.FORWARD), this.copy(type = CardType.REVERSE))
+    }
+
     fun addDeck(name: String) {
         repository.addDeck(domain, name)
     }

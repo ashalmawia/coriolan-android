@@ -22,6 +22,7 @@ import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
@@ -82,7 +83,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
     private fun decksList(): List<Deck> {
         val timeStart = System.currentTimeMillis()
-        val decks = decksRegistry().allDecks()
+        val decks = decksRegistry().allDecksForLearning()
         Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
         return decks
     }
@@ -98,14 +99,14 @@ private class DecksAdapter<S: State, E : Exercise>(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
-    private val counts: MutableMap<Long, Counts> = mutableMapOf()
+    private val counts: MutableMap<Deck, Counts> = mutableMapOf()
 
     fun setData(data: List<Deck>) {
         decks.clear()
         decks.addAll(data)
 
         val timeStart = System.currentTimeMillis()
-        decks.forEach { counts[it.id] = LearningFlow.peekCounts(context, exercise, it) }
+        decks.forEach { counts[it] = LearningFlow.peekCounts(context, exercise, it) }
         Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
 
         notifyDataSetChanged()
@@ -131,10 +132,11 @@ private class DecksAdapter<S: State, E : Exercise>(
         val item = decks[positionToIndex(position)]
 
         holder.text.text = item.name
+        holder.type.text = item.type.toTypeStringRes()?.run { context.getString(this) } ?: ""
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
         holder.itemView.setOnClickListener { studyDefault(item) }
-        setPendingStatus(holder, counts[item.id]!!)
+        setPendingStatus(holder, counts.getValue(item))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -228,10 +230,17 @@ private class DecksAdapter<S: State, E : Exercise>(
     }
 }
 
+private fun CardType.toTypeStringRes() = when (this) {
+    CardType.UNKNOWN -> null
+    CardType.FORWARD -> R.string.decks__type__passive
+    CardType.REVERSE -> R.string.decks__type__active
+}
+
 class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val text = view.findViewById<TextView>(R.id.deck_list_item__text)!!
+    val type = view.findViewById<TextView>(R.id.deck_list_item__type)!!
     val more = view.findViewById<ImageView>(R.id.deck_list_item__more)!!
     val pending = view.findViewById<ViewGroup>(R.id.deck_list_item__pending)!!
     val countNew = view.findViewById<TextView>(R.id.pending_counter__new)!!

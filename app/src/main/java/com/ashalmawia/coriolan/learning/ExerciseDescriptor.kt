@@ -42,5 +42,5 @@ interface ExerciseDescriptor<S : State, out T : Exercise> {
 
     fun onTranslationAdded(repository: Repository, card: Card)
 
-    fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder): Mutations<S>
+    fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<S>
 }
