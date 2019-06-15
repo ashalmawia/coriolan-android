@@ -38,11 +38,12 @@ class MockRepository : Repository {
     }
 
     private val domains = mutableListOf<Domain>()
-    override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
+    override fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain {
         val domain = Domain(domains.size + 1L, name, langOriginal, langTranslations)
         domains.add(domain)
         return domain
     }
+    override fun domainById(id: Long): Domain? = domains.find { it.id == id }
     override fun allDomains(): List<Domain> {
         return domains
     }

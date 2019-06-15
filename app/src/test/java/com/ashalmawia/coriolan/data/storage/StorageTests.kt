@@ -453,6 +453,35 @@ abstract class StorageTest {
     }
 
     @Test
+    fun test__domainById__exists() {
+        // given
+        val storage = emptyStorage.value
+
+        val lang1 = storage.addLanguage("French")
+        val lang2 = storage.addLanguage("Russian")
+        val lang3 = storage.addLanguage("German")
+
+        storage.createDomain("Some domain 1", lang1, lang2)
+        val domain2 = storage.createDomain("Domain 2", lang3, lang2)
+        val domain3 = storage.createDomain(null, lang1, lang2)
+        storage.createDomain("One more", lang3, lang1)
+
+        // when
+        val read1 = storage.domainById(domain2.id)
+
+        // then
+        assertEquals(domain2, read1)
+
+        // when
+        val read2 = storage.domainById(domain3.id)
+
+        // then
+        assertEquals(domain3, read2)
+        assertEquals(lang1.value, domain3.name)
+        assertEquals(lang1.value, read2!!.name)
+    }
+
+    @Test
     fun test__allDomains__empty() {
         // given
         val storage = emptyStorage.value

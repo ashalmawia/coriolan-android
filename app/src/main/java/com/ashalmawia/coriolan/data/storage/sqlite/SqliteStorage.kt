@@ -173,7 +173,7 @@ class SqliteStorage(
         }
     }
 
-    override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
+    override fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain {
         val db = helper.writableDatabase
         val cv = createDomainContentValues(name, langOriginal, langTranslations)
 
@@ -182,6 +182,40 @@ class SqliteStorage(
             return Domain(id, name, langOriginal, langTranslations)
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to create domain $langOriginal -> $langTranslations, constraint violation", e)
+        }
+    }
+
+    override fun domainById(id: Long): Domain? {
+        val db = helper.readableDatabase
+
+        val DOMAINS = "D"
+        val LANGS1 = "L1"
+        val LANGS2 = "L2"
+
+        val cursor = db.rawQuery("""
+            |SELECT
+            |   ${allColumnsDomains(DOMAINS)},
+            |   ${allColumnsLanguages(LANGS1)},
+            |   ${allColumnsLanguages(LANGS2)}
+            |
+            |   FROM $SQLITE_TABLE_DOMAINS AS $DOMAINS
+            |      LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS1
+            |          ON ${SQLITE_COLUMN_LANG_ORIGINAL.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS1)}
+            |      LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS2
+            |          ON ${SQLITE_COLUMN_LANG_TRANSLATIONS.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS2)}
+            |
+            |   WHERE
+            |      ${SQLITE_COLUMN_ID.from(DOMAINS)} = ?
+        """.trimMargin(), arrayOf(id.toString()))
+
+        cursor.use {
+            it.moveToNext()
+            return Domain(
+                    it.getId(DOMAINS),
+                    it.getNameIfAny(DOMAINS),
+                    it.getLanguage(LANGS1),
+                    it.getLanguage(LANGS2)
+            )
         }
     }
 

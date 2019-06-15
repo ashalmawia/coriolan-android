@@ -35,6 +35,7 @@
 		<item name="android:background">@color/colorPrimary</item>
 		<item name="popupTheme">@style/Theme.AppCompat.Light</item>
 		<item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+		<item name="titleTextColor">@color/white</item>
 	</style>
 
 	<style name="Coriolan.Text" />

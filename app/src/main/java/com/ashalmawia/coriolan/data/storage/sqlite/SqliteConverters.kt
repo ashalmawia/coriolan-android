@@ -36,10 +36,10 @@ fun createExpressionContentValues(value: String, type: ExpressionType, languageI
 
 // ********** DOMAIIN ********************
 
-fun createDomainContentValues(name: String, langOriginal: Language, langTranslations: Language)
+fun createDomainContentValues(name: String?, langOriginal: Language, langTranslations: Language)
     = createDomainContentValues(name, langOriginal.id, langTranslations.id)
 
-fun createDomainContentValues(name: String, langOriginalId: Long, langTranslationsId: Long, id: Long? = null): ContentValues {
+fun createDomainContentValues(name: String?, langOriginalId: Long, langTranslationsId: Long, id: Long? = null): ContentValues {
     val cv = ContentValues()
     if (id != null) {
         cv.put(SQLITE_COLUMN_ID, id)

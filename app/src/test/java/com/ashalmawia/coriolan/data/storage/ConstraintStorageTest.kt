@@ -113,17 +113,6 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__createDomain__nameUnique`() {
-        // given
-        val storage = prefilledStorage.value
-        val name = "My domain"
-
-        // when
-        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
-        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
-    }
-
-    @Test(expected = DataProcessingException::class)
     fun `test__createDomain__langOriginalIncorrect`() {
         // given
         val storage = prefilledStorage.value

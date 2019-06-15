@@ -7,16 +7,13 @@ import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.toExpressionType
-import com.ashalmawia.coriolan.util.getDate
-import com.ashalmawia.coriolan.util.getLong
-import com.ashalmawia.coriolan.util.getString
-import com.ashalmawia.coriolan.util.getInt
-import com.ashalmawia.coriolan.util.isNull
+import com.ashalmawia.coriolan.util.*
 import org.joda.time.DateTime
 
 fun Cursor.getValue(alias: String? = null): String { return getString(SQLITE_COLUMN_VALUE, alias) }
 fun Cursor.getLangValue(alias: String? = null): String { return getString(SQLITE_COLUMN_LANG_VALUE, alias) }
 fun Cursor.getName(alias: String? = null): String { return getString(SQLITE_COLUMN_NAME, alias) }
+fun Cursor.getNameIfAny(alias: String? = null): String? { return getStringOrNull(SQLITE_COLUMN_NAME, alias) }
 
 fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID, alias) }
 fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }

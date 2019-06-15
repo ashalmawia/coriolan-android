@@ -56,10 +56,15 @@ class InMemoryCache(private val inner: Repository) : Repository {
         expressions.remove(expression.id)
     }
 
-    override fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain {
+    override fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain {
         val domain = inner.createDomain(name, langOriginal, langTranslations)
         domains[domain.id] = domain
         return domain
+    }
+
+    override fun domainById(id: Long): Domain? {
+        // no need to cache languages as it's immutable data that isn't normally queried
+        return inner.domainById(id)
     }
 
     override fun allDomains(): List<Domain> {

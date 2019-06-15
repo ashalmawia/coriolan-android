@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.edit.EditFragment
@@ -40,13 +41,17 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.domain_activity)
 
-        setUpToolbarWithLogo()
-
         if (!intent.hasExtra(EXTRA_DOMAIN_ID)) {
             throw IllegalStateException("missing domain id")
         }
 
-//        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        val repository = Repository.get(this)
+        val domain = repository.domainById(domainId)
+
+        domain?.apply {
+            setUpToolbar(domain.name, false)
+        }
 
         setUpBottomBarNavigation()
     }

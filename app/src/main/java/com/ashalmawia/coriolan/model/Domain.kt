@@ -2,10 +2,11 @@ package com.ashalmawia.coriolan.model
 
 data class Domain(
         val id: Long,
-        val name: String,
+        private val customName: String?,
         private val langOriginal: Language,
         private val langTranslations: Language
 ) {
+    val name: String = if (customName != null && customName.isNotBlank()) customName else langOriginal.value
 
     fun langOriginal(type: CardType = CardType.FORWARD): Language {
         return when (type) {

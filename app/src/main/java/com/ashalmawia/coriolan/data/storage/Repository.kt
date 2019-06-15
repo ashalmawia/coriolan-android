@@ -17,7 +17,7 @@ interface Repository {
         private lateinit var instance: Repository
 
         fun get(context: Context): Repository {
-            if (!Repository.Companion::instance.isInitialized) {
+            if (!Companion::instance.isInitialized) {
                 instance = InMemoryCache(SqliteStorage(context.applicationContext, ExercisesRegistry.allExercises()))
             }
             return instance
@@ -38,7 +38,9 @@ interface Repository {
 
     fun deleteExpression(expression: Expression)
 
-    fun createDomain(name: String, langOriginal: Language, langTranslations: Language): Domain
+    fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain
+
+    fun domainById(id: Long): Domain?
 
     fun allDomains(): List<Domain>
 
