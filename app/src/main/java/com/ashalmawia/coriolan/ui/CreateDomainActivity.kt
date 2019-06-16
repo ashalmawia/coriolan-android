@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.create_domain.*
 import java.lang.Exception
 
@@ -99,7 +100,7 @@ class CreateDomainActivity : BaseActivity() {
             if (firstStart) {
                 // do not go to domain details directly on the first start
                 // as we want to configure backstack properly
-                restart()
+                restartApp()
             } else {
                 openDomainActivity(domain)
             }

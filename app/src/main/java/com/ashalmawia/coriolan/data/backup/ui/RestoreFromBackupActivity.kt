@@ -15,8 +15,8 @@ import com.ashalmawia.coriolan.data.backup.Backup.Companion.backupDir
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.StartActivity
 import com.ashalmawia.coriolan.ui.view.visible
+import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnPermissionDenied
@@ -121,13 +121,6 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
         buttonOk.isEnabled = true
         buttonOk.setText(R.string.button_ok)
         buttonOk.setOnClickListener { restartApp() }
-    }
-
-    private fun restartApp() {
-        val intent = Intent(this, StartActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        finishAffinity()
     }
 
     @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
