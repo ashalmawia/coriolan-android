@@ -122,37 +122,10 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
                 .commitAllowingStateLoss()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.domain, menu)
-
-        if (BuildConfig.DEBUG) {
-            menu.setGroupVisible(R.id.menu_group_debug, true)
-        }
-
-        return true
-    }
+    override fun onCreateOptionsMenu(menu: Menu) = AppMenu.onCreateOptionsMenu(menuInflater, menu)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_debug_increase_date -> {
-                increaseDate()
-                true
-            }
-            R.id.menu_settings -> {
-                openSettings()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun increaseDate() {
-        DebugIncreaseDateActivity.launch(this)
-    }
-
-    private fun openSettings() {
-        val intent = SettingsActivity.intent(this)
-        startActivity(intent)
+        return AppMenu.onOptionsItemSelected(this, item) || super.onOptionsItemSelected(item)
     }
 
     override fun onDataUpdated() {

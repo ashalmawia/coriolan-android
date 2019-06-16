@@ -30,7 +30,6 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
     }
 
     init {
-        // TODO: must be per domain
         val decksCount = repository.allDecks(domain).size
         if (decksCount == 0) {
             addDefaultDeck(context, repository)
