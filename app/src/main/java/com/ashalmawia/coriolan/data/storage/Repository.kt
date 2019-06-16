@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import android.content.Context
+import android.support.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.CountsSummary
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
@@ -56,6 +57,7 @@ interface Repository {
 
     fun deleteCard(card: Card)
 
+    @VisibleForTesting
     fun allCards(domain: Domain): List<Card>
 
     fun allDecks(domain: Domain): List<Deck>

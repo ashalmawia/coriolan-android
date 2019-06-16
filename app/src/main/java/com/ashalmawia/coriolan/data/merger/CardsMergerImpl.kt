@@ -13,9 +13,7 @@ class CardsMergerImpl(
 ): CardsMerger {
 
     override fun mergeOrAdd(original: Expression, translations: List<Expression>, deckId: Long) {
-        val cards = repository.allCards(domain)
-
-        val originalMatch = matchByOriginal(cards, original)
+        val originalMatch = repository.cardByValues(domain, original)
         if (originalMatch == null) {
             addCard(original, translations, deckId)
         } else {
@@ -41,9 +39,5 @@ class CardsMergerImpl(
 
     private fun resetProgress(card: Card) {
         exercisesRegistry.allExercises().forEach { it.onTranslationAdded(repository, card) }
-    }
-
-    private fun matchByOriginal(cards: List<Card>, expression: Expression): Card? {
-        return cards.find { it.original.id == expression.id }
     }
 }
