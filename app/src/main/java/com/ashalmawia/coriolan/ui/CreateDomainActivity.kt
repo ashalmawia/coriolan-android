@@ -12,9 +12,12 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.create_domain.*
 import java.lang.Exception
@@ -23,11 +26,15 @@ private const val EXTRA_FIRST_START = "cancellable"
 
 class CreateDomainActivity : BaseActivity() {
 
+    private lateinit var preferences: Preferences
+
     private var firstStart = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.create_domain)
+
+        preferences = Preferences.get(this)
 
         firstStart = intent.getBooleanExtra(EXTRA_FIRST_START, false)
         if (firstStart) {
@@ -56,7 +63,31 @@ class CreateDomainActivity : BaseActivity() {
             welcomeLabelSubtitle.visibility = View.GONE
         }
 
+        initializeWithLastTranslationsLanguage()
+
         buttonOk.setOnClickListener { verifyAndSave() }
+    }
+
+    private fun initializeWithLastTranslationsLanguage() {
+        val lastTranslationsLanguageId = preferences.getLastTranslationsLanguageId()
+        if (lastTranslationsLanguageId != null) {
+            val language = Repository.get(this).languageById(lastTranslationsLanguageId)!!
+            prefillTranslationsLanguage(language)
+        }
+    }
+
+    private fun prefillTranslationsLanguage(language: Language) {
+        inputTranslationsLang.apply {
+            setText(language.value)
+            isEnabled = false
+        }
+        buttonChangeTranslationsLang.apply {
+            visible = true
+            setOnClickListener {
+                inputTranslationsLang.isEnabled = true
+                inputTranslationsLang.requestFocus()
+            }
+        }
     }
 
     private fun verify(originalLang: String, translationsLang: String): Boolean {
@@ -97,6 +128,7 @@ class CreateDomainActivity : BaseActivity() {
         try {
             val domain = DomainsRegistry.createDomain(Repository.get(this), originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
+            preferences.setLastTranslationsLanguageId(domain.langTranslations())
             if (firstStart) {
                 // do not go to domain details directly on the first start
                 // as we want to configure backstack properly

@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.prefs
 
 import android.content.Context
+import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
 
 interface Preferences {
@@ -9,7 +10,7 @@ interface Preferences {
         private lateinit var instance: Preferences
 
         fun get(context: Context): Preferences {
-            if (!Preferences.Companion::instance.isInitialized) {
+            if (!Companion::instance.isInitialized) {
                 instance = SharedPreferencesImpl(context)
             }
             return instance
@@ -33,4 +34,7 @@ interface Preferences {
 
     fun getCardTypePreference(): CardTypePreference?
     fun setCardTypePreference(preference: CardTypePreference)
+
+    fun getLastTranslationsLanguageId(): Long?
+    fun setLastTranslationsLanguageId(language: Language)
 }

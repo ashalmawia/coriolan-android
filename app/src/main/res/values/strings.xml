@@ -104,6 +104,7 @@
 	<string name="create_domain__error__already_exists">Domain like this already exists (language to learn: %1$s, translations: %2$s)</string>
 	<string name="create_domain__error__generic">Failed to create domain</string>
 	<string name="create_domain__created">Domain created successfully</string>
+	<string name="create_domain__translations_lang_change">CHANGE</string>
 
 	<!-- Domains list -->
 	<string name="domains_list__add">Add new language to learn…</string>

@@ -60,13 +60,31 @@
 			android:labelFor="@id/inputTranslationsLang"
 			android:text="@string/create_domain__specify_translations_lang"/>
 
-		<EditText
-			android:id="@+id/inputTranslationsLang"
+		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:inputType="text"
-			android:maxLines="1"
-			android:hint="@string/create_domain__specify_translations_lang_hint"/>
+			android:orientation="horizontal">
+
+			<EditText
+				android:id="@+id/inputTranslationsLang"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:hint="@string/create_domain__specify_translations_lang_hint"
+				android:inputType="text"
+				android:maxLines="1"/>
+
+			<Button
+				android:id="@+id/buttonChangeTranslationsLang"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@color/transparent"
+				android:textColor="@color/colorAccentContrast"
+				android:text="@string/create_domain__translations_lang_change"
+				android:visibility="gone"
+				/>
+
+		</LinearLayout>
 
 		<LinearLayout
 			style="?attr/buttonBarStyle"

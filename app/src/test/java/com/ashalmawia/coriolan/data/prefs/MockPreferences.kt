@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.prefs
 
+import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
 
 class MockPreferences : Preferences {
@@ -52,5 +53,11 @@ class MockPreferences : Preferences {
     }
     override fun setCardTypePreference(preference: CardTypePreference) {
         cardType = preference
+    }
+
+    private var lastTranslationsLanguageId: Long? = null
+    override fun getLastTranslationsLanguageId(): Long? = lastTranslationsLanguageId
+    override fun setLastTranslationsLanguageId(language: Language) {
+        lastTranslationsLanguageId = language.id
     }
 }

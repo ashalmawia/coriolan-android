@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.prefs
 
 import android.content.Context
+import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
 
 class SharedPreferencesImpl(context: Context) : Preferences {
@@ -71,8 +72,17 @@ class SharedPreferencesImpl(context: Context) : Preferences {
     override fun setCardTypePreference(preference: CardTypePreference) {
         prefs.edit().putString(CARDY_TYPE_PREFERENCE, preference.value).apply()
     }
+
+    override fun getLastTranslationsLanguageId(): Long? {
+        return prefs.getLongOrNull(LAST_TRANSLATIONS_LANGUAGE)
+    }
+
+    override fun setLastTranslationsLanguageId(language: Language) {
+        prefs.edit().putLong(LAST_TRANSLATIONS_LANGUAGE, language.id).apply()
+    }
 }
 
 private const val IS_FIRST_START = "is_first_start"
 private const val DEFAULT = "default"
 private const val CARDY_TYPE_PREFERENCE = "card_type_preference"
+private const val LAST_TRANSLATIONS_LANGUAGE = "last_translations_language"

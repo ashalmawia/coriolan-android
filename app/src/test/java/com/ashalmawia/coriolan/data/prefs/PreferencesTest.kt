@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.prefs
 
 import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.model.mockLanguage
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -165,5 +166,21 @@ abstract class PreferencesTest {
         // then
         assertEquals(cardType, preferences.getCardTypePreference())
         assertEquals(cardType, preferences.getCardTypePreference())
+    }
+
+    @Test
+    fun `test lastTranslationsLanguageId`() {
+        // given
+        val preferences = this.prefereces.value
+        val lastTranslationsLanguage = mockLanguage(id = 2L)
+
+        // then
+        assertNull(preferences.getLastTranslationsLanguageId())
+
+        // when
+        preferences.setLastTranslationsLanguageId(lastTranslationsLanguage)
+
+        // then
+        assertEquals(lastTranslationsLanguage.id, preferences.getLastTranslationsLanguageId())
     }
 }
