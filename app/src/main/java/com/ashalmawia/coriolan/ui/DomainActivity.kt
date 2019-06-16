@@ -50,7 +50,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         val domain = repository.domainById(domainId)
 
         domain?.apply {
-            setUpToolbar(domain.name, false)
+            setUpToolbar(domain.name)
         }
 
         setUpBottomBarNavigation()
@@ -133,11 +133,17 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_debug_increase_date -> increaseDate()
-            R.id.menu_settings -> openSettings()
+        return when (item.itemId) {
+            R.id.menu_debug_increase_date -> {
+                increaseDate()
+                true
+            }
+            R.id.menu_settings -> {
+                openSettings()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        return true
     }
 
     private fun increaseDate() {

@@ -29,7 +29,7 @@ class CreateDomainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.create_domain)
 
-        firstStart = intent.getBooleanExtra(EXTRA_FIRST_START, true)
+        firstStart = intent.getBooleanExtra(EXTRA_FIRST_START, false)
         if (firstStart) {
             // show logo and don't allow to cancel this activity
             setUpToolbarWithLogo()

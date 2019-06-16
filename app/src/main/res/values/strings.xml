@@ -104,6 +104,10 @@
 	<string name="create_domain__error__already_exists">Domain like this already exists</string>
 	<string name="create_domain__created">Domain created successfully</string>
 
+	<!-- Domains list -->
+	<string name="domains_list__add">Add new language to learn…</string>
+	<string name="domains_list__subtitle">What do you feel like studying?</string>
+
 	<!-- Settings -->
 	<string name="settings__title">Settings</string>
 	<string name="settings__category__daily_limits">Daily limits</string>

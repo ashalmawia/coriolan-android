@@ -27,7 +27,10 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".ui.DomainActivity"/>
+		<activity android:name=".ui.domains_list.DomainsListActivity" />
+
+		<activity android:name=".ui.DomainActivity"
+			android:parentActivityName=".ui.domains_list.DomainsListActivity"/>
 
 		<activity
 			android:name=".CardActivity"
@@ -50,7 +53,7 @@
 
 		<activity
 			android:name=".ui.CreateDomainActivity"
-			android:parentActivityName=".ui.DomainActivity"/>
+			android:parentActivityName=".ui.domains_list.DomainsListActivity"/>
 
 		<activity
 			android:name=".ui.AddEditDeckActivity"

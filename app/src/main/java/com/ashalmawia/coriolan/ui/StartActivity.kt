@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
 
 class StartActivity : BaseActivity() {
 
@@ -22,9 +23,12 @@ class StartActivity : BaseActivity() {
     }
 
     private fun openDomain(domain: Domain) {
-        val intent = DomainActivity.intent(this, domain)
-        startActivity(intent)
         finish()
+
+        startActivity(DomainsListActivity.intent(this))
+        startActivity(DomainActivity.intent(this, domain))
+
+        overridePendingTransition(0, 0)
     }
 
     private fun openDomainCreation() {

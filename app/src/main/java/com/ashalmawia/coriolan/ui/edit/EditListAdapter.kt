@@ -22,13 +22,9 @@ class EditListAdapter : RecyclerView.Adapter<EditListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditListViewHolder {
         val context = parent.context
-        return when (viewType) {
-            EditListItemType.CATEGORY.ordinal -> EditListItemType.CATEGORY.createViewHolder(context, parent)
-            EditListItemType.DECK.ordinal -> EditListItemType.DECK.createViewHolder(context, parent)
-            EditListItemType.OPTION.ordinal -> EditListItemType.OPTION.createViewHolder(context, parent)
-
-            else -> throw IllegalStateException("unexpected view type value $viewType")
-        }
+        return EditListItemType.values().find { it.ordinal == viewType }
+                ?.createViewHolder(context, parent)
+                ?: throw IllegalStateException("unexpected view type value $viewType")
     }
 
     override fun onBindViewHolder(holder: EditListViewHolder, position: Int) {
