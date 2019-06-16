@@ -34,7 +34,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addLanguage__nameUnique`() {
+    fun test__addLanguage__nameUnique() {
         // given
         val storage = emptyStorage.value
         val value = "Russian"
@@ -45,7 +45,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addExpression__valueUnique`() {
+    fun test__addExpression__valueUnique() {
         // given
         val storage = prefilledStorage.value
 
@@ -59,7 +59,7 @@ class ConstraintStorageTest {
     }
 
     @Test
-    fun `test__addExpression__sameValueDifferentLangs`() {
+    fun test__addExpression__sameValueDifferentLangs() {
         // given
         val storage = prefilledStorage.value
 
@@ -72,7 +72,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addExpression__languageIncorrect`() {
+    fun test__addExpression__languageIncorrect() {
         // given
         val storage = emptyStorage.value
 
@@ -85,7 +85,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__deleteExpression__expressionIncorrect__emptyStorage`() {
+    fun test__deleteExpression__expressionIncorrect__emptyStorage() {
         // given
         val storage = prefilledStorage.value
 
@@ -97,7 +97,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__deleteExpression__expressionIncorrect__notPresent`() {
+    fun test__deleteExpression__expressionIncorrect__notPresent() {
         // given
         val storage = prefilledStorage.value
 
@@ -113,7 +113,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__createDomain__langOriginalIncorrect`() {
+    fun test__createDomain__langOriginalIncorrect() {
         // given
         val storage = prefilledStorage.value
         val name = "My domain"
@@ -123,7 +123,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__createDomain__langTranslationsIncorrect`() {
+    fun test__createDomain__langTranslationsIncorrect() {
         // given
         val storage = prefilledStorage.value
         val name = "My domain"
@@ -133,7 +133,17 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addCard__domainIncorrect`() {
+    fun test__createDomain__alreadyExists() {
+        // given
+        val storage = prefilledStorage.value
+        val name = "My domain"
+
+        // when
+        storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
+    }
+
+    @Test(expected = DataProcessingException::class)
+    fun test__addCard__domainIncorrect() {
         // given
         val storage = prefilledStorage.value
 
@@ -149,7 +159,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addCard__deckIncorrect`() {
+    fun test__addCard__deckIncorrect() {
         // given
         val storage = prefilledStorage.value
 
@@ -163,7 +173,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addCard__originalIncorrect`() {
+    fun test__addCard__originalIncorrect() {
         // given
         val storage = prefilledStorage.value
 
@@ -178,7 +188,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addCard__dummyTranslation`() {
+    fun test__addCard__dummyTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -193,7 +203,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addCard__dummyTranslation2`() {
+    fun test__addCard__dummyTranslation2() {
         // given
         val storage = prefilledStorage.value
 
@@ -209,7 +219,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addCard__noTranslation`() {
+    fun test__addCard__noTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -222,7 +232,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCard__cardAbsent`() {
+    fun test__updateCard__cardAbsent() {
         // given
         val storage = prefilledStorage.value
         val card = mockCard()
@@ -232,7 +242,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCard__deckIncorrect`() {
+    fun test__updateCard__deckIncorrect() {
         // given
         val storage = prefilledStorage.value
 
@@ -250,7 +260,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCard__originalIncorrect`() {
+    fun test__updateCard__originalIncorrect() {
         // given
         val storage = prefilledStorage.value
 
@@ -268,7 +278,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCard__dummyTranslation`() {
+    fun test__updateCard__dummyTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -286,7 +296,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCard__dummyTranslation2`() {
+    fun test__updateCard__dummyTranslation2() {
         // given
         val storage = prefilledStorage.value
 
@@ -304,7 +314,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateCard__noTranslation`() {
+    fun test__updateCard__noTranslation() {
         // given
         val storage = prefilledStorage.value
 
@@ -320,7 +330,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__deleteCard__absent`() {
+    fun test__deleteCard__absent() {
         // given
         val storage = prefilledStorage.value
 
@@ -333,7 +343,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addDeck__domainIncorrect`() {
+    fun test__addDeck__domainIncorrect() {
         // given
         val storage = emptyStorage.value
         val name = "My new deck"
@@ -345,7 +355,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__addDeck__nameUnique`() {
+    fun test__addDeck__nameUnique() {
         // given
         val storage = prefilledStorage.value
 
@@ -357,7 +367,7 @@ class ConstraintStorageTest {
     }
 
     @Test
-    fun `test__addDeck__sameNameDifferentDomains`() {
+    fun test__addDeck__sameNameDifferentDomains() {
         // given
         val storage = prefilledStorage.value
         val lang = storage.addLanguage("French")
@@ -375,7 +385,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateDeck__wrongDeck`() {
+    fun test__updateDeck__wrongDeck() {
         // given
         val storage = prefilledStorage.value
         val deck = mockDeck(id = 777L)
@@ -385,7 +395,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateDeck__nameUnique`() {
+    fun test__updateDeck__nameUnique() {
         // given
         val storage = prefilledStorage.value
         val name = "My new deck"
@@ -397,7 +407,7 @@ class ConstraintStorageTest {
     }
 
     @Test
-    fun `test__updateDeck__sameNameDifferentDomains`() {
+    fun test__updateDeck__sameNameDifferentDomains() {
         // given
         val storage = prefilledStorage.value
         val lang = storage.addLanguage("French")
@@ -418,7 +428,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__deleteDeck__wrongDeck`() {
+    fun test__deleteDeck__wrongDeck() {
         // given
         val storage = prefilledStorage.value
         val deck = mockDeck(id = 77L)
@@ -428,7 +438,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateSRCardState__cardIncorrect`() {
+    fun test__updateSRCardState__cardIncorrect() {
         // when
         val storage = prefilledStorage.value
         val newState = SRState(today().plusDays(8), 8)
@@ -440,7 +450,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun `test__updateSRCardState__exerciseIncorrect`() {
+    fun test__updateSRCardState__exerciseIncorrect() {
         // when
         val storage = prefilledStorage.value
 

@@ -17,6 +17,9 @@ class MockRepository : Repository {
     override fun languageById(id: Long): Language? {
         return langs.find { it.id == id }
     }
+    override fun languageByName(name: String): Language? {
+        return langs.find { it.value == name }
+    }
 
     val expressions = mutableListOf<Expression>()
     override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {

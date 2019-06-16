@@ -101,7 +101,8 @@
 	<string name="create_domain__specify_translations_lang_hint">(e.g. English)</string>
 	<string name="create_domain__verify__empty_original">Please specify the language you learn</string>
 	<string name="create_domain__verify__empty_translations">Please specify the language you will use for translations</string>
-	<string name="create_domain__error__already_exists">Domain like this already exists</string>
+	<string name="create_domain__error__already_exists">Domain like this already exists (language to learn: %1$s, translations: %2$s)</string>
+	<string name="create_domain__error__generic">Failed to create domain</string>
 	<string name="create_domain__created">Domain created successfully</string>
 
 	<!-- Domains list -->

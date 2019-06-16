@@ -67,7 +67,7 @@ abstract class StorageTest {
 
         // then
         assertLanguageCorrect(read, language.value)
-        assertEquals("language id is correct", language.id, read!!.id)
+        assertEquals("languages match", language, read)
     }
 
     @Test
@@ -77,6 +77,36 @@ abstract class StorageTest {
 
         // when
         val read = storage.languageById(777L)
+
+        // then
+        assertNull(read)
+    }
+
+    @Test
+    fun test__languageByName__languageExists() {
+        // given
+        val storage = emptyStorage.value
+
+        val value = "Russian"
+        storage.addLanguage("Some language")
+        val language = storage.addLanguage(value)
+        storage.addLanguage("Other language")
+
+        // when
+        val read = storage.languageByName(value)
+
+        // then
+        assertLanguageCorrect(read, value)
+        assertEquals("languages match", language, read)
+    }
+
+    @Test
+    fun test__languageByName__languageDoesNotExist() {
+        // given
+        val storage = emptyStorage.value
+
+        // when
+        val read = storage.languageByName("Something")
 
         // then
         assertNull(read)
@@ -426,14 +456,16 @@ abstract class StorageTest {
     @Test
     fun test__createDomain__prefilledLanguages() {
         // given
-        val storage = prefilledStorage.value
-        val name = "Some deck"
+        val storage = emptyStorage.value
+        addMockLanguages(storage)
+
+        val name = "Some domain"
 
         // when
-        val domain = storage.createDomain(name, domain.langOriginal(), domain.langTranslations())
+        val domain = storage.createDomain(name, langOriginal(), langTranslations())
 
         // then
-        assertDomainCorrect(domain, name, domain.langOriginal(), domain.langTranslations())
+        assertDomainCorrect(domain, name, langOriginal(), langTranslations())
     }
 
     @Test
@@ -461,7 +493,7 @@ abstract class StorageTest {
         val lang2 = storage.addLanguage("Russian")
         val lang3 = storage.addLanguage("German")
 
-        storage.createDomain("Some domain 1", lang1, lang2)
+        storage.createDomain("Some domain 1", lang2, lang1)
         val domain2 = storage.createDomain("Domain 2", lang3, lang2)
         val domain3 = storage.createDomain(null, lang1, lang2)
         storage.createDomain("One more", lang3, lang1)
@@ -522,7 +554,7 @@ abstract class StorageTest {
 
         val domain1 = storage.createDomain("Some domain 1", lang1, lang2)
         val domain2 = storage.createDomain("Domain 2", lang3, lang2)
-        val domain3 = storage.createDomain("Some another domain", lang1, lang2)
+        val domain3 = storage.createDomain("Some another domain", lang2, lang1)
         val domain4 = storage.createDomain("One more", lang3, lang1)
 
         // when

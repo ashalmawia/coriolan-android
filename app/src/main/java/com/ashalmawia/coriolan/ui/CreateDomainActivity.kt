@@ -13,9 +13,11 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
+import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import kotlinx.android.synthetic.main.create_domain.*
+import java.lang.Exception
 
 private const val EXTRA_FIRST_START = "cancellable"
 
@@ -76,6 +78,10 @@ class CreateDomainActivity : BaseActivity() {
         showMessage(messageId)
     }
 
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
     private fun showMessage(@StringRes messageId: Int) {
         Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show()
     }
@@ -90,12 +96,14 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     private fun createDomain(originalLang: String, translationsLang: String) {
-        val domain = DomainsRegistry.createDomain(Repository.get(this), originalLang, translationsLang)
-        if (domain != null) {
+        try {
+            val domain = DomainsRegistry.createDomain(Repository.get(this), originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
             openDomainActivity(domain)
-        } else {
-            showError(R.string.create_domain__error__already_exists)
+        } catch (e: DataProcessingException) {
+            showError(getString(R.string.create_domain__error__already_exists, originalLang, translationsLang))
+        } catch (e: Exception) {
+            showError(R.string.create_domain__error__generic)
         }
     }
 

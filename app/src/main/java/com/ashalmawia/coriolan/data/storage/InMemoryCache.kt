@@ -25,6 +25,11 @@ class InMemoryCache(private val inner: Repository) : Repository {
         return inner.languageById(id)
     }
 
+    override fun languageByName(name: String): Language? {
+        // no need to cache languages as it's immutable data that isn't normally queried
+        return inner.languageByName(name)
+    }
+
     override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
         val expression = inner.addExpression(value, type, language)
         expressions.put(expression.id, expression)

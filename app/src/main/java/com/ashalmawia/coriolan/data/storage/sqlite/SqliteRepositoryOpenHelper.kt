@@ -60,7 +60,8 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
             |   ON UPDATE CASCADE,
             |FOREIGN KEY ($SQLITE_COLUMN_LANG_TRANSLATIONS) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
             |   ON DELETE RESTRICT
-            |   ON UPDATE CASCADE
+            |   ON UPDATE CASCADE,
+            |UNIQUE ($SQLITE_COLUMN_LANG_ORIGINAL, $SQLITE_COLUMN_LANG_TRANSLATIONS)
             |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DECKS(

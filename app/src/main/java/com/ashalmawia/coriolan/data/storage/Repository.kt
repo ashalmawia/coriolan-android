@@ -28,6 +28,8 @@ interface Repository {
 
     fun languageById(id: Long): Language?
 
+    fun languageByName(name: String): Language?
+
     fun addExpression(value: String, type: ExpressionType, language: Language): Expression
 
     fun expressionById(id: Long): Expression?

@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data
 
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.Language
 
 object DomainsRegistry {
 
@@ -22,10 +23,10 @@ object DomainsRegistry {
         return domain
     }
 
-    fun createDomain(repository: Repository, originalLangName: String, translationsLangName: String): Domain? {
-        val langOriginal = repository.addLanguage(originalLangName)
-        val langTranslations = repository.addLanguage(translationsLangName)
-        // todo: do not create if domain like this already exists: https://trello.com/c/81UJeTRp
+    fun createDomain(repository: Repository, originalLangName: String, translationsLangName: String): Domain {
+        val langOriginal = repository.findOrAddLanguage(originalLangName)
+        val langTranslations = repository.findOrAddLanguage(translationsLangName)
+
         val domain = repository.createDomain("", langOriginal, langTranslations)
 
         if (this.domain == null) {
@@ -33,5 +34,10 @@ object DomainsRegistry {
         }
 
         return domain
+    }
+
+    private fun Repository.findOrAddLanguage(name: String): Language {
+        val found = languageByName(name)
+        return found ?: addLanguage(name)
     }
 }

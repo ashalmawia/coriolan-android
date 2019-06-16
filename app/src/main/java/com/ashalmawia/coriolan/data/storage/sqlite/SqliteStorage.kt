@@ -43,7 +43,25 @@ class SqliteStorage(
             |WHERE $SQLITE_COLUMN_ID = ?
         """.trimMargin(), arrayOf(id.toString()))
 
-        cursor.use { it ->
+        cursor.use {
+            return if (it.moveToNext()) {
+                Language(it.getId(), it.getLangValue())
+            } else {
+                null
+            }
+        }
+    }
+
+    override fun languageByName(name: String): Language? {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |   FROM $SQLITE_TABLE_LANGUAGES
+            |   WHERE $SQLITE_COLUMN_LANG_VALUE = ?
+        """.trimMargin(), arrayOf(name))
+
+        cursor.use {
             return if (it.moveToNext()) {
                 Language(it.getId(), it.getLangValue())
             } else {
