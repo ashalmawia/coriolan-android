@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,8 +19,6 @@ import kotlinx.android.synthetic.main.create_domain.*
 import java.lang.Exception
 
 private const val EXTRA_FIRST_START = "cancellable"
-
-private const val REQUEST_CODE_CLOSE = 1
 
 class CreateDomainActivity : BaseActivity() {
 
@@ -138,25 +135,7 @@ class CreateDomainActivity : BaseActivity() {
 
     private fun restoreFromBackup() {
         val intent = RestoreFromBackupActivity.intent(this)
-        startActivityForResult(intent, REQUEST_CODE_CLOSE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_CODE_CLOSE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    restart()
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    private fun restart() {
-        val intent = Intent(this, StartActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        finish()
     }
 
     companion object {
