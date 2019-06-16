@@ -31,4 +31,13 @@
 
 	</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/settings__category__general">
+
+		<Preference
+			android:key="app_version"
+			android:title="@string/settings__version"
+			/>
+
+	</PreferenceCategory>
+
 </PreferenceScreen>
