@@ -99,7 +99,14 @@ class CreateDomainActivity : BaseActivity() {
         try {
             val domain = DomainsRegistry.createDomain(Repository.get(this), originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
-            openDomainActivity(domain)
+            if (firstStart) {
+                // do not go to domain details directly on the first start
+                // as we want to configure backstack properly
+                restart()
+            } else {
+                openDomainActivity(domain)
+            }
+            finish()
         } catch (e: DataProcessingException) {
             showError(getString(R.string.create_domain__error__already_exists, originalLang, translationsLang))
         } catch (e: Exception) {
@@ -110,7 +117,6 @@ class CreateDomainActivity : BaseActivity() {
     private fun openDomainActivity(domain: Domain) {
         val intent = DomainActivity.intent(this, domain)
         startActivity(intent)
-        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -121,12 +127,13 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.create_domain_menu__restore_from_backup -> {
                 restoreFromBackup()
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun restoreFromBackup() {
