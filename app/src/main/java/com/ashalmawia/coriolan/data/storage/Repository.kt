@@ -18,7 +18,7 @@ interface Repository {
 
         fun get(context: Context): Repository {
             if (!Companion::instance.isInitialized) {
-                instance = InMemoryCache(SqliteStorage(context.applicationContext, ExercisesRegistry.allExercises()))
+                instance = SqliteStorage(context.applicationContext, ExercisesRegistry.allExercises())
             }
             return instance
         }
