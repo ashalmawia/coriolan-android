@@ -13,17 +13,16 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
     companion object {
         private var instance: DecksRegistry? = null
 
-        fun get(context: Context): DecksRegistry {
+        fun get(context: Context, domain: Domain): DecksRegistry {
             var instance = this.instance
-            if (instance == null) {
-                instance = create(context)
+            if (instance == null || instance.domain != domain) {
+                instance = create(context, domain)
             }
             this.instance = instance
             return instance
         }
 
-        private fun create(context: Context): DecksRegistry {
-            val domain = DomainsRegistry.domain()
+        private fun create(context: Context, domain: Domain): DecksRegistry {
             val repository = Repository.get(context)
             return DecksRegistry(context, domain, repository)
         }

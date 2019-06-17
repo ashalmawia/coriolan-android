@@ -23,6 +23,10 @@ object DomainsRegistry {
         return domain
     }
 
+    fun setCurrentDomain(domain: Domain) {
+        this.domain = domain
+    }
+
     fun createDomain(repository: Repository, originalLangName: String, translationsLangName: String): Domain {
         val langOriginal = repository.findOrAddLanguage(originalLangName)
         val langTranslations = repository.findOrAddLanguage(translationsLangName)

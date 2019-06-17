@@ -6,14 +6,12 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Menu
 import android.view.MenuItem
-import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.debug.DebugIncreaseDateActivity
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.edit.EditFragment
 import com.ashalmawia.coriolan.ui.edit.EditFragmentListener
-import com.ashalmawia.coriolan.ui.settings.SettingsActivity
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
@@ -50,7 +48,8 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         val domain = repository.domainById(domainId)
 
         domain?.apply {
-            setUpToolbar(domain.name)
+            setUpToolbar(this.name)
+            DomainsRegistry.setCurrentDomain(this)
         }
 
         setUpBottomBarNavigation()
