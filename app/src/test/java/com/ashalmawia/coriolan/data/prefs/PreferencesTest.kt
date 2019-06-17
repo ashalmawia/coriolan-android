@@ -182,5 +182,11 @@ abstract class PreferencesTest {
 
         // then
         assertEquals(lastTranslationsLanguage.id, preferences.getLastTranslationsLanguageId())
+
+        // when
+        preferences.clearLastTranslationsLanguageId()
+
+        // then
+        assertNull(preferences.getLastTranslationsLanguageId())
     }
 }

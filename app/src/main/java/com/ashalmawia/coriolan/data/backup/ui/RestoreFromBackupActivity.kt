@@ -13,6 +13,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.Backup.Companion.backupDir
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
@@ -101,7 +102,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     private fun restoreFrom(file: File, repo: BackupableRepository) {
-        val task = RestoreFromBackupAsyncTask(repo, file)
+        val task = RestoreFromBackupAsyncTask(repo, file, Preferences.get(this))
         task.listener = this
         this.task = task
 
@@ -152,7 +153,8 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
 private class RestoreFromBackupAsyncTask(
         private val repo: BackupableRepository,
-        private val backupFile: File
+        private val backupFile: File,
+        private val preferences: Preferences
 ) : AsyncTask<Any, Unit, Boolean>() {
 
     var listener: BackupRestoringListener? = null
@@ -166,6 +168,7 @@ private class RestoreFromBackupAsyncTask(
 
         backupFile.inputStream().use {
             backup.restoreFrom(it, repo)
+            preferences.clearLastTranslationsLanguageId()
         }
 
         return true

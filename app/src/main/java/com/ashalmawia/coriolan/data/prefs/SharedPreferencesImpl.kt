@@ -80,6 +80,10 @@ class SharedPreferencesImpl(context: Context) : Preferences {
     override fun setLastTranslationsLanguageId(language: Language) {
         prefs.edit().putLong(LAST_TRANSLATIONS_LANGUAGE, language.id).apply()
     }
+
+    override fun clearLastTranslationsLanguageId() {
+        prefs.edit().remove(LAST_TRANSLATIONS_LANGUAGE).apply()
+    }
 }
 
 private const val IS_FIRST_START = "is_first_start"

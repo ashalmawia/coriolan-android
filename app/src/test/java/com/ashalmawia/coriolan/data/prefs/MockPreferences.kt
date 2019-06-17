@@ -60,4 +60,7 @@ class MockPreferences : Preferences {
     override fun setLastTranslationsLanguageId(language: Language) {
         lastTranslationsLanguageId = language.id
     }
+    override fun clearLastTranslationsLanguageId() {
+        lastTranslationsLanguageId = null
+    }
 }
