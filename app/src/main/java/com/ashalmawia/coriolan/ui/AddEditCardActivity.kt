@@ -18,6 +18,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.ExpressionType
 import kotlinx.android.synthetic.main.add_edit_card.*
+import org.koin.android.ext.android.inject
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val EXTRA_DECK_ID = "deck_id"
@@ -29,7 +30,7 @@ private const val KEY_DECK_SELECTION_POSITION = "deck_id"
 
 class AddEditCardActivity : BaseActivity() {
 
-    private val repository = Repository.get(this)
+    private val repository: Repository by inject()
 
     private var card: Card? = null
 

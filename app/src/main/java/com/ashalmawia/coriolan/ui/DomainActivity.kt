@@ -17,6 +17,7 @@ import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import kotlinx.android.synthetic.main.domain_activity.*
+import org.koin.android.ext.android.inject
 
 private enum class Tab {
     LEARNING,
@@ -36,6 +37,8 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     private val TAG = DomainActivity::class.java.simpleName
 
+    private val repository: Repository by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.domain_activity)
@@ -45,7 +48,6 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         }
 
         val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
-        val repository = Repository.get(this)
         val domain = repository.domainById(domainId)
 
         domain?.apply {

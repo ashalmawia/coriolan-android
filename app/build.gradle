@@ -71,6 +71,13 @@ dependencies {
     }
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.5'
 
+    // Koin for Kotlin
+    implementation "org.koin:koin-core:$koin_version"
+    // Koin for Unit tests
+    testImplementation "org.koin:koin-test:$koin_version"
+    // Koin for Android
+    implementation "org.koin:koin-android:$koin_version"
+
     testImplementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:3.6.1"
     testImplementation 'org.mockito:mockito-core:2.8.47'

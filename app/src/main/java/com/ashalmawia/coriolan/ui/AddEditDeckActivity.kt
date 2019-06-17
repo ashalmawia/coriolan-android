@@ -12,6 +12,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.errors.Errors
 import kotlinx.android.synthetic.main.button_bar.*
 import kotlinx.android.synthetic.main.create_deck.*
+import org.koin.android.ext.android.inject
 
 private const val TAG = "AddEditDeckActivity"
 
@@ -20,6 +21,8 @@ private const val EXTRA_DECK_ID = "deck_id"
 class AddEditDeckActivity : BaseActivity() {
 
     private var deck: Deck? = null
+
+    private val repository: Repository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +45,6 @@ class AddEditDeckActivity : BaseActivity() {
     }
 
     private fun extractData(deckId: Long) {
-        val repository = Repository.get(this)
         val deck = repository.deckById(deckId, decksRegistry().domain)
         if (deck != null) {
             this.deck = deck

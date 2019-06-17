@@ -14,6 +14,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.takisoft.fix.support.v7.preference.EditTextPreference
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
+import org.koin.android.ext.android.inject
 
 private const val PREFERENCE_CARD_TYPES = "card_types"
 private const val PREFERENCE_DAILY_LIMITS_NEW = "daily_limit_new_cards"
@@ -22,8 +23,7 @@ private const val PREFERENCE_VERSION = "app_version"
 
 class SettingsFragment : PreferenceFragmentCompatDividers() {
 
-    private lateinit var prefs: Preferences
-    private lateinit var dataStore: PreferenceDataStore
+    private val dataStore: PreferenceDataStore by inject()
 
     private val cardTypePreferenceHelper: CardTypePreferenceHelper = CardTypePreferenceHelperImpl()
 
@@ -33,9 +33,6 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
         if (context == null) {
             return
         }
-
-        prefs = Preferences.get(context)
-        dataStore = CoriolanPreferencesDataStore(prefs, cardTypePreferenceHelper)
     }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
