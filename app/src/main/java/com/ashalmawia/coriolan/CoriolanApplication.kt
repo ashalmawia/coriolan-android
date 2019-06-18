@@ -1,9 +1,9 @@
 package com.ashalmawia.coriolan
 
 import android.app.Application
-import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.Dependecies
+import com.ashalmawia.coriolan.dependencies.KodeinDependencies
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.util.OpenForTesting
 import com.ashalmawia.errors.Errors
@@ -22,10 +22,10 @@ class CoriolanApplication : Application() {
 
         todayManager()
 
-        domainsRegistry()
-
-        firstStartJobs()
+//        firstStartJobs(preferences)
     }
+
+    val dependencies: Dependecies = KodeinDependencies()
 
     private fun crashlytics() {
         val core = CrashlyticsCore.Builder().build()
@@ -41,11 +41,13 @@ class CoriolanApplication : Application() {
         TodayManager.initialize(this)
     }
 
-    protected fun domainsRegistry() {
-        DomainsRegistry.preinitialize(Repository.get(this))
+    protected fun firstStartJobs(preferences: Preferences) {
+        FirstStart.preinitializeIfFirstStart(preferences)
     }
 
-    protected fun firstStartJobs() {
-        FirstStart.preinitializeIfFirstStart(Preferences.get(this))
-    }
+//    companion object {
+//        fun onDomainChanged(koin: Koin, domain: Domain) {
+//            koin.setDomain(domain)
+//        }
+//    }
 }

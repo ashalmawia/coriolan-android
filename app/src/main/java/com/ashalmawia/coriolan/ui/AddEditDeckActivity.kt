@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
+import com.ashalmawia.coriolan.CoriolanApplication
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -19,7 +20,12 @@ private const val EXTRA_DECK_ID = "deck_id"
 
 class AddEditDeckActivity : BaseActivity() {
 
+    data class Dependencies(val repository: Repository)
+    private val dependencies: Dependencies by lazy { (applicationContext as CoriolanApplication).dependencies.addEditDeckActivity }
+
     private var deck: Deck? = null
+
+    private val repository: Repository by lazy { dependencies.repository }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +48,6 @@ class AddEditDeckActivity : BaseActivity() {
     }
 
     private fun extractData(deckId: Long) {
-        val repository = Repository.get(this)
         val deck = repository.deckById(deckId, decksRegistry().domain)
         if (deck != null) {
             this.deck = deck
