@@ -5,10 +5,13 @@ import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.dependencies.domainScope
 import kotlinx.android.synthetic.main.app_toolbar.*
+import org.kodein.di.KodeinAware
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity(), KodeinAware {
+
+    override val kodein by org.kodein.di.android.kodein()
 
     protected fun setUpToolbar(title: String, cancellable: Boolean = true) {
         setSupportActionBar(toolbar)
@@ -37,5 +40,5 @@ abstract class BaseActivity : AppCompatActivity() {
         finish()
     }
 
-    protected fun decksRegistry(): DecksRegistry = DecksRegistry.get(applicationContext, DomainsRegistry.domain())
+    protected fun decksRegistry(): DecksRegistry = DecksRegistry.get(applicationContext, domainScope().get())
 }

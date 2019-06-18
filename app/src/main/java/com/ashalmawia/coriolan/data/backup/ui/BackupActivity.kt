@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*
+import org.kodein.di.generic.instance
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnPermissionDenied
 import permissions.dispatcher.RuntimePermissions
@@ -25,6 +26,9 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
     private val rootDir = File(Environment.getExternalStorageDirectory(), "Coriolan")
     private val backupDir = File(rootDir, "backup")
+
+    private val backupableRepository: BackupableRepository by instance()
+    private val backup: Backup by instance()
 
     private var task: BackupAsyncTask? = null
 
@@ -50,9 +54,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun createBackup() {
-        val repo = BackupableRepository.get(this)
-
-        val task = BackupAsyncTask(repo, backupDir)
+        val task = BackupAsyncTask(backupableRepository, backupDir, backup)
         task.listener = this
         this.task = task
 
@@ -100,7 +102,11 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 }
 
-private class BackupAsyncTask(private val repo: BackupableRepository, private val backupDir: File) : AsyncTask<Any, Nothing, File?>() {
+private class BackupAsyncTask(
+        private val repo: BackupableRepository,
+        private val backupDir: File,
+        private val backup: Backup
+) : AsyncTask<Any, Nothing, File?>() {
 
     var listener: BackupCreationListener? = null
 
@@ -117,8 +123,6 @@ private class BackupAsyncTask(private val repo: BackupableRepository, private va
         if (!file.createNewFile()) {
             return null
         }
-
-        val backup = Backup.get()
 
         file.outputStream().use {
             backup.create(repo, ExercisesRegistry.allExercises(), it)

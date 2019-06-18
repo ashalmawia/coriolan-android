@@ -6,26 +6,31 @@ import com.ashalmawia.coriolan.model.Language
 
 object DomainsRegistry {
 
-    private var domain: Domain? = null
+//    private var domain: Domain? = null
 
     fun preinitialize(repository: Repository) {
+//        val domains = repository.allDomains()
+//        if (!domains.isEmpty()) {
+//            domain = domains[0]
+//        }
+    }
+
+//    fun domain(): Domain {
+//        return domainIfExists() ?: throw IllegalStateException("domain expected to have beeen initialized was not")
+//    }
+
+    fun domainIfExists(repository: Repository): Domain? {
         val domains = repository.allDomains()
         if (!domains.isEmpty()) {
-            domain = domains[0]
+            return domains[0]
+        } else {
+            return null
         }
     }
 
-    fun domain(): Domain {
-        return domainIfExists() ?: throw IllegalStateException("domain expected to have beeen initialized was not")
-    }
-
-    fun domainIfExists(): Domain? {
-        return domain
-    }
-
-    fun setCurrentDomain(domain: Domain) {
-        this.domain = domain
-    }
+//    fun setCurrentDomain(domain: Domain) {
+//        this.domain = domain
+//    }
 
     fun createDomain(repository: Repository, originalLangName: String, translationsLangName: String): Domain {
         val langOriginal = repository.findOrAddLanguage(originalLangName)
@@ -33,9 +38,9 @@ object DomainsRegistry {
 
         val domain = repository.createDomain("", langOriginal, langTranslations)
 
-        if (this.domain == null) {
-            this.domain = domain
-        }
+//        if (this.domain == null) {
+//            this.domain = domain
+//        }
 
         return domain
     }

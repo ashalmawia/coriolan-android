@@ -5,16 +5,19 @@ import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
+import org.kodein.di.generic.instance
 
 class StartActivity : BaseActivity() {
+
+    private val repository: Repository by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // refetch data in the domains registry
-        DomainsRegistry.preinitialize(Repository.get(this))
+//        DomainsRegistry.preinitialize(repository)
 
-        val defaultDomain = DomainsRegistry.domainIfExists()
+        val defaultDomain = DomainsRegistry.domainIfExists(repository)
         if (defaultDomain != null) {
             openDomain(defaultDomain)
         } else {

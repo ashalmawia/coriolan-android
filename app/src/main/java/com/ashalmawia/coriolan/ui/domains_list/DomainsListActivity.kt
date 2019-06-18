@@ -14,8 +14,11 @@ import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.CreateDomainActivity
 import com.ashalmawia.coriolan.ui.DomainActivity
 import kotlinx.android.synthetic.main.domains_list.*
+import org.kodein.di.generic.instance
 
 class DomainsListActivity : BaseActivity() {
+
+    private val repository: Repository by instance()
 
     companion object {
         fun intent(context: Context) = Intent(context, DomainsListActivity::class.java)
@@ -35,7 +38,7 @@ class DomainsListActivity : BaseActivity() {
     }
 
     private fun setUpList() {
-        val domains = Repository.get(this).allDomains()
+        val domains = repository.allDomains()
 
         domainsList.apply {
             layoutManager = LinearLayoutManager(this.context)

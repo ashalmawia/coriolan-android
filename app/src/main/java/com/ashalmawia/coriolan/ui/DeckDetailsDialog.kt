@@ -13,7 +13,8 @@ class DeckDetailsDialog(
         context: Context,
         private val deck: Deck,
         private val exercise: ExerciseDescriptor<*, *>,
-        private val date: DateTime
+        private val date: DateTime,
+        private val repository: Repository
 ) : Dialog(context) {
 
     init {
@@ -34,6 +35,6 @@ class DeckDetailsDialog(
         cellTotalReverse.text = counts.reverse.total.toString()
     }
 
-    private fun counts() = Repository.get(context).deckPendingCounts(exercise.stableId, deck, date)
+    private fun counts() = repository.deckPendingCounts(exercise.stableId, deck, date)
 
 }

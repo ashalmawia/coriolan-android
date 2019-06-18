@@ -20,21 +20,21 @@ import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.create_domain.*
+import org.kodein.di.generic.instance
 import java.lang.Exception
 
 private const val EXTRA_FIRST_START = "cancellable"
 
 class CreateDomainActivity : BaseActivity() {
 
-    private lateinit var preferences: Preferences
+    private val preferences: Preferences by instance()
+    private val repository: Repository by instance()
 
     private var firstStart = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.create_domain)
-
-        preferences = Preferences.get(this)
 
         firstStart = intent.getBooleanExtra(EXTRA_FIRST_START, false)
         if (firstStart) {
@@ -71,7 +71,7 @@ class CreateDomainActivity : BaseActivity() {
     private fun initializeWithLastTranslationsLanguage() {
         val lastTranslationsLanguageId = preferences.getLastTranslationsLanguageId()
         if (lastTranslationsLanguageId != null) {
-            val language = Repository.get(this).languageById(lastTranslationsLanguageId)!!
+            val language = repository.languageById(lastTranslationsLanguageId)!!
             prefillTranslationsLanguage(language)
         }
     }
@@ -126,7 +126,7 @@ class CreateDomainActivity : BaseActivity() {
 
     private fun createDomain(originalLang: String, translationsLang: String) {
         try {
-            val domain = DomainsRegistry.createDomain(Repository.get(this), originalLang, translationsLang)
+            val domain = DomainsRegistry.createDomain(repository, originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
             preferences.setLastTranslationsLanguageId(domain.langTranslations())
             if (firstStart) {

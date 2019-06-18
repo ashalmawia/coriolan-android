@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Menu
 import android.view.MenuItem
+import com.ashalmawia.coriolan.CoriolanApplication
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.edit.EditFragment
@@ -16,6 +16,7 @@ import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import kotlinx.android.synthetic.main.domain_activity.*
+import org.kodein.di.generic.instance
 
 private enum class Tab {
     LEARNING,
@@ -35,6 +36,8 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     private val TAG = DomainActivity::class.java.simpleName
 
+    private val repository: Repository by instance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.domain_activity)
@@ -44,12 +47,12 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         }
 
         val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
-        val repository = Repository.get(this)
         val domain = repository.domainById(domainId)
 
         domain?.apply {
             setUpToolbar(this.name)
-            DomainsRegistry.setCurrentDomain(this)
+//            DomainsRegistry.setCurrentDomain(this)
+            CoriolanApplication.onDomainChanged(getKoin(), domain)
         }
 
         setUpBottomBarNavigation()

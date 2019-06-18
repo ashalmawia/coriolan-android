@@ -1,18 +1,24 @@
 package com.ashalmawia.coriolan
 
 import android.app.Application
-import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.init
+import com.ashalmawia.coriolan.dependencies.mainModule
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
+import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.util.OpenForTesting
 import com.ashalmawia.errors.Errors
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import io.fabric.sdk.android.Fabric
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.generic.instance
 
 @OpenForTesting
-class CoriolanApplication : Application() {
+class CoriolanApplication : Application(), KodeinAware {
+
+    private val preferences: Preferences by instance()
 
     override fun onCreate() {
         super.onCreate()
@@ -22,9 +28,11 @@ class CoriolanApplication : Application() {
 
         todayManager()
 
-        domainsRegistry()
+        firstStartJobs(preferences)
+    }
 
-        firstStartJobs()
+    override val kodein: Kodein by Kodein.lazy {
+        import(mainModule)
     }
 
     private fun crashlytics() {
@@ -41,11 +49,13 @@ class CoriolanApplication : Application() {
         TodayManager.initialize(this)
     }
 
-    protected fun domainsRegistry() {
-        DomainsRegistry.preinitialize(Repository.get(this))
+    protected fun firstStartJobs(preferences: Preferences) {
+        FirstStart.preinitializeIfFirstStart(preferences)
     }
 
-    protected fun firstStartJobs() {
-        FirstStart.preinitializeIfFirstStart(Preferences.get(this))
+    companion object {
+        fun onDomainChanged(kodein: Kodein, domain: Domain) {
+
+        }
     }
 }

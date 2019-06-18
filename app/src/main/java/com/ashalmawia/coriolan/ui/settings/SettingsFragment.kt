@@ -14,16 +14,22 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.takisoft.fix.support.v7.preference.EditTextPreference
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
+import org.kodein.di.KodeinAware
+import org.kodein.di.generic.instance
 
 private const val PREFERENCE_CARD_TYPES = "card_types"
 private const val PREFERENCE_DAILY_LIMITS_NEW = "daily_limit_new_cards"
 private const val PREFERENCE_DAILY_LIMITS_REVIEW = "daily_limit_review_cards"
 private const val PREFERENCE_VERSION = "app_version"
 
-class SettingsFragment : PreferenceFragmentCompatDividers() {
+class SettingsFragment : PreferenceFragmentCompatDividers(), KodeinAware {
 
-    private lateinit var prefs: Preferences
-    private lateinit var dataStore: PreferenceDataStore
+    override val kodein by org.kodein.di.android.kodein(context())
+
+    private val dataStore: PreferenceDataStore by instance()
+
+    private fun context() =
+            activity?.applicationContext ?: throw IllegalStateException("expected to have been attached to activity")
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -31,9 +37,6 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
         if (context == null) {
             return
         }
-
-        prefs = Preferences.get(context)
-        dataStore = CoriolanPreferencesDataStore(prefs)
     }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {

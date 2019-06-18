@@ -18,6 +18,7 @@ import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
+import org.kodein.di.generic.instance
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnPermissionDenied
 import permissions.dispatcher.RuntimePermissions
@@ -27,6 +28,10 @@ import java.io.File
 class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     private var task: RestoreFromBackupAsyncTask? = null
+
+    private val repository: Repository by instance()
+    private val backupableRepository: BackupableRepository by instance()
+    private val backup: Backup by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,18 +73,17 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     private fun onFileSelected(file: File) {
-        val repo = BackupableRepository.get(this)
-        val hasValuableData = repo.hasAtLeastOneCard()
+        val hasValuableData = backupableRepository.hasAtLeastOneCard()
 
         if (hasValuableData) {
             val dialog = AlertDialog.Builder(this, R.style.Coriolan_Theme_Dialog)
                     .setTitle(R.string.backup__restore_final_warning_title)
                     .setMessage(R.string.backup__restore_final_warning_message)
                     .setNegativeButton(R.string.button_cancel, null)
-                    .setPositiveButton(R.string.backup__restore_confirm, { _, _ -> onRestoreConfirmed(file, repo) })
+                    .setPositiveButton(R.string.backup__restore_confirm) { _, _ -> onRestoreConfirmed(file, backupableRepository) }
             dialog.show()
         } else {
-            onRestoreConfirmed(file, repo)
+            onRestoreConfirmed(file, backupableRepository)
         }
     }
 
@@ -97,11 +101,11 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
         labelRestoring.visible = true
         progress.visible = true
 
-        restoreFrom(file, repo)
+        restoreFrom(file)
     }
 
-    private fun restoreFrom(file: File, repo: BackupableRepository) {
-        val task = RestoreFromBackupAsyncTask(repo, file)
+    private fun restoreFrom(file: File) {
+        val task = RestoreFromBackupAsyncTask(backupableRepository, file, backup)
         task.listener = this
         this.task = task
 
@@ -109,7 +113,6 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     override fun onRestored() {
-        val repository = Repository.get(this)
         repository.invalidateCache()
 
         labelStatus.setText(R.string.backup__restore_success)
@@ -152,7 +155,8 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
 private class RestoreFromBackupAsyncTask(
         private val repo: BackupableRepository,
-        private val backupFile: File
+        private val backupFile: File,
+        private val backup: Backup
 ) : AsyncTask<Any, Unit, Boolean>() {
 
     var listener: BackupRestoringListener? = null
@@ -161,8 +165,6 @@ private class RestoreFromBackupAsyncTask(
         if (!backupFile.exists() || !backupFile.isFile) {
             return false
         }
-
-        val backup = Backup.get()
 
         backupFile.inputStream().use {
             backup.restoreFrom(it, repo)

@@ -28,12 +28,16 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning.*
+import org.kodein.di.generic.instance
 
 private const val TAG = "LearningFragment"
 
 class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
     private lateinit var exercise: ExerciseDescriptor<*, *>
+
+    private val repository: Repository by instance()
+    private val preferences: Preferences by instance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.learning, container, false)
@@ -69,7 +73,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
         val context = context ?: return
 
         decksList.layoutManager = LinearLayoutManager(context)
-        decksList.adapter = DecksAdapter(context, exercise, this)
+        decksList.adapter = DecksAdapter(context, exercise, this, preferences, repository)
     }
 
     override fun fetchData() {
@@ -95,7 +99,9 @@ private const val TYPE_ITEM = 2
 private class DecksAdapter<S: State, E : Exercise>(
         private val context: Context,
         private val exercise: ExerciseDescriptor<S, E>,
-        private val dataFetcher: DataFetcher
+        private val dataFetcher: DataFetcher,
+        private val preferences: Preferences,
+        private val repository: Repository
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -199,16 +205,13 @@ private class DecksAdapter<S: State, E : Exercise>(
     }
 
     private fun studyMore(deck: Deck) {
-        val repository = Repository.get(context)
-        val preferences = Preferences.get(context)
-
         val dialog = IncreaseLimitsDialog(context, deck, exercise, today(), repository, preferences).build()
         dialog.setOnDismissListener { dataFetcher.fetchData() }
         dialog.show()
     }
 
     private fun showDeckDetails(deck: Deck) {
-        val dialog = DeckDetailsDialog(context, deck, exercise, today())
+        val dialog = DeckDetailsDialog(context, deck, exercise, today(), repository)
         dialog.show()
     }
 
