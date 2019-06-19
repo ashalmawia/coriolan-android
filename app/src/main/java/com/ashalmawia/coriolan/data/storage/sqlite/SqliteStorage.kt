@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.scheduler.*
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors

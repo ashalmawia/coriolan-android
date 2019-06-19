@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.scheduler
+package com.ashalmawia.coriolan.learning
 
 import com.ashalmawia.coriolan.debug.DEBUG_OVERRIDE_TODAY
 import org.joda.time.DateTime

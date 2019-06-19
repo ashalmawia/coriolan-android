@@ -11,7 +11,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.orZero
 import kotlinx.android.synthetic.main.increase_limits.view.*

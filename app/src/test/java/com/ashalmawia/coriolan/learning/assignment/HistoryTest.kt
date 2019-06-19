@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.mockCardWithState
 import com.ashalmawia.coriolan.model.mockState
 import com.ashalmawia.coriolan.model.mockStateRelearn

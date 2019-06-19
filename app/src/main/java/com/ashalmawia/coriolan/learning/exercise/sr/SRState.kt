@@ -1,8 +1,8 @@
-package com.ashalmawia.coriolan.learning.scheduler.sr
+package com.ashalmawia.coriolan.learning.exercise.sr
 
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.today
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.util.*

@@ -4,7 +4,7 @@ import android.app.Application
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.scheduler.TodayManager
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.util.OpenForTesting
 import com.ashalmawia.errors.Errors
 import com.crashlytics.android.Crashlytics

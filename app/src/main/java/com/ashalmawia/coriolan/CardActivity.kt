@@ -13,9 +13,9 @@ import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.learning.FinishListener
-import com.ashalmawia.coriolan.learning.LearningAnswer
+import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.CardView
@@ -31,7 +31,7 @@ private const val EXTRA_ANSWERS = "answers"
 class CardActivity : BaseActivity(), CardViewListener, FinishListener {
 
     companion object {
-        fun intent(context: Context, answers: Array<LearningAnswer>): Intent {
+        fun intent(context: Context, answers: Array<SRAnswer>): Intent {
             return Intent(context, CardActivity::class.java).apply {
                 putExtra(EXTRA_ANSWERS, answers.map { it.toString() }.toTypedArray())
             }
@@ -40,7 +40,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
 
     private val flow by lazy {
         @Suppress("UNCHECKED_CAST")
-        LearningFlow.current as LearningFlow<SRState, LearningAnswer>
+        LearningFlow.current as LearningFlow<SRState, SRAnswer>
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         bindToCurrent(intent.answers())
     }
 
-    private fun Intent.answers() = getStringArrayExtra(EXTRA_ANSWERS).map { LearningAnswer.valueOf(it) }
+    private fun Intent.answers() = getStringArrayExtra(EXTRA_ANSWERS).map { SRAnswer.valueOf(it) }
 
     override fun onStart() {
         super.onStart()
@@ -155,22 +155,22 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     override fun onCorrect() {
-        flow.replyCurrent(LearningAnswer.CORRECT)
+        flow.replyCurrent(SRAnswer.CORRECT)
     }
 
     override fun onWrong() {
-        flow.replyCurrent(LearningAnswer.WRONG)
+        flow.replyCurrent(SRAnswer.WRONG)
     }
 
     override fun onEasy() {
-        flow.replyCurrent(LearningAnswer.EASY)
+        flow.replyCurrent(SRAnswer.EASY)
     }
 
     override fun onHard() {
-        flow.replyCurrent(LearningAnswer.HARD)
+        flow.replyCurrent(SRAnswer.HARD)
     }
 
-    private fun bindToCurrent(answers: List<LearningAnswer>) {
+    private fun bindToCurrent(answers: List<SRAnswer>) {
         val view = cardView as CardView
         val card = flow.card
         view.bind(card.card, answers)

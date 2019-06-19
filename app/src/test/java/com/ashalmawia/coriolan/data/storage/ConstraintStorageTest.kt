@@ -3,9 +3,9 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.StateType
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert
 import org.junit.Test

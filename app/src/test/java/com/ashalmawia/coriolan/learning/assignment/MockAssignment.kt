@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.Status
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.Card
 import org.joda.time.DateTime
 

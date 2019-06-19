@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.scheduler
+package com.ashalmawia.coriolan.learning
 
 import android.app.AlarmManager
 import android.app.PendingIntent

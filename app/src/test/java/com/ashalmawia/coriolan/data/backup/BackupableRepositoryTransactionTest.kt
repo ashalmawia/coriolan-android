@@ -6,7 +6,7 @@ import com.ashalmawia.coriolan.data.storage.provideHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.StateType
+import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.util.OpenForTesting
 import junit.framework.Assert.assertTrue
 import org.junit.Test

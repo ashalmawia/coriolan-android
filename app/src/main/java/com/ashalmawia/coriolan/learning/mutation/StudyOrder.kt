@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
-import com.ashalmawia.coriolan.learning.scheduler.State
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.util.new
 import com.ashalmawia.coriolan.util.review
 

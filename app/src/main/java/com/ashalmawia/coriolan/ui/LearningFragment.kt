@@ -20,9 +20,9 @@ import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
-import com.ashalmawia.coriolan.learning.scheduler.TodayManager
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.TodayChangeListener
+import com.ashalmawia.coriolan.learning.TodayManager
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.view.visible

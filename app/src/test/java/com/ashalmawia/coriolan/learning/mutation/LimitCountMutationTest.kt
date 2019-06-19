@@ -2,10 +2,10 @@ package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.data.journal.MockJournal
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
-import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.*
 import junit.framework.Assert.*
 import org.junit.Test

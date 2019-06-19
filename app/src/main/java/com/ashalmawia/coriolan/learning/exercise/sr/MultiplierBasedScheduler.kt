@@ -1,7 +1,8 @@
-package com.ashalmawia.coriolan.learning.scheduler.sr
+package com.ashalmawia.coriolan.learning.exercise.sr
 
-import com.ashalmawia.coriolan.learning.LearningAnswer
-import com.ashalmawia.coriolan.learning.scheduler.*
+import com.ashalmawia.coriolan.learning.SRAnswer
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.today
 import org.joda.time.Days
 import kotlin.math.*
 
@@ -13,20 +14,20 @@ private const val NEW_RESPONDED_EASY_DAYS = 4
 
 class MultiplierBasedScheduler : Scheduler {
 
-    override fun answers(state: SRState): Array<LearningAnswer> {
+    override fun answers(state: SRState): Array<SRAnswer> {
         return when (state.status) {
-            Status.NEW -> arrayOf(LearningAnswer.WRONG, LearningAnswer.CORRECT, LearningAnswer.EASY)
-            Status.RELEARN -> arrayOf(LearningAnswer.WRONG, LearningAnswer.CORRECT)
-            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(LearningAnswer.WRONG, LearningAnswer.HARD, LearningAnswer.CORRECT, LearningAnswer.EASY)
+            Status.NEW -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT, SRAnswer.EASY)
+            Status.RELEARN -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT)
+            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(SRAnswer.WRONG, SRAnswer.HARD, SRAnswer.CORRECT, SRAnswer.EASY)
         }
     }
 
-    override fun processAnswer(answer: LearningAnswer, state: SRState): SRState {
+    override fun processAnswer(answer: SRAnswer, state: SRState): SRState {
         return when (answer) {
-            LearningAnswer.WRONG -> wrong(state)
-            LearningAnswer.CORRECT -> correct(state)
-            LearningAnswer.EASY -> easy(state)
-            LearningAnswer.HARD -> hard(state)
+            SRAnswer.WRONG -> wrong(state)
+            SRAnswer.CORRECT -> correct(state)
+            SRAnswer.EASY -> easy(state)
+            SRAnswer.HARD -> hard(state)
         }
     }
 

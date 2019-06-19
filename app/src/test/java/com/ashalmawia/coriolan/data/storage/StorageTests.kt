@@ -2,13 +2,12 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.LearningExercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.StateType
-import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert.*
 import org.junit.Test

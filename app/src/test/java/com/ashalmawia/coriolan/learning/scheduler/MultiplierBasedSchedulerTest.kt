@@ -1,9 +1,12 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
-import com.ashalmawia.coriolan.learning.LearningAnswer
-import com.ashalmawia.coriolan.learning.scheduler.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
+import com.ashalmawia.coriolan.learning.SRAnswer
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
+import com.ashalmawia.coriolan.learning.today
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -24,7 +27,7 @@ class MultiplierBasedSchedulerTest {
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
         // when
-        state = scheduler.processAnswer(LearningAnswer.WRONG, state)
+        state = scheduler.processAnswer(SRAnswer.WRONG, state)
 
         // then
         val today = today()
@@ -330,7 +333,7 @@ class MultiplierBasedSchedulerTest {
     }
 }
 
-private fun Scheduler.wrong(srState: SRState) = processAnswer(LearningAnswer.WRONG, srState)
-private fun Scheduler.correct(srState: SRState) = processAnswer(LearningAnswer.CORRECT, srState)
-private fun Scheduler.easy(srState: SRState) = processAnswer(LearningAnswer.EASY, srState)
-private fun Scheduler.hard(srState: SRState) = processAnswer(LearningAnswer.HARD, srState)
+private fun Scheduler.wrong(srState: SRState) = processAnswer(SRAnswer.WRONG, srState)
+private fun Scheduler.correct(srState: SRState) = processAnswer(SRAnswer.CORRECT, srState)
+private fun Scheduler.easy(srState: SRState) = processAnswer(SRAnswer.EASY, srState)
+private fun Scheduler.hard(srState: SRState) = processAnswer(SRAnswer.HARD, srState)

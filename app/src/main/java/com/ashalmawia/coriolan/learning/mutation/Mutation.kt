@@ -3,10 +3,10 @@ package com.ashalmawia.coriolan.learning.mutation
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.CardTypePreference
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.new
 import com.ashalmawia.coriolan.util.review

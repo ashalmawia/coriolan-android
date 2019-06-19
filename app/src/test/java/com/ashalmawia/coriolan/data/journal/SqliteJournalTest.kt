@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.journal
 
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.sqlite.SqliteJournal
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.today
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

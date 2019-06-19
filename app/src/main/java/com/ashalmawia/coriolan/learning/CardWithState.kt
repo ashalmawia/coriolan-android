@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.scheduler
+package com.ashalmawia.coriolan.learning
 
 import com.ashalmawia.coriolan.model.Card
 

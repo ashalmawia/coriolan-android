@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.scheduler.StateType
+import com.ashalmawia.coriolan.learning.StateType
 
 class SqliteBackupHelper(
         context: Context,

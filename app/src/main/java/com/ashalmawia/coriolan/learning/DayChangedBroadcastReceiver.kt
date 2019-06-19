@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.scheduler
+package com.ashalmawia.coriolan.learning
 
 import android.content.BroadcastReceiver
 import android.content.Context

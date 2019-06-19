@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.SRStateInfo
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.StateType
+import com.ashalmawia.coriolan.learning.StateType
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

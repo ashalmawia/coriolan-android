@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning
 
-enum class LearningAnswer {
+enum class SRAnswer {
     WRONG,
     CORRECT,
     EASY,

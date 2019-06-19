@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.learning.assignment.MockState
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.model.mockForwardCardWithState
 import com.ashalmawia.coriolan.model.mockReverseCardWithState
 import com.ashalmawia.coriolan.util.forwardWithState

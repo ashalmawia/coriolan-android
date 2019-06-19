@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.CardWithState
 import org.joda.time.DateTime
 
 import org.junit.Assert.*
@@ -134,9 +134,11 @@ class AssignmentTest {
     @Test
     fun `test__undo__forthAndBack`() {
         // given
-        val cards = (0 until 20).map { CardWithState(com.ashalmawia.coriolan.model.mockCard(
-                front = "front $it", back = "back $it"
-        ), MockState()) }
+        val cards = (0 until 20).map {
+            CardWithState(com.ashalmawia.coriolan.model.mockCard(
+                    front = "front $it", back = "back $it"
+            ), MockState())
+        }
 
         // when
         val assignment = create(date, cards)
@@ -160,9 +162,11 @@ class AssignmentTest {
     @Test
     fun `test__undo__fullQueue`() {
         // given
-        val cards = (0 until 20).map { CardWithState(com.ashalmawia.coriolan.model.mockCard(
-                front = "front $it", back = "back $it"
-        ), MockState()) }
+        val cards = (0 until 20).map {
+            CardWithState(com.ashalmawia.coriolan.model.mockCard(
+                    front = "front $it", back = "back $it"
+            ), MockState())
+        }
 
         // when
         val assignment = create(date, cards)
@@ -185,9 +189,11 @@ class AssignmentTest {
     @Test
     fun `test__undo__reschedule`() {
         // given
-        val cards = (1 .. 2).map { CardWithState(com.ashalmawia.coriolan.model.mockCard(
-                front = "front $it", back = "back $it"
-        ), MockState()) }
+        val cards = (1 .. 2).map {
+            CardWithState(com.ashalmawia.coriolan.model.mockCard(
+                    front = "front $it", back = "back $it"
+            ), MockState())
+        }
 
         // when
         val assignment = create(date, cards)

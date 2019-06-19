@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.mockCardWithState
 import com.ashalmawia.coriolan.model.mockStateInProgress
 import com.ashalmawia.coriolan.model.mockStateNew

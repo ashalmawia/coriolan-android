@@ -4,8 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.learning.scheduler.overrideToday
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.overrideToday
+import com.ashalmawia.coriolan.learning.today
 import kotlinx.android.synthetic.main.debug_increase_date.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat

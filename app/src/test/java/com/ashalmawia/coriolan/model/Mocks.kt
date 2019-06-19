@@ -3,11 +3,11 @@ package com.ashalmawia.coriolan.model
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.MockState
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
-import com.ashalmawia.coriolan.learning.scheduler.State
-import com.ashalmawia.coriolan.learning.scheduler.sr.PERIOD_NEVER_SCHEDULED
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_NEVER_SCHEDULED
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.today
 
 // TODO: go over it's default usages and consider adding params and checking them
 fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)

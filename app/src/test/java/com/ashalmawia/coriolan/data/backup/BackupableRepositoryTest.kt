@@ -2,8 +2,8 @@ package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.scheduler.StateType
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.ExpressionType
 import org.junit.Assert.*
 import org.junit.Before

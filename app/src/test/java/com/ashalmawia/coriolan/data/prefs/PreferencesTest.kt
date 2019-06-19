@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.prefs
 
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.mockLanguage
 import org.junit.Assert.*
 import org.junit.Test

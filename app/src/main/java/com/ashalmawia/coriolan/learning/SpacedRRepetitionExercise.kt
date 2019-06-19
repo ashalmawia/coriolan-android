@@ -11,10 +11,9 @@ import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.scheduler.*
-import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
-import com.ashalmawia.coriolan.learning.scheduler.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
@@ -26,7 +25,7 @@ import org.joda.time.DateTime
  * If the card is answered correctly, it removes it from the queue.
  * Otherwise, adds it to the end of the queue.
  */
-class LearningExercise(private val context: Context) : Exercise<SRState, LearningAnswer> {
+class SpacedRRepetitionExercise(private val context: Context) : Exercise<SRState, SRAnswer> {
 
     private val scheduler = MultiplierBasedScheduler()
 
@@ -44,13 +43,13 @@ class LearningExercise(private val context: Context) : Exercise<SRState, Learnin
     override val canUndo: Boolean
         get() = true
 
-    override fun processReply(repository: Repository, card: CardWithState<SRState>, answer: LearningAnswer, assignment: Assignment<SRState>): CardWithState<SRState> {
+    override fun processReply(repository: Repository, card: CardWithState<SRState>, answer: SRAnswer, assignment: Assignment<SRState>): CardWithState<SRState> {
         val updated = updateCardState(repository, card, scheduler.processAnswer(answer, card.state))
         rescheduleIfNeeded(updated, assignment)
         return updated
     }
 
-    private fun answers(state: SRState): Array<LearningAnswer> = scheduler.answers(state)
+    private fun answers(state: SRState): Array<SRAnswer> = scheduler.answers(state)
 
     override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
         return repository.cardsDueDate(stableId, deck, date)

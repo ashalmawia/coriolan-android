@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data
 
-import com.ashalmawia.coriolan.learning.scheduler.Status
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.util.orZero
 
 data class Counts(val new: Int, val review: Int, val relearn: Int, val total: Int) {
