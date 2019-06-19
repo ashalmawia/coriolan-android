@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
 import com.ashalmawia.coriolan.data.storage.provideHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.util.OpenForTesting
 import junit.framework.Assert.assertTrue
@@ -20,7 +20,7 @@ import java.io.InputStream
 @RunWith(RobolectricTestRunner::class)
 class BackupableRepositoryTransactionTest {
 
-    val exercises = ExercisesRegistry.get(RuntimeEnvironment.application).allExercises()
+    val exercises = listOf(MockExercise(stateType = StateType.SR_STATE))
     val realRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
 
     val backup: Backup = JsonBackup()

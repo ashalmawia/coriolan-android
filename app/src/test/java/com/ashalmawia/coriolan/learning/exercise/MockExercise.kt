@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.scheduler.CardWithState
 import com.ashalmawia.coriolan.learning.scheduler.StateType
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
@@ -45,6 +46,7 @@ class MockExercise(override val stableId: String = "mock", override val stateTyp
     }
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
+        repository.updateSRCardState(card, emptyState(), stableId)
     }
 
     override fun equals(other: Any?): Boolean {

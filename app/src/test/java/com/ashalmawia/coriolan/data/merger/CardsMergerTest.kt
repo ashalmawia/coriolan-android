@@ -1,15 +1,14 @@
 package com.ashalmawia.coriolan.data.merger
 
 import com.ashalmawia.coriolan.data.storage.MockRepository
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.exercise.MockExerciseDescriptor
+import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.assertCardCorrect
 import com.ashalmawia.coriolan.model.mockDomain
 import com.ashalmawia.coriolan.model.mockExpression
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -19,11 +18,11 @@ class CardsMergerTest {
 
     private val domain = mockDomain()
     private val repository = MockRepository()
-    private val exersicesRegistry = ExercisesRegistry
+    private val exersicesRegistry = MockExercisesRegistry()
 
     private val deckId = 5L
     private val mockState = SRState(today().plusDays(5), 8)
-    private val exercise = MockExerciseDescriptor()
+    private val exercise = exersicesRegistry.defaultExercise()
 
     private val merger = CardsMergerImpl(repository, domain, exersicesRegistry)
 

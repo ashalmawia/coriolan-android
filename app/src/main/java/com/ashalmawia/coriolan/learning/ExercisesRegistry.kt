@@ -2,28 +2,17 @@ package com.ashalmawia.coriolan.learning
 
 import android.content.Context
 
-class ExercisesRegistry(context: Context) {
+interface ExercisesRegistry {
 
     companion object {
         private var instance: ExercisesRegistry? = null
 
         fun get(context: Context): ExercisesRegistry {
-            return instance ?: ExercisesRegistry(context.applicationContext).also { instance = it }
+            return instance ?: ExercisesRegistryImpl(context.applicationContext).also { instance = it }
         }
     }
 
-    private val default = LearningExercise(context)
+    fun allExercises(): List<Exercise<*, *>>
 
-    private val exercises = listOf(
-            default
-            // all others go here
-    )
-
-    fun allExercises(): List<Exercise<*, *>> {
-        return exercises
-    }
-
-    fun defaultExercise(): Exercise<*, *> {
-        return default
-    }
+    fun defaultExercise(): Exercise<*, *>
 }

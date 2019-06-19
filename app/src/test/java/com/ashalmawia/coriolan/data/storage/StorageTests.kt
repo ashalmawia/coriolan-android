@@ -3,6 +3,8 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.LearningExercise
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
@@ -13,7 +15,7 @@ import org.junit.Test
 
 abstract class StorageTest {
 
-    private val exercise = LearningExercise()
+    private val exercise = MockExercise(stateType = StateType.SR_STATE)
     private val exercises = listOf(exercise)
 
     private lateinit var domain: Domain

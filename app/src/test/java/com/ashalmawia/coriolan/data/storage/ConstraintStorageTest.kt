@@ -2,7 +2,8 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
-import com.ashalmawia.coriolan.learning.LearningExercise
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.*
@@ -15,7 +16,7 @@ import org.robolectric.RuntimeEnvironment
 @RunWith(RobolectricTestRunner::class)
 class ConstraintStorageTest {
 
-    private val exercise = LearningExercise()
+    private val exercise = MockExercise(stateType = StateType.SR_STATE)
     private val exercises = listOf(exercise)
 
     private lateinit var domain: Domain
