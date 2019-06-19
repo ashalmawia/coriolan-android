@@ -10,7 +10,7 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.orZero
@@ -21,7 +21,7 @@ import kotlin.math.max
 class IncreaseLimitsDialog(
         private val context: Context,
         private val deck: Deck,
-        private val exercise: ExerciseDescriptor<*, *>,
+        private val exercise: Exercise<*, *>,
         private val date: DateTime,
         private val repository: Repository,
         private val preferences: Preferences

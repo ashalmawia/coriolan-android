@@ -1,19 +1,23 @@
 package com.ashalmawia.coriolan.learning
 
 import android.content.Context
+import android.support.annotation.StringRes
 import com.ashalmawia.coriolan.CardActivity
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
-import com.ashalmawia.coriolan.learning.scheduler.Answer
-import com.ashalmawia.coriolan.learning.scheduler.CardWithState
+import com.ashalmawia.coriolan.learning.mutation.Mutation
+import com.ashalmawia.coriolan.learning.mutation.Mutations
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.learning.scheduler.*
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.scheduler.Status
-import com.ashalmawia.coriolan.learning.scheduler.today
+import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
+import org.joda.time.DateTime
 
 /**
  * Simple learning exercise which shows all the cards in the assignment: given front, guess back.
@@ -22,144 +26,70 @@ import com.ashalmawia.coriolan.model.Deck
  * If the card is answered correctly, it removes it from the queue.
  * Otherwise, adds it to the end of the queue.
  */
-class LearningExercise(
-        private val context: Context,
-        private val stableId: String,
-        private val deck: Deck,
-        private val assignment: Assignment<SRState>,
-        private val finishListener: FinishListener
-) : Exercise {
-
-    private val repository = Repository.get(context)
-    private val journal = Journal.get(context)
+class LearningExercise(private val context: Context) : Exercise<SRState, LearningAnswer> {
 
     private val scheduler = MultiplierBasedScheduler()
 
-    override fun refetchCard(card: Card) {
-        val updated = repository.cardById(card.id, card.domain)!!
-        val state = repository.getSRCardState(card, stableId)
-        if (updated.deckId == deck.id && isPending(state)) {
-            assignment.replace(card, CardWithState(updated, state))
-        } else {
-            dropCard(card)
-        }
+    override val stableId: String
+        get() = "simple"
+
+    override val stateType: StateType
+        get() = StateType.SR_STATE
+
+    @StringRes
+    override fun name(): Int {
+        return R.string.exercise_simple
     }
 
-    override fun dropCard(card: Card) {
-        val removingCurrent = assignment.current?.card == card
-        assignment.delete(card)
-        if (removingCurrent) {
-            showNextOrComplete()
-        }
+    override val canUndo: Boolean
+        get() = true
+
+    override fun processReply(repository: Repository, card: CardWithState<SRState>, answer: LearningAnswer, assignment: Assignment<SRState>): CardWithState<SRState> {
+        val updated = updateCardState(repository, card, scheduler.processAnswer(answer, card.state))
+        rescheduleIfNeeded(updated, assignment)
+        return updated
     }
 
-    override fun showNextOrComplete() {
-        if (assignment.hasNext()) {
-            assignment.next()
+    private fun answers(state: SRState): Array<LearningAnswer> = scheduler.answers(state)
 
-            val intent = CardActivity.intent(context)
-            context.startActivity(intent)
-        } else {
-            finish()
-        }
+    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
+        return repository.cardsDueDate(stableId, deck, date)
     }
 
-    override fun canUndo(): Boolean = assignment.canUndo()
-
-    override fun undo() {
-        val newState = assignment.current!!.state
-        val undone = assignment.undo()
-        updateCardState(undone, undone.state)
-        undoCardStudied(undone.state, journal, newState.status != Status.RELEARN)
+    override fun showCard(card: CardWithState<SRState>) {
+        val intent = CardActivity.intent(context, answers(card.state))
+        context.startActivity(intent)
     }
 
-    private fun finish() {
-        finishListener.onFinish()
-    }
-
-    val counts: Counts
-        get() = assignment.counts()
-
-    fun card() = assignment.current!!
-
-    fun easy() = onCardAnsweredCorrectly { card -> scheduler.easy(card) }
-
-    fun correct() = onCardAnsweredCorrectly { card -> scheduler.correct(card) }
-
-    fun hard() = onCardAnsweredCorrectly { card -> scheduler.hard(card) }
-
-    fun wrong() = onCardAnswered(false, { card -> scheduler.wrong(card) })
-
-    fun answers(state: SRState): Array<Answer> = scheduler.answers(state)
-
-    private fun onCardAnsweredCorrectly(update: (SRState) -> SRState) {
-        onCardAnswered(true, update)
-    }
-
-    private fun onCardAnswered(correct: Boolean, update: (SRState) -> SRState) {
-        val card = assignment.current!!
-
-        recordCardStudied(card.state, journal, correct)
-        val updated = updateCardState(card, update.invoke(card.state))
-        rescheduleIfNeeded(updated)
-
-        showNextOrComplete()
-    }
-
-    private fun updateCardState(card: CardWithState<SRState>, newState: SRState): CardWithState<SRState> {
+    override fun updateCardState(repository: Repository, card: CardWithState<SRState>, newState: SRState): CardWithState<SRState> {
         repository.updateSRCardState(card.card, newState, stableId)
         return CardWithState(card.card, newState)
     }
 
-    private fun rescheduleIfNeeded(card: CardWithState<SRState>) {
-        if (isPending(card.state)) {
+    override fun getCardWithState(repository: Repository, card: Card): CardWithState<SRState> {
+        return CardWithState(card, repository.getSRCardState(card, stableId))
+    }
+
+    private fun rescheduleIfNeeded(card: CardWithState<SRState>, assignment: Assignment<SRState>) {
+        if (isPending(card)) {
             assignment.reschedule(card)
         }
     }
 
-    private fun isPending(state: SRState) = state.due <= today()
+    override fun isPending(card: CardWithState<SRState>): Boolean = card.state.due <= today()
 
-    private fun recordCardStudied(state: SRState, journal: Journal, correct: Boolean) {
-        val date = assignment.date
-        when (state.status) {
-            Status.NEW -> {
-                journal.recordNewCardStudied(date)
-            }
-
-            Status.IN_PROGRESS, Status.LEARNT -> {
-                journal.recordReviewStudied(date)
-                if (!correct) {
-                    journal.recordCardRelearned(date)
-                }
-            }
-
-            Status.RELEARN -> {
-            } // ignore all relearns as if they appear they have been already counted somehow
-        }
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<SRState> {
+        return Mutations(listOf(
+                Mutation.CardTypeFilter.from(preferences),
+                Mutation.SplitDeck(deck),
+                Mutation.SortReviewsByPeriod(),
+                Mutation.NewCardsOrder.from(order),
+                Mutation.LimitCount(preferences, journal, date),
+                Mutation.Shuffle(order == StudyOrder.RANDOM)
+        ))
     }
 
-    private fun undoCardStudied(state: SRState, journal: Journal, correct: Boolean) {
-        val date = assignment.date
-        when (state.status) {
-            Status.NEW -> {
-                journal.undoNewCardStudied(date)
-            }
-
-            Status.IN_PROGRESS, Status.LEARNT -> {
-                if (correct) {
-                    journal.undoReviewStudied(date)
-                } else {
-                    journal.undoCardRelearned(date)
-                }
-            }
-
-            Status.RELEARN -> {
-            } // ignore all relearns as if they appear they have been already counted somehow
-        }
+    override fun onTranslationAdded(repository: Repository, card: Card) {
+        repository.updateSRCardState(card, emptyState(), stableId)
     }
-}
-
-interface FinishListener {
-
-    fun onFinish() {}
 }

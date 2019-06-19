@@ -4,7 +4,7 @@ import com.ashalmawia.coriolan.data.backup.json.JsonBackup
 import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
 import com.ashalmawia.coriolan.data.storage.provideHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.util.OpenForTesting
@@ -20,7 +20,7 @@ import java.io.InputStream
 @RunWith(RobolectricTestRunner::class)
 class BackupableRepositoryTransactionTest {
 
-    val exercises = ExercisesRegistry.allExercises()
+    val exercises = ExercisesRegistry.get(RuntimeEnvironment.application).allExercises()
     val realRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
 
     val backup: Backup = JsonBackup()
@@ -123,7 +123,7 @@ class BackupableRepositoryTransactionTest {
     private fun provideBackupInputStream(): InputStream = provideBackupInputStream(exercises)
 }
 
-private fun assertEmpty(repository: BackupableRepository, exercises: List<ExerciseDescriptor<*, *>>) {
+private fun assertEmpty(repository: BackupableRepository, exercises: List<Exercise<*, *>>) {
     assertTrue(repository.allLanguages(0, 500).isEmpty())
     assertTrue(repository.allDomains(0, 500).isEmpty())
     assertTrue(repository.allDecks(0, 500).isEmpty())
@@ -132,7 +132,7 @@ private fun assertEmpty(repository: BackupableRepository, exercises: List<Exerci
     exercises.forEach { assertTrue(repository.allSRStates(it.stableId, 0, 500).isEmpty()) }
 }
 
-private fun provideBackupInputStream(exercises: List<ExerciseDescriptor<*, *>>): InputStream {
+private fun provideBackupInputStream(exercises: List<Exercise<*, *>>): InputStream {
     val tempRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
     tempRepo.writeLanguages(JsonBackupTestData.languages)
     tempRepo.writeDomains(JsonBackupTestData.domains)

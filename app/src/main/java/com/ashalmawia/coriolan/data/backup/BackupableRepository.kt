@@ -10,7 +10,7 @@ interface BackupableRepository {
 
     companion object {
         fun get(context: Context): BackupableRepository {
-            return SqliteBackupHelper(context, ExercisesRegistry.allExercises())
+            return SqliteBackupHelper(context, ExercisesRegistry.get(context).allExercises())
         }
     }
 

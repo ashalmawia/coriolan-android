@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.model.Deck
 import kotlinx.android.synthetic.main.deck_details.*
 import org.joda.time.DateTime
@@ -12,7 +12,7 @@ import org.joda.time.DateTime
 class DeckDetailsDialog(
         context: Context,
         private val deck: Deck,
-        private val exercise: ExerciseDescriptor<*, *>,
+        private val exercise: Exercise<*, *>,
         private val date: DateTime
 ) : Dialog(context) {
 

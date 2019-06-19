@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.backup.json
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.SRStateInfo
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.fasterxml.jackson.core.*
 import java.io.InputStream
@@ -20,7 +20,7 @@ private const val FIELD_SR_STATES = "sr_state"
 
 class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
-    override fun create(repository: BackupableRepository, exercises: List<ExerciseDescriptor<*, *>>, stream: OutputStream) {
+    override fun create(repository: BackupableRepository, exercises: List<Exercise<*, *>>, stream: OutputStream) {
         write(repository, exercises, stream, JacksonSerializer.instance())
     }
 
@@ -54,7 +54,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
     private fun write(
             repository: BackupableRepository,
-            exercises: List<ExerciseDescriptor<*, *>>,
+            exercises: List<Exercise<*, *>>,
             stream: OutputStream,
             serializer: JacksonSerializer
     ) {
@@ -111,7 +111,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
     private fun writeSRStates(
             repository: BackupableRepository,
-            exercises: List<ExerciseDescriptor<*, *>>,
+            exercises: List<Exercise<*, *>>,
             json: JsonGenerator,
             serializer: (SRStateInfo, JsonGenerator) -> Unit
     ) {

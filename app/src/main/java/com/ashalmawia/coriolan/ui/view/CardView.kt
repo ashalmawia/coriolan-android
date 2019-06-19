@@ -7,7 +7,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
-import com.ashalmawia.coriolan.learning.scheduler.Answer
+import com.ashalmawia.coriolan.learning.LearningAnswer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
@@ -39,7 +39,7 @@ class CardView : FrameLayout {
         touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
     }
 
-    fun bind(card: Card, answers: Array<Answer>) {
+    fun bind(card: Card, answers: List<LearningAnswer>) {
         frontText.text = card.original.value
         backText.text = translationsToString(card.translations)
         configureButtonsBar(answers)
@@ -47,16 +47,16 @@ class CardView : FrameLayout {
         showFront()
     }
 
-    private fun configureButtonsBar(answers: Array<Answer>) {
-        if (!answers.contains(Answer.WRONG) || !answers.contains(Answer.CORRECT)) {
+    private fun configureButtonsBar(answers: List<LearningAnswer>) {
+        if (!answers.contains(LearningAnswer.WRONG) || !answers.contains(LearningAnswer.CORRECT)) {
             throw IllegalStateException("no wrong or correct state, unsupported")
         }
 
-        val hasHard = answers.contains(Answer.HARD)
+        val hasHard = answers.contains(LearningAnswer.HARD)
         buttonHard.visible = hasHard
         buttonHardCover.visible = !hasHard
 
-        val hasEasy = answers.contains(Answer.EASY)
+        val hasEasy = answers.contains(LearningAnswer.EASY)
         buttonEasy.visible = hasEasy
         buttonEasyCover.visible = !hasEasy
     }

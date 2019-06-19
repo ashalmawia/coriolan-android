@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.backup
 
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
-import com.ashalmawia.coriolan.learning.exercise.MockExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import com.ashalmawia.coriolan.learning.scheduler.today
 import com.ashalmawia.coriolan.model.ExpressionType
@@ -11,9 +11,9 @@ import org.junit.Test
 
 abstract class BackupableRepositoryTest {
 
-    protected abstract fun createRepository(exercises: List<ExerciseDescriptor<*, *>>): BackupableRepository
+    protected abstract fun createRepository(exercises: List<Exercise<*, *>>): BackupableRepository
 
-    private val exercise = MockExerciseDescriptor("some_exercise", StateType.SR_STATE)
+    private val exercise = MockExercise("some_exercise", StateType.SR_STATE)
     private val exercises = listOf(exercise)
 
     private lateinit var repo: BackupableRepository

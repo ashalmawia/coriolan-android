@@ -5,20 +5,21 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.scheduler.State
 import com.ashalmawia.coriolan.learning.scheduler.TodayChangeListener
 import com.ashalmawia.coriolan.learning.scheduler.TodayManager
 import com.ashalmawia.coriolan.learning.scheduler.today
@@ -33,7 +34,7 @@ private const val TAG = "LearningFragment"
 
 class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
-    private lateinit var exercise: ExerciseDescriptor<*, *>
+    private lateinit var exercise: Exercise<*, *>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.learning, container, false)
@@ -44,7 +45,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
         setHasOptionsMenu(true)
 
-        exercise = ExercisesRegistry.defaultExercise()
+        exercise = ExercisesRegistry.get(view.context).defaultExercise()
         initializeList()
     }
 
@@ -73,7 +74,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
     }
 
     override fun fetchData() {
-        (decksList.adapter as DecksAdapter<*, *>).setData(decksList())
+        (decksList.adapter as DecksAdapter).setData(decksList())
     }
 
     override fun onDayChanged() {
@@ -92,11 +93,15 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 private const val TYPE_HEADER = 1
 private const val TYPE_ITEM = 2
 
-private class DecksAdapter<S: State, E : Exercise>(
+private class DecksAdapter(
         private val context: Context,
-        private val exercise: ExerciseDescriptor<S, E>,
+        private val exercise: Exercise<*, *>,
         private val dataFetcher: DataFetcher
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val repository = Repository.get(context)
+    private val prefereces = Preferences.get(context)
+    private val journal = Journal.get(context)
 
     private val decks: MutableList<Deck> = mutableListOf()
     private val counts: MutableMap<Deck, Counts> = mutableMapOf()
@@ -183,19 +188,19 @@ private class DecksAdapter<S: State, E : Exercise>(
     }
 
     private fun studyDefault(deck: Deck) {
-        LearningFlow.initiate(context, deck, exercise = exercise)
+        LearningFlow.initiate(repository, prefereces, deck, exercise = exercise, journal = journal)
     }
 
     private fun studyStraightforward(deck: Deck) {
-        LearningFlow.initiate(context, deck, StudyOrder.ORDER_ADDED, exercise)
+        LearningFlow.initiate(repository, prefereces, deck, StudyOrder.ORDER_ADDED, exercise, journal)
     }
 
     private fun studyRandom(deck: Deck) {
-        LearningFlow.initiate(context, deck, StudyOrder.RANDOM, exercise)
+        LearningFlow.initiate(repository, prefereces, deck, StudyOrder.RANDOM, exercise, journal)
     }
 
     private fun studyNewestFirst(deck: Deck) {
-        LearningFlow.initiate(context, deck, StudyOrder.NEWEST_FIRST, exercise)
+        LearningFlow.initiate(repository, prefereces, deck, StudyOrder.NEWEST_FIRST, exercise, journal)
     }
 
     private fun studyMore(deck: Deck) {

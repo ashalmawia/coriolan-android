@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 
 private const val SCHEMA_VERSION = 1
@@ -14,13 +14,13 @@ private const val DATABASE_NAME = "data.db"
  * Companion object's get() function instead, otherwise having multiple instances of SQLiteOpenHelper
  * will be a well-known sourse of bugs.
  */
-class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<ExerciseDescriptor<*, *>>, dbName: String = DATABASE_NAME)
+class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<Exercise<*, *>>, dbName: String = DATABASE_NAME)
     : SQLiteOpenHelper(context, dbName, null, SCHEMA_VERSION) {
 
     companion object {
         private var value: SqliteRepositoryOpenHelper? = null
 
-        fun get(context: Context, exercises: List<ExerciseDescriptor<*, *>>): SqliteRepositoryOpenHelper {
+        fun get(context: Context, exercises: List<Exercise<*, *>>): SqliteRepositoryOpenHelper {
             if (value == null) {
                 value = SqliteRepositoryOpenHelper(context, exercises)
             }
@@ -106,7 +106,7 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
         createTablesForExercises(db, exercises)
     }
 
-    private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<ExerciseDescriptor<*, *>>) {
+    private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<Exercise<*, *>>) {
         exercises.filterNot { it.stateType == StateType.UNKNOWN }
                 .forEach { createTableExerciseState(db, it.stateType, sqliteTableExerciseState(it.stableId)) }
     }

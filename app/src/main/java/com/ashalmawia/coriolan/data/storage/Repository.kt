@@ -19,7 +19,7 @@ interface Repository {
 
         fun get(context: Context): Repository {
             if (!Companion::instance.isInitialized) {
-                instance = SqliteStorage(context.applicationContext, ExercisesRegistry.allExercises())
+                instance = SqliteStorage(context.applicationContext, ExercisesRegistry.get(context).allExercises())
             }
             return instance
         }

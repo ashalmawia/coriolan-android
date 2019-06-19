@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.learning.scheduler.sr
 
+import com.ashalmawia.coriolan.learning.LearningAnswer
 import com.ashalmawia.coriolan.learning.scheduler.*
 import org.joda.time.Days
 import kotlin.math.*
@@ -12,15 +13,24 @@ private const val NEW_RESPONDED_EASY_DAYS = 4
 
 class MultiplierBasedScheduler : Scheduler {
 
-    override fun answers(state: SRState): Array<Answer> {
+    override fun answers(state: SRState): Array<LearningAnswer> {
         return when (state.status) {
-            Status.NEW -> arrayOf(Answer.WRONG, Answer.CORRECT, Answer.EASY)
-            Status.RELEARN -> arrayOf(Answer.WRONG, Answer.CORRECT)
-            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(Answer.WRONG, Answer.HARD, Answer.CORRECT, Answer.EASY)
+            Status.NEW -> arrayOf(LearningAnswer.WRONG, LearningAnswer.CORRECT, LearningAnswer.EASY)
+            Status.RELEARN -> arrayOf(LearningAnswer.WRONG, LearningAnswer.CORRECT)
+            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(LearningAnswer.WRONG, LearningAnswer.HARD, LearningAnswer.CORRECT, LearningAnswer.EASY)
         }
     }
 
-    override fun wrong(state: SRState): SRState {
+    override fun processAnswer(answer: LearningAnswer, state: SRState): SRState {
+        return when (answer) {
+            LearningAnswer.WRONG -> wrong(state)
+            LearningAnswer.CORRECT -> correct(state)
+            LearningAnswer.EASY -> easy(state)
+            LearningAnswer.HARD -> hard(state)
+        }
+    }
+
+    private fun wrong(state: SRState): SRState {
         return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
             SRState(today(), PERIOD_FIRST_ASNWER_WRONG)
         } else {
@@ -28,11 +38,11 @@ class MultiplierBasedScheduler : Scheduler {
         }
     }
 
-    override fun hard(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_HARD)
+    private fun hard(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_HARD)
 
-    override fun correct(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_CORRECT)
+    private fun correct(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_CORRECT)
 
-    override fun easy(state: SRState): SRState {
+    private fun easy(state: SRState): SRState {
         return if (state.period == PERIOD_NEVER_SCHEDULED) {
             // a special rule for easy for a new card, don't show it in this assignment
             SRState(today().plusDays(NEW_RESPONDED_EASY_DAYS), NEW_RESPONDED_EASY_DAYS)

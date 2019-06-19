@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.importer.CardData
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
-import com.ashalmawia.coriolan.learning.LearningExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.LearningExercise
 import com.ashalmawia.coriolan.learning.scheduler.Status
 import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.learning.scheduler.sr.emptyState
@@ -13,7 +13,7 @@ import org.junit.Test
 
 abstract class StorageTest {
 
-    private val exercise = LearningExerciseDescriptor()
+    private val exercise = LearningExercise()
     private val exercises = listOf(exercise)
 
     private lateinit var domain: Domain
@@ -26,7 +26,7 @@ abstract class StorageTest {
     }
     private val emptyStorage: Lazy<Repository> = lazy { createStorage(exercises) }
 
-    protected abstract fun createStorage(exercises: List<ExerciseDescriptor<*, *>>): Repository
+    protected abstract fun createStorage(exercises: List<Exercise<*, *>>): Repository
 
     private fun addMockDeck(storage: Repository): Deck {
         return storage.addDeck(domain, "Mock")

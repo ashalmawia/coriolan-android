@@ -2,12 +2,12 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 
 class SqliteBackupHelper(
         context: Context,
-        private val exercises: List<ExerciseDescriptor<*, *>>,
+        private val exercises: List<Exercise<*, *>>,
         private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercises)
 ) : BackupableRepository {
 

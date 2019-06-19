@@ -1,12 +1,9 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import android.content.Context
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
-import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.mutation.Mutations
@@ -17,23 +14,29 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
 
-class MockExercise : Exercise {
-    override fun refetchCard(card: Card) {
+class MockExercise(override val stableId: String = "mock", override val stateType: StateType = StateType.UNKNOWN) : Exercise<MockState, Any> {
+
+    override val canUndo: Boolean
+        get() = true
+
+    override fun showCard(card: CardWithState<MockState>) {
     }
 
-    override fun dropCard(card: Card) {
+    override fun isPending(card: CardWithState<MockState>): Boolean {
+        return false
     }
 
-    override fun showNextOrComplete() {
+    override fun getCardWithState(repository: Repository, card: Card): CardWithState<MockState> {
+        return CardWithState(card, MockState())
     }
 
-    override fun canUndo(): Boolean = false
-
-    override fun undo() {
+    override fun updateCardState(repository: Repository, card: CardWithState<MockState>, newState: MockState): CardWithState<MockState> {
+        return CardWithState(card.card, newState)
     }
-}
 
-class MockExerciseDescriptor(override val stableId: String = "mock", override val stateType: StateType = StateType.UNKNOWN) : ExerciseDescriptor<MockState, MockExercise> {
+    override fun processReply(repository: Repository, card: CardWithState<MockState>, answer: Any, assignment: Assignment<MockState>): CardWithState<MockState> {
+        return card
+    }
 
     override fun name(): Int = 0
 
@@ -41,15 +44,11 @@ class MockExerciseDescriptor(override val stableId: String = "mock", override va
         return emptyList()
     }
 
-    override fun exercise(context: Context, deck: Deck, assignment: Assignment<MockState>, finishListener: FinishListener): MockExercise {
-        return MockExercise()
-    }
-
     override fun onTranslationAdded(repository: Repository, card: Card) {
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is MockExerciseDescriptor && stableId == other.stableId
+        return other is MockExercise && stableId == other.stableId
     }
 
     override fun hashCode(): Int {

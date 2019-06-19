@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import kotlin.math.min
 
@@ -12,7 +12,7 @@ class MockBackupableRepository(
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
         srstates: Map<String, List<SRStateInfo>>,
-        private val exercises: List<ExerciseDescriptor<*, *>>
+        private val exercises: List<Exercise<*, *>>
 ) : BackupableRepository {
 
     private val languages = langauges.toMutableList()
@@ -90,7 +90,7 @@ class MockBackupableRepository(
     }
 
     companion object {
-        fun empty(exercises: List<ExerciseDescriptor<*, *>>): MockBackupableRepository {
+        fun empty(exercises: List<Exercise<*, *>>): MockBackupableRepository {
             return MockBackupableRepository(
                     emptyList(),
                     emptyList(),
@@ -102,7 +102,7 @@ class MockBackupableRepository(
             )
         }
 
-        fun random(exercises: List<ExerciseDescriptor<*, *>>): MockBackupableRepository {
+        fun random(exercises: List<Exercise<*, *>>): MockBackupableRepository {
             return MockBackupableRepository(
                     JsonBackupTestData.languages,
                     JsonBackupTestData.domains,

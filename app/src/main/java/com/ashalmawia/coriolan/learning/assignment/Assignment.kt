@@ -54,7 +54,7 @@ class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
     }
 
     fun replace(old: Card, new: CardWithState<T>) {
-        if (current?.card == old) {
+        if (current?.card?.id == old.id) {
             current = new
         } else {
             val found = queue.find { it.card == old }

@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.backup
 
 import android.os.Environment
 import com.ashalmawia.coriolan.data.backup.json.JsonBackup
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -16,7 +16,7 @@ interface Backup {
         fun get(): Backup = JsonBackup()
     }
 
-    fun create(repository: BackupableRepository, exercises: List<ExerciseDescriptor<*, *>>, stream: OutputStream)
+    fun create(repository: BackupableRepository, exercises: List<Exercise<*, *>>, stream: OutputStream)
 
     fun restoreFrom(stream: InputStream, repository: BackupableRepository)
 }

@@ -1,12 +1,8 @@
 package com.ashalmawia.coriolan
 
 import android.content.Context
-
-import kotlinx.android.synthetic.main.card_activity.*
-
 import android.content.Intent
 import android.graphics.drawable.Drawable
-
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
@@ -17,18 +13,35 @@ import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.learning.FinishListener
+import com.ashalmawia.coriolan.learning.LearningAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.learning.LearningExercise
+import com.ashalmawia.coriolan.learning.scheduler.sr.SRState
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.CardView
 import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
+import kotlinx.android.synthetic.main.card_activity.*
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 
-private val REQUEST_CODE_EDIT_CARD = 1
+private const val REQUEST_CODE_EDIT_CARD = 1
+
+private const val EXTRA_ANSWERS = "answers"
 
 class CardActivity : BaseActivity(), CardViewListener, FinishListener {
+
+    companion object {
+        fun intent(context: Context, answers: Array<LearningAnswer>): Intent {
+            return Intent(context, CardActivity::class.java).apply {
+                putExtra(EXTRA_ANSWERS, answers.map { it.toString() }.toTypedArray())
+            }
+        }
+    }
+
+    private val flow by lazy {
+        @Suppress("UNCHECKED_CAST")
+        LearningFlow.current as LearningFlow<SRState, LearningAnswer>
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,23 +49,25 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
 
         adjustProgressCountsUI()
 
-        setUpToolbar(flow().deck.name)
-        toolbarTitle.text = flow().deck.name
+        setUpToolbar(flow.deck.name)
+        toolbarTitle.text = flow.deck.name
 
-        bindToCurrent()
+        bindToCurrent(intent.answers())
 
         delegate.isHandleNativeActionModesEnabled = false
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        bindToCurrent()
+        bindToCurrent(intent.answers())
     }
+
+    private fun Intent.answers() = getStringArrayExtra(EXTRA_ANSWERS).map { LearningAnswer.valueOf(it) }
 
     override fun onStart() {
         super.onStart()
 
-        flow().finishListener = this
+        flow.finishListener = this
     }
 
     override fun onFinish() {
@@ -70,7 +85,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val canUndo = exercise.canUndo()
+        val canUndo = flow.canUndo()
         menu.findItem(R.id.learning_menu__undo).isEnabled = canUndo
         menu.findItem(R.id.learning_menu__undo).icon = undoIcon.get(canUndo)
         return super.onPrepareOptionsMenu(menu)
@@ -95,12 +110,11 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     private fun undo() {
-        exercise.undo()
-        refresh()
+        flow.undo()
     }
 
     private fun editCurrentCard() {
-        val intent = AddEditCardActivity.edit(this, exercise.card().card)
+        val intent = AddEditCardActivity.edit(this, flow.card.card)
         startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
     }
 
@@ -115,8 +129,8 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     private fun deleteCurrentCard() {
-        val current = exercise.card()
-        exercise.dropCard(current.card)
+        val current = flow.card
+        flow.dropCard(current.card)
         decksRegistry().deleteCard(current.card)
     }
 
@@ -131,12 +145,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     private fun onCurrentCardUpdated() {
-        exercise.refetchCard(exercise.card().card)
-        refresh()
-    }
-
-    private fun refresh() {
-        bindToCurrent()
+        flow.refetchCard(flow.card)
     }
 
     override fun onStop() {
@@ -146,39 +155,30 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     override fun onCorrect() {
-        exercise.correct()
+        flow.replyCurrent(LearningAnswer.CORRECT)
     }
 
     override fun onWrong() {
-        exercise.wrong()
+        flow.replyCurrent(LearningAnswer.WRONG)
     }
 
     override fun onEasy() {
-        exercise.easy()
+        flow.replyCurrent(LearningAnswer.EASY)
     }
 
     override fun onHard() {
-        exercise.hard()
+        flow.replyCurrent(LearningAnswer.HARD)
     }
 
-    private fun bindToCurrent() {
+    private fun bindToCurrent(answers: List<LearningAnswer>) {
         val view = cardView as CardView
-        val card = exercise.card()
-        view.bind(card.card, exercise.answers(card.state))
+        val card = flow.card
+        view.bind(card.card, answers)
         view.listener = this
 
         updateProgressCounts()
 
         invalidateOptionsMenu()
-    }
-
-    private fun flow() = LearningFlow.current!!
-    private val exercise = flow().exercise as LearningExercise
-
-    companion object {
-        fun intent(context: Context): Intent {
-            return Intent(context, CardActivity::class.java)
-        }
     }
 
     private fun adjustProgressCountsUI() {
@@ -188,7 +188,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     }
 
     private fun updateProgressCounts() {
-        val counts = exercise.counts
+        val counts = flow.counts
         deck_progress_bar__new.text = counts.new.toString()
         deck_progress_bar__review.text = counts.review.toString()
         deck_progress_bar__relearn.text = counts.relearn.toString()

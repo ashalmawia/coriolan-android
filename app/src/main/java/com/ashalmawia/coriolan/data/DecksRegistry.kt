@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 
-class DecksRegistry(context: Context, val domain: Domain, private val repository: Repository) {
+class DecksRegistry(context: Context, val domain: Domain, private val repository: Repository, private val exercisesRegistry: ExercisesRegistry) {
 
     companion object {
         private var instance: DecksRegistry? = null
@@ -24,7 +24,8 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
 
         private fun create(context: Context, domain: Domain): DecksRegistry {
             val repository = Repository.get(context)
-            return DecksRegistry(context, domain, repository)
+            val exercisesRegistry = ExercisesRegistry.get(context)
+            return DecksRegistry(context, domain, repository, exercisesRegistry)
         }
     }
 
@@ -115,7 +116,7 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
     }
 
     private fun addForwardAndReverseWithMerging(original: Expression, translations: List<Expression>, cardData: CardData) {
-        val merger = CardsMerger.create(repository, domain, ExercisesRegistry)
+        val merger = CardsMerger.create(repository, domain, exercisesRegistry)
 
         merger.mergeOrAdd(original, translations, cardData.deckId)
 

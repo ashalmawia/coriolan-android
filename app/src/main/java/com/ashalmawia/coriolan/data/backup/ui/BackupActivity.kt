@@ -52,7 +52,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     fun createBackup() {
         val repo = BackupableRepository.get(this)
 
-        val task = BackupAsyncTask(repo, backupDir)
+        val task = BackupAsyncTask(repo, backupDir, ExercisesRegistry.get(this))
         task.listener = this
         this.task = task
 
@@ -100,7 +100,11 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 }
 
-private class BackupAsyncTask(private val repo: BackupableRepository, private val backupDir: File) : AsyncTask<Any, Nothing, File?>() {
+private class BackupAsyncTask(
+        private val repo: BackupableRepository,
+        private val backupDir: File,
+        private val exercisesRegistry: ExercisesRegistry
+) : AsyncTask<Any, Nothing, File?>() {
 
     var listener: BackupCreationListener? = null
 
@@ -121,7 +125,7 @@ private class BackupAsyncTask(private val repo: BackupableRepository, private va
         val backup = Backup.get()
 
         file.outputStream().use {
-            backup.create(repo, ExercisesRegistry.allExercises(), it)
+            backup.create(repo, exercisesRegistry.allExercises(), it)
         }
 
         return file

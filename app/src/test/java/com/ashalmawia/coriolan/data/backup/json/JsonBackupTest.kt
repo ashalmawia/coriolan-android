@@ -3,8 +3,8 @@ package com.ashalmawia.coriolan.data.backup.json
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.SRStateInfo
-import com.ashalmawia.coriolan.learning.ExerciseDescriptor
-import com.ashalmawia.coriolan.learning.exercise.MockExerciseDescriptor
+import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.scheduler.StateType
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -18,19 +18,19 @@ abstract class JsonBackupTest {
 
     private val backup: Backup = JsonBackup()
     
-    protected abstract fun createEmptyRepo(exercises: List<ExerciseDescriptor<*, *>>): BackupableRepository
-    protected abstract fun createNonEmptyRepo(exercises: List<ExerciseDescriptor<*, *>>): BackupableRepository
+    protected abstract fun createEmptyRepo(exercises: List<Exercise<*, *>>): BackupableRepository
+    protected abstract fun createNonEmptyRepo(exercises: List<Exercise<*, *>>): BackupableRepository
 
-    private fun exercises(count: Int = 0): List<ExerciseDescriptor<*, *>> {
-        return (1..count).map { MockExerciseDescriptor("exercise_$it", StateType.SR_STATE) }
+    private fun exercises(count: Int = 0): List<Exercise<*, *>> {
+        return (1..count).map { MockExercise("exercise_$it", StateType.SR_STATE) }
     }
 
     @Test
     fun `test__emptyRepository`() {
         // given
         val exercises = listOf(
-                MockExerciseDescriptor(stateType = StateType.SR_STATE),
-                MockExerciseDescriptor(stateType = StateType.UNKNOWN)
+                MockExercise(stateType = StateType.SR_STATE),
+                MockExercise(stateType = StateType.UNKNOWN)
         )
         val repo = createEmptyRepo(exercises)
 
@@ -71,7 +71,7 @@ abstract class JsonBackupTest {
     @Test
     fun `test__multipleSRStateExercisesAndSomeWithoutState`() {
         // given
-        val exercises = exercises(5).plus(MockExerciseDescriptor("no_state", StateType.UNKNOWN))
+        val exercises = exercises(5).plus(MockExercise("no_state", StateType.UNKNOWN))
         val repo = createNonEmptyRepo(exercises)
 
         // then
@@ -154,10 +154,10 @@ abstract class JsonBackupTest {
 
     private fun test(
             repo: BackupableRepository,
-            exercises: List<ExerciseDescriptor<*, *>>,
+            exercises: List<Exercise<*, *>>,
             backup: Backup,
             outRepo: BackupableRepository = createEmptyRepo(exercises),
-            exercisesIn: List<ExerciseDescriptor<*, *>> = exercises
+            exercisesIn: List<Exercise<*, *>> = exercises
     ) {
         // when
         val output = ByteArrayOutputStream()
@@ -178,7 +178,7 @@ abstract class JsonBackupTest {
     }
 
     private fun assertRepoEquals(expected: BackupableRepository, actual: BackupableRepository,
-                                 exercises: List<ExerciseDescriptor<*, *>>, exercisesIn: List<ExerciseDescriptor<*, *>> = exercises) {
+                                 exercises: List<Exercise<*, *>>, exercisesIn: List<Exercise<*, *>> = exercises) {
         assertEquals(expected.allLanguages(0, 500), actual.allLanguages(0, 500))
         assertEquals(expected.allDomains(0, 500), actual.allDomains(0, 500))
         assertEquals(expected.allExpressions(0, 500), actual.allExpressions(0, 500))
