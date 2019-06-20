@@ -25,6 +25,8 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
     private lateinit var prefs: Preferences
     private lateinit var dataStore: PreferenceDataStore
 
+    private val cardTypePreferenceHelper: CardTypePreferenceHelper = CardTypePreferenceHelperImpl()
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
@@ -33,7 +35,7 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
         }
 
         prefs = Preferences.get(context)
-        dataStore = CoriolanPreferencesDataStore(prefs)
+        dataStore = CoriolanPreferencesDataStore(prefs, cardTypePreferenceHelper)
     }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
@@ -65,10 +67,8 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
     }
 
     private fun setUpCardTypes() {
-        val context = context ?: return
-
         val cardTypes = findPreference(PREFERENCE_CARD_TYPES) as ListPreference
-        CardTypePreferenceHelper.initialize(context, cardTypes)
+        cardTypePreferenceHelper.initialize(cardTypes)
     }
 
     private fun verifyDailyLimit(value: String): Boolean {
@@ -105,7 +105,10 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
     }
 }
 
-class CoriolanPreferencesDataStore(val prefs: Preferences) : PreferenceDataStore() {
+class CoriolanPreferencesDataStore(
+        private val prefs: Preferences,
+        private val cardTypePreferenceHelper: CardTypePreferenceHelper
+) : PreferenceDataStore() {
 
     override fun putString(key: String?, value: String?) {
         when (key ?: return) {
@@ -116,7 +119,7 @@ class CoriolanPreferencesDataStore(val prefs: Preferences) : PreferenceDataStore
                 if (!TextUtils.isEmpty(value)) prefs.setReviewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearReviewCardsDailyLimit()
 
             PREFERENCE_CARD_TYPES ->
-                CardTypePreferenceHelper.saveValue(prefs, value)
+                cardTypePreferenceHelper.saveValue(prefs, value)
         }
     }
 
@@ -129,7 +132,7 @@ class CoriolanPreferencesDataStore(val prefs: Preferences) : PreferenceDataStore
                 prefs.getReviewCardsDailyLimitDefault()?.toString()
 
             PREFERENCE_CARD_TYPES ->
-                CardTypePreferenceHelper.getCurrentValue(prefs)
+                cardTypePreferenceHelper.getCurrentValue(prefs)
 
             else ->
                 super.getString(key, defValue)

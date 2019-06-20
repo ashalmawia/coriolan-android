@@ -1,12 +1,20 @@
 package com.ashalmawia.coriolan.ui.settings
 
-import android.content.Context
 import android.support.v7.preference.ListPreference
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.CardTypePreference
 import com.ashalmawia.coriolan.data.prefs.Preferences
 
-object CardTypePreferenceHelper {
+interface CardTypePreferenceHelper {
+
+    fun initialize(preference: ListPreference)
+
+    fun saveValue(preferences: Preferences, value: String?)
+
+    fun getCurrentValue(preferences: Preferences): String?
+}
+
+class CardTypePreferenceHelperImpl : CardTypePreferenceHelper {
 
     private val VALUES = CardTypePreference.values().map { it.value }.toTypedArray()
 
@@ -16,12 +24,12 @@ object CardTypePreferenceHelper {
             R.string.settings__card_types_reverse_only
     )
 
-    fun initialize(context: Context, preference: ListPreference) {
+    override fun initialize(preference: ListPreference) {
         preference.entryValues = VALUES
-        preference.entries = ENTRIES.map { context.getString(it) }.toTypedArray()
+        preference.entries = ENTRIES.map { preference.context.getString(it) }.toTypedArray()
     }
 
-    fun saveValue(preferences: Preferences, value: String?) {
+    override fun saveValue(preferences: Preferences, value: String?) {
         if (value == null) {
             throw IllegalArgumentException("value must not be null")
         }
@@ -34,12 +42,12 @@ object CardTypePreferenceHelper {
         }
     }
 
-    fun getCurrentValue(preferences: Preferences): String? {
+    override fun getCurrentValue(preferences: Preferences): String? {
         val value = preferences.getCardTypePreference()
-        if (value == null) {
-            return null
+        return if (value == null) {
+            null
         } else {
-            return value.value
+            value.value
         }
     }
 }
