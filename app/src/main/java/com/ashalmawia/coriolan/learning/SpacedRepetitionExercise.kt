@@ -25,7 +25,9 @@ import org.joda.time.DateTime
  * If the card is answered correctly, it removes it from the queue.
  * Otherwise, adds it to the end of the queue.
  */
-class SpacedRRepetitionExercise(private val context: Context) : Exercise<SRState, SRAnswer> {
+class SpacedRepetitionExercise(
+        private val context: Context
+) : Exercise<SRState, SRAnswer> {
 
     private val scheduler = MultiplierBasedScheduler()
 

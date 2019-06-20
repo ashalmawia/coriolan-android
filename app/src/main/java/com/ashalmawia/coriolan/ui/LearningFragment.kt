@@ -16,13 +16,9 @@ import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.LearningFlow
+import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.TodayChangeListener
-import com.ashalmawia.coriolan.learning.TodayManager
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.view.visible
@@ -100,8 +96,9 @@ private class DecksAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val repository = Repository.get(context)
-    private val prefereces = Preferences.get(context)
     private val journal = Journal.get(context)
+    private val assignmentFactory = AssignmentFactory.get(context)
+    private val deckCountsProvider = DeckCountsProvider.get(context)
 
     private val decks: MutableList<Deck> = mutableListOf()
     private val counts: MutableMap<Deck, Counts> = mutableMapOf()
@@ -111,7 +108,7 @@ private class DecksAdapter(
         decks.addAll(data)
 
         val timeStart = System.currentTimeMillis()
-        decks.forEach { counts[it] = LearningFlow.peekCounts(context, exercise, it) }
+        decks.forEach { counts[it] = deckCountsProvider.peekCounts(exercise, it) }
         Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
 
         notifyDataSetChanged()
@@ -188,19 +185,24 @@ private class DecksAdapter(
     }
 
     private fun studyDefault(deck: Deck) {
-        LearningFlow.initiate(repository, prefereces, deck, exercise = exercise, journal = journal)
+        studyRandom(deck)
     }
 
     private fun studyStraightforward(deck: Deck) {
-        LearningFlow.initiate(repository, prefereces, deck, StudyOrder.ORDER_ADDED, exercise, journal)
+        instantiateLearningFlow(deck, StudyOrder.ORDER_ADDED)
     }
 
     private fun studyRandom(deck: Deck) {
-        LearningFlow.initiate(repository, prefereces, deck, StudyOrder.RANDOM, exercise, journal)
+        instantiateLearningFlow(deck, StudyOrder.RANDOM)
     }
 
     private fun studyNewestFirst(deck: Deck) {
-        LearningFlow.initiate(repository, prefereces, deck, StudyOrder.NEWEST_FIRST, exercise, journal)
+        val studyOrder = StudyOrder.NEWEST_FIRST
+        instantiateLearningFlow(deck, studyOrder)
+    }
+
+    private fun instantiateLearningFlow(deck: Deck, studyOrder: StudyOrder) {
+        LearningFlow.initiate(repository, assignmentFactory, deck, studyOrder, exercise, journal)
     }
 
     private fun studyMore(deck: Deck) {

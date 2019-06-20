@@ -4,7 +4,7 @@ import android.content.Context
 
 class ExercisesRegistryImpl(context: Context) : ExercisesRegistry {
 
-    private val default = SpacedRRepetitionExercise(context)
+    private val default = SpacedRepetitionExercise(context)
 
     private val exercises = listOf(
             default
