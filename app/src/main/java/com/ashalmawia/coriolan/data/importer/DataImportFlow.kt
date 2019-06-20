@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.data.currentDomain
 import com.ashalmawia.coriolan.data.importer.file.ImporterFromFile
 
 class DataImportFlow(
@@ -44,7 +44,7 @@ class DataImportFlow(
     fun onData(context: Context, data: List<CardData>) {
         // TODO: add generalized confirmation UI
 
-        DecksRegistry.get(context, DomainsRegistry.domain()).addCardsToDeck(data)
+        DecksRegistry.get(context, currentDomain()).addCardsToDeck(data)
 
         callback.onSuccess()
         finish()

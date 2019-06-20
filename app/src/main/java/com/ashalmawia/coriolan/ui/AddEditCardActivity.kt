@@ -10,10 +10,13 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.AddCardResult
-import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.data.currentDomain
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.ExpressionType
 import kotlinx.android.synthetic.main.add_edit_card.*
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
@@ -51,7 +54,7 @@ class AddEditCardActivity : BaseActivity() {
             throw IllegalStateException("activity was not properly initialized - missing domain id")
         }   // todo: use it
 
-        domain = DomainsRegistry.domain()
+        domain = currentDomain()
 
         if (intent.hasExtra(EXTRA_CARD_ID)) {
             extractDataEditCard()

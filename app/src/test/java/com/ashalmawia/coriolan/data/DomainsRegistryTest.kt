@@ -15,29 +15,23 @@ class DomainsRegistryTest {
     @Before
     fun before() {
         repository = MockRepository()
-        registry = DomainsRegistry
+        registry = DomainsRegistryImpl(repository)
     }
 
     @Test
-    fun `test__preinitialize__domainAdded`() {
-        // given
-
-        // when
-        registry.preinitialize(repository)
-
+    fun test__preinitialize__domainAdded() {
         // then
         assertEquals(0, repository.allDomains().size)
-        assertNull(registry.domainIfExists())
+        assertNull(registry.defaultDomain())
     }
 
     @Test
-    fun `test__preinitialize__domainReused`() {
+    fun test__preinitialize__domainReused() {
         // given
         val domain = repository.createDomain("Some domain", langTranslations(), langOriginal())
 
         // when
-        registry.preinitialize(repository)
-        val default = registry.domainIfExists()
+        val default = registry.defaultDomain()
 
         // then
         assertNotNull(default)

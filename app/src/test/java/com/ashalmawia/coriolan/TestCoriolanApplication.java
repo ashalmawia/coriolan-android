@@ -4,11 +4,6 @@ package com.ashalmawia.coriolan;
 public class TestCoriolanApplication extends CoriolanApplication {
 
 	@Override
-	protected void domainsRegistry() {
-		// do nothing here
-	}
-
-	@Override
 	protected void firstStartJobs() {
 		// do nothing here
 	}

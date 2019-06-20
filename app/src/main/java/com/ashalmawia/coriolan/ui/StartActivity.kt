@@ -11,10 +11,7 @@ class StartActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // refetch data in the domains registry
-        DomainsRegistry.preinitialize(Repository.get(this))
-
-        val defaultDomain = DomainsRegistry.domainIfExists()
+        val defaultDomain = DomainsRegistry.get(this).defaultDomain()
         if (defaultDomain != null) {
             openDomain(defaultDomain)
         } else {

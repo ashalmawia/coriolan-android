@@ -1,43 +1,43 @@
 package com.ashalmawia.coriolan.data
 
+import android.content.Context
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
 
-object DomainsRegistry {
+interface DomainsRegistry {
 
-    private var domain: Domain? = null
+    companion object {
 
-    fun preinitialize(repository: Repository) {
-        val domains = repository.allDomains()
-        if (!domains.isEmpty()) {
-            domain = domains[0]
+        private var instance: DomainsRegistry? = null
+
+        fun get(context: Context): DomainsRegistry {
+            val repository = Repository.get(context)
+            return instance ?: DomainsRegistryImpl(repository).also { instance = it }
         }
     }
 
-    fun domain(): Domain {
-        return domainIfExists() ?: throw IllegalStateException("domain expected to have beeen initialized was not")
+    fun defaultDomain(): Domain?
+
+    fun createDomain(originalLangName: String, translationsLangName: String): Domain
+}
+
+class DomainsRegistryImpl(private val repository: Repository) : DomainsRegistry {
+
+    override fun defaultDomain(): Domain? {
+        val domains = repository.allDomains()
+        return if (domains.isNotEmpty()) {
+            domains[0]
+        } else {
+            null
+        }
     }
 
-    fun domainIfExists(): Domain? {
-        return domain
-    }
-
-    fun setCurrentDomain(domain: Domain) {
-        this.domain = domain
-    }
-
-    fun createDomain(repository: Repository, originalLangName: String, translationsLangName: String): Domain {
+    override fun createDomain(originalLangName: String, translationsLangName: String): Domain {
         val langOriginal = repository.findOrAddLanguage(originalLangName)
         val langTranslations = repository.findOrAddLanguage(translationsLangName)
 
-        val domain = repository.createDomain("", langOriginal, langTranslations)
-
-        if (this.domain == null) {
-            this.domain = domain
-        }
-
-        return domain
+        return repository.createDomain("", langOriginal, langTranslations)
     }
 
     private fun Repository.findOrAddLanguage(name: String): Language {

@@ -1,9 +1,7 @@
 package com.ashalmawia.coriolan
 
 import android.app.Application
-import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.util.OpenForTesting
 import com.ashalmawia.errors.Errors
@@ -22,8 +20,6 @@ class CoriolanApplication : Application() {
 
         todayManager()
 
-        domainsRegistry()
-
         firstStartJobs()
     }
 
@@ -39,10 +35,6 @@ class CoriolanApplication : Application() {
 
     private fun todayManager() {
         TodayManager.initialize(this)
-    }
-
-    protected fun domainsRegistry() {
-        DomainsRegistry.preinitialize(Repository.get(this))
     }
 
     protected fun firstStartJobs() {

@@ -126,7 +126,7 @@ class CreateDomainActivity : BaseActivity() {
 
     private fun createDomain(originalLang: String, translationsLang: String) {
         try {
-            val domain = DomainsRegistry.createDomain(Repository.get(this), originalLang, translationsLang)
+            val domain = DomainsRegistry.get(this).createDomain(originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
             preferences.setLastTranslationsLanguageId(domain.langTranslations())
             if (firstStart) {
