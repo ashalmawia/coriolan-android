@@ -13,6 +13,7 @@ import com.ashalmawia.coriolan.data.backup.ui.BackupActivity
 import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
+import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.AddEditDeckActivity
@@ -118,7 +119,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun importFromFile(context: Context) {
-        DataImportFlow.start(context, DataImportFlow.default(), object : DataImportCallback {
+        DataImportFlow.start(context, ImporterRegistry.get().default(), object : DataImportCallback {
             override fun onSuccess() {
                 Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
                 notifyDataUpdated()
