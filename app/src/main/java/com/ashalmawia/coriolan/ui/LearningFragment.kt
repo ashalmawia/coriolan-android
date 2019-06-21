@@ -14,13 +14,11 @@ import android.widget.TextView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.view.visible
@@ -28,14 +26,15 @@ import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning.*
 import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
 private const val TAG = "LearningFragment"
 
-class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
+class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher, BeginStudyListener {
 
     private val decksRegistry: DecksRegistry = domainScope().get()
-    private val adapter: DecksAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this) }
+    private val adapter: DecksAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this, this) }
     private val exercisesRegistry: ExercisesRegistry by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,6 +76,11 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
         adapter.setData(decksList())
     }
 
+    override fun beginStudy(deck: Deck, studyOrder: StudyOrder) {
+        val flow = get<LearningFlow<*, *>> { parametersOf(exercisesRegistry.defaultExercise(), deck, studyOrder) }
+        flow.showNextOrComplete()
+    }
+
     override fun onDayChanged() {
         // to update pending counters on deck items
         fetchData()
@@ -98,10 +102,9 @@ class DecksAdapter(
         private val preferences: Preferences,
         private val repository: Repository,
         private val deckCountsProvider: DeckCountsProvider,
-        private val assignmentFactory: AssignmentFactory,
-        private val journal: Journal,
         private val exercise: Exercise<*, *>,
-        private val dataFetcher: DataFetcher
+        private val dataFetcher: DataFetcher,
+        private val beginStudyListener: BeginStudyListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -206,7 +209,7 @@ class DecksAdapter(
     }
 
     private fun instantiateLearningFlow(deck: Deck, studyOrder: StudyOrder) {
-        LearningFlow.initiate(repository, assignmentFactory, deck, studyOrder, exercise, journal)
+        beginStudyListener.beginStudy(deck, studyOrder)
     }
 
     private fun studyMore(deck: Deck) {
@@ -258,4 +261,9 @@ class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 interface DataFetcher {
     fun fetchData()
+}
+
+interface BeginStudyListener {
+
+    fun beginStudy(deck: Deck, studyOrder: StudyOrder)
 }

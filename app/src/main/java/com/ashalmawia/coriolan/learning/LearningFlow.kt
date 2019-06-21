@@ -48,7 +48,6 @@ class LearningFlow<S : State, R>(
     }
 
     private fun finish() {
-        current = null
         finishListener?.onFinish()
     }
 
@@ -125,23 +124,6 @@ class LearningFlow<S : State, R>(
     }
 
     private fun isCurrent(card: Card) = this.card.card.id == card.id
-
-    companion object {
-        var current: LearningFlow<*, *>? = null
-
-        fun <S: State, R> initiate(
-                repository: Repository,
-                assignmentFactory: AssignmentFactory,
-                deck: Deck,
-                studyOrder: StudyOrder = StudyOrder.RANDOM,
-                exercise: Exercise<S, R>,
-                journal: Journal
-        ) {
-            val flow = LearningFlow(repository, assignmentFactory, deck, studyOrder, exercise, journal)
-            current = flow
-            flow.showNextOrComplete()
-        }
-    }
 }
 
 interface FinishListener {
