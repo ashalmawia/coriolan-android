@@ -9,19 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.backup.ui.BackupActivity
 import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry
+import com.ashalmawia.coriolan.dependencies.dataImportScope
+import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.DataFetcher
 import kotlinx.android.synthetic.main.edit.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
+
+    private val importerRegistry: ImporterRegistry by inject()
+    private val decksRegistry: DecksRegistry = domainScope().get()
 
     private lateinit var listener: EditFragmentListener
 
@@ -63,7 +71,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         builder.addOption(R.string.add_deck__title, { createNewDeck(it) }, R.drawable.ic_add)
 
         builder.addCategory(R.string.import__category_title)
-        builder.addOption(R.string.import_from_file, { importFromFile(it) })
+        builder.addOption(R.string.import_from_file, { importFromFile() })
 
         builder.addCategory(R.string.backup__category_title)
         builder.addOption(R.string.backup__create_title, { createBackup(it) })
@@ -73,12 +81,11 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun decks(): List<Deck> {
-        return decksRegistry().allDecks()
+        return decksRegistry.allDecks()
     }
 
     override fun addCards(context: Context, deck: Deck) {
-        val domain = decksRegistry().domain
-        val intent = AddEditCardActivity.add(context, domain, deck)
+        val intent = AddEditCardActivity.add(context, deck)
         startActivity(intent)
     }
 
@@ -92,12 +99,12 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
                 .setTitle(R.string.delete_deck__title)
                 .setMessage(context.getString(R.string.delete_deck__message, deck.name))
                 .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(R.string.button_delete, { _, _ -> performDeleteDeck(context, deck) })
+                .setPositiveButton(R.string.button_delete) { _, _ -> performDeleteDeck(context, deck) }
         dialog.show()
     }
 
     private fun performDeleteDeck(context: Context, deck: Deck) {
-        val deleted = decksRegistry().deleteDeck(deck)
+        val deleted = decksRegistry.deleteDeck(deck)
         if (deleted) {
             fetchData()
         } else {
@@ -118,17 +125,21 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         startActivity(intent)
     }
 
-    private fun importFromFile(context: Context) {
-        DataImportFlow.start(context, ImporterRegistry.get().default(), object : DataImportCallback {
+    private fun importFromFile() {
+        val flow = dataImportScope().get<DataImportFlow> { parametersOf(importerRegistry.default()) }
+        flow.callback = object : DataImportCallback {
             override fun onSuccess() {
                 Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
                 notifyDataUpdated()
+                dataImportScope().close()
             }
 
             override fun onError(message: String) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                dataImportScope().close()
             }
-        })
+        }
+        flow.start()
     }
 
     private fun createBackup(context: Context) {

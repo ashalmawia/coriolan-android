@@ -10,17 +10,17 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.AddCardResult
-import com.ashalmawia.coriolan.data.currentDomain
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.ExpressionType
 import kotlinx.android.synthetic.main.add_edit_card.*
-import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.get
 
-private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val EXTRA_DECK_ID = "deck_id"
 private const val EXTRA_CARD_ID = "card_id"
 
@@ -30,11 +30,11 @@ private const val KEY_DECK_SELECTION_POSITION = "deck_id"
 
 class AddEditCardActivity : BaseActivity() {
 
-    private val repository: Repository by inject()
+    private val repository: Repository = get()
+    private val decksRegistry: DecksRegistry = domainScope().get()
+    private val domain: Domain = domainScope().get()
 
     private var card: Card? = null
-
-    private lateinit var domain: Domain
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +51,6 @@ class AddEditCardActivity : BaseActivity() {
         get() = card != null
 
     private fun extractData() {
-        if (!intent.hasExtra(EXTRA_DOMAIN_ID)) {
-            throw IllegalStateException("activity was not properly initialized - missing domain id")
-        }   // todo: use it
-
-        domain = currentDomain()
-
         if (intent.hasExtra(EXTRA_CARD_ID)) {
             extractDataEditCard()
         }
@@ -174,7 +168,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun add(data: CardData) {
-        val result = decksRegistry().addCardToDeck(data)
+        val result = decksRegistry.addCardToDeck(data)
 
         when (result) {
             AddCardResult.Success -> {
@@ -188,7 +182,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun save(data: CardData) {
-        decksRegistry().editCard(card!!, data)
+        decksRegistry.editCard(card!!, data)
 
         confirm()
 
@@ -287,16 +281,14 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     companion object {
-        fun add(context: Context, domain: Domain, deck: Deck): Intent {
+        fun add(context: Context, deck: Deck): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
-            intent.putExtra(EXTRA_DOMAIN_ID, domain.id)
             intent.putExtra(EXTRA_DECK_ID, deck.id)
             return intent
         }
 
         fun edit(context: Context, card: Card): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
-            intent.putExtra(EXTRA_DOMAIN_ID, card.domain.id)
             intent.putExtra(EXTRA_CARD_ID, card.id)
             return intent
         }

@@ -6,9 +6,8 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Menu
 import android.view.MenuItem
+import com.ashalmawia.coriolan.CoriolanApplication
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DomainsRegistry
-import com.ashalmawia.coriolan.data.currentDomain
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.edit.EditFragment
@@ -52,7 +51,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
         domain?.apply {
             setUpToolbar(this.name)
-            currentDomain = this
+            (applicationContext as CoriolanApplication).onDomainChanged(this)
         }
 
         setUpBottomBarNavigation()

@@ -12,6 +12,8 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
+import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
@@ -37,6 +39,8 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
             }
         }
     }
+
+    private val decksRegistry: DecksRegistry = domainScope().get()
 
     private val flow by lazy {
         @Suppress("UNCHECKED_CAST")
@@ -131,7 +135,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     private fun deleteCurrentCard() {
         val current = flow.card
         flow.dropCard(current.card)
-        decksRegistry().deleteCard(current.card)
+        decksRegistry.deleteCard(current.card)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

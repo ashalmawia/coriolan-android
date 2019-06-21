@@ -8,7 +8,10 @@ import android.os.Bundle
 import android.widget.Toast
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
+import com.ashalmawia.coriolan.dependencies.dataImportScope
+import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.ui.BaseActivity
 import kotlinx.android.synthetic.main.enter_file_path.*
 import permissions.dispatcher.NeedsPermission
@@ -23,6 +26,9 @@ private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
 @RuntimePermissions
 class EnterFilePathActivity : BaseActivity() {
+
+    private val decksRegistry: DecksRegistry by domainScope().inject()
+    private val importFlow: DataImportFlow by dataImportScope().inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +47,7 @@ class EnterFilePathActivity : BaseActivity() {
     }
 
     private fun initalize() {
-        deckSelector.initialize(decksRegistry().allDecks())
+        deckSelector.initialize(decksRegistry.allDecks())
     }
 
     @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -67,7 +73,7 @@ class EnterFilePathActivity : BaseActivity() {
             return
         }
 
-        (DataImportFlow.ongoing!!.importer as ImporterFromFile).onFile(applicationContext, path, deckSelector.selectedDeck())
+        (importFlow.importer as ImporterFromFile).onFile(path, deckSelector.selectedDeck())
         finish()
     }
 

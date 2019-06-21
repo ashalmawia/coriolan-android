@@ -2,46 +2,50 @@ package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.currentDomain
 
-class DataImportFlow(
-        val importer: DataImporter,
-        private val callback: DataImportCallback
-) {
+interface DataImportFlow {
 
-    companion object {
+    var callback: DataImportCallback?
 
-        var ongoing : DataImportFlow? = null
-            private set
+    val importer: DataImporter
 
-        fun start(context: Context, importer: DataImporter, callback: DataImportCallback) {
-            val import = DataImportFlow(importer, callback)
-            ongoing = import
-            import.start(context)
-        }
+    fun start()
 
-        private fun finish() {
-            ongoing = null
-        }
-    }
+    fun onData(data: List<CardData>)
 
-    private fun start(context: Context) {
+    fun onError(message: String)
+}
+
+class DataImportFlowImpl(
+        private val context: Context,
+        private val decksRegistry: DecksRegistry,
+        override val importer: DataImporter
+) : DataImportFlow {
+
+    override var callback: DataImportCallback? = null
+
+    override fun start() {
+        importer.flow = this
         importer.launch(context)
     }
 
-    fun onData(context: Context, data: List<CardData>) {
+    override fun onData(data: List<CardData>) {
         // TODO: add generalized confirmation UI
 
-        DecksRegistry.get(context, currentDomain()).addCardsToDeck(data)
+        decksRegistry.addCardsToDeck(data)
 
-        callback.onSuccess()
+        callback?.onSuccess()
         finish()
     }
 
-    fun onError(message: String) {
+    override fun onError(message: String) {
         // TODO: add generalized error notification UI
-        callback.onError(message)
+        callback?.onError(message)
         finish()
+    }
+
+    private fun finish() {
+        importer.flow = null
     }
 }
 

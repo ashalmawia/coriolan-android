@@ -13,9 +13,11 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
@@ -35,6 +37,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
+    private val decksRegistry: DecksRegistry = domainScope().get()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.learning, container, false)
@@ -84,7 +87,7 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
     private fun decksList(): List<Deck> {
         val timeStart = System.currentTimeMillis()
-        val decks = decksRegistry().allDecksForLearning()
+        val decks = decksRegistry.allDecksForLearning()
         Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
         return decks
     }
