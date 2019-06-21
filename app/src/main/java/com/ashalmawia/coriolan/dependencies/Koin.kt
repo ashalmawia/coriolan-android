@@ -3,6 +3,8 @@ package com.ashalmawia.coriolan.dependencies
 import android.content.ComponentCallbacks
 import android.support.v7.preference.PreferenceDataStore
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.data.DomainsRegistryImpl
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.importer.*
@@ -32,6 +34,7 @@ val mainModule = module {
     single<CardTypePreferenceHelper> { CardTypePreferenceHelperImpl() }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get(), get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
+    single<DomainsRegistry> { DomainsRegistryImpl(get()) }
 
     scope(named(SCOPE_DOMAIN)) {
         scoped { getProperty<Domain>(DOMAIN_PROPERTY) }

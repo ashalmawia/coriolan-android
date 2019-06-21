@@ -29,6 +29,7 @@ class CreateDomainActivity : BaseActivity() {
 
     private val preferences: Preferences by inject()
     private val repository: Repository by inject()
+    private val domainsRegistry: DomainsRegistry by inject()
 
     private var firstStart = false
 
@@ -126,7 +127,7 @@ class CreateDomainActivity : BaseActivity() {
 
     private fun createDomain(originalLang: String, translationsLang: String) {
         try {
-            val domain = DomainsRegistry.get(this).createDomain(originalLang, translationsLang)
+            val domain = domainsRegistry.createDomain(originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
             preferences.setLastTranslationsLanguageId(domain.langTranslations())
             if (firstStart) {

@@ -1,21 +1,10 @@
 package com.ashalmawia.coriolan.data
 
-import android.content.Context
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
 
 interface DomainsRegistry {
-
-    companion object {
-
-        private var instance: DomainsRegistry? = null
-
-        fun get(context: Context): DomainsRegistry {
-            val repository = Repository.get(context)
-            return instance ?: DomainsRegistryImpl(repository).also { instance = it }
-        }
-    }
 
     fun defaultDomain(): Domain?
 
