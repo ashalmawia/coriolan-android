@@ -2,11 +2,11 @@ package com.ashalmawia.coriolan.learning
 
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 
-class MockExercisesRegistry : ExercisesRegistry {
+class MockExercisesRegistry(
+        private val list: List<Exercise<*, *>> = listOf(MockExercise(stateType = StateType.SR_STATE))
+) : ExercisesRegistry {
 
-    private val mockExercise = MockExercise(stateType = StateType.SR_STATE)
+    override fun allExercises(): List<Exercise<*, *>> = list
 
-    override fun allExercises(): List<Exercise<*, *>> = listOf(defaultExercise())
-
-    override fun defaultExercise(): Exercise<*, *> = mockExercise
+    override fun defaultExercise(): Exercise<*, *> = list[0]
 }

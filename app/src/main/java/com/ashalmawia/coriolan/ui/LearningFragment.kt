@@ -28,16 +28,15 @@ import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning.*
 import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 private const val TAG = "LearningFragment"
 
 class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 
-    private lateinit var exercise: Exercise<*, *>
-
-    private val repository: Repository by inject()
-    private val preferences: Preferences by inject()
     private val decksRegistry: DecksRegistry = domainScope().get()
+    private val adapter: DecksAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this) }
+    private val exercisesRegistry: ExercisesRegistry by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.learning, container, false)
@@ -47,8 +46,6 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
-
-        exercise = ExercisesRegistry.get(view.context).defaultExercise()
         initializeList()
     }
 
@@ -73,11 +70,11 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
         val context = context ?: return
 
         decksList.layoutManager = LinearLayoutManager(context)
-        decksList.adapter = DecksAdapter(context, exercise, this, preferences, repository)
+        decksList.adapter = adapter
     }
 
     override fun fetchData() {
-        (decksList.adapter as DecksAdapter).setData(decksList())
+        adapter.setData(decksList())
     }
 
     override fun onDayChanged() {
@@ -96,17 +93,16 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher {
 private const val TYPE_HEADER = 1
 private const val TYPE_ITEM = 2
 
-private class DecksAdapter(
+class DecksAdapter(
         private val context: Context,
-        private val exercise: Exercise<*, *>,
-        private val dataFetcher: DataFetcher,
         private val preferences: Preferences,
-        private val repository: Repository
+        private val repository: Repository,
+        private val deckCountsProvider: DeckCountsProvider,
+        private val assignmentFactory: AssignmentFactory,
+        private val journal: Journal,
+        private val exercise: Exercise<*, *>,
+        private val dataFetcher: DataFetcher
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private val journal = Journal.get(context)
-    private val assignmentFactory = AssignmentFactory.get(context)
-    private val deckCountsProvider = DeckCountsProvider.get(context)
 
     private val decks: MutableList<Deck> = mutableListOf()
     private val counts: MutableMap<Deck, Counts> = mutableMapOf()

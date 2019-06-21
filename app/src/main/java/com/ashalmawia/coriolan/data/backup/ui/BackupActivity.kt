@@ -29,6 +29,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
+    private val exercisesRegistry: ExercisesRegistry by inject()
 
     private var task: BackupAsyncTask? = null
 
@@ -54,7 +55,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun createBackup() {
-        val task = BackupAsyncTask(backupableRepository, backupDir, backup, ExercisesRegistry.get(this))
+        val task = BackupAsyncTask(backupableRepository, backupDir, backup, exercisesRegistry)
         task.listener = this
         this.task = task
 

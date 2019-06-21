@@ -10,8 +10,14 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
+import com.ashalmawia.coriolan.learning.*
+import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
+import com.ashalmawia.coriolan.learning.assignment.AssignmentFactoryImpl
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.ui.DataFetcher
+import com.ashalmawia.coriolan.ui.DecksAdapter
 import com.ashalmawia.coriolan.ui.settings.CardTypePreferenceHelper
 import com.ashalmawia.coriolan.ui.settings.CardTypePreferenceHelperImpl
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
@@ -26,19 +32,26 @@ private const val SCOPE_DATA_IMPORT = "scope_data_import"
 private const val DOMAIN_PROPERTY = "domain"
 
 val mainModule = module {
-    single { Repository.get(get()) }
+    single { SqliteStorage(get(), get()) }
     single { Preferences.get(get()) }
     single { Journal.get(get()) }
-    single { BackupableRepository.get(get()) }
+    single<BackupableRepository> { SqliteBackupHelper(get(), get()) }
     single { Backup.get() }
     single<CardTypePreferenceHelper> { CardTypePreferenceHelperImpl() }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get(), get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
+    single<ExercisesRegistry> { ExercisesRegistryImpl(get()) }
+    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
+    single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
+
+    factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher) ->
+        DecksAdapter(get(), get(), get(), get(), get(), get(), exercise, dataFetcher)
+    }
 
     scope(named(SCOPE_DOMAIN)) {
         scoped { getProperty<Domain>(DOMAIN_PROPERTY) }
-        scoped { DecksRegistry.get(get(), get()) }
+        scoped { DecksRegistry(get(), get(), get(), get()) }
     }
 
     scope(named(SCOPE_DATA_IMPORT)) {

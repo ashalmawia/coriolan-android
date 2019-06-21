@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import android.content.Context
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -11,19 +10,6 @@ import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.Deck
 
 interface AssignmentFactory {
-
-    companion object {
-
-        private var instance: AssignmentFactory? = null
-
-        fun get(context: Context): AssignmentFactory {
-            return instance ?: AssignmentFactoryImpl(
-                    Repository.get(context),
-                    Preferences.get(context),
-                    Journal.get(context)
-            ).also { instance = it }
-        }
-    }
 
     fun <S: State, R> createAssignment(
             order: StudyOrder,

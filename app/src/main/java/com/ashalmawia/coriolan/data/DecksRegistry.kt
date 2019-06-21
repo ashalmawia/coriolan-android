@@ -10,25 +10,6 @@ import com.ashalmawia.coriolan.model.*
 
 class DecksRegistry(context: Context, val domain: Domain, private val repository: Repository, private val exercisesRegistry: ExercisesRegistry) {
 
-    companion object {
-        private var instance: DecksRegistry? = null
-
-        fun get(context: Context, domain: Domain): DecksRegistry {
-            var instance = this.instance
-            if (instance == null || instance.domain != domain) {
-                instance = create(context, domain)
-            }
-            this.instance = instance
-            return instance
-        }
-
-        private fun create(context: Context, domain: Domain): DecksRegistry {
-            val repository = Repository.get(context)
-            val exercisesRegistry = ExercisesRegistry.get(context)
-            return DecksRegistry(context, domain, repository, exercisesRegistry)
-        }
-    }
-
     init {
         val decksCount = repository.allDecks(domain).size
         if (decksCount == 0) {

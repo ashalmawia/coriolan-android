@@ -8,6 +8,7 @@ import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.*
@@ -19,8 +20,8 @@ private val TAG = SqliteStorage::class.java.simpleName
 
 class SqliteStorage(
         private val context: Context,
-        exercises: List<Exercise<*, *>>,
-        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercises)
+        exercisesRegistry: ExercisesRegistry,
+        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercisesRegistry.allExercises())
 ) : Repository {
 
     override fun addLanguage(value: String): Language {

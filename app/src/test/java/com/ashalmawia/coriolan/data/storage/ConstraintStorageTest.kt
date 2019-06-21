@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
+import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
@@ -31,7 +32,7 @@ class ConstraintStorageTest {
 
     private fun createStorage(): Repository {
         val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application, exercises)
-        return SqliteStorage(RuntimeEnvironment.application, exercises, helper)
+        return SqliteStorage(RuntimeEnvironment.application, MockExercisesRegistry(exercises), helper)
     }
 
     @Test(expected = DataProcessingException::class)

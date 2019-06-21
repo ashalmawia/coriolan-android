@@ -4,6 +4,7 @@ import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.SRStateInfo
 import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.StateType
 import junit.framework.Assert.assertEquals
@@ -18,8 +19,8 @@ abstract class JsonBackupTest {
 
     private val backup: Backup = JsonBackup()
     
-    protected abstract fun createEmptyRepo(exercises: List<Exercise<*, *>>): BackupableRepository
-    protected abstract fun createNonEmptyRepo(exercises: List<Exercise<*, *>>): BackupableRepository
+    protected abstract fun createEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository
+    protected abstract fun createNonEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository
 
     private fun exercises(count: Int = 0): List<Exercise<*, *>> {
         return (1..count).map { MockExercise("exercise_$it", StateType.SR_STATE) }
@@ -32,17 +33,7 @@ abstract class JsonBackupTest {
                 MockExercise(stateType = StateType.SR_STATE),
                 MockExercise(stateType = StateType.UNKNOWN)
         )
-        val repo = createEmptyRepo(exercises)
-
-        // then
-        test(repo, exercises, backup)
-    }
-
-    @Test
-    fun `test__nonEmptyRepository_noStates`() {
-        // given
-        val exercises = exercises()
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -52,7 +43,7 @@ abstract class JsonBackupTest {
     fun `test__singleSRStateExercise`() {
         // given
         val exercises = exercises(1)
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -62,7 +53,7 @@ abstract class JsonBackupTest {
     fun `test__multipleSRStateExercises`() {
         // given
         val exercises = exercises(5)
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -72,7 +63,7 @@ abstract class JsonBackupTest {
     fun `test__multipleSRStateExercisesAndSomeWithoutState`() {
         // given
         val exercises = exercises(5).plus(MockExercise("no_state", StateType.UNKNOWN))
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -82,9 +73,10 @@ abstract class JsonBackupTest {
     fun `test__applyEmptyToANonEmpty`() {
         // given
         val exercises = exercises(3)
+        val mockExercisesRegistry = MockExercisesRegistry(exercises)
 
-        val repo = createEmptyRepo(exercises)
-        val outRepo = createNonEmptyRepo(exercises)
+        val repo = createEmptyRepo(mockExercisesRegistry)
+        val outRepo = createNonEmptyRepo(mockExercisesRegistry)
 
         // then
         test(repo, exercises, backup, outRepo)
@@ -96,8 +88,8 @@ abstract class JsonBackupTest {
         val exercisesIn = exercises(3)
         val exercises = exercises(5)
 
-        val repo = createNonEmptyRepo(exercisesIn)
-        val outRepo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercisesIn))
+        val outRepo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup, outRepo, exercisesIn)
@@ -109,8 +101,8 @@ abstract class JsonBackupTest {
         val exercisesIn = exercises(5)
         val exercises = exercises(3)
 
-        val repo = createNonEmptyRepo(exercisesIn)
-        val outRepo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercisesIn))
+        val outRepo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup, outRepo, exercisesIn)
@@ -122,7 +114,7 @@ abstract class JsonBackupTest {
         val backup = JsonBackup(2)
 
         val exercises = exercises(2)
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -134,7 +126,7 @@ abstract class JsonBackupTest {
         val backup = JsonBackup(5)
 
         val exercises = exercises(2)
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -146,7 +138,7 @@ abstract class JsonBackupTest {
         val backup = JsonBackup(50)
 
         val exercises = exercises(2)
-        val repo = createNonEmptyRepo(exercises)
+        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
 
         // then
         test(repo, exercises, backup)
@@ -156,7 +148,7 @@ abstract class JsonBackupTest {
             repo: BackupableRepository,
             exercises: List<Exercise<*, *>>,
             backup: Backup,
-            outRepo: BackupableRepository = createEmptyRepo(exercises),
+            outRepo: BackupableRepository = createEmptyRepo(MockExercisesRegistry(exercises)),
             exercisesIn: List<Exercise<*, *>> = exercises
     ) {
         // when

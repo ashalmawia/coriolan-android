@@ -81,15 +81,15 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
                     .setTitle(R.string.backup__restore_final_warning_title)
                     .setMessage(R.string.backup__restore_final_warning_message)
                     .setNegativeButton(R.string.button_cancel, null)
-                    .setPositiveButton(R.string.backup__restore_confirm) { _, _ -> onRestoreConfirmed(file, backupableRepository) }
+                    .setPositiveButton(R.string.backup__restore_confirm) { _, _ -> onRestoreConfirmed(file) }
             dialog.show()
         } else {
-            onRestoreConfirmed(file, backupableRepository)
+            onRestoreConfirmed(file)
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun onRestoreConfirmed(file: File, repo: BackupableRepository) {
+    private fun onRestoreConfirmed(file: File) {
         buttonOk.isEnabled = false
         buttonCancel.isEnabled = false
 

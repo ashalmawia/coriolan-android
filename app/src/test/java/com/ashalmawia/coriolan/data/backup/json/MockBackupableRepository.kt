@@ -1,7 +1,8 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 import kotlin.math.min
 
@@ -12,7 +13,7 @@ class MockBackupableRepository(
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
         srstates: Map<String, List<SRStateInfo>>,
-        private val exercises: List<Exercise<*, *>>
+        private val exercises: ExercisesRegistry
 ) : BackupableRepository {
 
     private val languages = langauges.toMutableList()
@@ -80,7 +81,7 @@ class MockBackupableRepository(
     }
 
     override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) {
-        if (exercises.find { it.stableId == exerciseId } != null) {
+        if (exercises.allExercises().find { it.stableId == exerciseId } != null) {
             this.srstates.getOrPut(exerciseId, { mutableListOf() }).addAll(states)
         }
     }
@@ -90,7 +91,7 @@ class MockBackupableRepository(
     }
 
     companion object {
-        fun empty(exercises: List<Exercise<*, *>>): MockBackupableRepository {
+        fun empty(exercises: MockExercisesRegistry): MockBackupableRepository {
             return MockBackupableRepository(
                     emptyList(),
                     emptyList(),
@@ -102,14 +103,14 @@ class MockBackupableRepository(
             )
         }
 
-        fun random(exercises: List<Exercise<*, *>>): MockBackupableRepository {
+        fun random(exercises: MockExercisesRegistry): MockBackupableRepository {
             return MockBackupableRepository(
                     JsonBackupTestData.languages,
                     JsonBackupTestData.domains,
                     JsonBackupTestData.exressions,
                     JsonBackupTestData.cards,
                     JsonBackupTestData.decks,
-                    exercises.filter { it.stateType == StateType.SR_STATE }
+                    exercises.allExercises().filter { it.stateType == StateType.SR_STATE }
                             .map { it.stableId }.associate { id -> Pair(id, JsonBackupTestData.srstates) },
                     exercises
             )

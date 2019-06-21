@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
 import com.ashalmawia.coriolan.data.storage.provideHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.util.OpenForTesting
 import junit.framework.Assert.assertTrue
@@ -20,7 +20,7 @@ import java.io.InputStream
 @RunWith(RobolectricTestRunner::class)
 class BackupableRepositoryTransactionTest {
 
-    val exercises = listOf(MockExercise(stateType = StateType.SR_STATE))
+    val exercises = MockExercisesRegistry()
     val realRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
 
     val backup: Backup = JsonBackup()
@@ -117,7 +117,7 @@ class BackupableRepositoryTransactionTest {
         } catch (e: Exception) { }
 
         // then
-        assertEmpty(repo, exercises)
+        assertEmpty(repo, exercises.allExercises())
     }
 
     private fun provideBackupInputStream(): InputStream = provideBackupInputStream(exercises)
@@ -132,18 +132,18 @@ private fun assertEmpty(repository: BackupableRepository, exercises: List<Exerci
     exercises.forEach { assertTrue(repository.allSRStates(it.stableId, 0, 500).isEmpty()) }
 }
 
-private fun provideBackupInputStream(exercises: List<Exercise<*, *>>): InputStream {
+private fun provideBackupInputStream(exercises: MockExercisesRegistry): InputStream {
     val tempRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
     tempRepo.writeLanguages(JsonBackupTestData.languages)
     tempRepo.writeDomains(JsonBackupTestData.domains)
     tempRepo.writeExpressions(JsonBackupTestData.exressions)
     tempRepo.writeDecks(JsonBackupTestData.decks)
     tempRepo.writeCards(JsonBackupTestData.cards)
-    exercises.filter { it.stateType == StateType.SR_STATE }
+    exercises.allExercises().filter { it.stateType == StateType.SR_STATE }
             .forEach { tempRepo.writeSRStates(it.stableId, JsonBackupTestData.srstates) }
 
     val output = ByteArrayOutputStream()
-    JsonBackup().create(tempRepo, exercises, output)
+    JsonBackup().create(tempRepo, exercises.allExercises(), output)
 
     return ByteArrayInputStream(output.toByteArray())
 }

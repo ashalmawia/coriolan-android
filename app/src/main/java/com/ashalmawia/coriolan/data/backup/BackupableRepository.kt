@@ -1,18 +1,9 @@
 package com.ashalmawia.coriolan.data.backup
 
-import android.content.Context
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.model.ExpressionType
 import org.joda.time.DateTime
 
 interface BackupableRepository {
-
-    companion object {
-        fun get(context: Context): BackupableRepository {
-            return SqliteBackupHelper(context, ExercisesRegistry.get(context).allExercises())
-        }
-    }
 
     fun beginTransaction()
 

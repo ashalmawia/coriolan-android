@@ -2,13 +2,13 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 
 class SqliteBackupHelper(
         context: Context,
-        private val exercises: List<Exercise<*, *>>,
-        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercises)
+        private val exercisesRegistry: ExercisesRegistry,
+        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercisesRegistry.allExercises())
 ) : BackupableRepository {
 
     override fun beginTransaction() {
@@ -161,7 +161,7 @@ class SqliteBackupHelper(
     override fun clearAll() {
         val db = helper.writableDatabase
 
-        exercises.filterNot { it.stateType == StateType.UNKNOWN }.forEach {
+        exercisesRegistry.allExercises().filterNot { it.stateType == StateType.UNKNOWN }.forEach {
             db.execSQL("DELETE FROM ${sqliteTableExerciseState(it.stableId)}")
         }
         db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS_REVERSE")
@@ -226,7 +226,7 @@ class SqliteBackupHelper(
     }
 
     override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) {
-        if (exercises.find { it.stableId == exerciseId } == null) {
+        if (exercisesRegistry.allExercises().find { it.stableId == exerciseId } == null) {
             // skip this exercise as we don't know it in the current version
             return
         }

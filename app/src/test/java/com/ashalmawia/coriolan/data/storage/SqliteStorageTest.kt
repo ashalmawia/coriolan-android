@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -14,7 +15,8 @@ import org.robolectric.RuntimeEnvironment
 class SqliteStorageTest : StorageTest() {
 
     override fun createStorage(exercises: List<Exercise<*, *>>): Repository {
-        val helper = provideHelper(exercises)
-        return SqliteStorage(RuntimeEnvironment.application, exercises, helper)
+        val registry = MockExercisesRegistry(exercises)
+        val helper = provideHelper(registry)
+        return SqliteStorage(RuntimeEnvironment.application, registry, helper)
     }
 }
