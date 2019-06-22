@@ -9,6 +9,8 @@ import android.view.MenuItem
 import com.ashalmawia.coriolan.CoriolanApplication
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.closeScope
+import com.ashalmawia.coriolan.dependencies.createScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.edit.EditFragment
 import com.ashalmawia.coriolan.ui.edit.EditFragmentListener
@@ -46,6 +48,8 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
             throw IllegalStateException("missing domain id")
         }
 
+        createScope()
+
         val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
         val domain = repository.domainById(domainId)
 
@@ -55,6 +59,11 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         }
 
         setUpBottomBarNavigation()
+    }
+
+    override fun onDestroy() {
+        closeScope()
+        super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -4,6 +4,7 @@ val koinModules = listOf(
         mainModule,
         domainModule,
         backupModule,
+        activityModule,
         learningFragmentModule,
         learningFlowModule,
         dataImportModule

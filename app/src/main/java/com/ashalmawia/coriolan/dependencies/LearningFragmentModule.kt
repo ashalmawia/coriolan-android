@@ -28,11 +28,11 @@ val learningFragmentModule = module {
     }
 
     factory<Dialog>(named(DIALOG_DECK_DETAILS)) { (deck: Deck, exercise: Exercise<*, *>, date: DateTime) ->
-        DeckDetailsDialog(get(), deck, exercise, date, get())
+        DeckDetailsDialog(domainActivityScope().get(), deck, exercise, date, get())
     }
 
     factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: Deck, exercise: Exercise<*, *>, date: DateTime) ->
-        IncreaseLimitsDialog(get(), deck, exercise, date, get(), get()).build()
+        IncreaseLimitsDialog(domainActivityScope().get(), deck, exercise, date, get(), get()).build()
     }
 
 }

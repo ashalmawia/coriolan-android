@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.ui
 
-import android.content.Context
+import android.app.Activity
 import android.content.DialogInterface
 import android.support.annotation.StringRes
 import android.support.v7.app.AlertDialog
@@ -19,7 +19,7 @@ import org.joda.time.DateTime
 import kotlin.math.max
 
 class IncreaseLimitsDialog(
-        private val context: Context,
+        private val activity: Activity,
         private val deck: Deck,
         private val exercise: Exercise<*, *>,
         private val date: DateTime,
@@ -28,15 +28,15 @@ class IncreaseLimitsDialog(
 ) {
     private val totalCounts = lazy { repository.deckPendingCounts(exercise.stableId, deck, date) }
 
-    private val builder = AlertDialog.Builder(context)
+    private val builder = AlertDialog.Builder(activity)
 
     fun build() : AlertDialog {
-        val view = View.inflate(context, R.layout.increase_limits, null) as ViewGroup
+        val view = View.inflate(activity, R.layout.increase_limits, null) as ViewGroup
 
         populateMaxCounts(view)
 
         builder.setView(view)
-        builder.setTitle(context.getString(R.string.deck_options_study_more__title, deck.name))
+        builder.setTitle(activity.getString(R.string.deck_options_study_more__title, deck.name))
 
         builder.setNegativeButton(R.string.button_cancel, null)
         builder.setPositiveButton(R.string.button_ok, null)
@@ -77,7 +77,7 @@ class IncreaseLimitsDialog(
     }
 
     private fun showError(@StringRes error: Int) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, error, Toast.LENGTH_SHORT).show()
     }
 
     private fun confirm(new: Int, review: Int) {

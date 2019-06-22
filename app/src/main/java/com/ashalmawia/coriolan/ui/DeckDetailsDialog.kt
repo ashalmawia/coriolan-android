@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.ui
 
+import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Exercise
@@ -10,12 +10,12 @@ import kotlinx.android.synthetic.main.deck_details.*
 import org.joda.time.DateTime
 
 class DeckDetailsDialog(
-        context: Context,
+        activity: Activity,
         private val deck: Deck,
         private val exercise: Exercise<*, *>,
         private val date: DateTime,
         private val repository: Repository
-) : Dialog(context) {
+) : Dialog(activity) {
 
     init {
         setTitle(deck.name)
