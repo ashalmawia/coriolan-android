@@ -10,8 +10,14 @@ interface History<T : State> {
     fun record(card: CardWithState<T>)
 
     fun goBack(): CardWithState<T>
+}
 
-    companion object {
-        fun <T : State> create() = SimpleHistory<T>()
-    }
+interface HistoryFactory {
+
+    fun <T : State> create(): History<T>
+}
+
+object HistoryFactoryImpl : HistoryFactory {
+
+    override fun <T : State> create() = SimpleHistory<T>()
 }

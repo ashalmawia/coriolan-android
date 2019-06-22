@@ -12,10 +12,12 @@ import kotlin.math.min
 private const val RESCHEDULING_STEP = 20
 
 @OpenForTesting
-class Assignment<T : State>(val date: DateTime, cards: List<CardWithState<T>>) {
-
+class Assignment<T : State>(
+        val date: DateTime,
+        private val history: History<T>,
+        cards: List<CardWithState<T>>
+) {
     private val queue = LinkedList(cards)
-    private val history = History.create<T>()
 
     var current: CardWithState<T>? = null
         protected set

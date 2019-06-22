@@ -21,7 +21,8 @@ interface AssignmentFactory {
 class AssignmentFactoryImpl(
         private val repository: Repository,
         private val preferences: Preferences,
-        private val journal: Journal
+        private val journal: Journal,
+        private val historyFactory: HistoryFactory
 ) : AssignmentFactory {
 
     override fun <S : State, R> createAssignment(
@@ -31,7 +32,8 @@ class AssignmentFactoryImpl(
     ): Assignment<S> {
         val date = today()
         val cards = exercise.pendingCards(repository, deck, date)
+        val history = historyFactory.create<S>()
         val mutations = exercise.mutations(preferences, journal, date, order, deck)
-        return Assignment(date, mutations.apply(cards))
+        return Assignment(date, history, mutations.apply(cards))
     }
 }
