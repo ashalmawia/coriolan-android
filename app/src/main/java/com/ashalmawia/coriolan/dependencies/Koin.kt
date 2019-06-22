@@ -11,7 +11,10 @@ import com.ashalmawia.coriolan.data.DomainsRegistryImpl
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.journal.sqlite.SqliteJournal
 import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.data.prefs.SharedPreferencesImpl
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
@@ -40,9 +43,9 @@ private const val SCOPE_DATA_IMPORT = "scope_data_import"
 private const val PROPERTY_DOMAIN = "domain"
 
 val mainModule = module {
-    single { SqliteStorage(get()) }
-    single { Preferences.get(get()) }
-    single { Journal.get(get()) }
+    single<Repository> { SqliteStorage(get()) }
+    single<Preferences> { SharedPreferencesImpl(get()) }
+    single<Journal> { SqliteJournal(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get(), get()) }
     single<CardTypePreferenceHelper> { CardTypePreferenceHelperImpl() }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get(), get()) }

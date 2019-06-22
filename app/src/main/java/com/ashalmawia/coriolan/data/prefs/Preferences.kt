@@ -1,21 +1,9 @@
 package com.ashalmawia.coriolan.data.prefs
 
-import android.content.Context
 import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
 
 interface Preferences {
-
-    companion object {
-        private lateinit var instance: Preferences
-
-        fun get(context: Context): Preferences {
-            if (!Companion::instance.isInitialized) {
-                instance = SharedPreferencesImpl(context)
-            }
-            return instance
-        }
-    }
 
     fun isFirstStart(): Boolean
     fun recordFirstStart()

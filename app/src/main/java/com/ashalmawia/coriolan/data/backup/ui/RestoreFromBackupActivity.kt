@@ -35,6 +35,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
     private val backupDir: File by inject(named(BACKUP_DIR))
+    private val preferences: Preferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +109,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     private fun restoreFrom(file: File) {
-        val task = RestoreFromBackupAsyncTask(backupableRepository, file, backup, Preferences.get(this))
+        val task = RestoreFromBackupAsyncTask(backupableRepository, file, backup, preferences)
         task.listener = this
         this.task = task
 
