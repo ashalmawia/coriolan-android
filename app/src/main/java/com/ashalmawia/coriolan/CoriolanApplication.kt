@@ -34,7 +34,14 @@ class CoriolanApplication : Application() {
     protected fun initializeDependencies() {
         startKoin {
             androidContext(this@CoriolanApplication)
-            modules(listOf(mainModule, backupModule, learningFragmentModule))
+            modules(listOf(
+                    mainModule,
+                    domainModule,
+                    backupModule,
+                    learningFragmentModule,
+                    learningFlowModule,
+                    dataImportModule
+            ))
         }
     }
 
