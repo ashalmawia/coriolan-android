@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.ui
 
-import android.content.Context
+import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,8 +14,6 @@ import android.widget.TextView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -25,8 +23,9 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning.*
-import org.koin.android.ext.android.inject
+import org.joda.time.DateTime
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 private const val TAG = "LearningFragment"
@@ -98,13 +97,12 @@ private const val TYPE_HEADER = 1
 private const val TYPE_ITEM = 2
 
 class DecksAdapter(
-        private val context: Context,
-        private val preferences: Preferences,
-        private val repository: Repository,
         private val deckCountsProvider: DeckCountsProvider,
         private val exercise: Exercise<*, *>,
         private val dataFetcher: DataFetcher,
-        private val beginStudyListener: BeginStudyListener
+        private val beginStudyListener: BeginStudyListener,
+        private val createDeckDetailsDialog: DeckDetailsDialogCreator,
+        private val createIncreaseLimitsDialog: IncreaseLimitsDialogCreator
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -139,6 +137,8 @@ class DecksAdapter(
 
         holder as DeckViewHolder
         val item = decks[positionToIndex(position)]
+
+        val context = holder.text.context
 
         holder.text.text = item.name
         holder.type.text = item.type.toTypeStringRes()?.run { context.getString(this) } ?: ""
@@ -176,7 +176,7 @@ class DecksAdapter(
     }
 
     private fun showPopupMenu(deck: Deck, anchor: View) {
-        val menu = PopupMenu(context, anchor)
+        val menu = PopupMenu(anchor.context, anchor)
         menu.inflate(R.menu.decks_study_options_popup)
         menu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -213,13 +213,13 @@ class DecksAdapter(
     }
 
     private fun studyMore(deck: Deck) {
-        val dialog = IncreaseLimitsDialog(context, deck, exercise, today(), repository, preferences).build()
+        val dialog = createIncreaseLimitsDialog(deck, today())
         dialog.setOnDismissListener { dataFetcher.fetchData() }
         dialog.show()
     }
 
     private fun showDeckDetails(deck: Deck) {
-        val dialog = DeckDetailsDialog(context, deck, exercise, today(), repository)
+        val dialog = createDeckDetailsDialog(deck, today())
         dialog.show()
     }
 
@@ -267,3 +267,6 @@ interface BeginStudyListener {
 
     fun beginStudy(deck: Deck, studyOrder: StudyOrder)
 }
+
+typealias DeckDetailsDialogCreator = (Deck, DateTime) -> Dialog
+typealias IncreaseLimitsDialogCreator = (Deck, DateTime) -> Dialog

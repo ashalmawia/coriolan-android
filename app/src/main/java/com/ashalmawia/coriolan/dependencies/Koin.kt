@@ -25,9 +25,6 @@ import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.ui.BeginStudyListener
-import com.ashalmawia.coriolan.ui.DataFetcher
-import com.ashalmawia.coriolan.ui.DecksAdapter
 import com.ashalmawia.coriolan.ui.settings.CardTypePreferenceHelper
 import com.ashalmawia.coriolan.ui.settings.CardTypePreferenceHelperImpl
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
@@ -58,12 +55,7 @@ val mainModule = module {
     single<Scheduler> { MultiplierBasedScheduler() }
     single<HistoryFactory> { HistoryFactoryImpl }
 
-
     factory<FirstStart> { FirstStartImpl(get()) }
-
-    factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
-        DecksAdapter(get(), get(), get(), get(), exercise, dataFetcher, beginStudyListener)
-    }
 
     scope(named(SCOPE_DOMAIN)) {
         scoped { getProperty<Domain>(PROPERTY_DOMAIN) }
