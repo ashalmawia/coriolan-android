@@ -23,13 +23,23 @@ class CoriolanApplication : Application() {
         crashlytics()
         errors()
 
+        initializeDependencies()
+
         todayManager()
 
+        runFirstStartRoutine()
+    }
+
+    @OpenForTesting
+    protected fun initializeDependencies() {
         startKoin {
             androidContext(this@CoriolanApplication)
             modules(listOf(mainModule, backupModule, learningFragmentModule))
         }
+    }
 
+    @OpenForTesting
+    protected fun runFirstStartRoutine() {
         val firstStart: FirstStart = get()
         firstStart.runFirstStartRoutine()
     }
