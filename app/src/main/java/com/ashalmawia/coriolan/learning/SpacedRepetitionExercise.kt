@@ -8,12 +8,12 @@ import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
@@ -26,10 +26,9 @@ import org.joda.time.DateTime
  * Otherwise, adds it to the end of the queue.
  */
 class SpacedRepetitionExercise(
-        private val context: Context
+        private val context: Context,
+        private val scheduler: Scheduler
 ) : Exercise<SRState, SRAnswer> {
-
-    private val scheduler = MultiplierBasedScheduler()
 
     override val stableId: String
         get() = "simple"

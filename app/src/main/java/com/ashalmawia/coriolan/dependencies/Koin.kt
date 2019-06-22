@@ -17,6 +17,8 @@ import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactoryImpl
+import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
@@ -47,10 +49,11 @@ val mainModule = module {
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get(), get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
-    single<ExercisesRegistry> { ExercisesRegistryImpl(get()) }
+    single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get()) }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
     single<SQLiteOpenHelper> { SqliteRepositoryOpenHelper(get(), get()) }
+    single<Scheduler> { MultiplierBasedScheduler() }
 
     factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
         DecksAdapter(get(), get(), get(), get(), exercise, dataFetcher, beginStudyListener)
