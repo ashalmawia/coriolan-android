@@ -11,6 +11,7 @@ import org.junit.runners.JUnit4
 class FirstStartTest {
 
     private val preferences = MockPreferences()
+    private val firstStart = FirstStartImpl(preferences)
 
     @Test
     fun testFirstStart() {
@@ -20,7 +21,7 @@ class FirstStartTest {
         assertTrue(preferences.isFirstStart())
 
         // when
-        FirstStart.preinitializeIfFirstStart(preferences)
+        firstStart.runFirstStartRoutine()
 
         // then
         assertFalse(preferences.isFirstStart())
@@ -39,7 +40,7 @@ class FirstStartTest {
         preferences.setCardTypePreference(CardTypePreference.REVERSE_ONLY)
 
         // when
-        FirstStart.preinitializeIfFirstStart(preferences)
+        firstStart.runFirstStartRoutine()
 
         // then
         assertFalse(preferences.isFirstStart())

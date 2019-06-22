@@ -3,6 +3,8 @@ package com.ashalmawia.coriolan.dependencies
 import android.content.ComponentCallbacks
 import android.database.sqlite.SQLiteOpenHelper
 import android.support.v7.preference.PreferenceDataStore
+import com.ashalmawia.coriolan.FirstStart
+import com.ashalmawia.coriolan.FirstStartImpl
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistryImpl
@@ -57,6 +59,8 @@ val mainModule = module {
     single<SQLiteOpenHelper> { SqliteRepositoryOpenHelper(get(), get()) }
     single<Scheduler> { MultiplierBasedScheduler() }
     single { HistoryFactoryImpl }
+
+    factory<FirstStart> { FirstStartImpl(get()) }
 
     factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
         DecksAdapter(get(), get(), get(), get(), exercise, dataFetcher, beginStudyListener)

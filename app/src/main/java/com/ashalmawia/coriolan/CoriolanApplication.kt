@@ -1,10 +1,9 @@
 package com.ashalmawia.coriolan
 
 import android.app.Application
-import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.dependencies.mainModule
 import com.ashalmawia.coriolan.dependencies.recreateDomainScope
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.util.OpenForTesting
 import com.ashalmawia.errors.Errors
@@ -32,7 +31,8 @@ class CoriolanApplication : Application() {
             modules(listOf(mainModule))
         }
 
-        firstStartJobs(get())
+        val firstStart: FirstStart = get()
+        firstStart.runFirstStartRoutine()
     }
 
     private fun crashlytics() {
@@ -47,10 +47,6 @@ class CoriolanApplication : Application() {
 
     private fun todayManager() {
         TodayManager.initialize(this)
-    }
-
-    protected fun firstStartJobs(preferences: Preferences) {
-        FirstStart.preinitializeIfFirstStart(preferences)
     }
 
     fun onDomainChanged(domain: Domain) {
