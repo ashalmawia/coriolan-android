@@ -1,14 +1,12 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-import android.content.Context
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 
 class SqliteBackupHelper(
-        context: Context,
         private val exercisesRegistry: ExercisesRegistry,
-        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercisesRegistry.allExercises())
+        private val helper: SqliteRepositoryOpenHelper
 ) : BackupableRepository {
 
     override fun beginTransaction() {

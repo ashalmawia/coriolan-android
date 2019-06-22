@@ -18,7 +18,7 @@ import org.robolectric.RuntimeEnvironment
 class ConstraintStorageTest {
 
     private val exercise = MockExercise(stateType = StateType.SR_STATE)
-    private val exercises = listOf(exercise)
+    private val exercises = MockExercisesRegistry(listOf(exercise))
 
     private lateinit var domain: Domain
 
@@ -32,7 +32,7 @@ class ConstraintStorageTest {
 
     private fun createStorage(): Repository {
         val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application, exercises)
-        return SqliteStorage(RuntimeEnvironment.application, MockExercisesRegistry(exercises), helper)
+        return SqliteStorage(helper)
     }
 
     @Test(expected = DataProcessingException::class)

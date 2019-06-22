@@ -91,7 +91,7 @@ class MockBackupableRepository(
     }
 
     companion object {
-        fun empty(exercises: MockExercisesRegistry): MockBackupableRepository {
+        fun empty(exercises: ExercisesRegistry): MockBackupableRepository {
             return MockBackupableRepository(
                     emptyList(),
                     emptyList(),

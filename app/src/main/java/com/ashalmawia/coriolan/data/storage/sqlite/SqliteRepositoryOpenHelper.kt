@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 
 private const val SCHEMA_VERSION = 1
@@ -14,19 +15,11 @@ private const val DATABASE_NAME = "data.db"
  * Companion object's get() function instead, otherwise having multiple instances of SQLiteOpenHelper
  * will be a well-known sourse of bugs.
  */
-class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<Exercise<*, *>>, dbName: String = DATABASE_NAME)
-    : SQLiteOpenHelper(context, dbName, null, SCHEMA_VERSION) {
-
-    companion object {
-        private var value: SqliteRepositoryOpenHelper? = null
-
-        fun get(context: Context, exercises: List<Exercise<*, *>>): SqliteRepositoryOpenHelper {
-            if (value == null) {
-                value = SqliteRepositoryOpenHelper(context, exercises)
-            }
-            return value!!
-        }
-    }
+class SqliteRepositoryOpenHelper(
+        context: Context,
+        private val exercisesRegistry: ExercisesRegistry,
+        dbName: String = DATABASE_NAME
+) : SQLiteOpenHelper(context, dbName, null, SCHEMA_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         if (db == null) {
@@ -103,7 +96,7 @@ class SqliteRepositoryOpenHelper(context: Context, private val exercises: List<E
             |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
-        createTablesForExercises(db, exercises)
+        createTablesForExercises(db, exercisesRegistry.allExercises())
     }
 
     private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<Exercise<*, *>>) {

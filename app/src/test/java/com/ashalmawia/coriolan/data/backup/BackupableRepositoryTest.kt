@@ -1,9 +1,7 @@
 package com.ashalmawia.coriolan.data.backup
 
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.StateType
-import com.ashalmawia.coriolan.learning.today
 import com.ashalmawia.coriolan.model.ExpressionType
 import org.junit.Assert.*
 import org.junit.Before
@@ -11,10 +9,10 @@ import org.junit.Test
 
 abstract class BackupableRepositoryTest {
 
-    protected abstract fun createRepository(exercises: List<Exercise<*, *>>): BackupableRepository
+    protected abstract fun createRepository(exercisesRegistry: ExercisesRegistry): BackupableRepository
 
     private val exercise = MockExercise("some_exercise", StateType.SR_STATE)
-    private val exercises = listOf(exercise)
+    private val exercises = MockExercisesRegistry(listOf(exercise))
 
     private lateinit var repo: BackupableRepository
 

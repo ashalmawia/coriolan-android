@@ -12,7 +12,6 @@ import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -21,7 +20,7 @@ import java.io.InputStream
 class BackupableRepositoryTransactionTest {
 
     val exercises = MockExercisesRegistry()
-    val realRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
+    val realRepo = SqliteBackupHelper(exercises, provideHelper(exercises))
 
     val backup: Backup = JsonBackup()
 
@@ -133,7 +132,7 @@ private fun assertEmpty(repository: BackupableRepository, exercises: List<Exerci
 }
 
 private fun provideBackupInputStream(exercises: MockExercisesRegistry): InputStream {
-    val tempRepo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
+    val tempRepo = SqliteBackupHelper(exercises, provideHelper(exercises))
     tempRepo.writeLanguages(JsonBackupTestData.languages)
     tempRepo.writeDomains(JsonBackupTestData.domains)
     tempRepo.writeExpressions(JsonBackupTestData.exressions)

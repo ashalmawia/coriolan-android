@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.dependencies
 
 import android.content.ComponentCallbacks
+import android.database.sqlite.SQLiteOpenHelper
 import android.support.v7.preference.PreferenceDataStore
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
@@ -11,6 +12,7 @@ import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
@@ -36,7 +38,7 @@ private const val SCOPE_DATA_IMPORT = "scope_data_import"
 private const val PROPERTY_DOMAIN = "domain"
 
 val mainModule = module {
-    single { SqliteStorage(get(), get()) }
+    single { SqliteStorage(get()) }
     single { Preferences.get(get()) }
     single { Journal.get(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get(), get()) }
@@ -48,6 +50,7 @@ val mainModule = module {
     single<ExercisesRegistry> { ExercisesRegistryImpl(get()) }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
+    single<SQLiteOpenHelper> { SqliteRepositoryOpenHelper(get(), get()) }
 
     factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
         DecksAdapter(get(), get(), get(), get(), exercise, dataFetcher, beginStudyListener)

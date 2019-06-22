@@ -7,16 +7,15 @@ import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 
 @RunWith(RobolectricTestRunner::class)
 class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
 
     override fun createEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository
-            = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
+            = SqliteBackupHelper(exercises, provideHelper(exercises))
 
     override fun createNonEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository {
-        val repo = SqliteBackupHelper(RuntimeEnvironment.application, exercises, provideHelper(exercises))
+        val repo = SqliteBackupHelper(exercises, provideHelper(exercises))
 
         repo.writeLanguages(JsonBackupTestData.languages)
         repo.writeDomains(JsonBackupTestData.domains)

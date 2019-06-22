@@ -1,14 +1,11 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.*
@@ -19,9 +16,7 @@ import org.joda.time.DateTime
 private val TAG = SqliteStorage::class.java.simpleName
 
 class SqliteStorage(
-        private val context: Context,
-        exercisesRegistry: ExercisesRegistry,
-        private val helper: SqliteRepositoryOpenHelper = SqliteRepositoryOpenHelper.get(context, exercisesRegistry.allExercises())
+        private val helper: SqliteRepositoryOpenHelper
 ) : Repository {
 
     override fun addLanguage(value: String): Language {
