@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan
 
 import android.app.Application
+import com.ashalmawia.coriolan.dependencies.backupModule
 import com.ashalmawia.coriolan.dependencies.mainModule
 import com.ashalmawia.coriolan.dependencies.recreateDomainScope
 import com.ashalmawia.coriolan.learning.TodayManager
@@ -28,7 +29,7 @@ class CoriolanApplication : Application() {
 
         startKoin {
             androidContext(this@CoriolanApplication)
-            modules(listOf(mainModule))
+            modules(listOf(mainModule, backupModule))
         }
 
         val firstStart: FirstStart = get()

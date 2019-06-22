@@ -11,15 +11,16 @@ import android.support.annotation.StringRes
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
-import com.ashalmawia.coriolan.data.backup.Backup.Companion.backupDir
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.BACKUP_DIR
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
 import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnPermissionDenied
 import permissions.dispatcher.RuntimePermissions
@@ -33,6 +34,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     private val repository: Repository by inject()
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
+    private val backupDir: File by inject(named(BACKUP_DIR))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

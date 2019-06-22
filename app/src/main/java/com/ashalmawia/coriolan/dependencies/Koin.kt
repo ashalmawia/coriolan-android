@@ -8,7 +8,6 @@ import com.ashalmawia.coriolan.FirstStartImpl
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistryImpl
-import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.importer.*
 import com.ashalmawia.coriolan.data.journal.Journal
@@ -48,7 +47,6 @@ val mainModule = module {
     single { Preferences.get(get()) }
     single { Journal.get(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get(), get()) }
-    single { Backup.get() }
     single<CardTypePreferenceHelper> { CardTypePreferenceHelperImpl() }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get(), get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
@@ -58,7 +56,8 @@ val mainModule = module {
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
     single<SQLiteOpenHelper> { SqliteRepositoryOpenHelper(get(), get()) }
     single<Scheduler> { MultiplierBasedScheduler() }
-    single { HistoryFactoryImpl }
+    single<HistoryFactory> { HistoryFactoryImpl }
+
 
     factory<FirstStart> { FirstStartImpl(get()) }
 
