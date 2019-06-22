@@ -24,7 +24,7 @@ class LearningFlow<S : State, R>(
             deck
     )
 
-    var finishListener: FinishListener? = null
+    private val finishListeners = mutableListOf<FinishListener>()
 
     val card
         get() = assignment.current!!
@@ -47,8 +47,16 @@ class LearningFlow<S : State, R>(
         showNextOrComplete()
     }
 
+    fun addFinishListener(listener: FinishListener) {
+        finishListeners.add(listener)
+    }
+
+    fun removeFinishListener(listener: FinishListener) {
+        finishListeners.remove(listener)
+    }
+
     private fun finish() {
-        finishListener?.onFinish()
+        finishListeners.forEach { it() }
     }
 
     fun canUndo() = exercise.canUndo
@@ -126,7 +134,4 @@ class LearningFlow<S : State, R>(
     private fun isCurrent(card: Card) = this.card.card.id == card.id
 }
 
-interface FinishListener {
-
-    fun onFinish() {}
-}
+typealias FinishListener = () -> Unit

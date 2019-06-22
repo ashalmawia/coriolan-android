@@ -6,6 +6,7 @@ import com.ashalmawia.coriolan.model.Domain
 import org.koin.android.ext.android.getKoin
 import org.koin.core.Koin
 import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 private const val SCOPE_DOMAIN = "scope_domain"
@@ -20,11 +21,12 @@ val domainModule = module {
     }
 }
 
+fun Scope.domainScope() = getScope(SCOPE_DOMAIN)
 fun ComponentCallbacks.domainScope() = getKoin().getScope(SCOPE_DOMAIN)
 
 fun Koin.recreateDomainScope(domain: Domain) {
-    val scope = getScope(SCOPE_DOMAIN)
-    scope.close()
+    val scope = getScopeOrNull(SCOPE_DOMAIN)
+    scope?.close()
     setProperty(PROPERTY_DOMAIN, domain)
     createScope(SCOPE_DOMAIN, named(SCOPE_DOMAIN))
 }

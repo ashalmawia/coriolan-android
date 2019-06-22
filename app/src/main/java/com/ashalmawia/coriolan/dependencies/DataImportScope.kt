@@ -13,8 +13,13 @@ private const val SCOPE_DATA_IMPORT = "scope_data_import"
 val dataImportModule = module {
 
     scope(named(SCOPE_DATA_IMPORT)) {
-        scoped<DataImportFlow> { (importer: DataImporter) -> DataImportFlowImpl(get(), get(), importer) }
+        scoped<DataImportFlow> { (importer: DataImporter) -> DataImportFlowImpl(
+                get(),
+                domainScope().get(),
+                importer)
+        }
+
     }
 }
 
-fun ComponentCallbacks.dataImportScope() = getKoin().getScope(SCOPE_DATA_IMPORT)
+fun ComponentCallbacks.dataImportScope() = getKoin().getOrCreateScope(SCOPE_DATA_IMPORT, named(SCOPE_DATA_IMPORT))

@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.dependencies.domainScope
+import com.ashalmawia.coriolan.dependencies.learningFlowScope
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
@@ -24,9 +25,16 @@ import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning.*
 import org.joda.time.DateTime
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.forEach
+import kotlin.collections.getValue
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 private const val TAG = "LearningFragment"
 
@@ -76,7 +84,9 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begin
     }
 
     override fun beginStudy(deck: Deck, studyOrder: StudyOrder) {
-        val flow = get<LearningFlow<*, *>> { parametersOf(exercisesRegistry.defaultExercise(), deck, studyOrder) }
+        val flow = learningFlowScope().get<LearningFlow<*, *>> {
+            parametersOf(exercisesRegistry.defaultExercise(), deck, studyOrder)
+        }
         flow.showNextOrComplete()
     }
 

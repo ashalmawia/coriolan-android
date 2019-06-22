@@ -15,7 +15,6 @@ import android.view.MenuItem
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.dependencies.learningFlowScope
-import com.ashalmawia.coriolan.learning.FinishListener
 import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
@@ -31,7 +30,7 @@ private const val REQUEST_CODE_EDIT_CARD = 1
 
 private const val EXTRA_ANSWERS = "answers"
 
-class CardActivity : BaseActivity(), CardViewListener, FinishListener {
+class CardActivity : BaseActivity(), CardViewListener {
 
     companion object {
         fun intent(context: Context, answers: Array<SRAnswer>): Intent {
@@ -47,6 +46,8 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
         @Suppress("UNCHECKED_CAST")
         learningFlowScope().get<LearningFlow<*, *>>() as LearningFlow<SRState, SRAnswer>
     }
+
+    private val finishListener = { finish() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,12 +73,12 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     override fun onStart() {
         super.onStart()
 
-        flow.finishListener = this
+        flow.addFinishListener(finishListener)
     }
 
-    override fun onFinish() {
+    override fun onBackPressed() {
         learningFlowScope().close()
-        finish()
+        super.onBackPressed()
     }
 
     private lateinit var undoIcon: VectorDrawableSelector
@@ -157,7 +158,7 @@ class CardActivity : BaseActivity(), CardViewListener, FinishListener {
     override fun onStop() {
         super.onStop()
 
-        flow.finishListener = null
+        flow.removeFinishListener(finishListener)
     }
 
     override fun onCorrect() {
