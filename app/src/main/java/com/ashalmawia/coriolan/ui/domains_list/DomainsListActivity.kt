@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.closeDomainScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.AppMenu
 import com.ashalmawia.coriolan.ui.BaseActivity
@@ -29,6 +30,11 @@ class DomainsListActivity : BaseActivity() {
         setContentView(R.layout.domains_list)
 
         setUpToolbarWithLogo()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        closeDomainScope()
     }
 
     override fun onResume() {
