@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.model.ExpressionType
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -36,21 +35,21 @@ abstract class BackupableRepositoryTest {
             DomainInfo(6L, "Finnish", 7L, 2L)
     )
     private val expressions = listOf(
-            ExpressionInfo(1L, "shrimp", ExpressionType.WORD, 1L),
-            ExpressionInfo(2L, "rocket", ExpressionType.WORD, 1L),
-            ExpressionInfo(3L, "spring", ExpressionType.WORD, 1L),
-            ExpressionInfo(4L, "summer", ExpressionType.WORD, 1L),
-            ExpressionInfo(5L, "victory", ExpressionType.WORD, 1L),
-            ExpressionInfo(6L, "march", ExpressionType.WORD, 1L),
-            ExpressionInfo(7L, "креветка", ExpressionType.WORD, 2L),
-            ExpressionInfo(8L, "ракета", ExpressionType.WORD, 2L),
-            ExpressionInfo(9L, "источник", ExpressionType.WORD, 2L),
-            ExpressionInfo(10L, "весна", ExpressionType.WORD, 2L),
-            ExpressionInfo(11L, "пружина", ExpressionType.WORD, 2L),
-            ExpressionInfo(12L, "лето", ExpressionType.WORD, 2L),
-            ExpressionInfo(13L, "победа", ExpressionType.WORD, 2L),
-            ExpressionInfo(14L, "март", ExpressionType.WORD, 2L),
-            ExpressionInfo(15L, "марш", ExpressionType.WORD, 2L)
+            ExpressionInfo(1L, "shrimp", 1L),
+            ExpressionInfo(2L, "rocket", 1L),
+            ExpressionInfo(3L, "spring", 1L),
+            ExpressionInfo(4L, "summer", 1L),
+            ExpressionInfo(5L, "victory", 1L),
+            ExpressionInfo(6L, "march", 1L),
+            ExpressionInfo(7L, "креветка", 2L),
+            ExpressionInfo(8L, "ракета", 2L),
+            ExpressionInfo(9L, "источник", 2L),
+            ExpressionInfo(10L, "весна", 2L),
+            ExpressionInfo(11L, "пружина", 2L),
+            ExpressionInfo(12L, "лето", 2L),
+            ExpressionInfo(13L, "победа", 2L),
+            ExpressionInfo(14L, "март", 2L),
+            ExpressionInfo(15L, "марш", 2L)
     )
     private val decks = listOf(
             DeckInfo(1L, 1L, "Basic English"),

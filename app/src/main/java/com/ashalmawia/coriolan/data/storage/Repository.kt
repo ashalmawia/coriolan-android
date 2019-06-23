@@ -17,11 +17,11 @@ interface Repository {
 
     fun languageByName(name: String): Language?
 
-    fun addExpression(value: String, type: ExpressionType, language: Language): Expression
+    fun addExpression(value: String, language: Language): Expression
 
     fun expressionById(id: Long): Expression?
 
-    fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression?
+    fun expressionByValues(value: String, language: Language): Expression?
 
     fun isUsed(expression: Expression): Boolean
 

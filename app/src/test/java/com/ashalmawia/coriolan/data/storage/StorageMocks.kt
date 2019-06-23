@@ -7,24 +7,24 @@ fun addMockCard(storage: Repository, deckId: Long = 1L, original: String = "spri
     return storage.addCard(
             domain,
             deckId,
-            storage.addExpression(original, ExpressionType.WORD, domain.langOriginal()),
-            translations.map { storage.addExpression(it, ExpressionType.WORD, domain.langTranslations()) })
+            storage.addExpression(original, domain.langOriginal()),
+            translations.map { storage.addExpression(it, domain.langTranslations()) })
 }
 
 fun addMockCard(storage: Repository, cardData: CardData, domain: Domain = mockDomain(), type: CardType = CardType.FORWARD): Card {
-    val original = storage.addExpression(cardData.original, cardData.contentType, domain.langOriginal(type))
+    val original = storage.addExpression(cardData.original, domain.langOriginal(type))
     return storage.addCard(
             domain,
             cardData.deckId,
             original,
-            cardData.translations.map { storage.addExpression(it, cardData.contentType, domain.langTranslations(type)) }
+            cardData.translations.map { storage.addExpression(it, domain.langTranslations(type)) }
     )
 }
 
-fun addMockExpressionOriginal(storage: Repository, value: String = "some value", type: ExpressionType = ExpressionType.WORD, domain: Domain): Expression {
-    return storage.addExpression(value, type, domain.langOriginal())
+fun addMockExpressionOriginal(storage: Repository, value: String = "some value", domain: Domain): Expression {
+    return storage.addExpression(value, domain.langOriginal())
 }
 
-fun addMockExpressionTranslation(storage: Repository, value: String = "some value", type: ExpressionType = ExpressionType.WORD, domain: Domain): Expression {
-    return storage.addExpression(value, type, domain.langTranslations())
+fun addMockExpressionTranslation(storage: Repository, value: String = "some value", domain: Domain): Expression {
+    return storage.addExpression(value, domain.langTranslations())
 }

@@ -8,10 +8,9 @@ fun assertLanguageCorrect(language: Language?, value: String) {
     assertEquals("language has correct values", value, language!!.value)
 }
 
-fun assertExpressionCorrect(expression: Expression?, value: String, type: ExpressionType, language: Language) {
+fun assertExpressionCorrect(expression: Expression?, value: String, language: Language) {
     assertNotNull("expression is found", expression)
     assertEquals("expression has correct values", value, expression!!.value)
-    assertEquals("expression has correct values", type, expression.type)
     assertLanguageCorrect(expression.language, language.value)
 }
 
@@ -30,10 +29,10 @@ fun assertCardCorrectReverse(card: Card?, data: CardData, domain: Domain) {
 }
 private fun `_assertCardCorrect`(card: Card?, data: CardData, langOriginal: Language, langTranslations: Language) {
     assertNotNull("card is created", card)
-    assertExpressionCorrect(card!!.original, data.original, data.contentType, langOriginal)
+    assertExpressionCorrect(card!!.original, data.original, langOriginal)
     assertEquals("translations count is correct", data.translations.size, card.translations.size)
     for (i in 0 until card.translations.size) {
-        assertExpressionCorrect(card.translations[i], data.translations[i], data.contentType, langTranslations)
+        assertExpressionCorrect(card.translations[i], data.translations[i], langTranslations)
     }
 }
 fun assertCardCorrect(card: Card?, original: Expression, translations: List<Expression>, deckId: Long, domain: Domain) {

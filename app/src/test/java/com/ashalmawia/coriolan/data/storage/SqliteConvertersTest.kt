@@ -3,12 +3,10 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.mockLanguage
 import org.joda.time.DateTime
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
@@ -47,27 +45,24 @@ class SqliteConvertersTest {
     fun createExpressionContentValuesTest() {
         // given
         val value = "some value"
-        val type = ExpressionType.WORD
         val lang = mockLanguage(777L, "Russian")
 
         // when
-        val cv = createExpressionContentValues(value, type, lang)
+        val cv = createExpressionContentValues(value, lang)
 
         // then
-        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("values count is correct", 2, cv.size())
         assertEquals("$SQLITE_COLUMN_VALUE is correct", value, cv.get(SQLITE_COLUMN_VALUE))
-        assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, cv.get(SQLITE_COLUMN_TYPE))
         assertEquals("$SQLITE_COLUMN_LANGUAGE_ID is correct", lang.id, cv.get(SQLITE_COLUMN_LANGUAGE_ID))
 
         // when
         val id = 7L
-        val cv1 = createExpressionContentValues(value, type, lang.id, id)
+        val cv1 = createExpressionContentValues(value, lang.id, id)
 
         // then
-        assertEquals("values count is correct", 4, cv1.size())
+        assertEquals("values count is correct", 3, cv1.size())
         assertEquals("$SQLITE_COLUMN_ID is correct", id, cv1.get(SQLITE_COLUMN_ID))
         assertEquals("$SQLITE_COLUMN_VALUE is correct", value, cv1.get(SQLITE_COLUMN_VALUE))
-        assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, cv1.get(SQLITE_COLUMN_TYPE))
         assertEquals("$SQLITE_COLUMN_LANGUAGE_ID is correct", lang.id, cv1.get(SQLITE_COLUMN_LANGUAGE_ID))
     }
 
@@ -105,7 +100,7 @@ class SqliteConvertersTest {
         val deckId = 5L
         val domainId = 2L
         val lang = mockLanguage()
-        val original = Expression(1L, "some original expression", ExpressionType.WORD, lang)
+        val original = Expression(1L, "some original expression", lang)
 
         // when
         val cv = createCardContentValues(domainId, deckId, original)
@@ -123,7 +118,7 @@ class SqliteConvertersTest {
         val deckId = 5L
         val domainId = 1L
         val lang = mockLanguage()
-        val original = Expression(1L, "some original expression", ExpressionType.WORD, lang)
+        val original = Expression(1L, "some original expression", lang)
         val cardId = 7L
 
         // when
@@ -185,9 +180,9 @@ class SqliteConvertersTest {
         val cardId = 99L
         val lang = mockLanguage()
         val translations = listOf(
-                Expression(1L, "firework", ExpressionType.WORD, lang),
-                Expression(2L, "rocket", ExpressionType.WORD, lang),
-                Expression(8L, "missile", ExpressionType.WORD, lang)
+                Expression(1L, "firework", lang),
+                Expression(2L, "rocket", lang),
+                Expression(8L, "missile", lang)
         )
 
         // when

@@ -23,20 +23,18 @@ fun addMockLanguages(storage: Repository) {
 fun mockCardData(
         original: String,
         translations: List<String>,
-        deckId: Long = 1L,
-        contentType: ExpressionType = ExpressionType.WORD
-) = CardData(original, translations, deckId, contentType)
+        deckId: Long = 1L
+) = CardData(original, translations, deckId)
 
 fun mockCardData(
         original: String = "shrimp",
         translation: String = "креветка",
-        deckId: Long = 1L,
-        type: ExpressionType = ExpressionType.WORD
-) = mockCardData(original, listOf(translation), deckId, type)
+        deckId: Long = 1L
+) = mockCardData(original, listOf(translation), deckId)
 
 private var expressionId = 1L
-fun mockExpression(value: String = "mock value", type: ExpressionType = ExpressionType.WORD, language: Language = mockLanguage())
-        = Expression(expressionId++, value, type, language)
+fun mockExpression(value: String = "mock value", language: Language = mockLanguage())
+        = Expression(expressionId++, value, language)
 
 private var domainId = 1L
 fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())

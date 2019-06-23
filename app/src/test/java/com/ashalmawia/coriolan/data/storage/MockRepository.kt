@@ -23,16 +23,16 @@ class MockRepository : Repository {
     }
 
     val expressions = mutableListOf<Expression>()
-    override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
-        val exp = Expression(expressions.size + 1L, value, type, language)
+    override fun addExpression(value: String, language: Language): Expression {
+        val exp = Expression(expressions.size + 1L, value, language)
         expressions.add(exp)
         return exp
     }
     override fun expressionById(id: Long): Expression? {
         return expressions.find { it.id == id }
     }
-    override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
-        return expressions.find { it.value == value && it.type == type && it.language == language }
+    override fun expressionByValues(value: String, language: Language): Expression? {
+        return expressions.find { it.value == value && it.language == language }
     }
     override fun isUsed(expression: Expression): Boolean {
         return cards.any { it.original.id == expression.id || it.translations.any { it.id == expression.id } }

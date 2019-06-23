@@ -74,7 +74,7 @@ class SqliteBackupHelper(
         cursor.use {
             val list = mutableListOf<ExpressionInfo>()
             while (cursor.moveToNext()) {
-                list.add(ExpressionInfo(cursor.getId(), cursor.getValue(), cursor.getExpressionType(), cursor.getLanguageId()))
+                list.add(ExpressionInfo(cursor.getId(), cursor.getValue(), cursor.getLanguageId()))
             }
             return list
         }
@@ -196,7 +196,7 @@ class SqliteBackupHelper(
 
         expressions.forEach {
             db.insertOrThrow(SQLITE_TABLE_EXPRESSIONS, null,
-                    createExpressionContentValues(it.value, it.type, it.languageId, it.id)
+                    createExpressionContentValues(it.value, it.languageId, it.id)
             )
         }
     }

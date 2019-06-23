@@ -14,7 +14,6 @@ fun sqliteTableExerciseState(exerciseId: String): String {
 const val SQLITE_COLUMN_ID = "_id"
 const val SQLITE_COLUMN_VALUE = "Value"
 const val SQLITE_COLUMN_LANG_VALUE = "LangValue"
-const val SQLITE_COLUMN_TYPE = "Type"
 const val SQLITE_COLUMN_LANGUAGE_ID = "LangId"
 const val SQLITE_COLUMN_FRONT_ID = "FrontId"
 const val SQLITE_COLUMN_DECK_ID = "DeckId"

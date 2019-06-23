@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.mockToday
-import com.ashalmawia.coriolan.model.ExpressionType
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -42,7 +41,7 @@ class JacksonSerializationTest {
     @Test
     fun testExpressionInfo() {
         // given
-        val info = ExpressionInfo(13L, "My expression value.", ExpressionType.WORD, 5L)
+        val info = ExpressionInfo(13L, "My expression value.", 5L)
 
         // then
         test(info, serializer::writeExpression, deserializer::readExpression)

@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.mockToday
-import com.ashalmawia.coriolan.model.ExpressionType
 import java.util.*
 
 object JsonBackupTestData {
@@ -18,33 +17,33 @@ object JsonBackupTestData {
 
     val exressions = listOf(
             // English
-            ExpressionInfo(1L, "shrimp", ExpressionType.WORD, 1L),
-            ExpressionInfo(2L, "rocket", ExpressionType.WORD, 1L),
-            ExpressionInfo(3L, "spring", ExpressionType.WORD, 1L),
-            ExpressionInfo(4L, "summer", ExpressionType.WORD, 1L),
-            ExpressionInfo(5L, "victory", ExpressionType.WORD, 1L),
-            ExpressionInfo(6L, "march", ExpressionType.WORD, 1L),
+            ExpressionInfo(1L, "shrimp", 1L),
+            ExpressionInfo(2L, "rocket", 1L),
+            ExpressionInfo(3L, "spring", 1L),
+            ExpressionInfo(4L, "summer", 1L),
+            ExpressionInfo(5L, "victory", 1L),
+            ExpressionInfo(6L, "march", 1L),
 
             // Russian
-            ExpressionInfo(7L, "креветка", ExpressionType.WORD, 2L),
-            ExpressionInfo(8L, "ракета", ExpressionType.WORD, 2L),
-            ExpressionInfo(9L, "источник", ExpressionType.WORD, 2L),
-            ExpressionInfo(10L, "весна", ExpressionType.WORD, 2L),
-            ExpressionInfo(11L, "пружина", ExpressionType.WORD, 2L),
-            ExpressionInfo(12L, "лето", ExpressionType.WORD, 2L),
-            ExpressionInfo(13L, "победа", ExpressionType.WORD, 2L),
-            ExpressionInfo(14L, "март", ExpressionType.WORD, 2L),
-            ExpressionInfo(15L, "марш", ExpressionType.WORD, 2L),
+            ExpressionInfo(7L, "креветка", 2L),
+            ExpressionInfo(8L, "ракета", 2L),
+            ExpressionInfo(9L, "источник", 2L),
+            ExpressionInfo(10L, "весна", 2L),
+            ExpressionInfo(11L, "пружина", 2L),
+            ExpressionInfo(12L, "лето", 2L),
+            ExpressionInfo(13L, "победа", 2L),
+            ExpressionInfo(14L, "март", 2L),
+            ExpressionInfo(15L, "марш", 2L),
 
             // French
-            ExpressionInfo(16L, "ameloirer", ExpressionType.WORD, 3L),
-            ExpressionInfo(17L, "chercher", ExpressionType.WORD, 3L),
-            ExpressionInfo(18L, "voisin", ExpressionType.WORD, 3L),
+            ExpressionInfo(16L, "ameloirer", 3L),
+            ExpressionInfo(17L, "chercher", 3L),
+            ExpressionInfo(18L, "voisin", 3L),
 
             // Russian
-            ExpressionInfo(19L, "улучшать", ExpressionType.WORD, 2L),
-            ExpressionInfo(20L, "искать", ExpressionType.WORD, 2L),
-            ExpressionInfo(21L, "сосед", ExpressionType.WORD, 2L)
+            ExpressionInfo(19L, "улучшать", 2L),
+            ExpressionInfo(20L, "искать", 2L),
+            ExpressionInfo(21L, "сосед", 2L)
     )
 
     val cards = listOf(

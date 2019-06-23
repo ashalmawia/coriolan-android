@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.backup
 
-import com.ashalmawia.coriolan.model.ExpressionType
 import org.joda.time.DateTime
 
 interface BackupableRepository {
@@ -54,7 +53,6 @@ data class DomainInfo(
 data class ExpressionInfo(
         val id: Long,
         val value: String,
-        val type: ExpressionType,
         val languageId: Long)
 
 data class CardInfo(

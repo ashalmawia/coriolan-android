@@ -51,8 +51,8 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
     }
 
     fun editCard(card: Card, cardData: CardData): Card? {
-        val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal(card.type))
-        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations(card.type)) }
+        val original = findOrAddExpression(cardData.original, domain.langOriginal(card.type))
+        val translations = cardData.translations.map { findOrAddExpression(it, domain.langTranslations(card.type)) }
 
         val updated = repository.updateCard(card, cardData.deckId, original, translations)
 
@@ -82,8 +82,8 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
      * 3. reverse: "источник -- spring"
      */
     private fun addCard(cardData: CardData): AddCardResult {
-        val original = findOrAddExpression(cardData.original, cardData.contentType, domain.langOriginal())
-        val translations = cardData.translations.map { findOrAddExpression(it, cardData.contentType, domain.langTranslations()) }
+        val original = findOrAddExpression(cardData.original, domain.langOriginal())
+        val translations = cardData.translations.map { findOrAddExpression(it, domain.langTranslations()) }
 
         val duplicate = repository.cardByValues(domain, original)
         fun Card.containsAll(translationValues: List<String>): Boolean
@@ -105,9 +105,9 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         translations.forEach { merger.mergeOrAdd(it, originalAsList, cardData.deckId) }
     }
 
-    private fun findOrAddExpression(value: String, type: ExpressionType, language: Language): Expression {
-        val found = repository.expressionByValues(value, type, language)
-        return found ?: repository.addExpression(value, type, language)
+    private fun findOrAddExpression(value: String, language: Language): Expression {
+        val found = repository.expressionByValues(value, language)
+        return found ?: repository.addExpression(value, language)
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {
