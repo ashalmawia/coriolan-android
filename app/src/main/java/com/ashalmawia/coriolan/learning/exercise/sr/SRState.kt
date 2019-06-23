@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.learning.exercise.sr
 
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.today
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.util.*
@@ -32,8 +31,4 @@ data class SRState(
     override fun toString(): String {
         return "due: ${format.print(due)}, period: $period"
     }
-}
-
-fun emptyState(): SRState {
-    return SRState(today(), PERIOD_NEVER_SCHEDULED)
 }

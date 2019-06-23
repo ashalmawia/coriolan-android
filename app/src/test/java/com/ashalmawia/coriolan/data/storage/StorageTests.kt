@@ -2,12 +2,13 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -16,6 +17,11 @@ abstract class StorageTest {
 
     private val exercise = MockExercise(stateType = StateType.SR_STATE)
     private val exercises = listOf(exercise)
+
+    private val today = mockToday()
+    private fun emptyState() = mockEmptySRState(today)
+
+    protected val mockEmptyStateProvider = MockEmptyStateProvider(today)
 
     private lateinit var domain: Domain
 
@@ -1149,7 +1155,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = storage.addDeck(domain, "mock deck")
-        val today = today()
+        val today = today
 
         // when
         val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
@@ -1182,7 +1188,7 @@ abstract class StorageTest {
                 .map {
                     addMockCard(storage, it, domain, CardType.REVERSE)
                 }
-        val today = today()
+        val today = today
 
         storage.updateSRCardState(forward[0], SRState(today.plusDays(3), 4), exercise.stableId)
         storage.updateSRCardState(forward[1], SRState(today.plusDays(1), 4), exercise.stableId)
@@ -1225,7 +1231,7 @@ abstract class StorageTest {
                 .map {
                     addMockCard(storage, it, domain, CardType.REVERSE)
                 }
-        val today = today()
+        val today = today
 
         storage.updateSRCardState(forward[0], SRState(today.plusDays(3), 4), exercise.stableId)
         storage.updateSRCardState(forward[1], SRState(today.minusDays(1), 4), exercise.stableId)
@@ -1508,10 +1514,10 @@ abstract class StorageTest {
 
         // then
         assertEquals("state is correct", Status.NEW, state.status)
-        assertEquals("new card is due today", today(), state.due)
+        assertEquals("new card is due today", today, state.due)
 
         // given
-        val newState = SRState(today().plusDays(8), 8)
+        val newState = SRState(today.plusDays(8), 8)
 
         // when
         storage.updateSRCardState(card, newState, exercise.stableId)
@@ -1537,13 +1543,13 @@ abstract class StorageTest {
         }
 
         // when
-        val due = storage.cardsDueDate(exercise.stableId, deck, today())
+        val due = storage.cardsDueDate(exercise.stableId, deck, today)
 
         // then
         assertEquals("all new cards are due today", count, due.size)
         for (i in 0 until count) {
             assertCardCorrect(due[i].card, cardData[i], domain)
-            assertEquals("state is correct", today(), due[i].state.due)
+            assertEquals("state is correct", today, due[i].state.due)
             assertEquals("state is correct", Status.NEW, due[i].state.status)
         }
     }
@@ -1563,7 +1569,7 @@ abstract class StorageTest {
             val added = addMockCard(storage, data, domain)
             cards.add(added)
         }
-        val today = today()
+        val today = today
 
         storage.updateSRCardState(cards[0], SRState(today, 4), exercise.stableId)
         storage.updateSRCardState(cards[1], SRState(today.plusDays(1), 4), exercise.stableId)
@@ -1588,7 +1594,7 @@ abstract class StorageTest {
         val cards = (0 until count)
                 .map { mockCardData("original $it", "translation $it", deck.id) }
                 .map { addMockCard(storage, it, domain) }
-        val today = today()
+        val today = today
 
         storage.updateSRCardState(cards[0], SRState(today.plusDays(3), 4), exercise.stableId)
         storage.updateSRCardState(cards[1], SRState(today.plusDays(1), 4), exercise.stableId)

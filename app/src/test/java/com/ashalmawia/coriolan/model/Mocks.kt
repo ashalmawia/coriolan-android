@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 
 // TODO: go over it's default usages and consider adding params and checking them
 fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
@@ -71,7 +71,7 @@ fun <T : State> mockCardWithState(
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
-fun mockState(period: Int = 0) = SRState(today(), period)
+fun mockState(period: Int = 0) = SRState(mockToday(), period)
 fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)
 fun mockStateRelearn() = mockState(0)
 fun mockStateInProgress() = mockState(5)

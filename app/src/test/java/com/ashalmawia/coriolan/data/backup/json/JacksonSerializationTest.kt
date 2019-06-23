@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.ExpressionType
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
@@ -18,6 +18,8 @@ class JacksonSerializationTest {
 
     private val serializer: JacksonSerializer = JacksonSerializerImpl()
     private val deserializer: JacksonDeserializer = JacksonDeserializerImpl()
+
+    private val today = mockToday()
 
     @Test
     fun testLanguageInfo() {
@@ -67,7 +69,7 @@ class JacksonSerializationTest {
     @Test
     fun testSRStateInfo() {
         // given
-        val info = SRStateInfo(23L, today().minusDays(5), 7)
+        val info = SRStateInfo(23L, today.minusDays(5), 7)
 
         // then
         test(info, serializer::writeCardStateSR, deserializer::readCardStateSR)

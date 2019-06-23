@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.prefs
 
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockLanguage
 import org.junit.Assert.*
 import org.junit.Test
@@ -10,6 +10,8 @@ abstract class PreferencesTest {
     protected abstract fun create(): Preferences
 
     private val prefereces = lazy { create() }
+
+    private val today = mockToday()
 
     @Test
     fun `test isFirstStart recordFirstStart`() {
@@ -65,7 +67,7 @@ abstract class PreferencesTest {
         val preferences = this.prefereces.value
         val newCardsLimit = 8
         val newCardsLimitToday = 20
-        val today = today()
+        val today = today
 
         // when
         preferences.setNewCardsDailyLimitDefault(newCardsLimit)
@@ -126,7 +128,7 @@ abstract class PreferencesTest {
         val preferences = this.prefereces.value
         val reviewCardsLimit = 8
         val reviewCardsLimitToday = 20
-        val today = today()
+        val today = today
 
         // when
         preferences.setReviewCardsDailyLimitDefault(reviewCardsLimit)

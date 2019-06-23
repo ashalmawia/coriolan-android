@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
@@ -16,7 +16,10 @@ import org.joda.time.DateTime
 
 private val TAG = SqliteStorage::class.java.simpleName
 
-class SqliteStorage(private val helper: SQLiteOpenHelper) : Repository {
+class SqliteStorage(
+        private val helper: SQLiteOpenHelper,
+        private val emptyStateProvider: EmptyStateProvider
+) : Repository {
 
     override fun addLanguage(value: String): Language {
         val db = helper.writableDatabase
@@ -699,7 +702,7 @@ class SqliteStorage(private val helper: SQLiteOpenHelper) : Repository {
             return if (cursor.moveToNext()) {
                 extractSRState(cursor)
             } else {
-                emptyState()
+                emptyStateProvider.emptySRState()
             }
         }
     }
@@ -783,5 +786,6 @@ class SqliteStorage(private val helper: SQLiteOpenHelper) : Repository {
     }
 
     private fun extractSRState(cursor: Cursor, alias: String? = null) =
-            if (cursor.hasSavedState(alias)) SRState(cursor.getDateDue(alias), cursor.getPeriod(alias)) else emptyState()
+            if (cursor.hasSavedState(alias)) SRState(cursor.getDateDue(alias), cursor.getPeriod(alias))
+            else emptyStateProvider.emptySRState()
 }

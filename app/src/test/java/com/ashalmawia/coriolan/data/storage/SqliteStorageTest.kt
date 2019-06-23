@@ -16,6 +16,6 @@ class SqliteStorageTest : StorageTest() {
     override fun createStorage(exercises: List<Exercise<*, *>>): Repository {
         val registry = MockExercisesRegistry(exercises)
         val helper = provideHelper(registry)
-        return SqliteStorage(helper)
+        return SqliteStorage(helper, mockEmptyStateProvider)
     }
 }

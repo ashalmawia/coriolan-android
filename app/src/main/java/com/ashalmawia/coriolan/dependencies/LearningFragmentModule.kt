@@ -17,6 +17,7 @@ val learningFragmentModule = module {
     factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
         DecksAdapter(
                 get(),
+                get(),
                 exercise,
                 dataFetcher,
                 beginStudyListener,
@@ -32,7 +33,7 @@ val learningFragmentModule = module {
     }
 
     factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: Deck, exercise: Exercise<*, *>, date: DateTime) ->
-        IncreaseLimitsDialog(domainActivityScope().get(), deck, exercise, date, get(), get()).build()
+        IncreaseLimitsDialog(domainActivityScope().get(), deck, exercise, date, get(), get(), get()).build()
     }
 
 }

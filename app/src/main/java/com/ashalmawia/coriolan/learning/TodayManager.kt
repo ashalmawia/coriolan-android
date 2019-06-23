@@ -4,24 +4,52 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.ashalmawia.coriolan.debug.DEBUG_OVERRIDE_TODAY
 import com.ashalmawia.coriolan.util.timespamp
+import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 private const val REQUEST_CODE = 777
 
-object TodayManager {
+object TodayManager : TodayProvider {
 
     private val listeners = mutableListOf<TodayChangeListener>()
 
-    fun register(listener: TodayChangeListener) {
+    // for debug & testing
+    private var overridenToday: LearningDay? = null
+
+    override fun today(): LearningDay {
+        return if (DEBUG_OVERRIDE_TODAY) todayWithOverride() else realToday()
+    }
+
+    private fun realToday(): LearningDay {
+        val today = LocalDate.now().toDateTime(LocalTime(4, 0))
+        return if (today.isAfterNow) {
+            today.minusDays(1)
+        } else {
+            today
+        }
+    }
+
+    private fun todayWithOverride(): LearningDay {
+        return overridenToday ?: realToday()
+    }
+
+    fun overrideToday(date: LearningDay) {
+        overridenToday = date
+        dayChanged()
+    }
+
+    override fun register(listener: TodayChangeListener) {
         listeners.add(listener)
     }
 
-    fun unregister(listener: TodayChangeListener) {
+    override fun unregister(listener: TodayChangeListener) {
         listeners.remove(listener)
     }
 
-    fun dayChanged() {
+    override fun dayChanged() {
         for (listener in listeners) {
             listener.onDayChanged()
         }

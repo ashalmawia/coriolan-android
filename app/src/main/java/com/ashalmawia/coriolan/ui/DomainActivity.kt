@@ -132,10 +132,10 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
                 .commitAllowingStateLoss()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu) = AppMenu.onCreateOptionsMenu(menuInflater, menu)
+    override fun onCreateOptionsMenu(menu: Menu) = appMenu.onCreateOptionsMenu(menuInflater, menu)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return AppMenu.onOptionsItemSelected(this, item) || super.onOptionsItemSelected(item)
+        return appMenu.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
     }
 
     override fun onDataUpdated() {

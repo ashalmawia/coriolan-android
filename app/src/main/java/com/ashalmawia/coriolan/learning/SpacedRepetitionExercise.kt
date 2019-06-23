@@ -8,9 +8,9 @@ import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -27,6 +27,8 @@ import org.joda.time.DateTime
  */
 class SpacedRepetitionExercise(
         private val context: Context,
+        private val todayProvider: TodayProvider,
+        private val emptyStateProvider: EmptyStateProvider,
         private val scheduler: Scheduler
 ) : Exercise<SRState, SRAnswer> {
 
@@ -76,7 +78,7 @@ class SpacedRepetitionExercise(
         }
     }
 
-    override fun isPending(card: CardWithState<SRState>): Boolean = card.state.due <= today()
+    override fun isPending(card: CardWithState<SRState>): Boolean = card.state.due <= todayProvider.today()
 
     override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<SRState> {
         return Mutations(listOf(
@@ -90,6 +92,6 @@ class SpacedRepetitionExercise(
     }
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
-        repository.updateSRCardState(card, emptyState(), stableId)
+        repository.updateSRCardState(card, emptyStateProvider.emptySRState(), stableId)
     }
 }

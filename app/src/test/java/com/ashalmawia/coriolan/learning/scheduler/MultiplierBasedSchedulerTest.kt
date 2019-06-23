@@ -2,21 +2,24 @@ package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.TodayManager
+import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class MultiplierBasedSchedulerTest {
 
-    private fun scheduler() = MultiplierBasedScheduler()
+    private val today = mockToday()
+    private fun emptyState() = mockEmptySRState(today)
+
+    private fun scheduler() = MultiplierBasedScheduler(TodayManager)
 
     @Test
     fun `test__newCard__wrong__shouldMeetAtLeastTwoMoreTimes`() {
@@ -30,7 +33,7 @@ class MultiplierBasedSchedulerTest {
         state = scheduler.processAnswer(SRAnswer.WRONG, state)
 
         // then
-        val today = today()
+        val today = today
         assertEquals(today, state.due)
 
         // when
@@ -59,7 +62,7 @@ class MultiplierBasedSchedulerTest {
         state = scheduler.wrong(state)
 
         // then
-        val today = today()
+        val today = today
         assertEquals(today, state.due)
 
         // when
@@ -96,7 +99,7 @@ class MultiplierBasedSchedulerTest {
         state = scheduler.correct(state)
 
         // then
-        val today = today()
+        val today = today
         assertEquals(0, state.period)
         assertEquals(today, state.due)
 
@@ -120,7 +123,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.easy(state)
 
         // then
-        val today = today()
+        val today = today
         assertEquals(4, updated.period)
         assertEquals(today.plusDays(4), updated.due)
     }
@@ -129,7 +132,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__wrong__dueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -146,7 +149,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__hard__dueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -163,7 +166,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__correct__dueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -180,7 +183,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__easy__dueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -197,7 +200,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__wrong__afterDueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -214,7 +217,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__hard__afterDueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -231,7 +234,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__correct__afterDueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -248,7 +251,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__inProgressCard__easy__afterDueDate`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
@@ -265,7 +268,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__learnt__wrong`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
@@ -282,7 +285,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__learnt__hard`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(216), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
@@ -300,7 +303,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__learnt__correct`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
@@ -318,7 +321,7 @@ class MultiplierBasedSchedulerTest {
     fun `test__learnt__easy`() {
         // given
         val scheduler = scheduler()
-        val today = today()
+        val today = today
 
         val state = SRState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed

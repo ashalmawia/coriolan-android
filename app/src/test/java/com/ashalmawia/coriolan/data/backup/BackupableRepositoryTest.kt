@@ -14,6 +14,8 @@ abstract class BackupableRepositoryTest {
     private val exercise = MockExercise("some_exercise", StateType.SR_STATE)
     private val exercises = MockExercisesRegistry(listOf(exercise))
 
+    private val today = mockToday()
+
     private lateinit var repo: BackupableRepository
 
     private val languages = listOf(
@@ -75,14 +77,15 @@ abstract class BackupableRepositoryTest {
             CardInfo(11L, 2L, 1L, 11L, listOf(3L)),
             CardInfo(12L, 1L, 1L, 12L, listOf(4L))
     )
+
     private val srstates = listOf(
-            SRStateInfo(5L, today().minusDays(10), 44),
-            SRStateInfo(3L, today().minusDays(5), 52),
-            SRStateInfo(12L, today().plusDays(11), 22),
-            SRStateInfo(11L, today().minusDays(88), 12),
-            SRStateInfo(9L, today().plusDays(23), 50),
-            SRStateInfo(8L, today().minusDays(1), 1),
-            SRStateInfo(6L, today(), 0)
+            SRStateInfo(5L, today.minusDays(10), 44),
+            SRStateInfo(3L, today.minusDays(5), 52),
+            SRStateInfo(12L, today.plusDays(11), 22),
+            SRStateInfo(11L, today.minusDays(88), 12),
+            SRStateInfo(9L, today.plusDays(23), 50),
+            SRStateInfo(8L, today.minusDays(1), 1),
+            SRStateInfo(6L, today, 0)
     )
 
     @Before

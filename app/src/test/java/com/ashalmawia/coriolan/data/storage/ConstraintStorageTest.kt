@@ -3,10 +3,11 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert
 import org.junit.Test
@@ -20,6 +21,8 @@ class ConstraintStorageTest {
     private val exercise = MockExercise(stateType = StateType.SR_STATE)
     private val exercises = MockExercisesRegistry(listOf(exercise))
 
+    private val today = mockToday()
+
     private lateinit var domain: Domain
 
     private val prefilledStorage: Lazy<Repository> = lazy {
@@ -32,7 +35,7 @@ class ConstraintStorageTest {
 
     private fun createStorage(): Repository {
         val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application, exercises)
-        return SqliteStorage(helper)
+        return SqliteStorage(helper, MockEmptyStateProvider(today))
     }
 
     @Test(expected = DataProcessingException::class)
@@ -443,7 +446,7 @@ class ConstraintStorageTest {
     fun test__updateSRCardState__cardIncorrect() {
         // when
         val storage = prefilledStorage.value
-        val newState = SRState(today().plusDays(8), 8)
+        val newState = SRState(today.plusDays(8), 8)
 
         val dummyCard = mockCard(domain = domain)
 
@@ -462,7 +465,7 @@ class ConstraintStorageTest {
         val translation = storage.addExpression("креветка", ExpressionType.WORD, domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
-        val newState = SRState(today().plusDays(8), 8)
+        val newState = SRState(today.plusDays(8), 8)
 
         val dummyExerciseId = "dummy"
 

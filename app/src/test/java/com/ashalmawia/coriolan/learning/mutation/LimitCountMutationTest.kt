@@ -5,9 +5,9 @@ import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
-import junit.framework.Assert.*
+import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -17,7 +17,7 @@ class LimitCountMutationTest {
 
     private val preferences = MockPreferences()
     private val journal = MockJournal()
-    private val date = today()
+    private val date = mockToday()
     private val cards = List(60, { i -> mockCardWithState(procudeMockState(i)) })
 
     private val mutation = lazy { Mutation.LimitCount<SRState>(preferences, journal, date) }

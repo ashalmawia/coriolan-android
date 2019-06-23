@@ -3,14 +3,14 @@ package com.ashalmawia.coriolan.learning.exercise
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.MockState
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.StateType
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
@@ -46,7 +46,7 @@ class MockExercise(override val stableId: String = "mock", override val stateTyp
     }
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
-        repository.updateSRCardState(card, emptyState(), stableId)
+        repository.updateSRCardState(card, mockEmptySRState(mockToday()), stableId)
     }
 
     override fun equals(other: Any?): Boolean {

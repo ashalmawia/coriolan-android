@@ -1,10 +1,11 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_LEARNT
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockState
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -15,7 +16,7 @@ class StateTest {
     @Test
     fun `test__stateNew`() {
         // when
-        val state = emptyState()
+        val state = mockEmptySRState(mockToday())
 
         // then
         assertEquals(Status.NEW, state.status)

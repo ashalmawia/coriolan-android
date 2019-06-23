@@ -108,6 +108,7 @@ private const val TYPE_ITEM = 2
 
 class DecksAdapter(
         private val deckCountsProvider: DeckCountsProvider,
+        private val todayProvider: TodayProvider,
         private val exercise: Exercise<*, *>,
         private val dataFetcher: DataFetcher,
         private val beginStudyListener: BeginStudyListener,
@@ -232,6 +233,8 @@ class DecksAdapter(
         val dialog = createDeckDetailsDialog(deck, today())
         dialog.show()
     }
+
+    private fun today() = todayProvider.today()
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
         if (counts.isAnythingPending()) {

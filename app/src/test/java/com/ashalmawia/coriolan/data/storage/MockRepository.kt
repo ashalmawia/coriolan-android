@@ -1,8 +1,9 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -132,7 +133,7 @@ class MockRepository : Repository {
         states[card.id] = state
     }
     override fun getSRCardState(card: Card, exerciseId: String): SRState {
-        return states[card.id] ?: emptyState()
+        return states[card.id] ?: mockEmptySRState(mockToday())
     }
     override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
         return cardsOfDeck(deck)

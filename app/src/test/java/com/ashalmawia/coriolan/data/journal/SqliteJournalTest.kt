@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.journal
 
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.sqlite.SqliteJournal
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,10 +14,12 @@ class SqliteJournalTest {
 
     private val journal = SqliteJournal(RuntimeEnvironment.application)
 
+    private val today = mockToday()
+
     @Test
     fun test__cardsStudiedOnDate__noEntry() {
         // given
-        val date = today()
+        val date = today
 
         // when
         val counts = journal.cardsStudiedOnDate(date)
@@ -29,7 +31,7 @@ class SqliteJournalTest {
     @Test
     fun test__recordNewCardStudied() {
         // given
-        val date = today()
+        val date = today
 
         // when
         journal.recordNewCardStudied(date)
@@ -56,7 +58,7 @@ class SqliteJournalTest {
     @Test
     fun test__recordReviewStudied() {
         // given
-        val date = today()
+        val date = today
 
         // when
         journal.recordReviewStudied(date)
@@ -83,7 +85,7 @@ class SqliteJournalTest {
     @Test
     fun test__recordCardRelearned() {
         // given
-        val date = today()
+        val date = today
 
         // when
         journal.recordCardRelearned(date)
@@ -110,7 +112,7 @@ class SqliteJournalTest {
     @Test
     fun test__recordsCombination() {
         // given
-        val date = today()
+        val date = today
 
         // when
         journal.recordReviewStudied(date)

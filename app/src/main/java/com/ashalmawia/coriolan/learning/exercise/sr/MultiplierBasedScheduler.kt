@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning.exercise.sr
 
 import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.TodayProvider
 import org.joda.time.Days
 import kotlin.math.*
 
@@ -12,7 +12,7 @@ private const val MULTIPLIER_EASY = 4f
 
 private const val NEW_RESPONDED_EASY_DAYS = 4
 
-class MultiplierBasedScheduler : Scheduler {
+class MultiplierBasedScheduler(private val todayProvider: TodayProvider) : Scheduler {
 
     override fun answers(state: SRState): Array<SRAnswer> {
         return when (state.status) {
@@ -67,4 +67,6 @@ class MultiplierBasedScheduler : Scheduler {
             SRState(due, period)
         }
     }
+
+    private fun today() = todayProvider.today()
 }

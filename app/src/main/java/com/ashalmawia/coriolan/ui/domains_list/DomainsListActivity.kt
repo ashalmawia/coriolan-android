@@ -10,7 +10,6 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.closeDomainScope
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.ui.AppMenu
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.CreateDomainActivity
 import com.ashalmawia.coriolan.ui.DomainActivity
@@ -67,10 +66,10 @@ class DomainsListActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu) = AppMenu.onCreateOptionsMenu(menuInflater, menu)
+    override fun onCreateOptionsMenu(menu: Menu) = appMenu.onCreateOptionsMenu(menuInflater, menu)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return AppMenu.onOptionsItemSelected(this, item) || super.onOptionsItemSelected(item)
+        return appMenu.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
     }
 
     private fun subtitleItem() = DomainsListItem.CategoryItem(R.string.domains_list__subtitle)

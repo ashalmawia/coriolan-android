@@ -2,9 +2,9 @@ package com.ashalmawia.coriolan.data.merger
 
 import com.ashalmawia.coriolan.data.storage.MockRepository
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
-import com.ashalmawia.coriolan.learning.today
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.assertCardCorrect
 import com.ashalmawia.coriolan.model.mockDomain
 import com.ashalmawia.coriolan.model.mockExpression
@@ -21,13 +21,16 @@ class CardsMergerTest {
     private val exersicesRegistry = MockExercisesRegistry()
 
     private val deckId = 5L
-    private val mockState = SRState(today().plusDays(5), 8)
+    private val today = mockToday()
+    private val mockState = SRState(today.plusDays(5), 8)
     private val exercise = exersicesRegistry.defaultExercise()
 
     private val merger = CardsMergerImpl(repository, domain, exersicesRegistry)
 
     private fun original(value: String) = mockExpression(value, language = domain.langOriginal())
     private fun translation(value: String) = mockExpression(value, language = domain.langTranslations())
+
+    private fun emptyState() = mockEmptySRState(today)
 
     @Test
     fun `test__emptyRepository__expectation_NewCardIsAdded`() {
