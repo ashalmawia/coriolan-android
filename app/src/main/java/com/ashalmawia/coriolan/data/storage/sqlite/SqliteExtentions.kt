@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.ExpressionExtra
+import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.util.*
 import org.joda.time.DateTime
@@ -39,6 +41,16 @@ fun Cursor.getExpression(aliasExpressions: String, aliasLanguages: String): Expr
             getId(aliasExpressions),
             getValue(aliasExpressions),
             getLanguage(aliasLanguages)
+    )
+}
+
+fun Cursor.getExpressionType(alias: String? = null): ExtraType = ExtraType.from(getType(alias))
+
+fun Cursor.getExtra(alias: String? = null): ExpressionExtra {
+    return ExpressionExtra(
+            getId(alias),
+            getExpressionType(alias),
+            getValue(alias)
     )
 }
 

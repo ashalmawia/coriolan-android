@@ -19,6 +19,15 @@ interface Repository {
 
     fun addExpression(value: String, language: Language): Expression
 
+    fun setTranscription(expression: Expression, transcription: String?)
+            = setExtra(expression, ExtraType.TRANSCRIPTION, transcription)
+
+    fun setExtra(expression: Expression, type: ExtraType, value: String?)
+
+    fun allExtrasForExpression(expression: Expression): ExpressionExtras
+
+    fun allExtrasForCard(card: Card): List<ExpressionExtras>
+
     fun expressionById(id: Long): Expression?
 
     fun expressionByValues(value: String, language: Language): Expression?

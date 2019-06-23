@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 const val SQLITE_TABLE_LANGUAGES = "Languages"
 const val SQLITE_TABLE_EXPRESSIONS = "Expressions"
+const val SQLITE_TABLE_EXPRESSION_EXTRAS = "ExprExtras"
 const val SQLITE_TABLE_DOMAINS = "Domains"
 const val SQLITE_TABLE_CARDS = "Cards"
 const val SQLITE_TABLE_CARDS_REVERSE = "CardsReverse"
@@ -25,3 +26,4 @@ const val SQLITE_COLUMN_PERIOD = "Period"
 const val SQLITE_COLUMN_LANG_ORIGINAL = "LangOriginal"
 const val SQLITE_COLUMN_LANG_TRANSLATIONS = "LangTranslations"
 const val SQLITE_COLUMN_DOMAIN_ID = "DomainId"
+const val SQLITE_COLUMN_TYPE = "Type"

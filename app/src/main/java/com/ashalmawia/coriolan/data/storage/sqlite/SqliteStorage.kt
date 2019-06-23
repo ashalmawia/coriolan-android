@@ -4,6 +4,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
@@ -80,8 +81,100 @@ class SqliteStorage(
 
             return Expression(id, value, language)
         } catch (e: SQLiteConstraintException) {
-            throw DataProcessingException("failed to add expression [$value], lang $language: constraint violation, e")
+            throw DataProcessingException("failed to add expression [$value], lang $language: constraint violation", e)
         }
+    }
+
+    override fun setExtra(expression: Expression, type: ExtraType, value: String?) {
+        updateOrDeleteExpressionExtra(expression.id, type, value)
+    }
+
+    private fun updateOrDeleteExpressionExtra(
+            expressionId: Long,
+            type: ExtraType,
+            newValue: String?
+    ) {
+        if (newValue == null) {
+            deleteExpressionExtra(expressionId, type)
+        } else {
+            updateExpressionExtra(expressionId, type, newValue)
+        }
+    }
+
+    private fun deleteExpressionExtra(expressionId: Long, type: ExtraType) {
+        val db = helper.writableDatabase
+
+        try {
+            db.delete(
+                    SQLITE_TABLE_EXPRESSION_EXTRAS,
+                    "$SQLITE_COLUMN_EXPRESSION_ID = ? AND $SQLITE_COLUMN_TYPE = ?",
+                    arrayOf(expressionId.toString(), type.value.toString())
+            )
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("extra with experssion id $expressionId, type $type")
+        }
+    }
+
+    private fun updateExpressionExtra(expressionId: Long, extraType: ExtraType, value: String) {
+        val id = helper.writableDatabase.replace(SQLITE_TABLE_EXPRESSION_EXTRAS,
+                null,
+                createExpressionExtrasContentValues(expressionId, extraType, value))
+
+        if (id < 0) {
+            throw DataProcessingException("failed to update expression extra [$value], " +
+                    "extraType [$extraType], exressionId [$expressionId]: maybe missing lang")
+        }
+    }
+
+    override fun allExtrasForExpression(expression: Expression): ExpressionExtras {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |   FROM $SQLITE_TABLE_EXPRESSION_EXTRAS
+            |   WHERE $SQLITE_COLUMN_EXPRESSION_ID = ?
+        """.trimMargin(), arrayOf(expression.id.toString()))
+
+        val map = mutableMapOf<ExtraType, ExpressionExtra>()
+        cursor.use {
+            while (it.moveToNext()) {
+                map[it.getExpressionType()] = it.getExtra()
+            }
+        }
+
+        return ExpressionExtras(expression, map)
+    }
+
+    override fun allExtrasForCard(card: Card): List<ExpressionExtras> {
+        val db = helper.readableDatabase
+
+        val allExpressions = card.translations.plus(card.original)
+
+        val allExpressionIds = allExpressions.map { it.id }
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |
+            |   FROM
+            |       $SQLITE_TABLE_EXPRESSION_EXTRAS
+            |
+            |   WHERE
+            |       $SQLITE_COLUMN_EXPRESSION_ID IN (${allExpressionIds.joinToString()})
+        """.trimMargin(), arrayOf())
+
+        val expressions = allExpressions.associateBy { it.id }
+        val list = mutableListOf<ExpressionExtras>()
+
+        cursor.use {
+            while (it.moveToNext()) {
+
+                val map = mapOf(it.getExpressionType() to it.getExtra())
+
+                list.add(ExpressionExtras(expressions.getValue(it.getExpressionId()), map))
+            }
+        }
+
+        return list
     }
 
     override fun expressionById(id: Long): Expression? {
@@ -115,24 +208,24 @@ class SqliteStorage(
     override fun expressionByValues(value: String, language: Language): Expression? {
         val db = helper.readableDatabase
 
-        val EXPRESSIONS = "E"
-        val LANGUAGES = "L"
+        val EXPRESSIONS = "Expressions"
+        val LANGUAGES = "Langs"
 
         val cursor = db.rawQuery("""
             |SELECT
             |   ${allColumnsExpressions(EXPRESSIONS)},
             |   ${allColumnsLanguages(LANGUAGES)}
             |
-            |FROM $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
-            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            |   FROM $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
             |
-            |WHERE ${SQLITE_COLUMN_VALUE.from(EXPRESSIONS)} = ?
-            |   AND ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ?
+            |   WHERE ${SQLITE_COLUMN_VALUE.from(EXPRESSIONS)} = ?
+            |       AND ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ?
             |
         """.trimMargin(), arrayOf(value, language.id.toString()))
 
-        cursor.use { it ->
+        cursor.use {
             if (it.count == 0) {
                 return null
             }
@@ -616,7 +709,7 @@ class SqliteStorage(
                         deck.id,
                         deck.domain,
                         it.getExpression(EXPRESSIONS, LANGUAGES),
-                        reverse[cardId]!!
+                        reverse.getValue(cardId)
                 ))
             }
 
@@ -767,7 +860,7 @@ class SqliteStorage(
                         deck.id,
                         deck.domain,
                         it.getExpression(EXPRESSIONS, LANGUAGES),
-                        reverse[cardId]!!
+                        reverse.getValue(cardId)
                 )
                 val state = extractSRState(cursor, STATES)
                 cards.add(CardWithState(card, state))

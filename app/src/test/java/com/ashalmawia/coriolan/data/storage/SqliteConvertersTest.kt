@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.mockExpression
 import com.ashalmawia.coriolan.model.mockLanguage
 import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
@@ -100,7 +100,7 @@ class SqliteConvertersTest {
         val deckId = 5L
         val domainId = 2L
         val lang = mockLanguage()
-        val original = Expression(1L, "some original expression", lang)
+        val original = mockExpression("some original expression", lang)
 
         // when
         val cv = createCardContentValues(domainId, deckId, original)
@@ -118,7 +118,7 @@ class SqliteConvertersTest {
         val deckId = 5L
         val domainId = 1L
         val lang = mockLanguage()
-        val original = Expression(1L, "some original expression", lang)
+        val original = mockExpression("some original expression", lang)
         val cardId = 7L
 
         // when
@@ -180,9 +180,9 @@ class SqliteConvertersTest {
         val cardId = 99L
         val lang = mockLanguage()
         val translations = listOf(
-                Expression(1L, "firework", lang),
-                Expression(2L, "rocket", lang),
-                Expression(8L, "missile", lang)
+                mockExpression("firework", lang),
+                mockExpression("rocket", lang),
+                mockExpression( "missile", lang)
         )
 
         // when

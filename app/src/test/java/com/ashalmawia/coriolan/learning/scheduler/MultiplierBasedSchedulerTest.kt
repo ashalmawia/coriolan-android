@@ -1,13 +1,10 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
-import com.ashalmawia.coriolan.learning.SRAnswer
-import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.TodayManager
+import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
-import com.ashalmawia.coriolan.learning.mockToday
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,10 +13,11 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class MultiplierBasedSchedulerTest {
 
-    private val today = mockToday()
+    private val mockTodayProvider = MockTodayProvider()
+    private val today = mockTodayProvider.today()
     private fun emptyState() = mockEmptySRState(today)
 
-    private fun scheduler() = MultiplierBasedScheduler(TodayManager)
+    private fun scheduler() = MultiplierBasedScheduler(mockTodayProvider)
 
     @Test
     fun `test__newCard__wrong__shouldMeetAtLeastTwoMoreTimes`() {

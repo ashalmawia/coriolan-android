@@ -5,6 +5,8 @@ import com.ashalmawia.coriolan.model.Deck
 import java.io.File
 import java.util.regex.Pattern
 
+@Deprecated("functionality not supported until data format reviewed " +
+        "- https://trello.com/c/INHZusem/280-review-dataimport-data-format")
 class FileParser(val deck: Deck) {
 
     fun parseFile(file: File): List<CardData> {
@@ -29,6 +31,7 @@ class FileParser(val deck: Deck) {
             val translationsData = matcher.group(2)
             return CardData(
                     matcher.group(1),
+                    null,
                     extractTranslations(translationsData),
                     deck.id
             )

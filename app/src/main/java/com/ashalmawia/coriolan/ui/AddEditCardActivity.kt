@@ -201,6 +201,7 @@ class AddEditCardActivity : BaseActivity() {
 
         return CardData(
                 original,
+                null,   //todo
                 translations.asList(),
                 deck.id
         )

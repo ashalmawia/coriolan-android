@@ -8,10 +8,18 @@ fun assertLanguageCorrect(language: Language?, value: String) {
     assertEquals("language has correct values", value, language!!.value)
 }
 
+fun assertExpressionCorrect(expected: Expression, actual: Expression) {
+    assertExpressionCorrect(actual, expected.value, expected.language)
+}
+
 fun assertExpressionCorrect(expression: Expression?, value: String, language: Language) {
     assertNotNull("expression is found", expression)
     assertEquals("expression has correct values", value, expression!!.value)
     assertLanguageCorrect(expression.language, language.value)
+}
+
+fun assertExtrasCorrect(extras: ExpressionExtras, transcription: String?) {
+    assertEquals("transcription extra is correct", transcription, extras.transcription)
 }
 
 fun assertDomainCorrect(domain: Domain?, name: String, langOriginal: Language, langTranslations: Language) {
@@ -27,7 +35,7 @@ fun assertCardCorrect(card: Card?, data: CardData, domain: Domain) {
 fun assertCardCorrectReverse(card: Card?, data: CardData, domain: Domain) {
     _assertCardCorrect(card, data, domain.langTranslations(), domain.langOriginal())
 }
-private fun `_assertCardCorrect`(card: Card?, data: CardData, langOriginal: Language, langTranslations: Language) {
+private fun _assertCardCorrect(card: Card?, data: CardData, langOriginal: Language, langTranslations: Language) {
     assertNotNull("card is created", card)
     assertExpressionCorrect(card!!.original, data.original, langOriginal)
     assertEquals("translations count is correct", data.translations.size, card.translations.size)

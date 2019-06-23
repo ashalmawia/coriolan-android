@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
+import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.Language
@@ -31,6 +32,18 @@ fun createExpressionContentValues(value: String, languageId: Long, id: Long? = n
     cv.put(SQLITE_COLUMN_LANGUAGE_ID, languageId)
     return cv
 }
+
+// ********** EXPRESSION EXTRAS ************
+
+fun createExpressionExtrasContentValues(exprerssionId: Long, type: ExtraType, value: String, id: Long? = null) =
+        ContentValues().apply {
+            if (id != null) {
+                put(SQLITE_COLUMN_ID, id)
+            }
+            put(SQLITE_COLUMN_EXPRESSION_ID, exprerssionId)
+            put(SQLITE_COLUMN_TYPE, type.value)
+            put(SQLITE_COLUMN_VALUE, value)
+        }
 
 // ********** DOMAIN ********************
 

@@ -11,6 +11,13 @@ private val expressions = arrayOf(
         SQLITE_COLUMN_LANGUAGE_ID
 )
 
+private val expressionExtras = arrayOf(
+        SQLITE_COLUMN_ID,
+        SQLITE_COLUMN_EXPRESSION_ID,
+        SQLITE_COLUMN_TYPE,
+        SQLITE_COLUMN_VALUE
+)
+
 private val domains = arrayOf(
         SQLITE_COLUMN_ID,
         SQLITE_COLUMN_NAME,
@@ -46,6 +53,7 @@ fun String.from(alias: String?): String = if (alias != null) "${alias}_$this" el
 
 fun allColumnsLanguages(alias: String? = null): String = allColumns(languages, alias)
 fun allColumnsExpressions(alias: String? = null): String = allColumns(expressions, alias)
+fun allColumnsExtras(alias: String? = null): String = allColumns(expressionExtras, alias)
 fun allColumnsDomains(alias: String? = null): String = allColumns(domains, alias)
 fun allColumnsDecks(alias: String? = null): String = allColumns(decks, alias)
 fun allColumnsCards(alias: String? = null): String = allColumns(cards, alias)

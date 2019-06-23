@@ -51,8 +51,12 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
     }
 
     fun editCard(card: Card, cardData: CardData): Card? {
-        val original = findOrAddExpression(cardData.original, domain.langOriginal(card.type))
-        val translations = cardData.translations.map { findOrAddExpression(it, domain.langTranslations(card.type)) }
+        val original = findOrAddExpression(
+                cardData.original, domain.langOriginal(card.type), cardData.transcription, true
+        )
+        val translations = cardData.translations.map {
+            findOrAddExpression(it, domain.langTranslations(card.type), null, false)
+        }
 
         val updated = repository.updateCard(card, cardData.deckId, original, translations)
 
@@ -82,8 +86,12 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
      * 3. reverse: "источник -- spring"
      */
     private fun addCard(cardData: CardData): AddCardResult {
-        val original = findOrAddExpression(cardData.original, domain.langOriginal())
-        val translations = cardData.translations.map { findOrAddExpression(it, domain.langTranslations()) }
+        val original = findOrAddExpression(
+                cardData.original, domain.langOriginal(), cardData.transcription, true
+        )
+        val translations = cardData.translations.map {
+            findOrAddExpression(it, domain.langTranslations(), null, false)
+        }
 
         val duplicate = repository.cardByValues(domain, original)
         fun Card.containsAll(translationValues: List<String>): Boolean
@@ -105,9 +113,25 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         translations.forEach { merger.mergeOrAdd(it, originalAsList, cardData.deckId) }
     }
 
-    private fun findOrAddExpression(value: String, language: Language): Expression {
+    private fun findOrAddExpression(
+            value: String,
+            language: Language,
+            transcription: String?,
+            overrideTranscription: Boolean
+    ): Expression {
         val found = repository.expressionByValues(value, language)
-        return found ?: repository.addExpression(value, language)
+        return if (found == null) {
+            val expression = repository.addExpression(value, language)
+            if (transcription != null) {
+                repository.setTranscription(expression, transcription)
+            }
+            expression
+        } else {
+            if (overrideTranscription) {
+                repository.setTranscription(found, transcription)
+            }
+            found
+        }
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {

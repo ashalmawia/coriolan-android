@@ -22,7 +22,7 @@ class MockRepository : Repository {
         return langs.find { it.value == name }
     }
 
-    val expressions = mutableListOf<Expression>()
+    private val expressions = mutableListOf<Expression>()
     override fun addExpression(value: String, language: Language): Expression {
         val exp = Expression(expressions.size + 1L, value, language)
         expressions.add(exp)
@@ -39,6 +39,40 @@ class MockRepository : Repository {
     }
     override fun deleteExpression(expression: Expression) {
         expressions.remove(expression)
+    }
+
+    private val extras = mutableListOf<ExpressionExtras>()
+    override fun setExtra(expression: Expression, type: ExtraType, value: String?) {
+        val expressionExtras = extras.find { it.expression.id == expression.id }
+        if (value == null) {
+            expressionExtras?.apply {
+                val new = copy(map = expressionExtras.map.toMutableMap().apply { remove(type) })
+                extras.apply {
+                    remove(expressionExtras)
+                    add(new)
+                }
+            }
+        } else {
+            if (expressionExtras == null) {
+                extras.add(ExpressionExtras(expression, mapOf(type to mockExtra(value))))
+            } else {
+                val new = expressionExtras.copy(map = expressionExtras.map.toMutableMap().apply {
+                    put(type, mockExtra(value))
+                })
+
+                extras.apply {
+                    remove(expressionExtras)
+                    add(new)
+                }
+            }
+        }
+    }
+    override fun allExtrasForExpression(expression: Expression): ExpressionExtras {
+        return extras.find { it.expression.id == expression.id } ?: ExpressionExtras(expression, mapOf())
+    }
+    override fun allExtrasForCard(card: Card): List<ExpressionExtras> {
+        return card.translations.plus(card.original)
+                .mapNotNull { expression -> extras.find { it.expression.id == expression.id } }
     }
 
     private val domains = mutableListOf<Domain>()
@@ -68,7 +102,7 @@ class MockRepository : Repository {
         return cards.find { it.id == id }
     }
     override fun cardByValues(domain: Domain, original: Expression): Card? {
-        return cards.find { it.original == original }
+        return cards.find { it.original.id == original.id }
     }
     override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
         if (!cards.contains(card)) {
@@ -147,3 +181,6 @@ class MockRepository : Repository {
         // nothing to do here
     }
 }
+
+fun Repository.justAddExpression(value: String, language: Language) =
+        addExpression(value, language)
