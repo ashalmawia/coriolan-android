@@ -80,6 +80,26 @@ class SqliteBackupHelper(
         }
     }
 
+    override fun allExpressionExtras(offset: Int, limit: Int): List<ExpressionExtraInfo> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |   FROM $SQLITE_TABLE_EXPRESSION_EXTRAS
+            |   ORDER BY $SQLITE_COLUMN_ID ASC
+            |   LIMIT $limit OFFSET $offset
+        """.trimMargin(), arrayOf())
+
+        cursor.use {
+            val list = mutableListOf<ExpressionExtraInfo>()
+            while (cursor.moveToNext()) {
+                list.add(ExpressionExtraInfo(
+                        cursor.getId(), cursor.getExpressionId(), cursor.getType(), cursor.getValue()))
+            }
+            return list
+        }
+    }
+
     override fun allCards(offset: Int, limit: Int): List<CardInfo> {
         val db = helper.readableDatabase
 
@@ -197,6 +217,16 @@ class SqliteBackupHelper(
         expressions.forEach {
             db.insertOrThrow(SQLITE_TABLE_EXPRESSIONS, null,
                     createExpressionContentValues(it.value, it.languageId, it.id)
+            )
+        }
+    }
+
+    override fun writeExpressionExtras(extras: List<ExpressionExtraInfo>) {
+        val db = helper.writableDatabase
+
+        extras.forEach {
+            db.insertOrThrow(SQLITE_TABLE_EXPRESSION_EXTRAS, null,
+                    createExpressionExtrasContentValues(it.expressionId, it.type, it.value, it.id)
             )
         }
     }

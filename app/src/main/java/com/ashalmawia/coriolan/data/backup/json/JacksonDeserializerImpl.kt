@@ -11,6 +11,8 @@ class JacksonDeserializerImpl : JacksonDeserializer {
 
     override fun readExpression(json: JsonParser): ExpressionInfo = readExpressionFromJson(json)
 
+    override fun readExpressionExtra(json: JsonParser): ExpressionExtraInfo = readExpressionExtraFromJson(json)
+
     override fun readCard(json: JsonParser): CardInfo = readCardFromJson(json)
 
     override fun readCardStateSR(json: JsonParser): SRStateInfo = readSRStateFromJson(json)

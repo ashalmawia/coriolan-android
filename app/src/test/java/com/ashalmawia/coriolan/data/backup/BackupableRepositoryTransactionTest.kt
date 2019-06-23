@@ -167,6 +167,8 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo> = inner.allExpressions(offset, limit)
 
+    override fun allExpressionExtras(offset: Int, limit: Int) = inner.allExpressionExtras(offset, limit)
+
     override fun allCards(offset: Int, limit: Int): List<CardInfo> = inner.allCards(offset, limit)
 
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo> = inner.allDecks(offset, limit)
@@ -181,6 +183,8 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
     override fun writeDomains(domains: List<DomainInfo>) = inner.writeDomains(domains)
 
     override fun writeExpressions(expressions: List<ExpressionInfo>) = inner.writeExpressions(expressions)
+
+    override fun writeExpressionExtras(extras: List<ExpressionExtraInfo>) = inner.writeExpressionExtras(extras)
 
     override fun writeCards(cards: List<CardInfo>) = inner.writeCards(cards)
 

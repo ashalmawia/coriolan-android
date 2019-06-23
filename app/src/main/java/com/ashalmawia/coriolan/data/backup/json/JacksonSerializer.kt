@@ -11,6 +11,8 @@ interface JacksonSerializer {
 
     fun writeExpression(expression: ExpressionInfo, json: JsonGenerator)
 
+    fun writeExpressionExtra(extra: ExpressionExtraInfo, json: JsonGenerator)
+
     fun writeCard(card: CardInfo, json: JsonGenerator)
 
     fun writeCardStateSR(state: SRStateInfo, json: JsonGenerator)

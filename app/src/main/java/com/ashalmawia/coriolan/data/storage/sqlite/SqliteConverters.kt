@@ -36,12 +36,15 @@ fun createExpressionContentValues(value: String, languageId: Long, id: Long? = n
 // ********** EXPRESSION EXTRAS ************
 
 fun createExpressionExtrasContentValues(exprerssionId: Long, type: ExtraType, value: String, id: Long? = null) =
+        createExpressionExtrasContentValues(exprerssionId, type.value, value, id)
+
+fun createExpressionExtrasContentValues(exprerssionId: Long, type: Int, value: String, id: Long? = null) =
         ContentValues().apply {
             if (id != null) {
                 put(SQLITE_COLUMN_ID, id)
             }
             put(SQLITE_COLUMN_EXPRESSION_ID, exprerssionId)
-            put(SQLITE_COLUMN_TYPE, type.value)
+            put(SQLITE_COLUMN_TYPE, type)
             put(SQLITE_COLUMN_VALUE, value)
         }
 

@@ -10,6 +10,7 @@ class MockBackupableRepository(
         langauges: List<LanguageInfo>,
         domains: List<DomainInfo>,
         expressions: List<ExpressionInfo>,
+        expressionExtras: List<ExpressionExtraInfo>,
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
         srstates: Map<String, List<SRStateInfo>>,
@@ -19,6 +20,7 @@ class MockBackupableRepository(
     private val languages = langauges.toMutableList()
     private val domains = domains.toMutableList()
     private val expressions = expressions.toMutableList()
+    private val expressionExtras = expressionExtras.toMutableList()
     private val cards = cards.toMutableList()
     private val decks = decks.toMutableList()
     private val srstates = srstates.mapValues { it.value.toMutableList() }.toMutableMap()
@@ -35,6 +37,9 @@ class MockBackupableRepository(
 
     override fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo>
             = expressions.subList(min(offset, expressions.size), min(offset + limit, expressions.size))
+
+    override fun allExpressionExtras(offset: Int, limit: Int): List<ExpressionExtraInfo>
+            = expressionExtras.subList(min(offset, expressionExtras.size), min(offset + limit, expressionExtras.size))
 
     override fun allCards(offset: Int, limit: Int): List<CardInfo>
             = cards.subList(min(offset, cards.size), min(offset + limit, cards.size))
@@ -55,6 +60,7 @@ class MockBackupableRepository(
         languages.clear()
         domains.clear()
         expressions.clear()
+        expressionExtras.clear()
         cards.clear()
         decks.clear()
         srstates.clear()
@@ -70,6 +76,10 @@ class MockBackupableRepository(
 
     override fun writeExpressions(expressions: List<ExpressionInfo>) {
         this.expressions.addAll(expressions)
+    }
+
+    override fun writeExpressionExtras(extras: List<ExpressionExtraInfo>) {
+        this.expressionExtras.addAll(extras)
     }
 
     override fun writeCards(cards: List<CardInfo>) {
@@ -98,6 +108,7 @@ class MockBackupableRepository(
                     emptyList(),
                     emptyList(),
                     emptyList(),
+                    emptyList(),
                     emptyMap(),
                     exercises
             )
@@ -108,6 +119,7 @@ class MockBackupableRepository(
                     JsonBackupTestData.languages,
                     JsonBackupTestData.domains,
                     JsonBackupTestData.exressions,
+                    JsonBackupTestData.expressionExtras,
                     JsonBackupTestData.cards,
                     JsonBackupTestData.decks,
                     exercises.allExercises().filter { it.stateType == StateType.SR_STATE }

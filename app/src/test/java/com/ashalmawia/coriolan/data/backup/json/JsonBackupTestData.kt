@@ -46,6 +46,14 @@ object JsonBackupTestData {
             ExpressionInfo(21L, "сосед", 2L)
     )
 
+    val expressionExtras = listOf(
+            ExpressionExtraInfo(1L, 2L, 1, "/ˈrɒkɪt \$ ˈrɑː-/"),
+            ExpressionExtraInfo(2L, 3L, 1, "/sprɪŋ/"),
+            ExpressionExtraInfo(3L, 4L, 1, "/ˈsʌmə \$ -ər/"),
+            ExpressionExtraInfo(4L, 5L, 1, "/ˈvɪktəri/"),
+            ExpressionExtraInfo(5L, 6L, 1, "/mɑːtʃ \$ mɑːrtʃ/")
+    )
+
     val cards = listOf(
             CardInfo(1L, 1L, 1L, 1L, listOf(7L)),
             CardInfo(2L, 1L, 1L, 2L, listOf(8L)),

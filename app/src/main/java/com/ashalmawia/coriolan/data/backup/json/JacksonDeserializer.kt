@@ -11,6 +11,8 @@ interface JacksonDeserializer {
 
     fun readExpression(json: JsonParser): ExpressionInfo
 
+    fun readExpressionExtra(json: JsonParser): ExpressionExtraInfo
+
     fun readCard(json: JsonParser): CardInfo
 
     fun readCardStateSR(json: JsonParser): SRStateInfo

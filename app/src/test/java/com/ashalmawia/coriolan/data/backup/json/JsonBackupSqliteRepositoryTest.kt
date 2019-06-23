@@ -20,6 +20,7 @@ class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
         repo.writeLanguages(JsonBackupTestData.languages)
         repo.writeDomains(JsonBackupTestData.domains)
         repo.writeExpressions(JsonBackupTestData.exressions)
+        repo.writeExpressionExtras(JsonBackupTestData.expressionExtras)
         repo.writeDecks(JsonBackupTestData.decks)
         repo.writeCards(JsonBackupTestData.cards)
         exercises.allExercises().filter { it.stateType == StateType.SR_STATE }

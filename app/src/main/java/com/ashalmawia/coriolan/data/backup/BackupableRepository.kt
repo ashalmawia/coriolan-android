@@ -16,6 +16,8 @@ interface BackupableRepository {
 
     fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo>
 
+    fun allExpressionExtras(offset: Int, limit: Int): List<ExpressionExtraInfo>
+
     fun allCards(offset: Int, limit: Int): List<CardInfo>
 
     fun allDecks(offset: Int, limit: Int): List<DeckInfo>
@@ -29,6 +31,8 @@ interface BackupableRepository {
     fun writeDomains(domains: List<DomainInfo>)
 
     fun writeExpressions(expressions: List<ExpressionInfo>)
+
+    fun writeExpressionExtras(extras: List<ExpressionExtraInfo>)
 
     fun writeCards(cards: List<CardInfo>)
 
@@ -54,6 +58,12 @@ data class ExpressionInfo(
         val id: Long,
         val value: String,
         val languageId: Long)
+
+data class ExpressionExtraInfo(
+        val id: Long,
+        val expressionId: Long,
+        val type: Int,
+        val value: String)
 
 data class CardInfo(
         val id: Long,
