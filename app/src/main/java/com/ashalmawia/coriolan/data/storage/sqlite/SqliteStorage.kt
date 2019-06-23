@@ -68,19 +68,19 @@ class SqliteStorage(
         }
     }
 
-    override fun addExpression(value: String, type: ExpressionType, language: Language): Expression {
+    override fun addExpression(value: String, language: Language): Expression {
         try {
             val id = helper.writableDatabase.insert(SQLITE_TABLE_EXPRESSIONS,
                     null,
-                    createExpressionContentValues(value, type, language))
+                    createExpressionContentValues(value, language))
 
             if (id < 0) {
-                throw DataProcessingException("failed to add expression [$value] of type [$type], lang $language: maybe missing lang")
+                throw DataProcessingException("failed to add expression [$value], lang $language: maybe missing lang")
             }
 
-            return Expression(id, value, type, language)
+            return Expression(id, value, language)
         } catch (e: SQLiteConstraintException) {
-            throw DataProcessingException("failed to add expression [$value] of type [$type], lang $language: constraint violation, e")
+            throw DataProcessingException("failed to add expression [$value], lang $language: constraint violation, e")
         }
     }
 
@@ -112,7 +112,7 @@ class SqliteStorage(
         }
     }
 
-    override fun expressionByValues(value: String, type: ExpressionType, language: Language): Expression? {
+    override fun expressionByValues(value: String, language: Language): Expression? {
         val db = helper.readableDatabase
 
         val EXPRESSIONS = "E"
@@ -128,10 +128,9 @@ class SqliteStorage(
             |       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
             |
             |WHERE ${SQLITE_COLUMN_VALUE.from(EXPRESSIONS)} = ?
-            |   AND ${SQLITE_COLUMN_TYPE.from(EXPRESSIONS)} = ?
             |   AND ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ?
             |
-        """.trimMargin(), arrayOf(value, type.value.toString(), language.id.toString()))
+        """.trimMargin(), arrayOf(value, language.id.toString()))
 
         cursor.use { it ->
             if (it.count == 0) {
@@ -140,7 +139,7 @@ class SqliteStorage(
 
             if (it.count > 1) {
                 Errors.illegalState(TAG, "found ${it.count} values for the value[$value], " +
-                        "type[$type], language[$language]")
+                        "language[$language]")
                 return null
             }
 

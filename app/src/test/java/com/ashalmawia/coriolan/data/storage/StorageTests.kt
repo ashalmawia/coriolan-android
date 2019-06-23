@@ -125,14 +125,13 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val value = "shrimp"
-        val type = ExpressionType.WORD
         val lang = domain.langTranslations()
 
         // when
-        val expression = storage.addExpression(value, type, lang)
+        val expression = storage.addExpression(value, lang)
 
         // then
-        assertExpressionCorrect(expression, value, type, lang)
+        assertExpressionCorrect(expression, value, lang)
     }
 
     @Test
@@ -141,14 +140,13 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val value = "Shrimp is going out on Fridays."
-        val type = ExpressionType.WORD
         val lang = domain.langTranslations()
 
         // when
-        val expression = storage.addExpression(value, type, lang)
+        val expression = storage.addExpression(value, lang)
 
         // then
-        assertExpressionCorrect(expression, value, type, lang)
+        assertExpressionCorrect(expression, value, lang)
     }
 
     @Test
@@ -159,14 +157,13 @@ abstract class StorageTest {
         val lang = storage.addLanguage("Russian")
 
         val value = "shrimp"
-        val type = ExpressionType.WORD
-        val id = storage.addExpression(value, type, lang).id
+        val id = storage.addExpression(value, lang).id
 
         // when
         val expression = storage.expressionById(id)
 
         // then
-        assertExpressionCorrect(expression, value, type, lang)
+        assertExpressionCorrect(expression, value, lang)
     }
 
     @Test
@@ -177,14 +174,13 @@ abstract class StorageTest {
         val lang = storage.addLanguage("Russian")
 
         val value = "Shrimp is going out on Fridays."
-        val type = ExpressionType.WORD
-        val id = storage.addExpression(value, type, lang).id
+        val id = storage.addExpression(value, lang).id
 
         // when
         val expression = storage.expressionById(id)
 
         // then
-        assertExpressionCorrect(expression, value, type, lang)
+        assertExpressionCorrect(expression, value, lang)
     }
 
     @Test
@@ -195,10 +191,9 @@ abstract class StorageTest {
         val lang = storage.addLanguage("Russian")
 
         val value = "shrimp"
-        val type = ExpressionType.WORD
 
         // when
-        val expression = storage.expressionByValues(value, type, lang)
+        val expression = storage.expressionByValues(value, lang)
 
         // then
         assertNull(expression)
@@ -211,11 +206,11 @@ abstract class StorageTest {
 
         val lang = storage.addLanguage("Russian")
 
-        storage.addExpression("aaa", ExpressionType.WORD, lang)
-        storage.addExpression("bbb", ExpressionType.WORD, lang)
+        storage.addExpression("aaa", lang)
+        storage.addExpression("bbb", lang)
 
         // when
-        val expression = storage.expressionByValues("shrimp", ExpressionType.WORD, lang)
+        val expression = storage.expressionByValues("shrimp", lang)
 
         // then
         assertNull(expression)
@@ -231,27 +226,10 @@ abstract class StorageTest {
         val langRussian = storage.addLanguage("Russian")
         val langFrench = storage.addLanguage("French")
 
-        storage.addExpression(value, ExpressionType.WORD, langRussian)
+        storage.addExpression(value, langRussian)
 
         // when
-        val expression = storage.expressionByValues(value, ExpressionType.WORD, langFrench)
-
-        // then
-        assertNull(expression)
-    }
-
-    @Test
-    fun test__expressionByValues__DoesNotExist_WrongContentType() {
-        // given
-        val storage = emptyStorage.value
-
-        val value = "shrimp"
-        val lang = storage.addLanguage("English")
-
-        storage.addExpression(value, ExpressionType.WORD, lang)
-
-        // when
-        val expression = storage.expressionByValues(value, ExpressionType.UNKNOWN, lang)
+        val expression = storage.expressionByValues(value, langFrench)
 
         // then
         assertNull(expression)
@@ -266,11 +244,11 @@ abstract class StorageTest {
         val langEnglish = storage.addLanguage("English")
         val langFrench = storage.addLanguage("French")
 
-        storage.addExpression("она", ExpressionType.WORD, langRussian)
-        storage.addExpression("she", ExpressionType.WORD, langEnglish)
+        storage.addExpression("она", langRussian)
+        storage.addExpression("she", langEnglish)
 
         // when
-        val expression = storage.expressionByValues("elle", ExpressionType.UNKNOWN, langFrench)
+        val expression = storage.expressionByValues("elle", langFrench)
 
         // then
         assertNull(expression)
@@ -284,16 +262,15 @@ abstract class StorageTest {
         val lang = storage.addLanguage("French")
 
         val value = "shrimp"
-        val type = ExpressionType.WORD
-        val id = storage.addExpression(value, type, lang).id
+        val id = storage.addExpression(value, lang).id
 
         // when
-        val expression = storage.expressionByValues(value, type, lang)
+        val expression = storage.expressionByValues(value, lang)
 
         // then
         assertNotNull(expression)
         assertEquals(id, expression!!.id)
-        assertExpressionCorrect(expression, value, type, lang)
+        assertExpressionCorrect(expression, value, lang)
     }
 
     @Test
@@ -301,9 +278,7 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val type = ExpressionType.WORD
-
-        val expression = mockExpression("креветка", type, domain.langTranslations())
+        val expression = mockExpression("креветка", domain.langTranslations())
 
         // when
         val used = storage.isUsed(expression)
@@ -317,11 +292,9 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val type = ExpressionType.WORD
-
-        storage.addExpression("shrimp", type, domain.langOriginal())
-        storage.addExpression("креветка", type, domain.langTranslations())
-        val expression = Expression(5L, "spring", type, domain.langOriginal())
+        storage.addExpression("shrimp", domain.langOriginal())
+        storage.addExpression("креветка", domain.langTranslations())
+        val expression = Expression(5L, "spring", domain.langOriginal())
 
         // when
         val used = storage.isUsed(expression)
@@ -335,10 +308,8 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val type = ExpressionType.WORD
-
-        storage.addExpression("shrimp", type, domain.langOriginal())
-        val expression = storage.addExpression("креветка", type, domain.langTranslations())
+        storage.addExpression("shrimp", domain.langOriginal())
+        val expression = storage.addExpression("креветка", domain.langTranslations())
 
         // when
         val used = storage.isUsed(expression)
@@ -353,11 +324,10 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val type = ExpressionType.WORD
 
-        val expression1 = storage.addExpression("shrimp", type, domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", type, domain.langTranslations())
-        val expression3 = storage.addExpression("spring", type, domain.langOriginal())
+        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
+        val expression2 = storage.addExpression("креветка", domain.langTranslations())
+        val expression3 = storage.addExpression("spring", domain.langOriginal())
 
         // when
         storage.addCard(domain, deck.id, expression1, listOf(expression2))
@@ -375,10 +345,9 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val type = ExpressionType.WORD
 
-        val expression1 = storage.addExpression("shrimp", type, domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", type, domain.langTranslations())
+        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
+        val expression2 = storage.addExpression("креветка", domain.langTranslations())
 
         // when
         val card = storage.addCard(domain, deck.id, expression1, listOf(expression2))
@@ -395,11 +364,10 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val type = ExpressionType.WORD
 
-        val expression1 = storage.addExpression("shrimp", type, domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", type, domain.langTranslations())
-        val expression3 = storage.addExpression("spring", type, domain.langOriginal())
+        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
+        val expression2 = storage.addExpression("креветка", domain.langTranslations())
+        val expression3 = storage.addExpression("spring", domain.langOriginal())
 
         // when
         val card = storage.addCard(domain, deck.id, expression1, listOf(expression2, expression3))
@@ -417,11 +385,10 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val type = ExpressionType.WORD
 
-        val expression1 = storage.addExpression("shrimp", type, domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", type, domain.langTranslations())
-        val expression3 = storage.addExpression("spring", type, domain.langOriginal())
+        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
+        val expression2 = storage.addExpression("креветка", domain.langTranslations())
+        val expression3 = storage.addExpression("spring", domain.langOriginal())
 
         // when
         val card1 = storage.addCard(domain, deck.id, expression1, listOf(expression2))
@@ -440,10 +407,8 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val type = ExpressionType.WORD
-
-        val expression1 = storage.addExpression("shrimp", type, domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", type, domain.langTranslations())
+        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
+        val expression2 = storage.addExpression("креветка", domain.langTranslations())
 
         // when
         storage.deleteExpression(expression1)

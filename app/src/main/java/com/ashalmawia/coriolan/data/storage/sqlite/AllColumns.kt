@@ -8,7 +8,6 @@ private val languages = arrayOf(
 private val expressions = arrayOf(
         SQLITE_COLUMN_ID,
         SQLITE_COLUMN_VALUE,
-        SQLITE_COLUMN_TYPE,
         SQLITE_COLUMN_LANGUAGE_ID
 )
 

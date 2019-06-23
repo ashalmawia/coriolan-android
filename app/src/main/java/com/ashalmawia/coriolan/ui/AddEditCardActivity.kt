@@ -17,7 +17,6 @@ import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.model.ExpressionType
 import kotlinx.android.synthetic.main.add_edit_card.*
 import org.koin.android.ext.android.get
 
@@ -203,8 +202,7 @@ class AddEditCardActivity : BaseActivity() {
         return CardData(
                 original,
                 translations.asList(),
-                deck.id,
-                ExpressionType.WORD
+                deck.id
         )
     }
 

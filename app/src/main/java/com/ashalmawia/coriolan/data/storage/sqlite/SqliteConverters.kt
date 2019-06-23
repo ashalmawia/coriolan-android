@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionType
 import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
 
@@ -20,21 +19,20 @@ fun createLanguageContentValues(value: String, id: Long? = null): ContentValues 
 
 // ********** EXPRESSION ********************
 
-fun createExpressionContentValues(value: String, type: ExpressionType, language: Language)
-    = createExpressionContentValues(value, type, language.id)
+fun createExpressionContentValues(value: String, language: Language)
+    = createExpressionContentValues(value, language.id)
 
-fun createExpressionContentValues(value: String, type: ExpressionType, languageId: Long, id: Long? = null): ContentValues {
+fun createExpressionContentValues(value: String, languageId: Long, id: Long? = null): ContentValues {
     val cv = ContentValues()
     if (id != null) {
         cv.put(SQLITE_COLUMN_ID, id)
     }
     cv.put(SQLITE_COLUMN_VALUE, value)
-    cv.put(SQLITE_COLUMN_TYPE, type.value)
     cv.put(SQLITE_COLUMN_LANGUAGE_ID, languageId)
     return cv
 }
 
-// ********** DOMAIIN ********************
+// ********** DOMAIN ********************
 
 fun createDomainContentValues(name: String?, langOriginal: Language, langTranslations: Language)
     = createDomainContentValues(name, langOriginal.id, langTranslations.id)
