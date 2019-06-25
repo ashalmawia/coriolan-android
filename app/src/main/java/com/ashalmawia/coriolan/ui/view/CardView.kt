@@ -1,16 +1,19 @@
 package com.ashalmawia.coriolan.ui.view
 
 import android.animation.ObjectAnimator
-import kotlinx.android.synthetic.main.card_view.view.*
-
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
+import kotlinx.android.synthetic.main.card_translation_item.view.*
+import kotlinx.android.synthetic.main.card_view.view.*
 
 private const val BUTTON_BAR_ANIMATION_DURATION = 200L
 
@@ -39,9 +42,15 @@ class CardView : FrameLayout {
         touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
     }
 
-    fun bind(card: Card, answers: List<SRAnswer>) {
+    fun bind(card: Card, extras: List<ExpressionExtras>, answers: List<SRAnswer>) {
+        val extrasMap = extras.associateBy { it.expression }
+
         frontText.text = card.original.value
-        backText.text = translationsToString(card.translations)
+        transcriptionText.bindTranscription(extrasMap[card.original]?.transcription)
+
+        clearTranslationItems()
+        card.translations.forEach { addTranslationItem(it.value, extrasMap[it]?.transcription) }
+
         configureButtonsBar(answers)
 
         showFront()
@@ -96,18 +105,20 @@ class CardView : FrameLayout {
         animator.start()
     }
 
-    private fun translationsToString(translations: List<Expression>): String {
-        return if (translations.size == 1) {
-            // if it's only one translation, we'll show it
-            translations[0].value
-        } else {
-            // for multiple translations, let's concatenate
-            val builder = StringBuilder()
-            for ((i, value) in translations.withIndex()) {
-                builder.append("${i + 1}. ${value.value}\n")
-            }
-            builder.toString()
-        }
+    private fun addTranslationItem(value: String, transcription: String?) {
+        val view = LayoutInflater.from(context).inflate(R.layout.card_translation_item, translations, false)
+        view.text.text = value
+        view.transcription.bindTranscription(transcription)
+        translations.addView(view)
+    }
+
+    private fun clearTranslationItems() {
+        translations.removeViews(1, translations.childCount - 1)
+    }
+
+    private fun TextView.bindTranscription(transcription: String?) {
+        text = transcription
+        visible = !transcription.isNullOrBlank()
     }
 }
 

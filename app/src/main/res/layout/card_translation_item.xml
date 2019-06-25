@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:tools="http://schemas.android.com/tools"
+			  android:orientation="horizontal"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content">
+
+	<TextView
+		android:id="@+id/text"
+		style="@style/CardText"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		tools:text="1. victory"
+		/>
+
+	<TextView
+		android:id="@+id/transcription"
+		style="@style/CardText.Addititonal"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/spacing__medium"
+		tools:text="/ˈvɪktəri/"
+		/>
+
+</LinearLayout>

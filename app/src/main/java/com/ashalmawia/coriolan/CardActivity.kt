@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.dependencies.learningFlowScope
 import com.ashalmawia.coriolan.learning.SRAnswer
@@ -25,6 +26,7 @@ import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.card_activity.*
 import kotlinx.android.synthetic.main.deck_progress_bar.*
+import org.koin.android.ext.android.get
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
@@ -41,6 +43,7 @@ class CardActivity : BaseActivity(), CardViewListener {
     }
 
     private val decksRegistry: DecksRegistry = domainScope().get()
+    private val repository: Repository = get()
 
     private val flow by lazy {
         @Suppress("UNCHECKED_CAST")
@@ -180,7 +183,7 @@ class CardActivity : BaseActivity(), CardViewListener {
     private fun bindToCurrent(answers: List<SRAnswer>) {
         val view = cardView as CardView
         val card = flow.card
-        view.bind(card.card, answers)
+        view.bind(card.card, repository.allExtrasForCard(card.card), answers)
         view.listener = this
 
         updateProgressCounts()

@@ -43,6 +43,19 @@
 				/>
 
 			<TextView
+				style="@style/EditCardSubtitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/spacing__medium"
+				android:text="@string/edit_card__transcription" />
+
+			<com.ashalmawia.coriolan.ui.AddEditCardItemView
+				android:id="@+id/transcription"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				/>
+
+			<TextView
 				android:id="@+id/labelTranslations"
 				style="@style/EditCardSubtitle"
 				android:layout_width="wrap_content"

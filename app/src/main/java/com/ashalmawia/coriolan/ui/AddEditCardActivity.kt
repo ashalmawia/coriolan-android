@@ -69,7 +69,7 @@ class AddEditCardActivity : BaseActivity() {
         labelTranslations.text = getString(R.string.edit_card__translations, domain.langTranslations().value)
 
         findViewById<AddEditCardItemView>(R.id.original).canBeDeleted = false
-        original.removeListener = { onRemoveClicked(it) }
+        findViewById<AddEditCardItemView>(R.id.transcription).canBeDeleted = false
 
         deckSelector.initialize(decks())
 
@@ -191,6 +191,7 @@ class AddEditCardActivity : BaseActivity() {
     private fun collectCardDataWithValidation(): CardData? {
         val deckPosition = deckSelector.selectedItemPosition
         val original = original.input
+        val transcription = transcription.input.takeIf { it.isNotBlank() }
         val translations = collectTranslations()
 
         if (!validate(deckPosition, original, translations)) {
@@ -201,7 +202,7 @@ class AddEditCardActivity : BaseActivity() {
 
         return CardData(
                 original,
-                null,   //todo
+                transcription,
                 translations.asList(),
                 deck.id
         )
@@ -223,6 +224,7 @@ class AddEditCardActivity : BaseActivity() {
 
     private fun clear() {
         original.input = ""
+        transcription.input = ""
         translationsContainer.removeAllViews()
         addTrasnlationField()
     }

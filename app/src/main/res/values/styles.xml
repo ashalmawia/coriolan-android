@@ -7,6 +7,11 @@
 		<item name="android:textIsSelectable">true</item>
 	</style>
 
+	<style name="CardText.Addititonal">
+		<item name="android:textColor">@color/colorPrimary__60</item>
+		<item name="android:textStyle">italic</item>
+	</style>
+
 	<style name="CardCover">
 		<item name="android:background">@color/card_cover_bg</item>
 		<item name="android:src">@drawable/ic_question</item>

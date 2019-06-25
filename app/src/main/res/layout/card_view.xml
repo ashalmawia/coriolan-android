@@ -177,14 +177,32 @@
 				android:layout_marginRight="@dimen/card_margin_horizontal"
 				android:layout_marginTop="@dimen/card_margin_vertical"
 				android:layout_weight="1"
+				android:layout_gravity="center"
 				app:cardElevation="@dimen/card_elevation">
 
-				<TextView
-					android:id="@+id/backText"
-					style="@style/CardText"
+				<ScrollView
 					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					tools:text="креветка"/>
+					android:layout_height="wrap_content"
+					android:layout_gravity="center">
+
+					<LinearLayout
+						android:id="@+id/translations"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:orientation="vertical">
+
+						<TextView
+							android:id="@+id/transcriptionText"
+							style="@style/CardText.Addititonal"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginBottom="@dimen/spacing__medium"
+							tools:text="[ʃrɪmp]"/>
+
+					</LinearLayout>
+
+				</ScrollView>
 
 				<ImageView
 					android:id="@+id/backCover"
