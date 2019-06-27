@@ -6,21 +6,10 @@ import com.ashalmawia.coriolan.model.Language
 
 interface DomainsRegistry {
 
-    fun defaultDomain(): Domain?
-
     fun createDomain(originalLangName: String, translationsLangName: String): Domain
 }
 
 class DomainsRegistryImpl(private val repository: Repository) : DomainsRegistry {
-
-    override fun defaultDomain(): Domain? {
-        val domains = repository.allDomains()
-        return if (domains.isNotEmpty()) {
-            domains[0]
-        } else {
-            null
-        }
-    }
 
     override fun createDomain(originalLangName: String, translationsLangName: String): Domain {
         val langOriginal = repository.findOrAddLanguage(originalLangName)

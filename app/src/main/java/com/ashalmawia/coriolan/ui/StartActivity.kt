@@ -1,24 +1,29 @@
 package com.ashalmawia.coriolan.ui
 
 import android.os.Bundle
-import com.ashalmawia.coriolan.data.DomainsRegistry
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
 import org.koin.android.ext.android.get
 
 class StartActivity : BaseActivity() {
 
-    private val domainsRegistry: DomainsRegistry = get()
+    private val repository: Repository = get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val defaultDomain = domainsRegistry.defaultDomain()
-        if (defaultDomain != null) {
-            openDomain(defaultDomain)
-        } else {
-            openDomainCreation()
+        val domains = repository.allDomains()
+
+        when (domains.size) {
+            0 -> openDomainCreation()
+            1 -> openDomain(domains[0])
+            else -> openDomainsList()
         }
+    }
+
+    private fun openDomainsList() {
+        startActivity(DomainsListActivity.intent(this))
     }
 
     private fun openDomain(domain: Domain) {
