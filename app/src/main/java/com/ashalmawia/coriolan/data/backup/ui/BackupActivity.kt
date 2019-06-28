@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.learning.ExercisesRegistry
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*
+import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnPermissionDenied
@@ -120,8 +121,7 @@ private class BackupAsyncTask(
             }
         }
 
-        val name = "backup_${System.currentTimeMillis()}.coriolan"
-        val file = File(backupDir, name)
+        val file = File(backupDir, name())
         if (!file.createNewFile()) {
             return null
         }
@@ -131,6 +131,11 @@ private class BackupAsyncTask(
         }
 
         return file
+    }
+
+    private fun name(): String {
+        val time = DateTime.now().toString("yyyy-MM-dd_HH:mm:ss")
+        return "backup_$time.coriolan"
     }
 
     override fun onPostExecute(file: File?) {
