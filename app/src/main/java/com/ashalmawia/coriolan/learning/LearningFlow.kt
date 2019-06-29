@@ -59,7 +59,7 @@ class LearningFlow<S : State, R>(
         finishListeners.forEach { it() }
     }
 
-    fun canUndo() = exercise.canUndo
+    fun canUndo() = exercise.canUndo && assignment.canUndo()
 
     fun undo() {
         val newState = assignment.current!!.state

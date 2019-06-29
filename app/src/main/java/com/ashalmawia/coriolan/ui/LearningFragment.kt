@@ -40,7 +40,7 @@ private const val TAG = "LearningFragment"
 
 class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher, BeginStudyListener {
 
-    private val decksRegistry: DecksRegistry = domainScope().get()
+    private val decksRegistry: DecksRegistry by lazy { domainScope().get<DecksRegistry>() }
     private val adapter: DecksAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this, this) }
     private val exercisesRegistry: ExercisesRegistry by inject()
 
