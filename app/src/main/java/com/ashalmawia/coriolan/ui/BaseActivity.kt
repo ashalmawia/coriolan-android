@@ -38,4 +38,8 @@ abstract class BaseActivity : AppCompatActivity() {
         setResult(Activity.RESULT_OK)
         finish()
     }
+
+    protected fun navigateBack() {
+        super.onBackPressed()
+    }
 }

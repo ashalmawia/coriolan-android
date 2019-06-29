@@ -76,6 +76,9 @@
 	<string name="edit_card__deck">Deck:</string>
 	<string name="edit_card__add_translation">add another translation…</string>
 	<string name="add_card__duplicate">Such a card already exists in the deck \"%s\"</string>
+	<string name="add_edit_card__confirm_exist__title">Confirm exit</string>
+	<string name="add_edit_card__confirm_exist__message">You have unsaved changes that will be lost if you
+	leave the screen now. Leave the screen anyway?</string>
 
 	<!-- Add/edit a deck -->
 	<string name="add_deck__title">Create new deck</string>
@@ -171,4 +174,5 @@
 	<string name="button_next">Next</string>
 	<string name="button_cancel">Cancel</string>
 	<string name="button_delete">Delete</string>
+	<string name="button_leave">Leave</string>
 </resources>

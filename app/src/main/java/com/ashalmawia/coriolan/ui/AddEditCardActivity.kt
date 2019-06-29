@@ -1,5 +1,7 @@
 package com.ashalmawia.coriolan.ui
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +19,7 @@ import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.ExpressionExtras
 import kotlinx.android.synthetic.main.add_edit_card.*
 import org.koin.android.ext.android.get
 
@@ -34,6 +37,7 @@ class AddEditCardActivity : BaseActivity() {
     private val domain: Domain = domainScope().get()
 
     private var card: Card? = null
+    private var extras: ExpressionExtras? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +66,7 @@ class AddEditCardActivity : BaseActivity() {
         if (card.translations.isEmpty()) throw IllegalStateException("card with id[$cardId] has no translations")
 
         this.card = card
+        this.extras = repository.allExtrasForExpression(card.original)
     }
 
     private fun initialize() {
@@ -99,6 +104,8 @@ class AddEditCardActivity : BaseActivity() {
         deckSelector.selectDeckWithId(card.deckId)
 
         original.input = card.original.value
+
+        transcription.input = extras?.transcription ?: ""
 
         card.translations.forEach {
             val view = addTrasnlationField()
@@ -157,7 +164,11 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun onSaveClicked() {
-        val data = collectCardDataWithValidation() ?: return
+        val data = collectCardData()
+
+        if (!validate(data)) {
+            return
+        }
 
         if (isInEditMode) {
             save(data)
@@ -188,15 +199,10 @@ class AddEditCardActivity : BaseActivity() {
         finishOk()
     }
 
-    private fun collectCardDataWithValidation(): CardData? {
-        val deckPosition = deckSelector.selectedItemPosition
+    private fun collectCardData(): CardData {
         val original = original.input
         val transcription = transcription.input.takeIf { it.isNotBlank() }
         val translations = collectTranslations()
-
-        if (!validate(deckPosition, original, translations)) {
-            return null
-        }
 
         val deck = deckSelector.selectedDeck()
 
@@ -209,7 +215,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun collectTranslations(): Array<String> {
-        val array = Array(translationsContainer.childCount, { _ -> "" })
+        val array = Array(translationsContainer.childCount) { "" }
         for (i in 0 until array.size) {
             val view = translationsContainer.getChildAt(i) as AddEditCardItemView
             array[i] = view.input
@@ -229,22 +235,18 @@ class AddEditCardActivity : BaseActivity() {
         addTrasnlationField()
     }
 
-    private fun validate(decksPosition: Int, original: String, translations: Array<String>): Boolean {
+    private fun validate(cardData: CardData): Boolean {
         val onError = this::showError
 
-        if (!CardValidator.validateDeckSelected(decksPosition, decks(), onError)) {
+        if (!CardValidator.validateOriginalNotEmpty(cardData.original, onError)) {
             return false
         }
 
-        if (!CardValidator.validateOriginalNotEmpty(original, onError)) {
+        if (!CardValidator.validateHasTranslations(cardData.translations, onError)) {
             return false
         }
 
-        if (!CardValidator.validateHasTranslations(translations, onError)) {
-            return false
-        }
-
-        if (!CardValidator.validateNoDuplicates(translations, onError)) {
+        if (!CardValidator.validateNoDuplicates(cardData.translations, onError)) {
             return false
         }
 
@@ -281,6 +283,56 @@ class AddEditCardActivity : BaseActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (anyDataChanged()) {
+            showExitConfirmationDialog()
+        } else {
+            navigateBack()
+        }
+    }
+
+    private var shownDialog: Dialog? = null
+
+    private fun showExitConfirmationDialog() {
+        val dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.add_edit_card__confirm_exist__title)
+                .setMessage(R.string.add_edit_card__confirm_exist__message)
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(R.string.button_leave) { _, _ -> navigateBack() }
+                .create()
+        dialog.show()
+
+        shownDialog = dialog
+    }
+
+    private fun anyDataChanged(): Boolean {
+        val data = collectCardData()
+
+        return if (isInEditMode) {
+            !data.matches(card!!)
+        } else {
+            data.isNotEmpty()
+        }
+    }
+
+    private fun CardData.matches(card: Card): Boolean {
+        return original == card.original.value
+                && transcription == extras?.transcription
+                && card.translations.size == translations.size
+                && card.translations.map { it.value }.containsAll(translations)
+    }
+
+    private fun CardData.isNotEmpty(): Boolean {
+        return original.isNotBlank()
+                || !transcription.isNullOrBlank()
+                || translations.any { it.isNotBlank() }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        shownDialog?.cancel()
+    }
+
     companion object {
         fun add(context: Context, deck: Deck): Intent {
             val intent = Intent(context, AddEditCardActivity::class.java)
@@ -304,10 +356,10 @@ object CardValidator {
     fun validateOriginalNotEmpty(original: String, onError: (String) -> Unit): Boolean
         = validate(!TextUtils.isEmpty(original), "Please enter the original", onError)
 
-    fun validateHasTranslations(translations: Array<String>, onError: (String) -> Unit): Boolean
+    fun validateHasTranslations(translations: List<String>, onError: (String) -> Unit): Boolean
         = validate(translations.filterNot { TextUtils.isEmpty(it) }.isNotEmpty(), "Please enter at least one translation", onError)
 
-    fun validateNoDuplicates(translations: Array<String>, onError: (String) -> Unit): Boolean {
+    fun validateNoDuplicates(translations: List<String>, onError: (String) -> Unit): Boolean {
         val nonEmpty = translations.filterNot { TextUtils.isEmpty(it) }
         return validate(nonEmpty.size == nonEmpty.distinct().size, "Some of translations duplicate each other", onError)
     }
