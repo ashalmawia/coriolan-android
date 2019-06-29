@@ -38,6 +38,10 @@ class Assignment<T : State>(
 
     fun delete(card: Card) {
         queue.removeAll { it.card == card }
+        if (current?.card == card) {
+            current = null
+        }
+        history.forget(card)
     }
 
     fun next(): CardWithState<T> {
