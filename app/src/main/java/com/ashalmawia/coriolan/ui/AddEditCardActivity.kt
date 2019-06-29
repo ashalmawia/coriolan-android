@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -354,13 +353,13 @@ object CardValidator {
         = validate(ordinal >= 0 && ordinal < decks.size, "Please select a deck", onError)
 
     fun validateOriginalNotEmpty(original: String, onError: (String) -> Unit): Boolean
-        = validate(!TextUtils.isEmpty(original), "Please enter the original", onError)
+        = validate(!original.isBlank(), "Please enter the original", onError)
 
     fun validateHasTranslations(translations: List<String>, onError: (String) -> Unit): Boolean
-        = validate(translations.filterNot { TextUtils.isEmpty(it) }.isNotEmpty(), "Please enter at least one translation", onError)
+        = validate(translations.filterNot { it.isBlank() }.isNotEmpty(), "Please enter at least one translation", onError)
 
     fun validateNoDuplicates(translations: List<String>, onError: (String) -> Unit): Boolean {
-        val nonEmpty = translations.filterNot { TextUtils.isEmpty(it) }
+        val nonEmpty = translations.filterNot { it.isBlank() }
         return validate(nonEmpty.size == nonEmpty.distinct().size, "Some of translations duplicate each other", onError)
     }
 

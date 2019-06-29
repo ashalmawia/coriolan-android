@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
@@ -103,7 +102,7 @@ class AddEditDeckActivity : BaseActivity() {
     }
 
     private fun validate(name: String): Boolean {
-        if (TextUtils.isEmpty(name)) {
+        if (name.isBlank()) {
             showError(getString(R.string.add_deck__empty_name))
             return false
         }

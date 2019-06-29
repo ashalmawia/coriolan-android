@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.PreferenceDataStore
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -110,10 +109,10 @@ class CoriolanPreferencesDataStore(
     override fun putString(key: String?, value: String?) {
         when (key ?: return) {
             PREFERENCE_DAILY_LIMITS_NEW ->
-                if (!TextUtils.isEmpty(value)) prefs.setNewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearNewCardsDailyLimit()
+                if (!value.isNullOrBlank()) prefs.setNewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearNewCardsDailyLimit()
 
             PREFERENCE_DAILY_LIMITS_REVIEW ->
-                if (!TextUtils.isEmpty(value)) prefs.setReviewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearReviewCardsDailyLimit()
+                if (!value.isNullOrBlank()) prefs.setReviewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearReviewCardsDailyLimit()
 
             PREFERENCE_CARD_TYPES ->
                 cardTypePreferenceHelper.saveValue(prefs, value)

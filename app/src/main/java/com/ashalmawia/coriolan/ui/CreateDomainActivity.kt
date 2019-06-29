@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,7 +20,6 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.create_domain.*
 import org.koin.android.ext.android.inject
-import java.lang.Exception
 
 private const val EXTRA_FIRST_START = "cancellable"
 
@@ -92,11 +90,11 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     private fun verify(originalLang: String, translationsLang: String): Boolean {
-        if (TextUtils.isEmpty(originalLang)) {
+        if (originalLang.isBlank()) {
             showError(R.string.create_domain__verify__empty_original)
             return false
         }
-        if (TextUtils.isEmpty(translationsLang)) {
+        if (translationsLang.isBlank()) {
             showError(R.string.create_domain__verify__empty_translations)
             return false
         }
