@@ -15,7 +15,7 @@ class SingleClickListener(private val listener: (View) -> Unit) : View.OnClickLi
     override fun onClick(v: View) {
         val now = System.currentTimeMillis()
         if (now - lastClicked >= TIME_INTERVAL_MIN) {
-            listener.invoke(v)
+            listener(v)
         }
         lastClicked = now
     }

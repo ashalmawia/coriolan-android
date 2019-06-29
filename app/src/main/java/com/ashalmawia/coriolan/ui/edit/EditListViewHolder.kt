@@ -41,7 +41,7 @@ sealed class EditListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVi
             } else {
                 title.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
             }
-            itemView.setOnClickListener { item.onClick.invoke(it.context) }
+            itemView.setOnClickListener { item.onClick(it.context) }
         }
     }
 }

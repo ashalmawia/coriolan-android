@@ -83,7 +83,7 @@ private fun <T> test(info: T, writer: (T, JsonGenerator) -> Unit, reader: (JsonP
     val jsonGenerator = jsonFactory.createGenerator(output)
 
     // when
-    writer.invoke(info, jsonGenerator)
+    writer(info, jsonGenerator)
 
     jsonGenerator.close()
 
@@ -92,7 +92,7 @@ private fun <T> test(info: T, writer: (T, JsonGenerator) -> Unit, reader: (JsonP
     val jsonParser = jsonFactory.createParser(input)
 
     // when
-    val read = reader.invoke(jsonParser)
+    val read = reader(jsonParser)
 
     jsonParser.close()
 

@@ -84,12 +84,12 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         var offset = 0
 
         while (true) {
-            val items = retriever.invoke(offset, pageSize)
+            val items = retriever(offset, pageSize)
             if (items.isEmpty()) {
                 break
             }
 
-            items.forEach { serializer.invoke(it, json) }
+            items.forEach { serializer(it, json) }
             offset += items.size
         }
 
@@ -100,15 +100,15 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         val items = mutableListOf<T>()
         while (json.nextToken() != JsonToken.END_ARRAY) {
             if (json.currentToken == JsonToken.START_OBJECT) {
-                items.add(deserializer.invoke(json))
+                items.add(deserializer(json))
                 if (items.size == pageSize) {
-                    writer.invoke(items)
+                    writer(items)
                     items.clear()
                 }
             }
         }
         if (items.isNotEmpty()) {
-            writer.invoke(items)
+            writer(items)
         }
     }
 

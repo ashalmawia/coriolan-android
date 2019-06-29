@@ -365,7 +365,7 @@ object CardValidator {
 
     private fun validate(condition: Boolean, error: String, onError: (String) -> Unit): Boolean {
         if (!condition) {
-            onError.invoke(error)
+            onError(error)
         }
         return condition
     }

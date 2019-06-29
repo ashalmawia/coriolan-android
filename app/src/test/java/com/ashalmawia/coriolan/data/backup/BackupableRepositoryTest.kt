@@ -258,8 +258,8 @@ abstract class BackupableRepositoryTest {
         val entities = listOf<T>()
 
         // when
-        writer.invoke(entities)
-        val read = reader.invoke(0, 10)
+        writer(entities)
+        val read = reader(0, 10)
 
         // then
         assertEquals(entities, read)
@@ -270,24 +270,24 @@ abstract class BackupableRepositoryTest {
      */
     private fun <T> testNonEmpty(data: List<T>, writer: (List<T>) -> Unit, reader: (Int, Int) -> List<T>) {
         // when
-        writer.invoke(data)
+        writer(data)
 
         // no pagination
-        assertEquals(data, reader.invoke(0, data.size))
+        assertEquals(data, reader(0, data.size))
 
         // big page
-        assertEquals(data, reader.invoke(0, data.size * 2 + 1))
+        assertEquals(data, reader(0, data.size * 2 + 1))
 
         // small page
-        assertEquals(data.subList(0, data.size / 2), reader.invoke(0, data.size / 2))
+        assertEquals(data.subList(0, data.size / 2), reader(0, data.size / 2))
 
         // offset within the list
-        assertEquals(data.subList(1, 1 + 3), reader.invoke(1, 3))
+        assertEquals(data.subList(1, 1 + 3), reader(1, 3))
 
         // offset partly within the list
-        assertEquals(data.subList(data.size / 2, data.size), reader.invoke(data.size / 2, data.size + 3))
+        assertEquals(data.subList(data.size / 2, data.size), reader(data.size / 2, data.size + 3))
 
         // offset outside of the list
-        assertEquals(emptyList<T>(), reader.invoke(data.size, 5))
+        assertEquals(emptyList<T>(), reader(data.size, 5))
     }
 }
