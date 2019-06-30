@@ -1,16 +1,36 @@
 package com.ashalmawia.coriolan.ui
 
 import android.app.Activity
+import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.debug.DebugIncreaseDateDialog
+import com.ashalmawia.coriolan.dependencies.createScope
 import kotlinx.android.synthetic.main.app_toolbar.*
-import org.koin.android.ext.android.get
+import org.koin.core.scope.Scope
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected val appMenu: AppMenu by lazy { AppMenu(this) { DebugIncreaseDateDialog(this, get()) } }
+    private var scope: Scope? = null
+
+    protected val navigator: Navigator
+        get() = requireScope().get()
+
+    protected val appMenu: AppMenu
+        get() = requireScope().get()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        scope = createScope()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope?.close()
+        scope = null
+    }
+
+    fun requireScope() = scope!!
 
     protected fun setUpToolbar(title: String, cancellable: Boolean = true) {
         setSupportActionBar(toolbar)

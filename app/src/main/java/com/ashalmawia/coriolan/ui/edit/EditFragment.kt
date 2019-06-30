@@ -10,16 +10,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.backup.ui.BackupActivity
-import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.dependencies.dataImportScope
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.ui.AddEditCardActivity
-import com.ashalmawia.coriolan.ui.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.DataFetcher
 import kotlinx.android.synthetic.main.edit.*
@@ -68,14 +64,14 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
         builder.addCategory(R.string.decks__category_title)
         builder.addDecks(decks(), this)
-        builder.addOption(R.string.add_deck__title, { createNewDeck(it) }, R.drawable.ic_add)
+        builder.addOption(R.string.add_deck__title, { createNewDeck() }, R.drawable.ic_add)
 
         builder.addCategory(R.string.import__category_title)
         builder.addOption(R.string.import_from_file, { importFromFile() })
 
         builder.addCategory(R.string.backup__category_title)
-        builder.addOption(R.string.backup__create_title, { createBackup(it) })
-        builder.addOption(R.string.backup__restore_title, { restoreFromBackup(it) })
+        builder.addOption(R.string.backup__create_title, { createBackup() })
+        builder.addOption(R.string.backup__restore_title, { restoreFromBackup() })
 
         return builder.build()
     }
@@ -84,14 +80,12 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         return decksRegistry.allDecks()
     }
 
-    override fun addCards(context: Context, deck: Deck) {
-        val intent = AddEditCardActivity.add(context, deck)
-        startActivity(intent)
+    override fun addCards(deck: Deck) {
+        navigator.openAddCardScreen(deck)
     }
 
-    override fun editDeck(context: Context, deck: Deck) {
-        val intent = AddEditDeckActivity.edit(context, deck)
-        context.startActivity(intent)
+    override fun editDeck(deck: Deck) {
+        navigator.openEditDeckScreen(deck)
     }
 
     override fun deleteDeck(context: Context, deck: Deck) {
@@ -120,9 +114,8 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         dialog.show()
     }
 
-    private fun createNewDeck(context: Context) {
-        val intent = AddEditDeckActivity.create(context)
-        startActivity(intent)
+    private fun createNewDeck() {
+        navigator.openAddDeckScreen()
     }
 
     private fun importFromFile() {
@@ -142,14 +135,12 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         flow.start()
     }
 
-    private fun createBackup(context: Context) {
-        val intent = BackupActivity.intent(context)
-        context.startActivity(intent)
+    private fun createBackup() {
+        navigator.openCreateBackupScreen()
     }
 
-    private fun restoreFromBackup(context: Context) {
-        val intent = RestoreFromBackupActivity.intent(context)
-        startActivity(intent)
+    private fun restoreFromBackup() {
+        navigator.openRestoreFromBackupScreen()
     }
 
     private fun notifyDataUpdated() {

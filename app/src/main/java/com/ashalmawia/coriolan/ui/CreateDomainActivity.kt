@@ -144,8 +144,7 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     private fun openDomainActivity(domain: Domain) {
-        val intent = DomainActivity.intent(this, domain)
-        startActivity(intent)
+        navigator.openDomain(domain)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

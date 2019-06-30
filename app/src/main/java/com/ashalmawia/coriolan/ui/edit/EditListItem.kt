@@ -26,9 +26,9 @@ sealed class EditListItem {
 
 interface EditDeckCallback {
 
-    fun addCards(context: Context, deck: Deck)
+    fun addCards(deck: Deck)
 
-    fun editDeck(context: Context, deck: Deck)
+    fun editDeck(deck: Deck)
 
     fun deleteDeck(context: Context, deck: Deck)
 }

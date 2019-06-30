@@ -24,8 +24,8 @@ sealed class EditListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVi
         
         fun bind(item: EditListItem.DeckItem) {
             title.text = item.deck.name
-            add.setOnClickListener { item.listener.addCards(it.context, item.deck) }
-            edit.setOnClickListener { item.listener.editDeck(it.context, item.deck) }
+            add.setOnClickListener { item.listener.addCards(item.deck) }
+            edit.setOnClickListener { item.listener.editDeck(item.deck) }
             delete.setOnClickListener { item.listener.deleteDeck(it.context, item.deck) }
         }
     }

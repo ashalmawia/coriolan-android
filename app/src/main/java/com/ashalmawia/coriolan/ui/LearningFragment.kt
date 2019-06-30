@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.ui
 
-import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -24,16 +23,9 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning.*
-import org.joda.time.DateTime
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
-import kotlin.collections.List
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
-import kotlin.collections.forEach
-import kotlin.collections.getValue
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 private const val TAG = "LearningFragment"
@@ -41,7 +33,9 @@ private const val TAG = "LearningFragment"
 class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher, BeginStudyListener {
 
     private val decksRegistry: DecksRegistry by lazy { domainScope().get<DecksRegistry>() }
-    private val adapter: DecksAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this, this) }
+    private val adapter: DecksAdapter by lazy { get<DecksAdapter>()
+        { parametersOf(requireActivityScope(), exercisesRegistry.defaultExercise(), this, this) }
+    }
     private val exercisesRegistry: ExercisesRegistry by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -112,8 +106,7 @@ class DecksAdapter(
         private val exercise: Exercise<*, *>,
         private val dataFetcher: DataFetcher,
         private val beginStudyListener: BeginStudyListener,
-        private val createDeckDetailsDialog: DeckDetailsDialogCreator,
-        private val createIncreaseLimitsDialog: IncreaseLimitsDialogCreator
+        private val navigator: Navigator
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<Deck> = mutableListOf()
@@ -224,13 +217,13 @@ class DecksAdapter(
     }
 
     private fun studyMore(deck: Deck) {
-        val dialog = createIncreaseLimitsDialog(deck, today())
+        val dialog = navigator.createIncreaseLimitsDialog(deck, exercise, today())
         dialog.setOnDismissListener { dataFetcher.fetchData() }
         dialog.show()
     }
 
     private fun showDeckDetails(deck: Deck) {
-        val dialog = createDeckDetailsDialog(deck, today())
+        val dialog = navigator.createDeckDetailsDialog(deck, exercise, today())
         dialog.show()
     }
 
@@ -280,6 +273,3 @@ interface BeginStudyListener {
 
     fun beginStudy(deck: Deck, studyOrder: StudyOrder)
 }
-
-typealias DeckDetailsDialogCreator = (Deck, DateTime) -> Dialog
-typealias IncreaseLimitsDialogCreator = (Deck, DateTime) -> Dialog

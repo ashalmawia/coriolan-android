@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.ui
 import android.os.Bundle
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
 import org.koin.android.ext.android.get
 
 class StartActivity : BaseActivity() {
@@ -23,20 +22,14 @@ class StartActivity : BaseActivity() {
     }
 
     private fun openDomainsList() {
-        startActivity(DomainsListActivity.intent(this))
+        navigator.openDomainsList()
     }
 
     private fun openDomain(domain: Domain) {
-        finish()
-
-        startActivity(DomainsListActivity.intent(this))
-        startActivity(DomainActivity.intent(this, domain))
-
-        overridePendingTransition(0, 0)
+        navigator.openDomainWithStack(domain)
     }
 
     private fun openDomainCreation() {
-        val intent = CreateDomainActivity.intent(this, true)
-        startActivity(intent)
+        navigator.openCreateDomainScreen(true)
     }
 }

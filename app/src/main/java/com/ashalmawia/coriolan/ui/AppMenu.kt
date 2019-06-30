@@ -1,18 +1,12 @@
 package com.ashalmawia.coriolan.ui
 
-import android.app.Activity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.debug.DebugIncreaseDateDialog
-import com.ashalmawia.coriolan.ui.settings.SettingsActivity
 
-class AppMenu(
-        private val activity: Activity,
-        private val createIncreaseDateDialog: () -> DebugIncreaseDateDialog
-) {
+class AppMenu(private val navigator: Navigator) {
 
     fun onCreateOptionsMenu(menuInflater: MenuInflater, menu: Menu): Boolean {
         menuInflater.inflate(R.menu.domain, menu)
@@ -39,11 +33,10 @@ class AppMenu(
     }
 
     private fun increaseDate() {
-        createIncreaseDateDialog().show()
+        navigator.createDebugIncreaseDateDialog().show()
     }
 
     private fun openSettings() {
-        val intent = SettingsActivity.intent(activity)
-        activity.startActivity(intent)
+        navigator.openSettings()
     }
 }

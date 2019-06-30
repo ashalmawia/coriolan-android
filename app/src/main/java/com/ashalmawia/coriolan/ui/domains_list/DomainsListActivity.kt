@@ -12,7 +12,6 @@ import com.ashalmawia.coriolan.dependencies.closeDomainScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.CreateDomainActivity
-import com.ashalmawia.coriolan.ui.DomainActivity
 import kotlinx.android.synthetic.main.domains_list.*
 import org.koin.android.ext.android.inject
 
@@ -59,11 +58,10 @@ class DomainsListActivity : BaseActivity() {
             }
 
     private fun Domain.toDomainItem()
-            = DomainsListItem.DomainItem(this) { context -> openDomain(context, this)}
+            = DomainsListItem.DomainItem(this) { openDomain(this)}
 
-    private fun openDomain(context: Context, domain: Domain) {
-        val intent = DomainActivity.intent(context, domain)
-        startActivity(intent)
+    private fun openDomain(domain: Domain) {
+        navigator.openDomain(domain)
     }
 
     override fun onCreateOptionsMenu(menu: Menu) = appMenu.onCreateOptionsMenu(menuInflater, menu)
