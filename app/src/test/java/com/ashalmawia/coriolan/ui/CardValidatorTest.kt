@@ -18,7 +18,7 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateDeckSelected__nothingSelected`() {
+    fun test__validateDeckSelected__nothingSelected() {
         // given
         val decks = listOf(mockDeck())
 
@@ -31,7 +31,7 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateDeckSelected__indexTooLarge`() {
+    fun test__validateDeckSelected__indexTooLarge() {
         // given
         val decks = listOf(mockDeck())
 
@@ -44,7 +44,7 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateDeckSelected__indexCorrect`() {
+    fun test__validateDeckSelected__indexCorrect() {
         // given
         val decks = listOf(mockDeck(), mockDeck(), mockDeck())
 
@@ -59,7 +59,7 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateOriginalNotEmpty__empty`() {
+    fun test__validateOriginalNotEmpty__empty() {
         // given
 
         // when
@@ -71,7 +71,7 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateOriginalNotEmpty__nonEmpty`() {
+    fun test__validateOriginalNotEmpty__nonEmpty() {
         // given
 
         // when
@@ -83,9 +83,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__noTranslations`() {
+    fun test__validateHasTranslations__noTranslations() {
         // given
-        val translations = arrayOf<String>()
+        val translations = listOf<String>()
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -96,9 +96,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__allTranslationsEmpty`() {
+    fun test__validateHasTranslations__allTranslationsEmpty() {
         // given
-        val translations = arrayOf("")
+        val translations = listOf("")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -109,9 +109,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__multiple__allTranslationsEmpty`() {
+    fun test__validateHasTranslations__multiple__allTranslationsEmpty() {
         // given
-        val translations = arrayOf("", "")
+        val translations = listOf("", "")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -122,9 +122,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__oneTranslation`() {
+    fun test__validateHasTranslations__oneTranslation() {
         // given
-        val translations = arrayOf("shrimp")
+        val translations = listOf("shrimp")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -135,9 +135,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__oneTranslationWithEmpty`() {
+    fun test__validateHasTranslations__oneTranslationWithEmpty() {
         // given
-        val translations = arrayOf("", "shrimp")
+        val translations = listOf("", "shrimp")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -148,9 +148,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__multipleTranslations`() {
+    fun test__validateHasTranslations__multipleTranslations() {
         // given
-        val translations = arrayOf("sleep", "doze")
+        val translations = listOf("sleep", "doze")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)
@@ -161,9 +161,9 @@ class CardValidatorTest {
     }
 
     @Test
-    fun `test__validateHasTranslations__multipleTranslationsWithEmpty`() {
+    fun test__validateHasTranslations__multipleTranslationsWithEmpty() {
         // given
-        val translations = arrayOf("sleep", "", "doze")
+        val translations = listOf("sleep", "", "doze")
 
         // when
         val result = CardValidator.validateHasTranslations(translations, this::onError)

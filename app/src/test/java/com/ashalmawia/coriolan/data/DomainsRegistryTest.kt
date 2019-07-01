@@ -1,9 +1,8 @@
 package com.ashalmawia.coriolan.data
 
 import com.ashalmawia.coriolan.data.storage.MockRepository
-import com.ashalmawia.coriolan.model.langOriginal
-import com.ashalmawia.coriolan.model.langTranslations
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -19,23 +18,52 @@ class DomainsRegistryTest {
     }
 
     @Test
-    fun test__preinitialize__domainAdded() {
+    fun `languages added`() {
+        // given
+        val english = "English"
+        val russian = "Russian"
+
+        // when
+        val domain = registry.createDomain(english, russian)
+
         // then
-        assertEquals(0, repository.allDomains().size)
-        assertNull(registry.defaultDomain())
+        assertNotNull(domain)
+        assertEquals(english, domain.langOriginal().value)
+        assertEquals(russian, domain.langTranslations().value)
+        assertEquals(2, repository.langs.size)
+        assertEquals(domain.langOriginal(), repository.langs[0])
+        assertEquals(domain.langTranslations(), repository.langs[1])
     }
 
     @Test
-    fun test__preinitialize__domainReused() {
+    fun `languages reused`() {
         // given
-        val domain = repository.createDomain("Some domain", langTranslations(), langOriginal())
+        val english = repository.addLanguage("English")
+        val russian = repository.addLanguage("Russian")
 
         // when
-        val default = registry.defaultDomain()
+        val domain = registry.createDomain(english.value, russian.value)
 
         // then
-        assertNotNull(default)
-        assertEquals(domain, default)
-        assertEquals(1, repository.allDomains().size)
+        assertNotNull(domain)
+        assertEquals(english, domain.langOriginal())
+        assertEquals(russian, domain.langTranslations())
+    }
+
+    @Test
+    fun `languages partly reused`() {
+        // given
+        val englishValue = "English"
+        val russian = repository.addLanguage("Russian")
+
+        // when
+        val domain = registry.createDomain(englishValue, russian.value)
+
+        // then
+        assertNotNull(domain)
+        assertEquals(englishValue, domain.langOriginal().value)
+        assertEquals(russian, domain.langTranslations())
+        assertEquals(domain.langOriginal(), repository.langs[1])
+        assertEquals(domain.langTranslations(), repository.langs[0])
     }
 }

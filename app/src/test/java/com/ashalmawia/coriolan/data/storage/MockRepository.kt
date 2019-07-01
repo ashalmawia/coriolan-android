@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
-    private val langs = mutableListOf<Language>()
+    val langs = mutableListOf<Language>()
     override fun addLanguage(value: String): Language {
         val lang = Language(langs.size + 1L, value)
         langs.add(lang)
