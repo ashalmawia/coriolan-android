@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.model
 
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.CardWithState

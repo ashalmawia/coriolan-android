@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.model
 
-import com.ashalmawia.coriolan.data.importer.CardData
 import org.junit.Assert.*
 
 fun assertLanguageCorrect(language: Language?, value: String) {

@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data
 
 import android.content.Context
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.merger.CardsMerger
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.ExercisesRegistry

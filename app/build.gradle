@@ -71,6 +71,9 @@ dependencies {
     }
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.5'
 
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+
     // Koin for Kotlin
     implementation "org.koin:koin-core:$koin_version"
     // Koin for Unit tests

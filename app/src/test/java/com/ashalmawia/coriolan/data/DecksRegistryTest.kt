@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data
 
 import android.content.Context
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.storage.MockRepository
@@ -490,8 +489,6 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val transcriptionOld = "ˈvɪktəri"
-
         val expression1 = mockRepository.addExpression("spring", domain.langOriginal())
         val expression2 = mockRepository.justAddExpression("источник", domain.langTranslations())
 
@@ -520,8 +517,6 @@ class DecksRegistryTest {
     fun `editCard() delete transcription`() {
         // given
         val deckId = 1L
-
-        val transcriptionOld = "ˈvɪktəri"
 
         val expression1 = mockRepository.addExpression("spring", domain.langOriginal())
         val expression2 = mockRepository.justAddExpression("источник", domain.langTranslations())

@@ -1,5 +1,7 @@
 package com.ashalmawia.coriolan.data.importer
 
+import com.ashalmawia.coriolan.model.CardData
+
 fun reversedTo(cardData: CardData): List<CardData> {
     return cardData.translations.map { createReversedForTranslation(cardData, it) }
 }

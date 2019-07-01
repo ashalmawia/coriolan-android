@@ -2,9 +2,10 @@ package com.ashalmawia.coriolan.data.importer.file
 
 import android.content.Context
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.importer.DataImporter
+import com.ashalmawia.coriolan.data.importer.JsonCardData
+import com.ashalmawia.coriolan.model.CardData
 import com.ashalmawia.coriolan.model.Deck
 import java.io.File
 
@@ -28,16 +29,17 @@ class ImporterFromFile : DataImporter {
             return
         }
 
-        val data = parseDataSafe(file, deck)
+        val data = parseDataSafe(file)
         if (data != null) {
-            flow?.onData(data)
+            flow?.onData(data.map { CardData(it.original, it.transcription, it.translations, deck.id) })
         }
     }
 
-    private fun parseDataSafe(file: File, deck: Deck): List<CardData>? {
-        val parser = FileParser(deck)
+    private fun parseDataSafe(file: File): List<JsonCardData>? {
+        val parser = JsonCardDataParser()
         return try {
-            parser.parseFile(file)
+            val text = file.readText()
+            parser.parse(text)
         } catch (e: ParsingException) {
             flow?.onError("Failed to parse file, line[" + e.line + "]")
             e.printStackTrace()

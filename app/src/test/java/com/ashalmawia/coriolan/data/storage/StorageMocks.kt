@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.model.*
 
 fun addMockCard(

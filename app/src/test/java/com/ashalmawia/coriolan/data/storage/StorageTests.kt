@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.data.importer.CardData
 import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.Status

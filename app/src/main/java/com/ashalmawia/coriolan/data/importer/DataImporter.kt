@@ -2,6 +2,8 @@ package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
 import android.support.annotation.StringRes
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
 interface DataImporter {
 
@@ -13,9 +15,14 @@ interface DataImporter {
     fun launch(context: Context)
 }
 
-data class CardData(
+@JsonClass(generateAdapter = true)
+data class JsonCardData(
+        @Json(name = "original")
         val original: String,
+
+        @Json(name = "transcription")
         val transcription: String?,
-        val translations: List<String>,
-        val deckId: Long
+
+        @Json(name = "translations")
+        val translations: List<String>
 )

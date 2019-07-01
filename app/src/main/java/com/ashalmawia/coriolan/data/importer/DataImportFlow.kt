@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
 import com.ashalmawia.coriolan.data.DecksRegistry
+import com.ashalmawia.coriolan.model.CardData
 
 interface DataImportFlow {
 
