@@ -62,8 +62,8 @@ sealed class Mutation<S : State> {
             val new = cards.new()
             val review = cards.review()
 
-            if (new.size >= newCardsAllowedSize) {
-                return new.shuffled().plus(review.shuffled())
+            return if (new.size >= newCardsAllowedSize) {
+                new.shuffled().plus(review.shuffled())
             } else {
                 // otherwise, keep the last X cards review only, to make sure all new cards are seen in advance
                 val extraReviewsCount = newCardsAllowedSize - new.size
@@ -71,7 +71,7 @@ sealed class Mutation<S : State> {
                 val newCardsAllowed = new.plus(review.subList(0, extraReviewsCount))
                 val reviewsOnly = review.subList(extraReviewsCount, review.size)
 
-                return newCardsAllowed.shuffled().plus(reviewsOnly.shuffled())
+                newCardsAllowed.shuffled().plus(reviewsOnly.shuffled())
             }
         }
     }
@@ -88,7 +88,7 @@ sealed class Mutation<S : State> {
         }
     }
 
-    class SortReviewsByPeriod : Mutation<SRState>() {
+    object SortReviewsByPeriod : Mutation<SRState>() {
 
         override fun apply(cards: List<CardWithState<SRState>>): List<CardWithState<SRState>> {
             return cards.sortedBy { it.state.period }
