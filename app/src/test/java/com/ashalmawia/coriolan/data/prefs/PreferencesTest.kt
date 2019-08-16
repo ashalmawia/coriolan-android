@@ -153,24 +153,6 @@ abstract class PreferencesTest {
     }
 
     @Test
-    fun `test cardTypePreference`() {
-        // given
-        val preferences = this.prefereces.value
-        val cardType = CardTypePreference.REVERSE_ONLY
-
-        // then
-        assertNull(preferences.getCardTypePreference())
-        assertNull(preferences.getCardTypePreference())
-
-        // when
-        preferences.setCardTypePreference(cardType)
-
-        // then
-        assertEquals(cardType, preferences.getCardTypePreference())
-        assertEquals(cardType, preferences.getCardTypePreference())
-    }
-
-    @Test
     fun `test lastTranslationsLanguageId`() {
         // given
         val preferences = this.prefereces.value

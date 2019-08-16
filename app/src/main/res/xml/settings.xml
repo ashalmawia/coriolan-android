@@ -3,16 +3,6 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/settings__title">
 
-	<PreferenceCategory android:title="@string/settings__category__learning_flow">
-
-		<ListPreference
-			android:key="card_types"
-			android:title="@string/settings__card_types"
-			android:summary="%s"
-			/>
-
-	</PreferenceCategory>
-
 	<PreferenceCategory android:title="@string/settings__category__daily_limits">
 
 		<AutoSummaryEditTextPreference

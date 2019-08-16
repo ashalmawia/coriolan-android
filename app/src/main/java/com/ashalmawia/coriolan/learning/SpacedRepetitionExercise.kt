@@ -82,7 +82,6 @@ class SpacedRepetitionExercise(
 
     override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<SRState> {
         return Mutations(listOf(
-                Mutation.CardTypeFilter.from(preferences),
                 Mutation.SplitDeck(deck),
                 Mutation.SortReviewsByPeriod(),
                 Mutation.NewCardsOrder.from(order),

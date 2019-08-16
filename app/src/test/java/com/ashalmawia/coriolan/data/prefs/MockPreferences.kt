@@ -47,14 +47,6 @@ class MockPreferences : Preferences {
         firstStart = false
     }
 
-    private var cardType: CardTypePreference? = null
-    override fun getCardTypePreference(): CardTypePreference? {
-        return cardType
-    }
-    override fun setCardTypePreference(preference: CardTypePreference) {
-        cardType = preference
-    }
-
     private var lastTranslationsLanguageId: Long? = null
     override fun getLastTranslationsLanguageId(): Long? = lastTranslationsLanguageId
     override fun setLastTranslationsLanguageId(language: Language) {

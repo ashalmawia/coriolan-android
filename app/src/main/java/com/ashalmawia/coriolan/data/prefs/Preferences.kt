@@ -20,9 +20,6 @@ interface Preferences {
     fun setReviewCardsDailyLimit(limit: Int, date: DateTime)
     fun clearReviewCardsDailyLimit()
 
-    fun getCardTypePreference(): CardTypePreference?
-    fun setCardTypePreference(preference: CardTypePreference)
-
     fun getLastTranslationsLanguageId(): Long?
     fun setLastTranslationsLanguageId(language: Language)
     fun clearLastTranslationsLanguageId()

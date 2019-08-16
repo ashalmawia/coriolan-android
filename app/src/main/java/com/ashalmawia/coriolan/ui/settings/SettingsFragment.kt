@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.ui.settings
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.preference.ListPreference
 import android.support.v7.preference.PreferenceDataStore
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,6 @@ import com.takisoft.fix.support.v7.preference.EditTextPreference
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
 import org.koin.android.ext.android.inject
 
-private const val PREFERENCE_CARD_TYPES = "card_types"
 private const val PREFERENCE_DAILY_LIMITS_NEW = "daily_limit_new_cards"
 private const val PREFERENCE_DAILY_LIMITS_REVIEW = "daily_limit_review_cards"
 private const val PREFERENCE_VERSION = "app_version"
@@ -23,8 +21,6 @@ private const val PREFERENCE_VERSION = "app_version"
 class SettingsFragment : PreferenceFragmentCompatDividers() {
 
     private val dataStore: PreferenceDataStore by inject()
-
-    private val cardTypePreferenceHelper: CardTypePreferenceHelper = CardTypePreferenceHelperImpl()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -38,7 +34,6 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
         preferenceManager.preferenceDataStore = dataStore
         addPreferencesFromResource(R.xml.settings)
 
-        setUpCardTypes()
         setUpDailyLimits()
         setUpVersionInfo()
     }
@@ -60,11 +55,6 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
             val stringValue = value as String
             verifyDailyLimit(stringValue)
         }
-    }
-
-    private fun setUpCardTypes() {
-        val cardTypes = findPreference(PREFERENCE_CARD_TYPES) as ListPreference
-        cardTypePreferenceHelper.initialize(cardTypes)
     }
 
     private fun verifyDailyLimit(value: String): Boolean {
@@ -102,20 +92,22 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
 }
 
 class CoriolanPreferencesDataStore(
-        private val prefs: Preferences,
-        private val cardTypePreferenceHelper: CardTypePreferenceHelper
+        private val prefs: Preferences
 ) : PreferenceDataStore() {
 
     override fun putString(key: String?, value: String?) {
         when (key ?: return) {
             PREFERENCE_DAILY_LIMITS_NEW ->
-                if (!value.isNullOrBlank()) prefs.setNewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearNewCardsDailyLimit()
+                if (!value.isNullOrBlank())
+                    prefs.setNewCardsDailyLimitDefault(value!!.toInt())
+                else
+                    prefs.clearNewCardsDailyLimit()
 
             PREFERENCE_DAILY_LIMITS_REVIEW ->
-                if (!value.isNullOrBlank()) prefs.setReviewCardsDailyLimitDefault(value!!.toInt()) else prefs.clearReviewCardsDailyLimit()
-
-            PREFERENCE_CARD_TYPES ->
-                cardTypePreferenceHelper.saveValue(prefs, value)
+                if (!value.isNullOrBlank())
+                    prefs.setReviewCardsDailyLimitDefault(value!!.toInt())
+                else
+                    prefs.clearReviewCardsDailyLimit()
         }
     }
 
@@ -126,9 +118,6 @@ class CoriolanPreferencesDataStore(
 
             PREFERENCE_DAILY_LIMITS_REVIEW ->
                 prefs.getReviewCardsDailyLimitDefault()?.toString()
-
-            PREFERENCE_CARD_TYPES ->
-                cardTypePreferenceHelper.getCurrentValue(prefs)
 
             else ->
                 super.getString(key, defValue)

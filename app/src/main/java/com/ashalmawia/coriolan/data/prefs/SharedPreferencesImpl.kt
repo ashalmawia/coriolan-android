@@ -60,19 +60,6 @@ class SharedPreferencesImpl(context: Context) : Preferences {
         dailyLimitsReview.edit().clear().apply()
     }
 
-    override fun getCardTypePreference(): CardTypePreference? {
-        val value = prefs.getString(CARDY_TYPE_PREFERENCE, null)
-        return if (value == null) {
-            null
-        } else {
-            CardTypePreference.from(value)
-        }
-    }
-
-    override fun setCardTypePreference(preference: CardTypePreference) {
-        prefs.edit().putString(CARDY_TYPE_PREFERENCE, preference.value).apply()
-    }
-
     override fun getLastTranslationsLanguageId(): Long? {
         return prefs.getLongOrNull(LAST_TRANSLATIONS_LANGUAGE)
     }
@@ -88,5 +75,4 @@ class SharedPreferencesImpl(context: Context) : Preferences {
 
 private const val IS_FIRST_START = "is_first_start"
 private const val DEFAULT = "default"
-private const val CARDY_TYPE_PREFERENCE = "card_type_preference"
 private const val LAST_TRANSLATIONS_LANGUAGE = "last_translations_language"

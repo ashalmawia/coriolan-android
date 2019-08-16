@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan
 
-import com.ashalmawia.coriolan.data.prefs.CardTypePreference
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import org.junit.Assert.*
 import org.junit.Test
@@ -27,7 +26,6 @@ class FirstStartTest {
         assertFalse(preferences.isFirstStart())
         assertEquals(15, preferences.getNewCardsDailyLimitDefault())
         assertEquals(30, preferences.getReviewCardsDailyLimitDefault())
-        assertEquals(CardTypePreference.MIXED, preferences.getCardTypePreference())
     }
 
     @Test
@@ -37,7 +35,6 @@ class FirstStartTest {
         assertFalse(preferences.isFirstStart())
 
         preferences.setReviewCardsDailyLimitDefault(5)
-        preferences.setCardTypePreference(CardTypePreference.REVERSE_ONLY)
 
         // when
         firstStart.runFirstStartRoutine()
@@ -46,7 +43,6 @@ class FirstStartTest {
         assertFalse(preferences.isFirstStart())
         assertNull(preferences.getNewCardsDailyLimitDefault())
         assertEquals(5, preferences.getReviewCardsDailyLimitDefault())
-        assertEquals(CardTypePreference.REVERSE_ONLY, preferences.getCardTypePreference())
     }
 
 }

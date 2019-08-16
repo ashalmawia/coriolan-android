@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.data.journal.Journal
-import com.ashalmawia.coriolan.data.prefs.CardTypePreference
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
@@ -14,21 +13,6 @@ import org.joda.time.DateTime
 
 sealed class Mutation<S : State> {
     abstract fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>>
-
-    abstract class CardTypeFilter<S : State> : Mutation<S>() {
-        companion object {
-            fun <S : State> from(preferences: Preferences): CardTypeFilter<S> {
-                val cardType = preferences.getCardTypePreference()
-                        ?: CardTypePreference.MIXED  // has no effect
-
-                return when (cardType) {
-                    CardTypePreference.MIXED -> CardTypeMixedMutation()
-                    CardTypePreference.FORWARD_ONLY -> CardTypeForwardOnlyMutation()
-                    CardTypePreference.REVERSE_ONLY -> CardTypeReverseOnlyMutation()
-                }
-            }
-        }
-    }
 
     class LimitCount<S : State>(preferences: Preferences, journal: Journal, date: DateTime) : Mutation<S>() {
 

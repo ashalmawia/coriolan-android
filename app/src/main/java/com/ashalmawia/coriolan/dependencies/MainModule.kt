@@ -26,8 +26,6 @@ import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProviderImpl
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
-import com.ashalmawia.coriolan.ui.settings.CardTypePreferenceHelper
-import com.ashalmawia.coriolan.ui.settings.CardTypePreferenceHelperImpl
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
 import org.koin.dsl.module
 
@@ -37,8 +35,7 @@ val mainModule = module {
     single<Preferences> { SharedPreferencesImpl(get()) }
     single<Journal> { SqliteJournal(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get(), get()) }
-    single<CardTypePreferenceHelper> { CardTypePreferenceHelperImpl() }
-    single<PreferenceDataStore> { CoriolanPreferencesDataStore(get(), get()) }
+    single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
     single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get(), get(), get()) }
