@@ -3,8 +3,7 @@
 			  android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
 			  android:gravity="center_vertical"
-			  android:paddingStart="@dimen/deck_list_item_padding_horizontal"
-			  android:paddingEnd="@dimen/deck_list_item_padding_horizontal">
+			  android:paddingStart="@dimen/deck_list_item_padding_horizontal">
 
 	<TextView
 		android:id="@+id/deck_list_item__text"
@@ -27,10 +26,10 @@
 
 	<ImageView
 		android:id="@+id/deck_list_item__more"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="10dp"
+		android:layout_width="@dimen/minimum_tappable_area"
+		android:layout_height="@dimen/minimum_tappable_area"
 		android:src="@drawable/ic_more_vert_black"
+		android:scaleType="centerInside"
 		/>
 
 </LinearLayout>
