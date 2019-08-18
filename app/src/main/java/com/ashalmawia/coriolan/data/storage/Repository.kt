@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.storage
 
 import android.support.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.data.CountsSummary
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
@@ -67,25 +66,17 @@ interface Repository {
 
     fun deleteDeck(deck: Deck): Boolean
 
-    fun deckPendingCounts(exerciseId: String, deck: Deck, date: DateTime): CountsSummary {
+    fun deckPendingCounts(exerciseId: String, deck: Deck, date: DateTime): Counts {
         val due = cardsDueDate(exerciseId, deck, date)
         val total = cardsOfDeck(deck)
 
-        val (forward, reverse) = due.partition { it.card.type == CardType.FORWARD }
+        val deckDue = due.filter { it.card.type == deck.type }
 
-        return CountsSummary(
-                Counts(
-                        forward.count { it.state.status == Status.NEW },
-                        forward.count { it.state.status == Status.IN_PROGRESS },
-                        forward.count { it.state.status == Status.RELEARN },
-                        total.count { it.type == CardType.FORWARD }
-                ),
-                Counts(
-                        reverse.count { it.state.status == Status.NEW },
-                        reverse.count { it.state.status == Status.IN_PROGRESS },
-                        reverse.count { it.state.status == Status.RELEARN },
-                        total.count { it.type == CardType.REVERSE }
-                )
+        return Counts(
+                deckDue.count { it.state.status == Status.NEW },
+                deckDue.count { it.state.status == Status.IN_PROGRESS || it.state.status == Status.LEARNT },
+                deckDue.count { it.state.status == Status.RELEARN },
+                total.filter { it.type == deck.type }.size
         )
     }
 

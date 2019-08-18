@@ -37,9 +37,6 @@
 
 	<string name="decks_pending">new: {%1$d}, review: {%2$d}</string>
 
-	<string name="card_type_forward">Forward</string>
-	<string name="card_type_reverse">Reverse</string>
-
 	<string name="deck_details_new">New:</string>
 	<string name="deck_details_review">Pending review:</string>
 	<string name="deck_details_total">Total</string>

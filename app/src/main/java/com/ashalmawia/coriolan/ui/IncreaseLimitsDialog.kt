@@ -55,10 +55,10 @@ class IncreaseLimitsDialog(
     }
 
     private val newMax
-        get() = max(totalCounts.value.total.new - preferences.getNewCardsDailyLimit(today()).orZero(), 0)
+        get() = max(totalCounts.value.new - preferences.getNewCardsDailyLimit(today()).orZero(), 0)
 
     private val reviewMax
-        get() = max(totalCounts.value.total.review - preferences.getReviewCardsDailyLimit(today()).orZero(), 0)
+        get() = max(totalCounts.value.review - preferences.getReviewCardsDailyLimit(today()).orZero(), 0)
 
     private fun today() = todayProvider.today()
 

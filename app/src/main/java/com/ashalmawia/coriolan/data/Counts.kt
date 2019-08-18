@@ -22,13 +22,3 @@ data class Counts(val new: Int, val review: Int, val relearn: Int, val total: In
         fun empty() = Counts(0, 0, 0, 0)
     }
 }
-
-data class CountsSummary(val forward: Counts, val reverse: Counts) {
-
-    val total = Counts(
-            forward.new + reverse.new,
-            forward.review + reverse.review,
-            forward.relearn + reverse.relearn,
-            forward.total + reverse.total
-    )
-}

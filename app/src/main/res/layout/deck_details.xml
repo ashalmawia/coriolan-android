@@ -8,34 +8,13 @@
 
 	<TableRow>
 
-		<Space/>
-
-		<TextView
-			style="@style/DeckDetails.Caption"
-			android:text="@string/card_type_forward"
-			/>
-
-		<TextView
-			style="@style/DeckDetails.Caption"
-			android:text="@string/card_type_reverse"
-			/>
-
-	</TableRow>
-
-	<TableRow>
-
 		<TextView
 			style="@style/DeckDetails.Caption.Vertical"
 			android:text="@string/deck_details_new"
 			/>
 
 		<TextView
-			android:id="@+id/cellNewForward"
-			style="@style/DeckDetails.Cell"
-			/>
-
-		<TextView
-			android:id="@+id/cellNewReverse"
+			android:id="@+id/cellNew"
 			style="@style/DeckDetails.Cell"
 			/>
 
@@ -49,12 +28,7 @@
 			/>
 
 		<TextView
-			android:id="@+id/cellReviewForward"
-			style="@style/DeckDetails.Cell"
-			/>
-
-		<TextView
-			android:id="@+id/cellReviewReverse"
+			android:id="@+id/cellReview"
 			style="@style/DeckDetails.Cell"
 			/>
 
@@ -68,12 +42,7 @@
 			/>
 
 		<TextView
-			android:id="@+id/cellTotalForward"
-			style="@style/DeckDetails.Cell"
-			/>
-
-		<TextView
-			android:id="@+id/cellTotalReverse"
+			android:id="@+id/cellTotal"
 			style="@style/DeckDetails.Cell"
 			/>
 

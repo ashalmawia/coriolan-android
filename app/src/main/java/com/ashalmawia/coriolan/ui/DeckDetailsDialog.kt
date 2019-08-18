@@ -26,13 +26,9 @@ class DeckDetailsDialog(
     private fun fillInfo() {
         val counts = counts()
 
-        cellNewForward.text = counts.forward.new.toString()
-        cellReviewForward.text = counts.forward.review.toString()
-        cellTotalForward.text = counts.forward.total.toString()
-
-        cellNewReverse.text = counts.reverse.new.toString()
-        cellReviewReverse.text = counts.reverse.review.toString()
-        cellTotalReverse.text = counts.reverse.total.toString()
+        cellNew.text = counts.new.toString()
+        cellReview.text = counts.review.toString()
+        cellTotal.text = counts.total.toString()
     }
 
     private fun counts() = repository.deckPendingCounts(exercise.stableId, deck, date)

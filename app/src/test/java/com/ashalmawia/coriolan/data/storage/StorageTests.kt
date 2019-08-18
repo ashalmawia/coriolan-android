@@ -1363,15 +1363,10 @@ abstract class StorageTest {
         val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
 
         // then
-        assertEquals(0, counts.forward.new)
-        assertEquals(0, counts.forward.review)
-        assertEquals(0, counts.forward.relearn)
-        assertEquals(0, counts.forward.total)
-
-        assertEquals(0, counts.reverse.new)
-        assertEquals(0, counts.reverse.review)
-        assertEquals(0, counts.reverse.relearn)
-        assertEquals(0, counts.reverse.total)
+        assertEquals(0, counts.new)
+        assertEquals(0, counts.review)
+        assertEquals(0, counts.relearn)
+        assertEquals(0, counts.total)
     }
 
     @Test
@@ -1403,18 +1398,22 @@ abstract class StorageTest {
         storage.updateSRCardState(reverse[4], SRState(today.plusDays(10), 4), exercise.stableId)
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
+        val counts = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.FORWARD), today)
 
         // then
-        assertEquals(0, counts.forward.new)
-        assertEquals(0, counts.forward.review)
-        assertEquals(0, counts.forward.relearn)
-        assertEquals(forward.count(), counts.forward.total)
+        assertEquals(0, counts.new)
+        assertEquals(0, counts.review)
+        assertEquals(0, counts.relearn)
+        assertEquals(forward.count(), counts.total)
 
-        assertEquals(0, counts.reverse.new)
-        assertEquals(0, counts.reverse.review)
-        assertEquals(0, counts.reverse.relearn)
-        assertEquals(reverse.count(), counts.reverse.total)
+        // when
+        val counts1 = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.REVERSE), today)
+
+        // then
+        assertEquals(0, counts1.new)
+        assertEquals(0, counts1.review)
+        assertEquals(0, counts1.relearn)
+        assertEquals(reverse.count(), counts1.total)
     }
 
     @Test
@@ -1448,18 +1447,22 @@ abstract class StorageTest {
         storage.updateSRCardState(reverse[5], emptyState(), exercise.stableId)
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
+        val counts = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.FORWARD), today)
 
         // then
-        assertEquals(1, counts.forward.new)
-        assertEquals(1, counts.forward.review)
-        assertEquals(0, counts.forward.relearn)
-        assertEquals(forward.count(), counts.forward.total)
+        assertEquals(1, counts.new)
+        assertEquals(1, counts.review)
+        assertEquals(0, counts.relearn)
+        assertEquals(forward.count(), counts.total)
 
-        assertEquals(2, counts.reverse.new)
-        assertEquals(1, counts.reverse.review)
-        assertEquals(2, counts.reverse.relearn)
-        assertEquals(reverse.count(), counts.reverse.total)
+        // when
+        val counts1 = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.REVERSE), today)
+
+        // then
+        assertEquals(2, counts1.new)
+        assertEquals(1, counts1.review)
+        assertEquals(2, counts1.relearn)
+        assertEquals(reverse.count(), counts1.total)
     }
 
     @Test
