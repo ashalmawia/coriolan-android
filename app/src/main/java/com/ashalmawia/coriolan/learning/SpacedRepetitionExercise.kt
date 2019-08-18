@@ -11,9 +11,7 @@ import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
-import com.ashalmawia.coriolan.learning.mutation.Mutation
-import com.ashalmawia.coriolan.learning.mutation.Mutations
-import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
@@ -82,11 +80,11 @@ class SpacedRepetitionExercise(
 
     override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<SRState> {
         return Mutations(listOf(
-                Mutation.SplitDeck(deck),
-                Mutation.SortReviewsByPeriod,
-                Mutation.NewCardsOrder.from(order),
-                Mutation.LimitCount(preferences, journal, date),
-                Mutation.Shuffle(order == StudyOrder.RANDOM)
+                SplitDeckMutation(deck),
+                SortReviewsByPeriodMutation,
+                NewCardsOrderMutation.from(order),
+                LimitCountMutation(preferences, journal, date),
+                ShuffleMutation(order == StudyOrder.RANDOM)
         ))
     }
 

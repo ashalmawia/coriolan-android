@@ -11,7 +11,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class SortReviewsByPeriodMutationTest {
 
-    private val mutation = lazy { Mutation.SortReviewsByPeriod }
+    private val mutation = lazy { SortReviewsByPeriodMutation }
 
     @Test
     fun test__sortedAscending() {

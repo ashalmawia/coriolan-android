@@ -17,7 +17,7 @@ class ShuffleMutationTest {
     @Test
     fun testNoShuffle() {
         // given
-        val mutation = Mutation.Shuffle<MockState>(false)
+        val mutation = ShuffleMutation<MockState>(false)
 
         // when
         val processed = mutation.apply(cards)
@@ -29,7 +29,7 @@ class ShuffleMutationTest {
     @Test
     fun testYesShuffle() {
         // given
-        val mutation = Mutation.Shuffle<MockState>(true)
+        val mutation = ShuffleMutation<MockState>(true)
 
         // when
         val processed = mutation.apply(cards)
@@ -42,7 +42,7 @@ class ShuffleMutationTest {
     @Test
     fun testNewCardsInTheBeginning() {
         // given
-        val mutation = Mutation.Shuffle<SRState>(true)
+        val mutation = ShuffleMutation<SRState>(true)
         val cards = listOf(
                 mockCardWithState(mockStateNew()),
                 mockCardWithState(mockStateNew()),

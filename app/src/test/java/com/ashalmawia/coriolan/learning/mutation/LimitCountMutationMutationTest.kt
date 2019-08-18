@@ -13,14 +13,14 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class LimitCountMutationTest {
+class LimitCountMutationMutationTest {
 
     private val preferences = MockPreferences()
     private val journal = MockJournal()
     private val date = mockToday()
     private val cards = List(60, { i -> mockCardWithState(procudeMockState(i)) })
 
-    private val mutation = lazy { Mutation.LimitCount<SRState>(preferences, journal, date) }
+    private val mutation = lazy { LimitCountMutation<SRState>(preferences, journal, date) }
 
     private fun procudeMockState(i: Int) =
             when (i % 4) {

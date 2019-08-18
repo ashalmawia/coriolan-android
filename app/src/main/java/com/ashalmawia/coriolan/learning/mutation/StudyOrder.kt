@@ -11,19 +11,19 @@ enum class StudyOrder {
     NEWEST_FIRST
 }
 
-class OrderAdded<S : State>: Mutation.NewCardsOrder<S>() {
+class OrderAdded<S : State>: NewCardsOrderMutation<S>() {
     override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
         return cards
     }
 }
 
-class NewestFirst<S : State>: Mutation.NewCardsOrder<S>() {
+class NewestFirst<S : State>: NewCardsOrderMutation<S>() {
     override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
         return cards.new().reversed().plus(cards.review())
     }
 }
 
-class Random<S : State> : Mutation.NewCardsOrder<S>() {
+class Random<S : State> : NewCardsOrderMutation<S>() {
     override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
         return cards.shuffled()
     }
