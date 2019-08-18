@@ -80,12 +80,12 @@
 	</style>
 
 	<style name="DeckDetails.Caption.Vertical">
+		<item name="android:layout_width">wrap_content</item>
 		<item name="android:gravity">end</item>
 	</style>
 
 	<style name="DeckDetails.Cell">
-		<item name="android:layout_width">0dp</item>
-		<item name="android:layout_weight">1</item>
+		<item name="android:layout_width">100dp</item>
 		<item name="android:gravity">center_horizontal</item>
 		<item name="android:layout_margin">@dimen/spacing__small</item>
 	</style>

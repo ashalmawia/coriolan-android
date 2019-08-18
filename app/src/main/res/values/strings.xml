@@ -39,7 +39,7 @@
 
 	<string name="deck_details_new">New:</string>
 	<string name="deck_details_review">Pending review:</string>
-	<string name="deck_details_total">Total</string>
+	<string name="deck_details_total">Total:</string>
 
 	<string name="increase_limits__new">New:</string>
 	<string name="increase_limits__review">Review:</string>

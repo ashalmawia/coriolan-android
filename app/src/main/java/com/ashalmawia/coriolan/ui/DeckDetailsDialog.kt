@@ -15,7 +15,7 @@ class DeckDetailsDialog(
         private val exercise: Exercise<*, *>,
         private val date: DateTime,
         private val repository: Repository
-) : Dialog(activity) {
+) : Dialog(activity, R.style.Coriolan_Theme_Dialog) {
 
     init {
         setTitle(deck.name)
