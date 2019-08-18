@@ -57,7 +57,7 @@ class MockExercise(override val stableId: String = "mock", override val stateTyp
         return stableId.hashCode()
     }
 
-    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<MockState> {
+    override fun mutations(repository: Repository, preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<MockState> {
         return Mutations(listOf())
     }
 }

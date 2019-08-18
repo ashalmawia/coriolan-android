@@ -95,6 +95,8 @@ interface Repository {
 
     fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>>
 
+    fun getStatesForCardsWithOriginals(originalIds: List<Long>, exerciseId: String): Map<Long, SRState>
+
     fun invalidateCache()
 }
 

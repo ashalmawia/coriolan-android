@@ -1808,4 +1808,98 @@ abstract class StorageTest {
         // then
         assertEquals(0, due.size)
     }
+
+    @Test
+    fun test__getStatesForCardsWithOriginals__emptyRequest() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val count = 3
+        val cards = (0 until count)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { addMockCard(storage, it, domain) }
+
+        // when
+        val map = storage.getStatesForCardsWithOriginals(emptyList(), exercise.stableId)
+
+        // then
+        assertEquals(0, map.size)
+
+        val state1 = SRState(today.plusDays(3), 4)
+        val state2 = SRState(today.plusDays(1), 4)
+        val state3 = SRState(today.plusDays(10), 4)
+
+        // given
+        storage.updateSRCardState(cards[0], state1, exercise.stableId)
+        storage.updateSRCardState(cards[1], state2, exercise.stableId)
+        storage.updateSRCardState(cards[2], state3, exercise.stableId)
+
+        // when
+        val map2 = storage.getStatesForCardsWithOriginals(emptyList(), exercise.stableId)
+
+        // then
+        assertEquals(0, map2.size)
+    }
+
+    @Test
+    fun test__getStatesForCardsWithOriginals__expressionsNotThere() {
+        // when
+        val storage = emptyStorage.value
+
+        // when
+        val map = storage.getStatesForCardsWithOriginals(listOf(1L, 5L, 10L), exercise.stableId)
+
+        // then
+        assertEquals(0, map.size)
+    }
+
+    @Test
+    fun test__getStatesForCardsWithOriginals__valuesAbsent() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val count = 3
+        val cards = (0 until count)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { addMockCard(storage, it, domain) }
+
+        // when
+        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id }, exercise.stableId)
+
+        // then
+        assertEquals(3, map.size)
+        map.values.forEach { assertEquals(mockEmptySRState(today), it) }
+    }
+
+    @Test
+    fun test__getStatesForCardsWithOriginals__valuesPresent() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val count = 3
+        val cards = (0 until count)
+                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { addMockCard(storage, it, domain) }
+        val today = today
+
+        val state1 = SRState(today.plusDays(3), 4)
+        val state2 = SRState(today.plusDays(1), 4)
+        val state3 = SRState(today.plusDays(10), 4)
+
+        storage.updateSRCardState(cards[0], state1, exercise.stableId)
+        storage.updateSRCardState(cards[1], state2, exercise.stableId)
+        storage.updateSRCardState(cards[2], state3, exercise.stableId)
+
+        // when
+        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id }, exercise.stableId)
+
+        // then
+        assertEquals(3, map.size)
+        assertEquals(state1, map[cards[0].original.id])
+        assertEquals(state2, map[cards[1].original.id])
+        assertEquals(state3, map[cards[2].original.id])
+    }
 }

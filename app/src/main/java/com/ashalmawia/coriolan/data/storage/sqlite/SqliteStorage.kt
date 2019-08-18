@@ -869,6 +869,42 @@ class SqliteStorage(
         }
     }
 
+    override fun getStatesForCardsWithOriginals(originalIds: List<Long>, exerciseId: String): Map<Long, SRState> {
+        val db = helper.readableDatabase
+
+        val CARDS = "Cards"
+        val STATES = "States"
+        val EXPRESSIONS = "Expressions"
+
+        val cursor = db.rawQuery("""
+            |SELECT
+            |   ${allColumnsCards(CARDS)},
+            |   ${allColumnsSRStates(STATES)},
+            |   ${allColumnsExpressions(EXPRESSIONS)}
+            |
+            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
+            |
+            |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
+            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
+            |
+            |       LEFT JOIN ${sqliteTableExerciseState(exerciseId)} AS $STATES
+            |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
+            |
+            |   WHERE
+            |       ${SQLITE_COLUMN_ID.from(EXPRESSIONS)} IN (${originalIds.joinToString()})
+        """.trimMargin(), arrayOf())
+
+        val map = mutableMapOf<Long, SRState>()
+        cursor.use {
+            while (cursor.moveToNext()) {
+                val expressionId = cursor.getId(EXPRESSIONS)
+                val state = extractSRState(cursor, STATES)
+                map[expressionId] = state
+            }
+            return map
+        }
+    }
+
     private fun onlyPending(statesTableAlias: String) =
             "(${SQLITE_COLUMN_DUE.from(statesTableAlias)} IS NULL OR ${SQLITE_COLUMN_DUE.from(statesTableAlias)} <= ?)"
 

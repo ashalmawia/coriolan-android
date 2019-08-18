@@ -176,6 +176,13 @@ class MockRepository : Repository {
                     it.state.due <= date
                 }
     }
+    override fun getStatesForCardsWithOriginals(originalIds: List<Long>, exerciseId: String): Map<Long, SRState> {
+        val cards = originalIds.mapNotNull { cards.find { card -> card.original.id == it } }
+        return cards.associateBy(
+                { it.original.id },
+                { states[it.id] ?: mockEmptySRState(mockToday()) }
+        )
+    }
 
     override fun invalidateCache() {
         // nothing to do here

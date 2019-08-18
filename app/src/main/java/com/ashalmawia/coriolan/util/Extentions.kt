@@ -37,6 +37,7 @@ fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
 
 fun <S : State> List<CardWithState<S>>.forwardWithState() = filter { it.card.type == CardType.FORWARD }
 fun <S : State> List<CardWithState<S>>.reverseWithState() = filter { it.card.type == CardType.REVERSE }
+fun <S : State> List<CardWithState<S>>.forwardAndReverseWithState() = partition { it.card.type == CardType.FORWARD }
 
 fun <S : State> List<CardWithState<S>>.new() = this.filter { it.state.status == Status.NEW }
 fun <S : State> List<CardWithState<S>>.review() = this.filter { it.state.status != Status.NEW }

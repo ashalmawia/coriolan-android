@@ -44,7 +44,7 @@ interface Exercise<S : State, R> {
 
     fun updateCardState(repository: Repository, card: CardWithState<S>, newState: S): CardWithState<S>
 
-    fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<S>
+    fun mutations(repository: Repository, preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<S>
 
     fun processReply(repository: Repository, card: CardWithState<S>, answer: R, assignment: Assignment<S>): CardWithState<S>
 
