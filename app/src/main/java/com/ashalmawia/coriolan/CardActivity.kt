@@ -71,7 +71,7 @@ class CardActivity : BaseActivity(), CardViewListener {
         bindToCurrent(intent.answers())
     }
 
-    private fun Intent.answers() = getStringArrayExtra(EXTRA_ANSWERS).map { SRAnswer.valueOf(it) }
+    private fun Intent.answers() = getStringArrayExtra(EXTRA_ANSWERS)!!.map { SRAnswer.valueOf(it) }
 
     override fun onStart() {
         super.onStart()
@@ -222,7 +222,7 @@ private data class VectorDrawableSelector(val enabled: Drawable, val disabled: D
             val enabled = VectorDrawableCompat.create(resources, drawableRes, null)!!
             DrawableCompat.setTint(enabled, ResourcesCompat.getColor(resources, enabledColorRes, null))
 
-            val disabled = enabled.constantState.newDrawable(resources).mutate()
+            val disabled = enabled.constantState!!.newDrawable(resources).mutate()
             DrawableCompat.setTint(disabled, ResourcesCompat.getColor(resources, disabledColorRes, null))
 
             return VectorDrawableSelector(enabled, disabled)

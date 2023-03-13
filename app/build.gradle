@@ -14,7 +14,7 @@ if (keystoreExists) {
 }
 
 android {
-    compileSdkVersion COMMON__COMPILE_SDK
+    compileSdk COMMON__COMPILE_SDK
     buildToolsVersion COMMON__BUILD_TOOLS
     defaultConfig {
         applicationId "com.ashalmawia.coriolan"
@@ -54,7 +54,7 @@ allOpen {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:design:$support_version"
@@ -89,8 +89,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation "com.android.support:support-annotations:$support_version"
 
-    implementation ("com.github.hotchemi:permissionsdispatcher:3.2.0") {
+    implementation ("com.github.hotchemi:permissionsdispatcher:3.3.1") {
         exclude module: "support-v13"
     }
-    kapt "com.github.hotchemi:permissionsdispatcher-processor:3.2.0"
+    //kapt "com.github.hotchemi:permissionsdispatcher-processor:3.3.1"
 }

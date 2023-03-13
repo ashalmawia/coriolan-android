@@ -258,16 +258,16 @@ class AddEditCardActivity : BaseActivity() {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState!!.putInt(KEY_DECK_SELECTION_POSITION, deckSelector.selectedItemPosition)
+        outState.putInt(KEY_DECK_SELECTION_POSITION, deckSelector.selectedItemPosition)
         outState.putString(KEY_ORIGINAL, original.input)
         val translations = collectTranslations()
         outState.putStringArray(KEY_TRANSLATIONS, translations)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        deckSelector.setSelection(savedInstanceState!!.getInt(KEY_DECK_SELECTION_POSITION, 0), false)
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        deckSelector.setSelection(savedInstanceState.getInt(KEY_DECK_SELECTION_POSITION, 0), false)
         original.input = savedInstanceState.getString(KEY_ORIGINAL, "")
 
         val translations = savedInstanceState.getStringArray(KEY_TRANSLATIONS)

@@ -48,7 +48,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     private fun onSelectAndRestoreClicked() {
-        selectBackupWithPermissionCheck()
+        //selectBackupWithPermissionCheck()
     }
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -141,7 +141,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
+        //onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun onStop() {

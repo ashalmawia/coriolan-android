@@ -61,7 +61,7 @@ class EnterFilePathActivity : BaseActivity() {
             return
         }
 
-        submitWithPermissionCheck(path)
+        //submitWithPermissionCheck(path)
     }
 
     @NeedsPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -94,11 +94,11 @@ class EnterFilePathActivity : BaseActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
+        //onRequestPermissionsResult(requestCode, grantResults)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState!!)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         outState.putString(EXTRA_TEXT, editText.text.toString())
         outState.putLong(EXTRA_DECK_ID, deckSelector.selectedDeck().id)
     }
