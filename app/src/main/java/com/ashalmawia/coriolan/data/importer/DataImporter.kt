@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.importer
 
 import android.content.Context
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

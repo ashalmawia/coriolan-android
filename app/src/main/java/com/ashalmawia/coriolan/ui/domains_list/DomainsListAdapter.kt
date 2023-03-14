@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.ui.domains_list
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 
 class DomainsListAdapter(private val items: List<DomainsListItem>) : RecyclerView.Adapter<DomainsListViewHolder>() {

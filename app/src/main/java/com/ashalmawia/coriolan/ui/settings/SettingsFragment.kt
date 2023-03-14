@@ -1,8 +1,7 @@
 package com.ashalmawia.coriolan.ui.settings
 
-import android.content.Context
 import android.os.Bundle
-import android.support.v7.preference.PreferenceDataStore
+import androidx.preference.PreferenceDataStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,14 +20,6 @@ private const val PREFERENCE_VERSION = "app_version"
 class SettingsFragment : PreferenceFragmentCompatDividers() {
 
     private val dataStore: PreferenceDataStore by inject()
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        if (context == null) {
-            return
-        }
-    }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = dataStore

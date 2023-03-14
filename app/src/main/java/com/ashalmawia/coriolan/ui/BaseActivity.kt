@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.ui
 
 import android.app.Activity
-import android.support.annotation.StringRes
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateDialog
 import kotlinx.android.synthetic.main.app_toolbar.*

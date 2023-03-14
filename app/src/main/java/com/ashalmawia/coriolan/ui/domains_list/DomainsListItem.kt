@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.ui.domains_list
 
 import android.content.Context
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.model.Domain
 
 sealed class DomainsListItem {

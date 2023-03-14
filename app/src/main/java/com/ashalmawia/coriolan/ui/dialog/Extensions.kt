@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.ui.dialog
 
 import android.app.AlertDialog
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 fun AlertDialog.setNegativeButton(title: String, listener: () -> Unit = {}) {
     setButton(AlertDialog.BUTTON_NEGATIVE, title, { _, _ -> listener() })

@@ -75,7 +75,7 @@
 				android:layout_height="wrap_content"
 				android:paddingStart="@dimen/spacing__very_large">
 
-				<android.support.v7.widget.AppCompatEditText
+				<androidx.appcompat.widget.AppCompatEditText
 					android:id="@+id/mockInputField"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"

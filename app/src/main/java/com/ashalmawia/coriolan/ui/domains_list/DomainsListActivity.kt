@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.ui.domains_list
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.R

@@ -16,13 +16,15 @@ if (keystoreExists) {
 android {
     compileSdk COMMON__COMPILE_SDK
     buildToolsVersion COMMON__BUILD_TOOLS
+
     defaultConfig {
         applicationId "com.ashalmawia.coriolan"
-        minSdkVersion 17
+        namespace "com.ashalmawia.coriolan"
+        minSdkVersion 21
         targetSdkVersion COMMON__TARGET_SDK
         versionCode 8
         versionName "0.8-alpha"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
         release {
@@ -55,11 +57,11 @@ allOpen {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support:appcompat-v7:$support_version"
-    implementation "com.android.support:recyclerview-v7:$support_version"
-    implementation "com.android.support:design:$support_version"
-    implementation "com.android.support:cardview-v7:$support_version"
-    implementation "com.android.support:gridlayout-v7:$support_version"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.recyclerview:recyclerview:1.3.0"
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation "com.takisoft.fix:preference-v7:$support_version.0"
     implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
@@ -86,8 +88,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.47'
     testImplementation "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation "com.android.support:support-annotations:$support_version"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.annotation:annotation:1.6.0'
 
     implementation ("com.github.hotchemi:permissionsdispatcher:3.3.1") {
         exclude module: "support-v13"

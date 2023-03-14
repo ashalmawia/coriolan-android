@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository

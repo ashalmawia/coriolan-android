@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning
 
 import android.content.Context
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.CardActivity
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.journal.Journal

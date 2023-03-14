@@ -2,8 +2,8 @@ package com.ashalmawia.coriolan.ui.edit
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +33,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
     private lateinit var listener: EditFragmentListener
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = context as EditFragmentListener
     }

@@ -13,7 +13,7 @@
 		android:text="@string/deck_content_cards"
 		android:padding="10dp"/>
 
-	<android.support.v7.widget.RecyclerView
+	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/cardsList"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

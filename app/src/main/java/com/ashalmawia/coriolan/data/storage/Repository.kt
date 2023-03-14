@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Status

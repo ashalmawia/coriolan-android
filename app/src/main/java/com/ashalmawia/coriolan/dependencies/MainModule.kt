@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.dependencies
 
 import android.database.sqlite.SQLiteOpenHelper
-import android.support.v7.preference.PreferenceDataStore
+import androidx.preference.PreferenceDataStore
 import com.ashalmawia.coriolan.FirstStart
 import com.ashalmawia.coriolan.FirstStartImpl
 import com.ashalmawia.coriolan.data.DomainsRegistry
