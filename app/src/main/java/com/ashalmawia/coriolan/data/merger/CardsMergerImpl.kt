@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.merger
 
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Expression

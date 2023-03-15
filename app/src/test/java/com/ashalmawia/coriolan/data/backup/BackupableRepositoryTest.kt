@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.learning.*
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import org.junit.Assert.*
 import org.junit.Before

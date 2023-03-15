@@ -32,7 +32,7 @@
 			android:parentActivityName=".ui.domains_list.DomainsListActivity"/>
 
 		<activity
-			android:name=".CardActivity"
+			android:name=".ui.learning.LearningActivity"
 			android:launchMode="singleTop"
 			android:parentActivityName=".ui.DomainActivity"/>
 

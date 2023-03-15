@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.data.backup.json.MockBackupableRepository
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 

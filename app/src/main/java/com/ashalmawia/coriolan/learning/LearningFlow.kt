@@ -5,9 +5,11 @@ import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.ExpressionExtras
 
 class LearningFlow<S : State, R>(
         private val repository: Repository,
@@ -15,7 +17,8 @@ class LearningFlow<S : State, R>(
         val deck: Deck,
         studyOrder: StudyOrder,
         val exercise: Exercise<S, R>,
-        val journal: Journal
+        val journal: Journal,
+        private val listener: Listener<S>
 ) {
 
     private val assignment: Assignment<S> = assignmentFactory.createAssignment(
@@ -23,8 +26,6 @@ class LearningFlow<S : State, R>(
             exercise,
             deck
     )
-
-    private val finishListeners = mutableListOf<FinishListener>()
 
     val card
         get() = assignment.current!!
@@ -35,28 +36,27 @@ class LearningFlow<S : State, R>(
     fun showNextOrComplete() {
         if (assignment.hasNext()) {
             val card = assignment.next()
-            exercise.showCard(card)
+            renderCard(card)
         } else {
             finish()
         }
     }
 
     fun replyCurrent(reply: R) {
-        val updated = exercise.processReply(repository, card, reply, assignment)
+        val updated = exercise.processReply(repository, card, reply)
         recordCardStudied(card.state.status, updated.state.status, journal)
+        rescheduleIfNeeded(card)
         showNextOrComplete()
     }
 
-    fun addFinishListener(listener: FinishListener) {
-        finishListeners.add(listener)
-    }
-
-    fun removeFinishListener(listener: FinishListener) {
-        finishListeners.remove(listener)
+    private fun rescheduleIfNeeded(card: CardWithState<S>) {
+        if (exercise.isPending(card)) {
+            assignment.reschedule(card)
+        }
     }
 
     private fun finish() {
-        finishListeners.forEach { it() }
+        listener.onFinish()
     }
 
     fun canUndo() = exercise.canUndo && assignment.canUndo()
@@ -66,7 +66,7 @@ class LearningFlow<S : State, R>(
         val undone = assignment.undo()
         exercise.updateCardState(repository, undone, undone.state)
         undoCardStudied(undone.state.status, journal, newState.status != Status.RELEARN)
-        exercise.showCard(undone)
+        renderCard(undone)
     }
 
     private fun recordCardStudied(oldStatus: Status, newStatus: Status, journal: Journal) {
@@ -116,11 +116,16 @@ class LearningFlow<S : State, R>(
             assignment.replace(card, updatedWithState)
             if (isCurrent(card)) {
                 // make exercise pre-present the card with the changes
-                exercise.showCard(updatedWithState)
+                renderCard(updatedWithState)
             }
         } else {
             dropCard(card)
         }
+    }
+
+    private fun renderCard(card: CardWithState<S>) {
+        val extras = repository.allExtrasForCard(card.card)
+        listener.onRender(card, extras)
     }
 
     fun dropCard(card: Card) {
@@ -132,6 +137,9 @@ class LearningFlow<S : State, R>(
     }
 
     private fun isCurrent(card: Card) = this.card.card.id == card.id
-}
 
-typealias FinishListener = () -> Unit
+    interface Listener<S : State> {
+        fun onRender(card: CardWithState<S>, extras: List<ExpressionExtras>)
+        fun onFinish()
+    }
+}

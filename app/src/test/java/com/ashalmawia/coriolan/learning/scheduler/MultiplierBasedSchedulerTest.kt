@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.learning.scheduler
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
 import org.junit.Assert.assertEquals

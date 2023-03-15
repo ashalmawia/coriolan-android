@@ -1,9 +1,12 @@
-package com.ashalmawia.coriolan.learning
+package com.ashalmawia.coriolan.learning.exercise
 
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -36,8 +39,6 @@ interface Exercise<S : State, R> {
 
     fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<S>>
 
-    fun showCard(card: CardWithState<S>)
-
     fun isPending(card: CardWithState<S>): Boolean
 
     fun getCardWithState(repository: Repository, card: Card): CardWithState<S>
@@ -46,7 +47,9 @@ interface Exercise<S : State, R> {
 
     fun mutations(repository: Repository, preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<S>
 
-    fun processReply(repository: Repository, card: CardWithState<S>, answer: R, assignment: Assignment<S>): CardWithState<S>
+    fun processReply(repository: Repository, card: CardWithState<S>, answer: R): CardWithState<S>
 
     fun onTranslationAdded(repository: Repository, card: Card)
+
+    fun createRenderer(listener: ExerciseRenderer.Listener<R>): ExerciseRenderer<S, R>
 }

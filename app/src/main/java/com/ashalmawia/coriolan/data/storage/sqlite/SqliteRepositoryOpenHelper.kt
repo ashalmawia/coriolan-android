@@ -3,8 +3,8 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.ashalmawia.coriolan.learning.Exercise
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 
 private const val SCHEMA_VERSION = 1

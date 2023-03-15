@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.backup.json
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.SRStateInfo
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.StateType
 import com.fasterxml.jackson.core.*
 import java.io.InputStream

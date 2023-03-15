@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.learning
 
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 

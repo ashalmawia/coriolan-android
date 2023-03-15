@@ -4,7 +4,7 @@ import com.ashalmawia.coriolan.data.backup.json.JsonBackup
 import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
 import com.ashalmawia.coriolan.data.storage.provideHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.util.OpenForTesting

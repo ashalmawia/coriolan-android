@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.backup
 
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import java.io.InputStream
 import java.io.OutputStream
 

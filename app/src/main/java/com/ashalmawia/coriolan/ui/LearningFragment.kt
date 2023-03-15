@@ -15,11 +15,13 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.dependencies.domainScope
-import com.ashalmawia.coriolan.dependencies.learningFlowScope
 import com.ashalmawia.coriolan.learning.*
+import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
@@ -40,7 +42,7 @@ private const val TAG = "LearningFragment"
 
 class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher, BeginStudyListener {
 
-    private val decksRegistry: DecksRegistry by lazy { domainScope().get<DecksRegistry>() }
+    private val decksRegistry: DecksRegistry by lazy { domainScope().get() }
     private val adapter: DecksAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this, this) }
     private val exercisesRegistry: ExercisesRegistry by inject()
 
@@ -84,10 +86,8 @@ class LearningFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begin
     }
 
     override fun beginStudy(deck: Deck, studyOrder: StudyOrder) {
-        val flow = learningFlowScope().get<LearningFlow<*, *>> {
-            parametersOf(exercisesRegistry.defaultExercise(), deck, studyOrder)
-        }
-        flow.showNextOrComplete()
+        val intent = LearningActivity.intent(requireContext(), deck, studyOrder)
+        requireActivity().startActivity(intent)
     }
 
     override fun onDayChanged() {

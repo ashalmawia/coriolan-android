@@ -1,16 +1,17 @@
-package com.ashalmawia.coriolan.learning
+package com.ashalmawia.coriolan.learning.exercise.sr
 
-import android.content.Context
 import androidx.annotation.StringRes
-import com.ashalmawia.coriolan.CardActivity
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
+import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
@@ -26,7 +27,6 @@ import org.joda.time.DateTime
  * Otherwise, adds it to the end of the queue.
  */
 class SpacedRepetitionExercise(
-        private val context: Context,
         private val todayProvider: TodayProvider,
         private val emptyStateProvider: EmptyStateProvider,
         private val scheduler: Scheduler
@@ -46,13 +46,9 @@ class SpacedRepetitionExercise(
     override val canUndo: Boolean
         get() = true
 
-    override fun processReply(repository: Repository, card: CardWithState<SRState>, answer: SRAnswer, assignment: Assignment<SRState>): CardWithState<SRState> {
-        val updated = updateCardState(repository, card, scheduler.processAnswer(answer, card.state))
-        rescheduleIfNeeded(updated, assignment)
-        return updated
+    override fun processReply(repository: Repository, card: CardWithState<SRState>, answer: SRAnswer): CardWithState<SRState> {
+        return updateCardState(repository, card, scheduler.processAnswer(answer, card.state))
     }
-
-    private fun answers(state: SRState): Array<SRAnswer> = scheduler.answers(state)
 
     override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
         return repository.cardsDueDate(stableId, deck, date)
@@ -62,24 +58,14 @@ class SpacedRepetitionExercise(
         return repository.getStatesForCardsWithOriginals(originals, stableId)
     }
 
-    override fun showCard(card: CardWithState<SRState>) {
-        val intent = CardActivity.intent(context, answers(card.state))
-        context.startActivity(intent)
-    }
-
     override fun updateCardState(repository: Repository, card: CardWithState<SRState>, newState: SRState): CardWithState<SRState> {
+        // todo: move to the LearningFlow
         repository.updateSRCardState(card.card, newState, stableId)
         return CardWithState(card.card, newState)
     }
 
     override fun getCardWithState(repository: Repository, card: Card): CardWithState<SRState> {
         return CardWithState(card, repository.getSRCardState(card, stableId))
-    }
-
-    private fun rescheduleIfNeeded(card: CardWithState<SRState>, assignment: Assignment<SRState>) {
-        if (isPending(card)) {
-            assignment.reschedule(card)
-        }
     }
 
     override fun isPending(card: CardWithState<SRState>): Boolean = card.state.due <= todayProvider.today()
@@ -97,6 +83,10 @@ class SpacedRepetitionExercise(
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
         repository.updateSRCardState(card, emptyStateProvider.emptySRState(), stableId)
+    }
+
+    override fun createRenderer(listener: ExerciseRenderer.Listener<SRAnswer>): ExerciseRenderer<SRState, SRAnswer> {
+        return SpacedRepetitionExerciseRenderer(scheduler, listener)
     }
 
     class LearningModeMutation(

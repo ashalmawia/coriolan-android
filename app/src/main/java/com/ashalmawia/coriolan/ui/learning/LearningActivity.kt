@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan
+package com.ashalmawia.coriolan.ui.learning
 
 import android.content.Context
 import android.content.Intent
@@ -12,71 +12,81 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.appcompat.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.dependencies.learningFlowScope
-import com.ashalmawia.coriolan.learning.SRAnswer
+import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
+import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.view.CardView
-import com.ashalmawia.coriolan.ui.view.CardViewListener
 import com.ashalmawia.coriolan.util.setStartDrawableTint
-import kotlinx.android.synthetic.main.card_activity.*
+import kotlinx.android.synthetic.main.learning_activity.*
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.getKoin
+import org.koin.core.parameter.parametersOf
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
-private const val EXTRA_ANSWERS = "answers"
+private const val EXTRA_DOMAIN_ID = "extra_domain_id"
+private const val EXTRA_DECK_ID = "extra_deck_id"
+private const val EXTRA_STUDY_ORDER = "extra_study_order"
 
-class CardActivity : BaseActivity(), CardViewListener {
+class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, ExerciseRenderer.Listener<SRAnswer> {
 
     companion object {
-        fun intent(context: Context, answers: Array<SRAnswer>): Intent {
-            return Intent(context, CardActivity::class.java).apply {
-                putExtra(EXTRA_ANSWERS, answers.map { it.toString() }.toTypedArray())
-            }
+        fun intent(context: Context, deck: Deck, studyOrder: StudyOrder): Intent {
+            val intent = Intent(context, LearningActivity::class.java)
+            intent.putExtra(EXTRA_DOMAIN_ID, deck.domain.id)
+            intent.putExtra(EXTRA_DECK_ID, deck.id)
+            intent.putExtra(EXTRA_STUDY_ORDER, studyOrder.toString())
+            return intent
         }
     }
 
     private val decksRegistry: DecksRegistry = domainScope().get()
     private val repository: Repository = get()
 
+    // todo: create factory
     private val flow by lazy {
         @Suppress("UNCHECKED_CAST")
-        learningFlowScope().get<LearningFlow<*, *>>() as LearningFlow<SRState, SRAnswer>
+        learningFlowScope().get<LearningFlow<*, *>> {
+            val exercisesRegistry = getKoin().get<ExercisesRegistry>()
+            val (deck, studyOrder) = resolveParameters()
+            parametersOf(exercisesRegistry.defaultExercise(), deck, studyOrder, this)
+        } as LearningFlow<SRState, SRAnswer>
     }
-
-    private val finishListener = { finish() }
+    private val renderer by lazy { flow.exercise.createRenderer(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.card_activity)
+        setContentView(R.layout.learning_activity)
 
         adjustProgressCountsUI()
 
         setUpToolbar(flow.deck.name)
         toolbarTitle.text = flow.deck.name
 
-        bindToCurrent(intent.answers())
-
+        beginExercise()
         delegate.isHandleNativeActionModesEnabled = false
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        bindToCurrent(intent.answers())
-    }
-
-    private fun Intent.answers() = getStringArrayExtra(EXTRA_ANSWERS)!!.map { SRAnswer.valueOf(it) }
-
-    override fun onStart() {
-        super.onStart()
-
-        flow.addFinishListener(finishListener)
+    private fun resolveParameters(): Pair<Deck, StudyOrder> {
+        val deckId = intent.getLongExtra(EXTRA_DECK_ID, 0L)
+        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, 0L)
+        val domain = repository.domainById(domainId)!!
+        val deck = repository.deckById(deckId, domain)!!
+        val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
+        return Pair(deck, studyOrder)
     }
 
     override fun onBackPressed() {
@@ -158,37 +168,13 @@ class CardActivity : BaseActivity(), CardViewListener {
         flow.refetchCard(flow.card)
     }
 
-    override fun onStop() {
-        super.onStop()
-
-        flow.removeFinishListener(finishListener)
-    }
-
-    override fun onCorrect() {
-        flow.replyCurrent(SRAnswer.CORRECT)
-    }
-
-    override fun onWrong() {
-        flow.replyCurrent(SRAnswer.WRONG)
-    }
-
-    override fun onEasy() {
-        flow.replyCurrent(SRAnswer.EASY)
-    }
-
-    override fun onHard() {
-        flow.replyCurrent(SRAnswer.HARD)
-    }
-
-    private fun bindToCurrent(answers: List<SRAnswer>) {
-        val view = cardView as CardView
-        val card = flow.card
-        view.bind(card.card, repository.allExtrasForCard(card.card), answers)
-        view.listener = this
+    private fun beginExercise() {
+        renderer.prepareUi(this, exerciseContainer)
 
         updateProgressCounts()
-
         invalidateOptionsMenu()
+
+        flow.showNextOrComplete()
     }
 
     private fun adjustProgressCountsUI() {
@@ -202,6 +188,18 @@ class CardActivity : BaseActivity(), CardViewListener {
         deck_progress_bar__new.text = counts.new.toString()
         deck_progress_bar__review.text = counts.review.toString()
         deck_progress_bar__relearn.text = counts.relearn.toString()
+    }
+
+    override fun onRender(card: CardWithState<SRState>, extras: List<ExpressionExtras>) {
+        renderer.renderCard(card, extras)
+    }
+
+    override fun onFinish() {
+        finish()
+    }
+
+    override fun onAnswered(answer: SRAnswer) {
+        flow.replyCurrent(answer)
     }
 }
 

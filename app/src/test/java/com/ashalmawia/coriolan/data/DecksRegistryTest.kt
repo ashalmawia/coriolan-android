@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.storage.MockRepository
 import com.ashalmawia.coriolan.data.storage.justAddExpression
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.forward

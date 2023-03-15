@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 

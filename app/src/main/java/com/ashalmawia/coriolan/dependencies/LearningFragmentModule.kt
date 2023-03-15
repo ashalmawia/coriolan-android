@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.dependencies
 
 import android.app.Dialog
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.*
 import org.joda.time.DateTime

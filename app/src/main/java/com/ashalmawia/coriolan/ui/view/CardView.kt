@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.learning.SRAnswer
+import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener

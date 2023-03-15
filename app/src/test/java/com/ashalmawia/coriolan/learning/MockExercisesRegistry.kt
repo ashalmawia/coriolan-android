@@ -1,5 +1,7 @@
 package com.ashalmawia.coriolan.learning
 
+import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 
 class MockExercisesRegistry(

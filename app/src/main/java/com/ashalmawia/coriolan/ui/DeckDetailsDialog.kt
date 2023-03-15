@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.model.Deck
 import kotlinx.android.synthetic.main.deck_details.*
 import org.joda.time.DateTime

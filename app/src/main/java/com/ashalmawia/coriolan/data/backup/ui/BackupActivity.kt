@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.learning.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*

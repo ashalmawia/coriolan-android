@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.learning.exercise.sr
 
-import com.ashalmawia.coriolan.learning.SRAnswer
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayProvider
 import org.joda.time.Days

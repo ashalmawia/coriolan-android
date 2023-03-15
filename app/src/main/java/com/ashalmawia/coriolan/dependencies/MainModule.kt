@@ -24,6 +24,8 @@ import com.ashalmawia.coriolan.learning.assignment.HistoryFactory
 import com.ashalmawia.coriolan.learning.assignment.HistoryFactoryImpl
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProviderImpl
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistryImpl
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore

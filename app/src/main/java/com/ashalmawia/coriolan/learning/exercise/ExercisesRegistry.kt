@@ -1,4 +1,6 @@
-package com.ashalmawia.coriolan.learning
+package com.ashalmawia.coriolan.learning.exercise
+
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 
 interface ExercisesRegistry {
 

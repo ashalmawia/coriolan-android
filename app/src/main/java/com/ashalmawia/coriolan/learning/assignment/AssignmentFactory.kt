@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.learning.assignment
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder

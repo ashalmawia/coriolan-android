@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.Exercise
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider

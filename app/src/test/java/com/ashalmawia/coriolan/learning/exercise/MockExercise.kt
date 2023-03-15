@@ -4,9 +4,7 @@ import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.Exercise
 import com.ashalmawia.coriolan.learning.StateType
-import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.learning.mutation.Mutations
@@ -33,10 +31,6 @@ class MockExercise(override val stableId: String = "mock", override val stateTyp
 
     override fun updateCardState(repository: Repository, card: CardWithState<MockState>, newState: MockState): CardWithState<MockState> {
         return CardWithState(card.card, newState)
-    }
-
-    override fun processReply(repository: Repository, card: CardWithState<MockState>, answer: Any, assignment: Assignment<MockState>): CardWithState<MockState> {
-        return card
     }
 
     override fun name(): Int = 0
