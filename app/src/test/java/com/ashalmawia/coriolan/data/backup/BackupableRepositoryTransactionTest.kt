@@ -12,11 +12,13 @@ import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.SQLiteMode
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 @RunWith(RobolectricTestRunner::class)
+@SQLiteMode(SQLiteMode.Mode.LEGACY)
 class BackupableRepositoryTransactionTest {
 
     val exercises = MockExercisesRegistry()

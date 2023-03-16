@@ -7,8 +7,10 @@ import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.learning.StateType
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.SQLiteMode
 
 @RunWith(RobolectricTestRunner::class)
+@SQLiteMode(SQLiteMode.Mode.LEGACY)
 class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
 
     override fun createEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository
