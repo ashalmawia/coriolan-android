@@ -24,7 +24,7 @@
 				android:layout_height="wrap_content"
 				android:text="@string/edit_card__deck"/>
 
-			<com.ashalmawia.coriolan.ui.view.DeckSelector
+			<com.ashalmawia.coriolan.ui.commons.DeckSelector
 				android:id="@+id/deckSelector"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"/>
@@ -36,7 +36,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginTop="@dimen/spacing__medium"/>
 
-			<com.ashalmawia.coriolan.ui.AddEditCardItemView
+			<com.ashalmawia.coriolan.ui.add_edit.AddEditCardItemView
 				android:id="@+id/original"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
 				android:layout_marginTop="@dimen/spacing__medium"
 				android:text="@string/edit_card__transcription" />
 
-			<com.ashalmawia.coriolan.ui.AddEditCardItemView
+			<com.ashalmawia.coriolan.ui.add_edit.AddEditCardItemView
 				android:id="@+id/transcription"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

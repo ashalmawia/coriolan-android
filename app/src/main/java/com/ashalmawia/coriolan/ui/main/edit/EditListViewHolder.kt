@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui.edit
+package com.ashalmawia.coriolan.ui.main.edit
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View

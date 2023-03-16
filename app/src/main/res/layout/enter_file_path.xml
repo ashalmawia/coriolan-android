@@ -35,7 +35,7 @@
 			android:text="@string/decks_select_deck"
 			android:labelFor="@id/deckSelector"/>
 
-		<com.ashalmawia.coriolan.ui.view.DeckSelector
+		<com.ashalmawia.coriolan.ui.commons.DeckSelector
 			android:id="@+id/deckSelector"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />

@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.add_edit
 
 import android.content.Context
 import android.util.AttributeSet

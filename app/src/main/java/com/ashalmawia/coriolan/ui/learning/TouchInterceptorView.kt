@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui.view
+package com.ashalmawia.coriolan.ui.learning
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.ashalmawia.coriolan.ui.view.visible
 
 /**
  * Accepts one or multiple anchors and catches all

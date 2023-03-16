@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui
 
 import com.ashalmawia.coriolan.model.mockDeck
+import com.ashalmawia.coriolan.ui.add_edit.CardValidator
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

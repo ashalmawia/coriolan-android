@@ -26,7 +26,7 @@ import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionExtras
-import com.ashalmawia.coriolan.ui.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning_activity.*

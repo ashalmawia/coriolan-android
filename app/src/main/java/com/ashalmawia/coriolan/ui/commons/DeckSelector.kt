@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui.view
+package com.ashalmawia.coriolan.ui.commons
 
 import android.content.Context
 import androidx.appcompat.widget.AppCompatSpinner

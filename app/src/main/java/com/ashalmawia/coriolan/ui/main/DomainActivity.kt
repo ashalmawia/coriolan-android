@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.main
 
 import android.content.Context
 import android.content.Intent
@@ -12,8 +12,11 @@ import com.ashalmawia.coriolan.dependencies.closeScope
 import com.ashalmawia.coriolan.dependencies.createDomainScope
 import com.ashalmawia.coriolan.dependencies.createScope
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.ui.edit.EditFragment
-import com.ashalmawia.coriolan.ui.edit.EditFragmentListener
+import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.DecksListFragment
+import com.ashalmawia.coriolan.ui.main.edit.EditFragment
+import com.ashalmawia.coriolan.ui.main.edit.EditFragmentListener
+import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
@@ -21,12 +24,12 @@ import kotlinx.android.synthetic.main.domain_activity.*
 import org.koin.android.ext.android.inject
 
 private enum class Tab {
-    LEARNING,
+    DECKS_LIST,
     EDIT,
     STATISTICS
 }
 
-private const val FRAGMENT_LEARNING = "fragment_learning"
+private const val FRAGMENT_DECKS_LIST = "fragment_decks_list"
 private const val FRAGMENT_EDIT = "fragment_edit"
 private const val FRAGMENT_STATISTICS = "fragment_statistics"
 
@@ -83,7 +86,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         bottomNavigation.defaultBackgroundColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
         bottomNavigation.setOnTabSelectedListener { position, _ -> onNavigationItemSelected(position) }
-        selectTab(Tab.LEARNING)
+        selectTab(Tab.DECKS_LIST)
     }
 
     private fun selectTab(tab: Tab) {
@@ -92,7 +95,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     private fun onNavigationItemSelected(position: Int): Boolean {
         return when (position) {
-            Tab.LEARNING.ordinal -> {
+            Tab.DECKS_LIST.ordinal -> {
                 switchToLearning()
                 true
             }
@@ -112,9 +115,9 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     private fun switchToLearning() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_LEARNING) ?: LearningFragment()
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_DECKS_LIST) ?: DecksListFragment()
         supportFragmentManager.beginTransaction()
-                .replace(R.id.content, fragment, FRAGMENT_LEARNING)
+                .replace(R.id.content, fragment, FRAGMENT_DECKS_LIST)
                 .commitAllowingStateLoss()
     }
 
@@ -139,7 +142,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     override fun onDataUpdated() {
-        selectTab(Tab.LEARNING)
+        selectTab(Tab.DECKS_LIST)
     }
 
     companion object {

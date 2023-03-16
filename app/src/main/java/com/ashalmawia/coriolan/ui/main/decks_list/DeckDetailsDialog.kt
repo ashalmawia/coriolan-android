@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.main.decks_list
 
 import android.app.Activity
 import android.app.Dialog

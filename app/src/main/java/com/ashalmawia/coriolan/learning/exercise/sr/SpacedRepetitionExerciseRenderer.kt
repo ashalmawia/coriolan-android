@@ -8,8 +8,8 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.model.ExpressionExtras
-import com.ashalmawia.coriolan.ui.view.CardView
-import com.ashalmawia.coriolan.ui.view.CardViewListener
+import com.ashalmawia.coriolan.ui.learning.CardView
+import com.ashalmawia.coriolan.ui.learning.CardViewListener
 
 class SpacedRepetitionExerciseRenderer(
         private val scheduler: Scheduler,

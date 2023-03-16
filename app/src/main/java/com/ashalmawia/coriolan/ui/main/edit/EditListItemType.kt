@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui.edit
+package com.ashalmawia.coriolan.ui.main.edit
 
 import android.content.Context
 import android.view.LayoutInflater

@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui.view
+package com.ashalmawia.coriolan.ui.learning
 
 import android.animation.ObjectAnimator
 import android.content.Context
@@ -12,6 +12,7 @@ import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
+import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.card_translation_item.view.*
 import kotlinx.android.synthetic.main.card_view.view.*
 

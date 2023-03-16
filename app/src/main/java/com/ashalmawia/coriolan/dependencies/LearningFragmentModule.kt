@@ -4,6 +4,9 @@ import android.app.Dialog
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.*
+import com.ashalmawia.coriolan.ui.main.decks_list.DeckDetailsDialog
+import com.ashalmawia.coriolan.ui.main.decks_list.DecksListAdapter
+import com.ashalmawia.coriolan.ui.main.decks_list.IncreaseLimitsDialog
 import org.joda.time.DateTime
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
@@ -12,10 +15,10 @@ import org.koin.dsl.module
 private const val DIALOG_DECK_DETAILS = "deck_details"
 private const val DIALOG_INCREASE_LIMITS = "increase_limits"
 
-val learningFragmentModule = module {
+val decksListFragmentModule = module {
 
     factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
-        DecksAdapter(
+        DecksListAdapter(
                 get(),
                 get(),
                 exercise,

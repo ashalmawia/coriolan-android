@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui.edit
+package com.ashalmawia.coriolan.ui.main.edit
 
 import android.content.Context
 import android.os.Bundle
@@ -18,8 +18,8 @@ import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.dependencies.dataImportScope
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.ui.AddEditCardActivity
-import com.ashalmawia.coriolan.ui.AddEditDeckActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.DataFetcher
 import kotlinx.android.synthetic.main.edit.*

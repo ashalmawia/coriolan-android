@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.add_edit
 
 import android.content.Context
 import android.content.Intent
@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.errors.Errors
 import kotlinx.android.synthetic.main.button_bar.*
 import kotlinx.android.synthetic.main.create_deck.*

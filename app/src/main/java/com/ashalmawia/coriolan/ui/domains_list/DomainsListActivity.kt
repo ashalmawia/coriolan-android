@@ -12,7 +12,7 @@ import com.ashalmawia.coriolan.dependencies.closeDomainScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.CreateDomainActivity
-import com.ashalmawia.coriolan.ui.DomainActivity
+import com.ashalmawia.coriolan.ui.main.DomainActivity
 import kotlinx.android.synthetic.main.domains_list.*
 import org.koin.android.ext.android.inject
 

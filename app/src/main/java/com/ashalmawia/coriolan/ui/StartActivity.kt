@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
+import com.ashalmawia.coriolan.ui.main.DomainActivity
 import org.koin.android.ext.android.get
 
 class StartActivity : BaseActivity() {

@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.add_edit
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.ui.BaseActivity
 import kotlinx.android.synthetic.main.add_edit_card.*
 import org.koin.android.ext.android.get
 
