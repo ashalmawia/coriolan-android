@@ -11,6 +11,7 @@ import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
 
@@ -45,7 +46,15 @@ interface Exercise<S : State, R> {
 
     fun updateCardState(repository: Repository, card: CardWithState<S>, newState: S): CardWithState<S>
 
-    fun mutations(repository: Repository, preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<S>
+    fun mutations(
+            repository: Repository,
+            preferences: Preferences,
+            journal: Journal,
+            date: DateTime,
+            order: StudyOrder,
+            deck: Deck,
+            cardType: CardType
+    ): Mutations<S>
 
     fun processReply(repository: Repository, card: CardWithState<S>, answer: R): CardWithState<S>
 

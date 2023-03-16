@@ -13,13 +13,6 @@ import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.ui.BeginStudyListener
-import com.ashalmawia.coriolan.ui.DataFetcher
-import com.ashalmawia.coriolan.ui.DeckDetailsDialogCreator
-import com.ashalmawia.coriolan.ui.DeckViewHolder
-import com.ashalmawia.coriolan.ui.HeaderViewHolder
-import com.ashalmawia.coriolan.ui.IncreaseLimitsDialogCreator
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
@@ -39,15 +32,15 @@ class DecksListAdapter(
         private val createIncreaseLimitsDialog: IncreaseLimitsDialogCreator
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val decks: MutableList<Deck> = mutableListOf()
-    private val counts: MutableMap<Deck, Counts> = mutableMapOf()
+    private val decks: MutableList<DeckListItem> = mutableListOf()
+    private val counts: MutableMap<DeckListItem, Counts> = mutableMapOf()
 
-    fun setData(data: List<Deck>) {
+    fun setData(data: List<DeckListItem>) {
         decks.clear()
         decks.addAll(data)
 
         val timeStart = System.currentTimeMillis()
-        decks.forEach { counts[it] = deckCountsProvider.peekCounts(exercise, it) }
+        decks.forEach { counts[it] = deckCountsProvider.peekCounts(exercise, it.deck, it.cardType) }
         Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
 
         notifyDataSetChanged()
@@ -74,8 +67,8 @@ class DecksListAdapter(
 
         val context = holder.text.context
 
-        holder.text.text = item.name
-        holder.type.text = item.type.toTypeStringRes()?.run { context.getString(this) } ?: ""
+        holder.text.text = item.deck.name
+        holder.type.text = item.cardType.toTypeStringRes()?.run { context.getString(this) } ?: ""
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
         holder.itemView.setOnClickListener { studyDefault(item) }
@@ -109,51 +102,51 @@ class DecksListAdapter(
         view.setStartDrawableTint(R.color.pending_item__foreground)
     }
 
-    private fun showPopupMenu(deck: Deck, anchor: View) {
+    private fun showPopupMenu(item: DeckListItem, anchor: View) {
         val menu = PopupMenu(anchor.context, anchor)
         menu.inflate(R.menu.decks_study_options_popup)
         menu.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.decks_study_options_popup__straightforward -> studyStraightforward(deck)
-                R.id.decks_study_options_popup__random -> studyRandom(deck)
-                R.id.decks_study_options_popup__newest_first -> studyNewestFirst(deck)
-                R.id.decks_study_options_popup__study_more -> studyMore(deck)
-                R.id.deck_study_options_popup__details -> showDeckDetails(deck)
+                R.id.decks_study_options_popup__straightforward -> studyStraightforward(item)
+                R.id.decks_study_options_popup__random -> studyRandom(item)
+                R.id.decks_study_options_popup__newest_first -> studyNewestFirst(item)
+                R.id.decks_study_options_popup__study_more -> studyMore(item)
+                R.id.deck_study_options_popup__details -> showDeckDetails(item)
             }
             true
         }
         menu.show()
     }
 
-    private fun studyDefault(deck: Deck) {
-        studyRandom(deck)
+    private fun studyDefault(item: DeckListItem) {
+        studyRandom(item)
     }
 
-    private fun studyStraightforward(deck: Deck) {
-        instantiateLearningFlow(deck, StudyOrder.ORDER_ADDED)
+    private fun studyStraightforward(item: DeckListItem) {
+        instantiateLearningFlow(item, StudyOrder.ORDER_ADDED)
     }
 
-    private fun studyRandom(deck: Deck) {
-        instantiateLearningFlow(deck, StudyOrder.RANDOM)
+    private fun studyRandom(item: DeckListItem) {
+        instantiateLearningFlow(item, StudyOrder.RANDOM)
     }
 
-    private fun studyNewestFirst(deck: Deck) {
+    private fun studyNewestFirst(item: DeckListItem) {
         val studyOrder = StudyOrder.NEWEST_FIRST
-        instantiateLearningFlow(deck, studyOrder)
+        instantiateLearningFlow(item, studyOrder)
     }
 
-    private fun instantiateLearningFlow(deck: Deck, studyOrder: StudyOrder) {
-        beginStudyListener.beginStudy(deck, studyOrder)
+    private fun instantiateLearningFlow(item: DeckListItem, studyOrder: StudyOrder) {
+        beginStudyListener.beginStudy(item.deck, item.cardType, studyOrder)
     }
 
-    private fun studyMore(deck: Deck) {
-        val dialog = createIncreaseLimitsDialog(deck, today())
+    private fun studyMore(item: DeckListItem) {
+        val dialog = createIncreaseLimitsDialog(item, today())
         dialog.setOnDismissListener { dataFetcher.fetchData() }
         dialog.show()
     }
 
-    private fun showDeckDetails(deck: Deck) {
-        val dialog = createDeckDetailsDialog(deck, today())
+    private fun showDeckDetails(item: DeckListItem) {
+        val dialog = createDeckDetailsDialog(item, today())
         dialog.show()
     }
 

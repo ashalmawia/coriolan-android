@@ -21,7 +21,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.BaseFragment
-import com.ashalmawia.coriolan.ui.DataFetcher
+import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
 import kotlinx.android.synthetic.main.edit.*
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf

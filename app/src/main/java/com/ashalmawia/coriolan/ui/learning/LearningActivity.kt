@@ -24,6 +24,7 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
@@ -38,15 +39,17 @@ private const val REQUEST_CODE_EDIT_CARD = 1
 
 private const val EXTRA_DOMAIN_ID = "extra_domain_id"
 private const val EXTRA_DECK_ID = "extra_deck_id"
+private const val EXTRA_CARD_TYPE = "extra_card_type"
 private const val EXTRA_STUDY_ORDER = "extra_study_order"
 
 class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, ExerciseRenderer.Listener<SRAnswer> {
 
     companion object {
-        fun intent(context: Context, deck: Deck, studyOrder: StudyOrder): Intent {
+        fun intent(context: Context, deck: Deck, cardType: CardType, studyOrder: StudyOrder): Intent {
             val intent = Intent(context, LearningActivity::class.java)
             intent.putExtra(EXTRA_DOMAIN_ID, deck.domain.id)
             intent.putExtra(EXTRA_DECK_ID, deck.id)
+            intent.putExtra(EXTRA_CARD_TYPE, cardType.toString())
             intent.putExtra(EXTRA_STUDY_ORDER, studyOrder.toString())
             return intent
         }
@@ -58,9 +61,9 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, Exercis
     private val flow by lazy {
         val learningFlowFactory: LearningFlow.Factory<SRState, SRAnswer> = get()
         val exercisesRegistry = getKoin().get<ExercisesRegistry>()
-        val (deck, studyOrder) = resolveParameters()
+        val (deck, cardType, studyOrder) = resolveParameters()
         val exercise = exercisesRegistry.defaultExercise() as Exercise<SRState, SRAnswer>
-        learningFlowFactory.createLearningFlow(deck, studyOrder, exercise, this)
+        learningFlowFactory.createLearningFlow(deck, cardType, studyOrder, exercise, this)
     }
     private val renderer by lazy { flow.exercise.createRenderer(this) }
 
@@ -77,13 +80,14 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, Exercis
         delegate.isHandleNativeActionModesEnabled = false
     }
 
-    private fun resolveParameters(): Pair<Deck, StudyOrder> {
+    private fun resolveParameters(): Triple<Deck, CardType, StudyOrder> {
         val deckId = intent.getLongExtra(EXTRA_DECK_ID, 0L)
         val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, 0L)
         val domain = repository.domainById(domainId)!!
         val deck = repository.deckById(deckId, domain)!!
+        val cardType = CardType.valueOf(intent.getStringExtra(EXTRA_CARD_TYPE)!!)
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
-        return Pair(deck, studyOrder)
+        return Triple(deck, cardType, studyOrder)
     }
 
     private lateinit var undoIcon: VectorDrawableSelector

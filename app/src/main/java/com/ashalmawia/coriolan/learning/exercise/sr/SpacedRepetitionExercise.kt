@@ -14,6 +14,7 @@ import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.util.forwardAndReverseWithState
@@ -70,10 +71,18 @@ class SpacedRepetitionExercise(
 
     override fun isPending(card: CardWithState<SRState>): Boolean = card.state.due <= todayProvider.today()
 
-    override fun mutations(repository: Repository, preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck): Mutations<SRState> {
+    override fun mutations(
+            repository: Repository,
+            preferences: Preferences,
+            journal: Journal,
+            date: DateTime,
+            order: StudyOrder,
+            deck: Deck,
+            cardType: CardType
+    ): Mutations<SRState> {
         return Mutations(listOf(
                 LearningModeMutation(this, repository),
-                SplitDeckMutation(deck),
+                CardTypeMutation(cardType),
                 SortReviewsByPeriodMutation,
                 NewCardsOrderMutation.from(order),
                 LimitCountMutation(preferences, journal, date),

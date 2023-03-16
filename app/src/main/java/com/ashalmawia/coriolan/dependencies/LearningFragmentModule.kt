@@ -3,8 +3,10 @@ package com.ashalmawia.coriolan.dependencies
 import android.app.Dialog
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.ui.*
+import com.ashalmawia.coriolan.ui.main.decks_list.BeginStudyListener
+import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
 import com.ashalmawia.coriolan.ui.main.decks_list.DeckDetailsDialog
+import com.ashalmawia.coriolan.ui.main.decks_list.DeckListItem
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListAdapter
 import com.ashalmawia.coriolan.ui.main.decks_list.IncreaseLimitsDialog
 import org.joda.time.DateTime
@@ -24,18 +26,18 @@ val decksListFragmentModule = module {
                 exercise,
                 dataFetcher,
                 beginStudyListener,
-                { deck: Deck, date: DateTime ->
+                { deck: DeckListItem, date: DateTime ->
                     get(named(DIALOG_DECK_DETAILS)) { parametersOf(deck, exercise, date) } },
-                { deck: Deck, date: DateTime ->
+                { deck: DeckListItem, date: DateTime ->
                     get(named(DIALOG_INCREASE_LIMITS)) { parametersOf(deck, exercise, date) } }
         )
     }
 
-    factory<Dialog>(named(DIALOG_DECK_DETAILS)) { (deck: Deck, exercise: Exercise<*, *>, date: DateTime) ->
+    factory<Dialog>(named(DIALOG_DECK_DETAILS)) { (deck: DeckListItem, exercise: Exercise<*, *>, date: DateTime) ->
         DeckDetailsDialog(domainActivityScope().get(), deck, exercise, date, get())
     }
 
-    factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: Deck, exercise: Exercise<*, *>, date: DateTime) ->
+    factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: DeckListItem, exercise: Exercise<*, *>, date: DateTime) ->
         IncreaseLimitsDialog(domainActivityScope().get(), deck, exercise, date, get(), get(), get()).build()
     }
 

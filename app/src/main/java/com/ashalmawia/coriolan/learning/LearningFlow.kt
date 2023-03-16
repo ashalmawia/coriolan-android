@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionExtras
 
@@ -17,6 +18,7 @@ class LearningFlow<S : State, R>(
         private val repository: Repository,
         assignmentFactory: AssignmentFactory,
         val deck: Deck,
+        private val cardType: CardType,
         studyOrder: StudyOrder,
         val exercise: Exercise<S, R>,
         val journal: Journal,
@@ -26,7 +28,8 @@ class LearningFlow<S : State, R>(
     private val assignment: Assignment<S> = assignmentFactory.createAssignment(
             studyOrder,
             exercise,
-            deck
+            deck,
+            cardType
     )
 
     val card
@@ -148,6 +151,7 @@ class LearningFlow<S : State, R>(
     interface Factory<S : State, R> {
         fun createLearningFlow(
                 deck: Deck,
+                cardType: CardType,
                 studyOrder: StudyOrder,
                 exercise: Exercise<S, R>,
                 listener: Listener<S>
@@ -159,7 +163,13 @@ class LearningFlowFactory(
         private val assignmentFactory: AssignmentFactory,
         private val journal: Journal
 ) : LearningFlow.Factory<SRState, SRAnswer> {
-    override fun createLearningFlow(deck: Deck, studyOrder: StudyOrder, exercise: Exercise<SRState, SRAnswer>, listener: LearningFlow.Listener<SRState>): LearningFlow<SRState, SRAnswer> {
-        return LearningFlow(repository, assignmentFactory, deck, studyOrder, exercise, journal, listener)
+    override fun createLearningFlow(
+            deck: Deck,
+            cardType: CardType,
+            studyOrder: StudyOrder,
+            exercise: Exercise<SRState, SRAnswer>,
+            listener: LearningFlow.Listener<SRState>
+    ): LearningFlow<SRState, SRAnswer> {
+        return LearningFlow(repository, assignmentFactory, deck, cardType, studyOrder, exercise, journal, listener)
     }
 }

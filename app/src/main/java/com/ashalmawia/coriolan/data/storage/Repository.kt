@@ -66,17 +66,17 @@ interface Repository {
 
     fun deleteDeck(deck: Deck): Boolean
 
-    fun deckPendingCounts(exerciseId: String, deck: Deck, date: DateTime): Counts {
+    fun deckPendingCounts(exerciseId: String, deck: Deck, cardType: CardType, date: DateTime): Counts {
         val due = cardsDueDate(exerciseId, deck, date)
         val total = cardsOfDeck(deck)
 
-        val deckDue = due.filter { it.card.type == deck.type }
+        val deckDue = due.filter { it.card.type == cardType }
 
         return Counts(
                 deckDue.count { it.state.status == Status.NEW },
                 deckDue.count { it.state.status == Status.IN_PROGRESS || it.state.status == Status.LEARNT },
                 deckDue.count { it.state.status == Status.RELEARN },
-                total.filter { it.type == deck.type }.size
+                total.filter { it.type == cardType }.size
         )
     }
 

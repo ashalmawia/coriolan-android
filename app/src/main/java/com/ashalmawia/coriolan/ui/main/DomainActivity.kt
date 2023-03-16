@@ -13,7 +13,7 @@ import com.ashalmawia.coriolan.dependencies.createDomainScope
 import com.ashalmawia.coriolan.dependencies.createScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.DecksListFragment
+import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragmentListener
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment

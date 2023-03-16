@@ -1357,10 +1357,11 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = storage.addDeck(domain, "mock deck")
+        val cardType = CardType.FORWARD
         val today = today
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck, today)
+        val counts = storage.deckPendingCounts(exercise.stableId, deck, cardType, today)
 
         // then
         assertEquals(0, counts.new)
@@ -1398,7 +1399,7 @@ abstract class StorageTest {
         storage.updateSRCardState(reverse[4], SRState(today.plusDays(10), 4), exercise.stableId)
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.FORWARD), today)
+        val counts = storage.deckPendingCounts(exercise.stableId, deck, CardType.FORWARD, today)
 
         // then
         assertEquals(0, counts.new)
@@ -1407,7 +1408,7 @@ abstract class StorageTest {
         assertEquals(forward.count(), counts.total)
 
         // when
-        val counts1 = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.REVERSE), today)
+        val counts1 = storage.deckPendingCounts(exercise.stableId, deck, CardType.REVERSE, today)
 
         // then
         assertEquals(0, counts1.new)
@@ -1447,7 +1448,7 @@ abstract class StorageTest {
         storage.updateSRCardState(reverse[5], emptyState(), exercise.stableId)
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.FORWARD), today)
+        val counts = storage.deckPendingCounts(exercise.stableId, deck, CardType.FORWARD, today)
 
         // then
         assertEquals(1, counts.new)
@@ -1456,7 +1457,7 @@ abstract class StorageTest {
         assertEquals(forward.count(), counts.total)
 
         // when
-        val counts1 = storage.deckPendingCounts(exercise.stableId, deck.copy(type = CardType.REVERSE), today)
+        val counts1 = storage.deckPendingCounts(exercise.stableId, deck, CardType.REVERSE, today)
 
         // then
         assertEquals(2, counts1.new)

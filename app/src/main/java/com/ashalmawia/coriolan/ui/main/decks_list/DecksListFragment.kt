@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.main.decks_list
 
 import android.app.Dialog
 import android.os.Bundle
@@ -16,9 +16,10 @@ import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
-import com.ashalmawia.coriolan.ui.main.decks_list.DecksListAdapter
 import kotlinx.android.synthetic.main.learning.*
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
@@ -72,8 +73,8 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
         adapter.setData(decksList())
     }
 
-    override fun beginStudy(deck: Deck, studyOrder: StudyOrder) {
-        val intent = LearningActivity.intent(requireContext(), deck, studyOrder)
+    override fun beginStudy(deck: Deck, cardType: CardType, studyOrder: StudyOrder) {
+        val intent = LearningActivity.intent(requireContext(), deck, cardType, studyOrder)
         requireActivity().startActivity(intent)
     }
 
@@ -82,11 +83,14 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
         fetchData()
     }
 
-    private fun decksList(): List<Deck> {
+    private fun decksList(): List<DeckListItem> {
         val timeStart = System.currentTimeMillis()
-        val decks = decksRegistry.allDecksForLearning()
+        val decks = decksRegistry.allDecks()
         Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
-        return decks
+        return decks.flatMap { listOf(
+                DeckListItem(it, CardType.FORWARD),
+                DeckListItem(it, CardType.REVERSE)
+        ) }
     }
 }
 
@@ -108,8 +112,8 @@ interface DataFetcher {
 
 interface BeginStudyListener {
 
-    fun beginStudy(deck: Deck, studyOrder: StudyOrder)
+    fun beginStudy(deck: Deck, cardType: CardType, studyOrder: StudyOrder)
 }
 
-typealias DeckDetailsDialogCreator = (Deck, DateTime) -> Dialog
-typealias IncreaseLimitsDialogCreator = (Deck, DateTime) -> Dialog
+typealias DeckDetailsDialogCreator = (DeckListItem, DateTime) -> Dialog
+typealias IncreaseLimitsDialogCreator = (DeckListItem, DateTime) -> Dialog

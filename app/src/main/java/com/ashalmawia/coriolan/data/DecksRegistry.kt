@@ -20,15 +20,6 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         return repository.allDecks(domain)
     }
 
-    fun allDecksForLearning(): List<Deck> {
-        val realList = repository.allDecks(domain)
-        return realList.flatMap { it.splitInfoForwardAndReverse() }
-    }
-
-    private fun Deck.splitInfoForwardAndReverse(): List<Deck> {
-        return listOf(this.copy(type = CardType.FORWARD), this.copy(type = CardType.REVERSE))
-    }
-
     fun addDeck(name: String) {
         repository.addDeck(domain, name)
     }
@@ -92,7 +83,7 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         )
         // todo: write test that transcription is not overriden by adding a new card with the same expression
         if (cardData.transcription != null)
-        repository.setTranscription(original, cardData.transcription)
+            repository.setTranscription(original, cardData.transcription)
 
         val translations = cardData.translations.map {
             findOrAddExpression(it, domain.langTranslations())
