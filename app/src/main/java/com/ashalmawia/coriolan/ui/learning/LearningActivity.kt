@@ -16,10 +16,10 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
-import com.ashalmawia.coriolan.dependencies.learningFlowScope
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
@@ -33,7 +33,6 @@ import kotlinx.android.synthetic.main.learning_activity.*
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
-import org.koin.core.parameter.parametersOf
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
@@ -56,14 +55,12 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, Exercis
     private val decksRegistry: DecksRegistry = domainScope().get()
     private val repository: Repository = get()
 
-    // todo: create factory
     private val flow by lazy {
-        @Suppress("UNCHECKED_CAST")
-        learningFlowScope().get<LearningFlow<*, *>> {
-            val exercisesRegistry = getKoin().get<ExercisesRegistry>()
-            val (deck, studyOrder) = resolveParameters()
-            parametersOf(exercisesRegistry.defaultExercise(), deck, studyOrder, this)
-        } as LearningFlow<SRState, SRAnswer>
+        val learningFlowFactory: LearningFlow.Factory<SRState, SRAnswer> = get()
+        val exercisesRegistry = getKoin().get<ExercisesRegistry>()
+        val (deck, studyOrder) = resolveParameters()
+        val exercise = exercisesRegistry.defaultExercise() as Exercise<SRState, SRAnswer>
+        learningFlowFactory.createLearningFlow(deck, studyOrder, exercise, this)
     }
     private val renderer by lazy { flow.exercise.createRenderer(this) }
 
@@ -87,11 +84,6 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, Exercis
         val deck = repository.deckById(deckId, domain)!!
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
         return Pair(deck, studyOrder)
-    }
-
-    override fun onBackPressed() {
-        learningFlowScope().close()
-        super.onBackPressed()
     }
 
     private lateinit var undoIcon: VectorDrawableSelector

@@ -6,6 +6,8 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
@@ -141,5 +143,23 @@ class LearningFlow<S : State, R>(
     interface Listener<S : State> {
         fun onRender(card: CardWithState<S>, extras: List<ExpressionExtras>)
         fun onFinish()
+    }
+
+    interface Factory<S : State, R> {
+        fun createLearningFlow(
+                deck: Deck,
+                studyOrder: StudyOrder,
+                exercise: Exercise<S, R>,
+                listener: Listener<S>
+        ) : LearningFlow<S, R>
+    }
+}
+class LearningFlowFactory(
+        private val repository: Repository,
+        private val assignmentFactory: AssignmentFactory,
+        private val journal: Journal
+) : LearningFlow.Factory<SRState, SRAnswer> {
+    override fun createLearningFlow(deck: Deck, studyOrder: StudyOrder, exercise: Exercise<SRState, SRAnswer>, listener: LearningFlow.Listener<SRState>): LearningFlow<SRState, SRAnswer> {
+        return LearningFlow(repository, assignmentFactory, deck, studyOrder, exercise, journal, listener)
     }
 }
