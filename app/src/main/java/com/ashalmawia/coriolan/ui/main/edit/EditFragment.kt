@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.backup.ui.BackupActivity
-import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
+import com.ashalmawia.coriolan.ui.backup.BackupActivity
+import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry

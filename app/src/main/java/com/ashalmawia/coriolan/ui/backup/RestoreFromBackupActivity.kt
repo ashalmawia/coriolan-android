@@ -1,6 +1,5 @@
-package com.ashalmawia.coriolan.data.backup.ui
+package com.ashalmawia.coriolan.ui.backup
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
@@ -9,21 +8,16 @@ import android.os.AsyncTask
 import android.os.Bundle
 import androidx.annotation.StringRes
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.dependencies.BACKUP_DIR
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.util.isPermissionGranted
-import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
 import org.koin.android.ext.android.inject
-import org.koin.core.qualifier.named
 import java.io.File
 
 class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
@@ -33,16 +27,8 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     private val repository: Repository by inject()
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
-    private val backupDir: File by inject(named(BACKUP_DIR))
+    private val backupDir by lazy { BackupUtils.createBackupDir(this) }
     private val preferences: Preferences by inject()
-
-    private val requstPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
-        if (isGranted) {
-            selectBackup()
-        } else {
-            showStoragePermissionDeniedAlert()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,17 +36,8 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
         setUpToolbar(R.string.backup__restore_title, false)
 
-        buttonOk.setOnClickListener { selectBackupWithPermissionCheck() }
+        buttonOk.setOnClickListener { selectBackup() }
         buttonCancel.setOnClickListener { finish() }
-    }
-
-    private fun selectBackupWithPermissionCheck() {
-        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-        if (isPermissionGranted(permission)) {
-            selectBackup()
-        } else {
-            requstPermissionLauncher.launch(permission)
-        }
     }
 
     private fun selectBackup() {

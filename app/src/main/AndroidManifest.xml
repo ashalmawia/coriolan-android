@@ -62,12 +62,12 @@
 			/>
 
 		<activity
-			android:name=".data.backup.ui.BackupActivity"
+			android:name=".ui.backup.BackupActivity"
 			android:parentActivityName=".ui.main.DomainActivity"
 			/>
 
 		<activity
-			android:name=".data.backup.ui.RestoreFromBackupActivity"
+			android:name=".ui.backup.RestoreFromBackupActivity"
 			android:parentActivityName=".ui.main.DomainActivity"
 			/>
 

@@ -6,7 +6,9 @@ import com.ashalmawia.coriolan.FirstStart
 import com.ashalmawia.coriolan.FirstStartImpl
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistryImpl
+import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.data.backup.json.JsonBackup
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.data.importer.ImporterRegistryImpl
 import com.ashalmawia.coriolan.data.journal.Journal
@@ -50,6 +52,7 @@ val mainModule = module {
     single<HistoryFactory> { HistoryFactoryImpl }
     single<EmptyStateProvider> { EmptyStateProviderImpl(get()) }
     single<LearningFlow.Factory<SRState, SRAnswer>> { LearningFlowFactory(get(), get(), get()) }
+    single<Backup> { JsonBackup() }
 
     factory<FirstStart> { FirstStartImpl(get()) }
 }

@@ -1,21 +1,16 @@
-package com.ashalmawia.coriolan.data.backup.ui
+package com.ashalmawia.coriolan.ui.backup
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Environment
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.util.isPermissionGranted
-import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*
 import org.joda.time.DateTime
@@ -24,22 +19,12 @@ import java.io.File
 
 class BackupActivity : BaseActivity(), BackupCreationListener {
 
-    private val rootDir = File(Environment.getExternalStorageDirectory(), "Coriolan")
-    private val backupDir = File(rootDir, "backup")
-
+    private val backupDir by lazy { BackupUtils.createBackupDir(this) }
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
     private val exercisesRegistry: ExercisesRegistry by inject()
 
     private var task: BackupAsyncTask? = null
-
-    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
-        if (isGranted) {
-            createBackup()
-        } else {
-            showStoragePermissionDeniedAlert()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +37,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 
     private fun onCreateBackupClicked() {
-        createBackupWithPermissionCheck()
+        createBackup()
     }
 
     private fun updateUiCreatingBackup() {
@@ -61,14 +46,6 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
         labelCreating.visible = true
         dividerCreating.visible = true
-    }
-
-    private fun createBackupWithPermissionCheck() {
-        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-        when {
-            isPermissionGranted(permission) -> createBackup()
-            else -> requestPermissionLauncher.launch(permission)
-        }
     }
 
     private fun createBackup() {
@@ -88,7 +65,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
         labelCreated.setText(R.string.backup__created)
         labelCreated.visible = true
-        labelPath.text = "sdcard/Coriolan/backup/${file.name}"
+        labelPath.text = file.absolutePath
         labelPath.visible = true
         dividerCreated.visible = true
 

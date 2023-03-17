@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DomainsRegistry
-import com.ashalmawia.coriolan.data.backup.ui.RestoreFromBackupActivity
+import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
