@@ -157,6 +157,12 @@
 	<string name="backup__restore_success">Restored successfully from the following backup:</string>
 	<string name="backup__restore_failed_no_backup">Looks like you don\'t have any Coriolan backups yet.</string>
 
+	<!-- Permissions -->
+	<string name="permissions__permission_denied_title">Permission needed</string>
+	<string name="permissions__storage_permission_denied_message">To use this functionality,
+		you need to give Coriolan permission to access files on your device.
+		You can do this in system settings.</string>
+
 	<!-- General -->
 	<string name="button_ok">OK</string>
 	<string name="button_submit">Submit</string>

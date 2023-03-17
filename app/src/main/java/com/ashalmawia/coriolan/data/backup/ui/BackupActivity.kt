@@ -8,21 +8,20 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Environment
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.util.isPermissionGranted
+import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.OnPermissionDenied
-import permissions.dispatcher.RuntimePermissions
 import java.io.File
 
-@RuntimePermissions
 class BackupActivity : BaseActivity(), BackupCreationListener {
 
     private val rootDir = File(Environment.getExternalStorageDirectory(), "Coriolan")
@@ -33,6 +32,14 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     private val exercisesRegistry: ExercisesRegistry by inject()
 
     private var task: BackupAsyncTask? = null
+
+    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
+        if (isGranted) {
+            createBackup()
+        } else {
+            showStoragePermissionDeniedAlert()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,17 +52,28 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 
     private fun onCreateBackupClicked() {
+        createBackupWithPermissionCheck()
+    }
+
+    private fun updateUiCreatingBackup() {
         buttonOk.isEnabled = false
         buttonCancel.isEnabled = false
 
         labelCreating.visible = true
         dividerCreating.visible = true
-
-        //createBackupWithPermissionCheck()
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun createBackup() {
+    private fun createBackupWithPermissionCheck() {
+        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        when {
+            isPermissionGranted(permission) -> createBackup()
+            else -> requestPermissionLauncher.launch(permission)
+        }
+    }
+
+    private fun createBackup() {
+        updateUiCreatingBackup()
+
         val task = BackupAsyncTask(backupableRepository, backupDir, backup, exercisesRegistry)
         task.listener = this
         this.task = task
@@ -80,15 +98,9 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
         buttonOk.setOnClickListener { finish() }
     }
 
-    @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     override fun onError() {
         Toast.makeText(this, R.string.backup__creation_failed, Toast.LENGTH_SHORT).show()
         finish()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        //onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun onStop() {

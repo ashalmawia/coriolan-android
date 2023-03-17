@@ -9,6 +9,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import androidx.annotation.StringRes
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
@@ -16,17 +17,15 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.BACKUP_DIR
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.util.isPermissionGranted
+import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
 import org.koin.android.ext.android.inject
 import org.koin.core.qualifier.named
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.OnPermissionDenied
-import permissions.dispatcher.RuntimePermissions
 import java.io.File
 
-@RuntimePermissions
 class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     private var task: RestoreFromBackupAsyncTask? = null
@@ -37,29 +36,41 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     private val backupDir: File by inject(named(BACKUP_DIR))
     private val preferences: Preferences by inject()
 
+    private val requstPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
+        if (isGranted) {
+            selectBackup()
+        } else {
+            showStoragePermissionDeniedAlert()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.restore_from_backup)
 
         setUpToolbar(R.string.backup__restore_title, false)
 
-        buttonOk.setOnClickListener { onSelectAndRestoreClicked() }
+        buttonOk.setOnClickListener { selectBackupWithPermissionCheck() }
         buttonCancel.setOnClickListener { finish() }
     }
 
-    private fun onSelectAndRestoreClicked() {
-        //selectBackupWithPermissionCheck()
+    private fun selectBackupWithPermissionCheck() {
+        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        if (isPermissionGranted(permission)) {
+            selectBackup()
+        } else {
+            requstPermissionLauncher.launch(permission)
+        }
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun selectBackup() {
+    private fun selectBackup() {
         if (!backupDir.exists()) {
             onError(R.string.backup__restore_failed_no_backup)
             return
         }
 
         val files = backupDir.listFiles { file -> file.isFile && file.name.endsWith(".coriolan") }
-        if (files.isEmpty()) {
+        if (files.isNullOrEmpty()) {
             onError(R.string.backup__restore_failed_no_backup)
             return
         }
@@ -68,10 +79,10 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
         val dialog = AlertDialog.Builder(this)
                 .setTitle(R.string.backup__restore_select_file)
-                .setSingleChoiceItems(fileNames, 0, { dialog, position ->
+                .setSingleChoiceItems(fileNames, 0) { dialog, position ->
                     onFileSelected(files[position])
                     dialog.dismiss()
-                })
+                }
                 .create()
         dialog.show()
     }
@@ -130,18 +141,8 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
         buttonOk.setOnClickListener { restartApp() }
     }
 
-    @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun onPermissionDenied() {
-        finish()
-    }
-
     override fun onError(@StringRes messageRes: Int) {
         Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        //onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun onStop() {

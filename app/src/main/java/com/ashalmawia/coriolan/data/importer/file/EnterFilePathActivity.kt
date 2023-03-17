@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
@@ -13,10 +14,9 @@ import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.dependencies.dataImportScope
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.util.isPermissionGranted
+import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
 import kotlinx.android.synthetic.main.enter_file_path.*
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.OnPermissionDenied
-import permissions.dispatcher.RuntimePermissions
 import java.io.File
 
 const val EXTRA_TEXT = "extra_text"
@@ -24,11 +24,18 @@ const val EXTRA_DECK_ID = "deck_id"
 
 private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
-@RuntimePermissions
 class EnterFilePathActivity : BaseActivity() {
 
     private val decksRegistry: DecksRegistry by domainScope().inject()
     private val importFlow: DataImportFlow by dataImportScope().inject()
+
+    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
+        if (isGranted) {
+            validateAndSubmitInput()
+        } else {
+            showStoragePermissionDeniedAlert()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +48,7 @@ class EnterFilePathActivity : BaseActivity() {
         restore(savedInstanceState)
 
         buttonCancel.setOnClickListener { cancel() }
-        buttonSubmit.setOnClickListener { validateAndSubmit(editText.text.toString()) }
+        buttonSubmit.setOnClickListener { validateAndSubmitInputWithPermissionCheck() }
 
         maybeSetDebugValues()
     }
@@ -50,22 +57,30 @@ class EnterFilePathActivity : BaseActivity() {
         deckSelector.initialize(decksRegistry.allDecks())
     }
 
-    @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE)
-    fun cancel() {
+    private fun cancel() {
         finish()
     }
 
-    private fun validateAndSubmit(path: String) {
+    private fun validateAndSubmitInputWithPermissionCheck() {
+        val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+        if (isPermissionGranted(permission)) {
+            validateAndSubmitInput()
+        } else {
+            requestPermissionLauncher.launch(permission)
+        }
+    }
+
+    private fun validateAndSubmitInput() {
+        val path = editText.text.toString()
         if (path.isBlank()) {
             showMessage(getString(R.string.import_file_empty_path))
             return
         }
 
-        //submitWithPermissionCheck(path)
+        submit(path)
     }
 
-    @NeedsPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-    fun submit(path: String) {
+    private fun submit(path: String) {
         val file = File(path)
         if (!file.exists() || file.isDirectory) {
             val message = getString(R.string.import_file_does_not_exist, path)
@@ -90,11 +105,6 @@ class EnterFilePathActivity : BaseActivity() {
             val deckId = savedInstanceState.getLong(EXTRA_DECK_ID)
             deckSelector.selectDeckWithId(deckId)
         }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        //onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
