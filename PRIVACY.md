@@ -23,13 +23,16 @@ The app is officially distributed for free via Google Play.
 This app is fully offline. All the data user provide to it is stored on the user's device. <br>
 It is not synced to any kind of online storage. Thus, the user has full control over it.
 
+**Coriolan does not collect this data as the data does not leave user's device.**
+
 _This might change in the future, but will always remain optional and under user's control._
 
 ### Exporting data
 
 Coriolan can export user-generated data (such as exproted decks or backups). <br> 
-This is optional and the user has full control over when and where
-it is exported and stored.
+This is optional and the user has full control over when and where it is exported and stored.
+
+Currently, Coriolan has no integrations to share the exported data, thus, it is not collected by the app.
 
 ### Person-identifiable information
 
