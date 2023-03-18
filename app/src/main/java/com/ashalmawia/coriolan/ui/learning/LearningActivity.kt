@@ -166,10 +166,6 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, Exercis
 
     private fun beginExercise() {
         renderer.prepareUi(this, exerciseContainer)
-
-        updateProgressCounts()
-        invalidateOptionsMenu()
-
         flow.showNextOrComplete()
     }
 
@@ -188,6 +184,9 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener<SRState>, Exercis
 
     override fun onRender(card: CardWithState<SRState>, extras: List<ExpressionExtras>) {
         renderer.renderCard(card, extras)
+
+        updateProgressCounts()
+        invalidateOptionsMenu()
     }
 
     override fun onFinish() {

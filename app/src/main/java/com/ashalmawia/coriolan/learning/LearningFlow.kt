@@ -18,7 +18,7 @@ class LearningFlow<S : State, R>(
         private val repository: Repository,
         assignmentFactory: AssignmentFactory,
         val deck: Deck,
-        private val cardType: CardType,
+        cardType: CardType,
         studyOrder: StudyOrder,
         val exercise: Exercise<S, R>,
         val journal: Journal,
@@ -50,7 +50,7 @@ class LearningFlow<S : State, R>(
     fun replyCurrent(reply: R) {
         val updated = exercise.processReply(repository, card, reply)
         recordCardStudied(card.state.status, updated.state.status, journal)
-        rescheduleIfNeeded(card)
+        rescheduleIfNeeded(updated)
         showNextOrComplete()
     }
 
