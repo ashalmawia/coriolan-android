@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui
 
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
@@ -12,6 +13,7 @@ class StartActivity : BaseActivity() {
     private val repository: Repository = get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         val domains = repository.allDomains()

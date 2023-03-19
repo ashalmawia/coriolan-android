@@ -62,6 +62,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation "com.takisoft.fix:preference-v7:$support_version.0"
     implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
