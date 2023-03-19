@@ -16,7 +16,7 @@ The app is officially distributed for free via Google Play.
 |----------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
 | - user-generated content (words, translations, usage examples, decks etc.)<br/>- data about the learning process (status of the cards) | to assist with learning the words                |  
 | - statistical data (e.g. how many cards where learned in a day)                                                                        | to reflect the progress to the user and motivate |
-| - diagnostic data (e.g. crash stacktraces)                                                                                             | to keep the app healthy and reliable             |
+| - diagnostic data (e.g. crash stacktraces, device id)                                                                                             | to keep the app healthy and reliable             |
 
 ### Storing user-generated data
 
@@ -41,7 +41,7 @@ _This might change in the future but will always be optional and under user's co
 
 ### Diagnostic data
 
-This _app collects depersonalized debug information_, such as crash stacktraces,
+This _app collects depersonalized debug information_, such as crash stacktraces and device ids,
 that helps me to keep Coriolan working reliably. <br>
 This data is shared with the industry-standard Firebase services in 
 depersonalized manner.
