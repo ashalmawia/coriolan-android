@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.*
 import junit.framework.Assert.*
 import org.junit.Test
@@ -16,7 +15,7 @@ class SortReviewsByPeriodMutationTest {
     @Test
     fun test__sortedAscending() {
         // when
-        val cards = List(5, { i -> mockCardWithState(mockState(i - 1)) })
+        val cards = List(5) { i -> mockCardWithState(mockState(i - 1)) }
         val processed = mutation.value.apply(cards)
 
         // then
@@ -51,11 +50,11 @@ class SortReviewsByPeriodMutationTest {
         assertTrue(checkAscending(processed))
     }
 
-    private fun checkAscending(cards: List<CardWithState<SRState>>): Boolean {
+    private fun checkAscending(cards: List<CardWithState>): Boolean {
         var previous = -1000
         cards.forEach {
-            if (it.state.period < previous) return false
-            previous = it.state.period
+            if (it.state.spacedRepetition.period < previous) return false
+            previous = it.state.spacedRepetition.period
         }
         return true
     }

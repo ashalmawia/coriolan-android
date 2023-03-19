@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.dependencies
 
 import android.app.Dialog
 import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.main.decks_list.BeginStudyListener
 import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
 import com.ashalmawia.coriolan.ui.main.decks_list.DeckDetailsDialog
@@ -19,7 +18,7 @@ private const val DIALOG_INCREASE_LIMITS = "increase_limits"
 
 val decksListFragmentModule = module {
 
-    factory { (exercise: Exercise<*, *>, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
+    factory { (exercise: Exercise, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
         DecksListAdapter(
                 get(),
                 get(),
@@ -27,18 +26,18 @@ val decksListFragmentModule = module {
                 dataFetcher,
                 beginStudyListener,
                 { deck: DeckListItem, date: DateTime ->
-                    get(named(DIALOG_DECK_DETAILS)) { parametersOf(deck, exercise, date) } },
+                    get(named(DIALOG_DECK_DETAILS)) { parametersOf(deck, date) } },
                 { deck: DeckListItem, date: DateTime ->
-                    get(named(DIALOG_INCREASE_LIMITS)) { parametersOf(deck, exercise, date) } }
+                    get(named(DIALOG_INCREASE_LIMITS)) { parametersOf(deck, date) } }
         )
     }
 
-    factory<Dialog>(named(DIALOG_DECK_DETAILS)) { (deck: DeckListItem, exercise: Exercise<*, *>, date: DateTime) ->
-        DeckDetailsDialog(domainActivityScope().get(), deck, exercise, date, get())
+    factory<Dialog>(named(DIALOG_DECK_DETAILS)) { (deck: DeckListItem, date: DateTime) ->
+        DeckDetailsDialog(domainActivityScope().get(), deck, date, get())
     }
 
-    factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: DeckListItem, exercise: Exercise<*, *>, date: DateTime) ->
-        IncreaseLimitsDialog(domainActivityScope().get(), deck, exercise, date, get(), get(), get()).build()
+    factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: DeckListItem, date: DateTime) ->
+        IncreaseLimitsDialog(domainActivityScope().get(), deck, date, get(), get(), get()).build()
     }
 
 }

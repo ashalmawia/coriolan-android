@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.exercise.mockEmptyState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
@@ -104,9 +104,9 @@ class MockRepository : Repository {
     override fun cardByValues(domain: Domain, original: Expression): Card? {
         return cards.find { it.original.id == original.id }
     }
-    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
+    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card {
         if (!cards.contains(card)) {
-            return null
+            throw DataProcessingException("card is not in the repo: $card")
         }
 
         val updated = Card(card.id, deckId, card.domain, original, translations)
@@ -136,7 +136,7 @@ class MockRepository : Repository {
         decks.add(deck)
         return deck
     }
-    override fun updateDeck(deck: Deck, name: String): Deck? {
+    override fun updateDeck(deck: Deck, name: String): Deck {
         if (!decks.contains(deck)) {
             throw DataProcessingException("deck is not in the repo: $deck")
         }
@@ -158,29 +158,29 @@ class MockRepository : Repository {
         }
     }
 
-    val states = mutableMapOf<Long, SRState>()
-    override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {
+    val states = mutableMapOf<Long, State>()
+    override fun updateCardState(card: Card, state: State) {
         if (!cards.contains(card)) {
             throw DataProcessingException("card is not in the repo: $card")
         }
 
         states[card.id] = state
     }
-    override fun getSRCardState(card: Card, exerciseId: String): SRState {
-        return states[card.id] ?: mockEmptySRState(mockToday())
+    override fun getCardState(card: Card): State {
+        return states[card.id] ?: mockEmptyState(mockToday())
     }
-    override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
+    override fun cardsDueDate(deck: Deck, date: DateTime): List<CardWithState> {
         return cardsOfDeck(deck)
-                .map { card -> CardWithState(card, getSRCardState(card, exerciseId)) }
+                .map { card -> CardWithState(card, getCardState(card)) }
                 .filter {
-                    it.state.due <= date
+                    it.state.spacedRepetition.due <= date
                 }
     }
-    override fun getStatesForCardsWithOriginals(originalIds: List<Long>, exerciseId: String): Map<Long, SRState> {
+    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State> {
         val cards = originalIds.mapNotNull { cards.find { card -> card.original.id == it } }
         return cards.associateBy(
                 { it.original.id },
-                { states[it.id] ?: mockEmptySRState(mockToday()) }
+                { states[it.id] ?: mockEmptyState(mockToday()) }
         )
     }
 

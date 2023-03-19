@@ -10,7 +10,6 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.util.orZero
 import kotlinx.android.synthetic.main.increase_limits.view.*
@@ -20,13 +19,12 @@ import kotlin.math.max
 class IncreaseLimitsDialog(
         private val activity: Activity,
         private val deck: DeckListItem,
-        private val exercise: Exercise<*, *>,
         private val date: DateTime,
         private val repository: Repository,
         private val preferences: Preferences,
         private val todayProvider: TodayProvider
 ) {
-    private val totalCounts = lazy { repository.deckPendingCounts(exercise.stableId, deck.deck, deck.cardType, date) }
+    private val totalCounts = lazy { repository.deckPendingCounts(deck.deck, deck.cardType, date) }
 
     private val builder = AlertDialog.Builder(activity)
 

@@ -9,14 +9,14 @@ import com.ashalmawia.coriolan.model.Deck
 
 interface DeckCountsProvider {
 
-    fun <S: State, R> peekCounts(exercise: Exercise<S, R>, deck: Deck, cardType: CardType): Counts
+    fun peekCounts(exercise: Exercise, deck: Deck, cardType: CardType): Counts
 }
 
 class DeckCountsProviderImpl(
         private val assignmentFactory: AssignmentFactory
 ) : DeckCountsProvider {
 
-    override fun <S : State, R> peekCounts(exercise: Exercise<S, R>, deck: Deck, cardType: CardType): Counts {
+    override fun peekCounts(exercise: Exercise, deck: Deck, cardType: CardType): Counts {
         return assignmentFactory.createAssignment(StudyOrder.RANDOM, exercise, deck, cardType).counts()
     }
 }

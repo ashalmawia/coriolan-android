@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.dependencies
 
-import android.database.sqlite.SQLiteOpenHelper
 import androidx.preference.PreferenceDataStore
 import com.ashalmawia.coriolan.FirstStart
 import com.ashalmawia.coriolan.FirstStartImpl
@@ -29,9 +28,7 @@ import com.ashalmawia.coriolan.learning.exercise.EmptyStateProviderImpl
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistryImpl
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
 import org.koin.dsl.module
 
@@ -40,18 +37,18 @@ val mainModule = module {
     single<Repository> { SqliteStorage(get(), get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
     single<Journal> { SqliteJournal(get()) }
-    single<BackupableRepository> { SqliteBackupHelper(get(), get()) }
+    single<BackupableRepository> { SqliteBackupHelper(get()) }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
-    single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get(), get(), get()) }
+    single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get(), get()) }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get(), get()) }
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
-    single<SQLiteOpenHelper> { SqliteRepositoryOpenHelper(get(), get()) }
-    single<Scheduler> { MultiplierBasedScheduler(get()) }
+    single { SqliteRepositoryOpenHelper(get()) }
+    single<SpacedRepetitionScheduler> { MultiplierBasedScheduler(get()) }
     single<HistoryFactory> { HistoryFactoryImpl }
     single<EmptyStateProvider> { EmptyStateProviderImpl(get()) }
-    single<LearningFlow.Factory<SRState, SRAnswer>> { LearningFlowFactory(get(), get(), get()) }
+    single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get()) }
     single<Backup> { JsonBackup() }
 
     factory<FirstStart> { FirstStartImpl(get()) }

@@ -25,7 +25,7 @@ private const val TYPE_ITEM = 2
 class DecksListAdapter(
         private val deckCountsProvider: DeckCountsProvider,
         private val todayProvider: TodayProvider,
-        private val exercise: Exercise<*, *>,
+        private val exercise: Exercise,
         private val dataFetcher: DataFetcher,
         private val beginStudyListener: BeginStudyListener,
         private val createDeckDetailsDialog: DeckDetailsDialogCreator,

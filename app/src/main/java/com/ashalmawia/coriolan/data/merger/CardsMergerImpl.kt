@@ -34,10 +34,11 @@ class CardsMergerImpl(
         }
 
         val updated = repository.updateCard(card, deckId, card.original, mergedTranslations)
-        resetProgress(updated!!)
+        resetProgress(updated)
     }
 
     private fun resetProgress(card: Card) {
+        // todo: should not apply to all exercises
         exercisesRegistry.allExercises().forEach { it.onTranslationAdded(repository, card) }
     }
 }

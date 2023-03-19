@@ -68,10 +68,10 @@ class JacksonSerializationTest {
     @Test
     fun testSRStateInfo() {
         // given
-        val info = SRStateInfo(23L, today.minusDays(5), 7)
+        val info = CardStateInfo(23L, today.minusDays(5), 7)
 
         // then
-        test(info, serializer::writeCardStateSR, deserializer::readCardStateSR)
+        test(info, serializer::writeCardState, deserializer::readCardStateSR)
     }
 }
 

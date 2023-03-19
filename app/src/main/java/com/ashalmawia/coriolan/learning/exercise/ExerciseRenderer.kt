@@ -7,13 +7,13 @@ import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.ExpressionExtras
 
-interface ExerciseRenderer<S : State, A> {
+interface ExerciseRenderer {
 
     fun prepareUi(context: Context, parentView: ViewGroup): View
 
-    fun renderCard(card: CardWithState<S>, extras: List<ExpressionExtras>)
+    fun renderCard(card: CardWithState, extras: List<ExpressionExtras>)
 
-    interface Listener<A> {
-        fun onAnswered(answer: A)
+    interface Listener {
+        fun onAnswered(answer: Any)
     }
 }

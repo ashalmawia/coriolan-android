@@ -26,9 +26,9 @@ fun Cursor.getLanguageId(alias: String? = null): Long { return getLong(SQLITE_CO
 fun Cursor.getCardId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_CARD_ID, alias) }
 fun Cursor.getType(alias: String? = null): Int { return getInt(SQLITE_COLUMN_TYPE, alias)}
 
-fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE, alias) }
-fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }
-fun Cursor.hasSavedState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_DUE, alias) }
+fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_STATE_SR_DUE, alias) }
+fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_STATE_SR_PERIOD, alias) }
+fun Cursor.hasSavedSRState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_STATE_SR_DUE, alias) }
 
 fun Cursor.getLanguage(alias: String? = null): Language {
     return Language(

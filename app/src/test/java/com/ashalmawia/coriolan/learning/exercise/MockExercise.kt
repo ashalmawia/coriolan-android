@@ -7,8 +7,8 @@ import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.StateType
-import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -18,31 +18,31 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionExtras
 import org.joda.time.DateTime
 
-class MockExercise(override val stableId: String = "mock", override val stateType: StateType = StateType.UNKNOWN) : Exercise<MockState, Any> {
+class MockExercise(override val stableId: String = "mock", override val stateType: StateType = StateType.UNKNOWN) : Exercise {
 
     override val canUndo: Boolean
         get() = true
 
-    override fun isPending(card: CardWithState<MockState>): Boolean {
+    override fun isPending(card: CardWithState): Boolean {
         return false
     }
 
-    override fun getCardWithState(repository: Repository, card: Card): CardWithState<MockState> {
-        return CardWithState(card, MockState())
+    override fun getCardWithState(repository: Repository, card: Card): CardWithState {
+        return CardWithState(card, mockEmptyState())
     }
 
-    override fun updateCardState(repository: Repository, card: CardWithState<MockState>, newState: MockState): CardWithState<MockState> {
+    override fun updateCardState(repository: Repository, card: CardWithState, newState: State): CardWithState {
         return CardWithState(card.card, newState)
     }
 
     override fun name(): Int = 0
 
-    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<MockState>> {
+    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState> {
         return emptyList()
     }
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
-        repository.updateSRCardState(card, mockEmptySRState(mockToday()), stableId)
+        repository.updateCardState(card, mockEmptyState(mockToday()))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -61,24 +61,24 @@ class MockExercise(override val stableId: String = "mock", override val stateTyp
             order: StudyOrder,
             deck: Deck,
             cardType: CardType
-    ): Mutations<MockState> {
+    ): Mutations {
         return Mutations(listOf())
     }
 
-    override fun processReply(repository: Repository, card: CardWithState<MockState>, answer: Any): CardWithState<MockState> {
+    override fun processReply(repository: Repository, card: CardWithState, answer: Any): CardWithState {
         return card
     }
 
-    override fun createRenderer(listener: ExerciseRenderer.Listener<Any>): ExerciseRenderer<MockState, Any> {
+    override fun createRenderer(listener: ExerciseRenderer.Listener): ExerciseRenderer {
         return Renderer()
     }
 
-    class Renderer : ExerciseRenderer<MockState, Any> {
+    class Renderer : ExerciseRenderer {
         override fun prepareUi(context: Context, parentView: ViewGroup): View {
             return View(context)
         }
 
-        override fun renderCard(card: CardWithState<MockState>, extras: List<ExpressionExtras>) {
+        override fun renderCard(card: CardWithState, extras: List<ExpressionExtras>) {
         }
     }
 }

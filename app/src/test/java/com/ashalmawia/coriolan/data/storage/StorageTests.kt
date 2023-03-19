@@ -1,11 +1,9 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
+import com.ashalmawia.coriolan.learning.exercise.mockEmptyState
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
@@ -14,25 +12,22 @@ import org.junit.Test
 
 abstract class StorageTest {
 
-    private val exercise = MockExercise(stateType = StateType.SR_STATE)
-    private val exercises = listOf(exercise)
-
     private val today = mockToday()
-    private fun emptyState() = mockEmptySRState(today)
+    private fun emptyState() = mockEmptyState(today)
 
     protected val mockEmptyStateProvider = MockEmptyStateProvider(today)
 
     private lateinit var domain: Domain
 
     private val prefilledStorage: Lazy<Repository> = lazy {
-        val it = createStorage(exercises)
+        val it = createStorage()
         addMockLanguages(it)
         domain = it.createDomain("Default", langOriginal(), langTranslations())
         it
     }
-    private val emptyStorage: Lazy<Repository> = lazy { createStorage(exercises) }
+    private val emptyStorage: Lazy<Repository> = lazy { createStorage() }
 
-    protected abstract fun createStorage(exercises: List<Exercise<*, *>>): Repository
+    protected abstract fun createStorage(): Repository
 
     private fun addMockDeck(storage: Repository): Deck {
         return storage.addDeck(domain, "Mock")
@@ -947,7 +942,7 @@ abstract class StorageTest {
 
         // then
         assertNotNull(updated)
-        assertEquals(card.id, updated!!.id)
+        assertEquals(card.id, updated.id)
         assertEquals(newDeck.id, updated.deckId)
         assertEquals(card.original, updated.original)
         assertEquals(card.translations, updated.translations)
@@ -996,7 +991,7 @@ abstract class StorageTest {
 
         // then
         assertNotNull(updated)
-        assertEquals(card.id, updated!!.id)
+        assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
         assertEquals(newOriginal, updated.original)
         assertEquals(card.translations, updated.translations)
@@ -1034,7 +1029,7 @@ abstract class StorageTest {
 
         // then
         assertNotNull(updated)
-        assertEquals(card.id, updated!!.id)
+        assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
         assertEquals(card.original, updated.original)
         assertEquals(newTranslations, updated.translations)
@@ -1074,7 +1069,7 @@ abstract class StorageTest {
 
         // then
         assertNotNull(updated)
-        assertEquals(card.id, updated!!.id)
+        assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
         assertEquals(card.original, updated.original)
         assertEquals(newTranslations, updated.translations)
@@ -1113,7 +1108,7 @@ abstract class StorageTest {
 
         // then
         assertNotNull(updated)
-        assertEquals(card.id, updated!!.id)
+        assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
         assertEquals(card.original, updated.original)
         assertEquals(newTranslations, updated.translations)
@@ -1156,7 +1151,7 @@ abstract class StorageTest {
 
         // then
         assertNotNull(updated)
-        assertEquals(card.id, updated!!.id)
+        assertEquals(card.id, updated.id)
         assertEquals(newDeck.id, updated.deckId)
         assertEquals(newOriginal, updated.original)
         assertEquals(newTranslations, updated.translations)
@@ -1284,7 +1279,7 @@ abstract class StorageTest {
         assertEquals(listOf(card), cards)
 
         // when
-        storage.updateSRCardState(card, state, exercise.stableId)
+        storage.updateCardState(card, state)
         val cards2 = storage.allCards(domain)
 
         // then
@@ -1318,7 +1313,7 @@ abstract class StorageTest {
 
         // then
         assertDeckCorrect(updated, name, domain)
-        assertEquals(deck.id, updated!!.id)
+        assertEquals(deck.id, updated.id)
         assertEquals(1, storage.allDecks(domain).size)
     }
 
@@ -1361,7 +1356,7 @@ abstract class StorageTest {
         val today = today
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck, cardType, today)
+        val counts = storage.deckPendingCounts(deck, cardType, today)
 
         // then
         assertEquals(0, counts.new)
@@ -1388,18 +1383,18 @@ abstract class StorageTest {
                 }
         val today = today
 
-        storage.updateSRCardState(forward[0], SRState(today.plusDays(3), 4), exercise.stableId)
-        storage.updateSRCardState(forward[1], SRState(today.plusDays(1), 4), exercise.stableId)
-        storage.updateSRCardState(forward[2], SRState(today.plusDays(10), 4), exercise.stableId)
+        storage.updateCardState(forward[0], State(SRState(today.plusDays(3), 4)))
+        storage.updateCardState(forward[1], State(SRState(today.plusDays(1), 4)))
+        storage.updateCardState(forward[2], State(SRState(today.plusDays(10), 4)))
 
-        storage.updateSRCardState(reverse[0], SRState(today.plusDays(3), 4), exercise.stableId)
-        storage.updateSRCardState(reverse[1], SRState(today.plusDays(1), 4), exercise.stableId)
-        storage.updateSRCardState(reverse[2], SRState(today.plusDays(10), 4), exercise.stableId)
-        storage.updateSRCardState(reverse[3], SRState(today.plusDays(10), 4), exercise.stableId)
-        storage.updateSRCardState(reverse[4], SRState(today.plusDays(10), 4), exercise.stableId)
+        storage.updateCardState(reverse[0], State(SRState(today.plusDays(3), 4)))
+        storage.updateCardState(reverse[1], State(SRState(today.plusDays(1), 4)))
+        storage.updateCardState(reverse[2], State(SRState(today.plusDays(10), 4)))
+        storage.updateCardState(reverse[3], State(SRState(today.plusDays(10), 4)))
+        storage.updateCardState(reverse[4], State(SRState(today.plusDays(10), 4)))
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck, CardType.FORWARD, today)
+        val counts = storage.deckPendingCounts(deck, CardType.FORWARD, today)
 
         // then
         assertEquals(0, counts.new)
@@ -1408,7 +1403,7 @@ abstract class StorageTest {
         assertEquals(forward.count(), counts.total)
 
         // when
-        val counts1 = storage.deckPendingCounts(exercise.stableId, deck, CardType.REVERSE, today)
+        val counts1 = storage.deckPendingCounts(deck, CardType.REVERSE, today)
 
         // then
         assertEquals(0, counts1.new)
@@ -1435,20 +1430,20 @@ abstract class StorageTest {
                 }
         val today = today
 
-        storage.updateSRCardState(forward[0], SRState(today.plusDays(3), 4), exercise.stableId)
-        storage.updateSRCardState(forward[1], SRState(today.minusDays(1), 4), exercise.stableId)
-        storage.updateSRCardState(forward[2], SRState(today, -1), exercise.stableId)
-        storage.updateSRCardState(forward[3], SRState(today.plusDays(1), 4), exercise.stableId)
+        storage.updateCardState(forward[0], State(SRState(today.plusDays(3), 4)))
+        storage.updateCardState(forward[1], State(SRState(today.minusDays(1), 4)))
+        storage.updateCardState(forward[2], State(SRState(today, -1)))
+        storage.updateCardState(forward[3], State(SRState(today.plusDays(1), 4)))
 
-        storage.updateSRCardState(reverse[0], SRState(today, 0), exercise.stableId)
-        storage.updateSRCardState(reverse[1], SRState(today.plusDays(1), 4), exercise.stableId)
-        storage.updateSRCardState(reverse[2], SRState(today.minusDays(10), 4), exercise.stableId)
-        storage.updateSRCardState(reverse[3], SRState(today, 0), exercise.stableId)
-        storage.updateSRCardState(reverse[4], emptyState(), exercise.stableId)
-        storage.updateSRCardState(reverse[5], emptyState(), exercise.stableId)
+        storage.updateCardState(reverse[0], State(SRState(today, 0)))
+        storage.updateCardState(reverse[1], State(SRState(today.plusDays(1), 4)))
+        storage.updateCardState(reverse[2], State(SRState(today.minusDays(10), 4)))
+        storage.updateCardState(reverse[3], State(SRState(today, 0)))
+        storage.updateCardState(reverse[4], emptyState())
+        storage.updateCardState(reverse[5], emptyState())
 
         // when
-        val counts = storage.deckPendingCounts(exercise.stableId, deck, CardType.FORWARD, today)
+        val counts = storage.deckPendingCounts(deck, CardType.FORWARD, today)
 
         // then
         assertEquals(1, counts.new)
@@ -1457,7 +1452,7 @@ abstract class StorageTest {
         assertEquals(forward.count(), counts.total)
 
         // when
-        val counts1 = storage.deckPendingCounts(exercise.stableId, deck, CardType.REVERSE, today)
+        val counts1 = storage.deckPendingCounts(deck, CardType.REVERSE, today)
 
         // then
         assertEquals(2, counts1.new)
@@ -1686,7 +1681,7 @@ abstract class StorageTest {
         val card = mockCard(id = 77L)
 
         // when
-        val state = storage.getSRCardState(card, exercise.stableId)
+        val state = storage.getCardState(card)
 
         // then
         assertEquals(emptyState(), state)
@@ -1701,7 +1696,7 @@ abstract class StorageTest {
         val card = addMockCard(storage, deck.id)
 
         // when
-        val state = storage.getSRCardState(card, exercise.stableId)
+        val state = storage.getCardState(card)
 
         // then
         assertEquals(emptyState(), state)
@@ -1716,22 +1711,22 @@ abstract class StorageTest {
         val deck = addMockDeck(storage)
         val card = addMockCard(storage, deck.id)
 
-        val state = storage.getSRCardState(card, exercise.stableId)
+        val state = storage.getCardState(card)
 
         // then
-        assertEquals("state is correct", Status.NEW, state.status)
-        assertEquals("new card is due today", today, state.due)
+        assertEquals("state is correct", Status.NEW, state.spacedRepetition.status)
+        assertEquals("new card is due today", today, state.spacedRepetition.due)
 
         // given
-        val newState = SRState(today.plusDays(8), 8)
+        val newState = State(SRState(today.plusDays(8), 8))
 
         // when
-        storage.updateSRCardState(card, newState, exercise.stableId)
-        val readState = storage.getSRCardState(card, exercise.stableId)
+        storage.updateCardState(card, newState)
+        val readState = storage.getCardState(card)
 
         // then
-        assertEquals("state is correct", newState.status, readState.status)
-        assertEquals("new card is due today", newState.due, readState.due)
+        assertEquals("state is correct", newState.spacedRepetition.status, readState.spacedRepetition.status)
+        assertEquals("new card is due today", newState.spacedRepetition.due, readState.spacedRepetition.due)
     }
 
     @Test
@@ -1749,14 +1744,14 @@ abstract class StorageTest {
         }
 
         // when
-        val due = storage.cardsDueDate(exercise.stableId, deck, today)
+        val due = storage.cardsDueDate(deck, today)
 
         // then
         assertEquals("all new cards are due today", count, due.size)
         for (i in 0 until count) {
             assertCardCorrect(due[i].card, cardData[i], domain)
-            assertEquals("state is correct", today, due[i].state.due)
-            assertEquals("state is correct", Status.NEW, due[i].state.status)
+            assertEquals("state is correct", today, due[i].state.spacedRepetition.due)
+            assertEquals("state is correct", Status.NEW, due[i].state.spacedRepetition.status)
         }
     }
 
@@ -1777,12 +1772,12 @@ abstract class StorageTest {
         }
         val today = today
 
-        storage.updateSRCardState(cards[0], SRState(today, 4), exercise.stableId)
-        storage.updateSRCardState(cards[1], SRState(today.plusDays(1), 4), exercise.stableId)
-        storage.updateSRCardState(cards[2], SRState(today.minusDays(1), 4), exercise.stableId)
+        storage.updateCardState(cards[0], State(SRState(today, 4)))
+        storage.updateCardState(cards[1], State(SRState(today.plusDays(1), 4)))
+        storage.updateCardState(cards[2], State(SRState(today.minusDays(1), 4)))
 
         // when
-        val due = storage.cardsDueDate(exercise.stableId, deck, today)
+        val due = storage.cardsDueDate(deck, today)
 
         // then
         assertEquals(2, due.size)
@@ -1802,12 +1797,12 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
         val today = today
 
-        storage.updateSRCardState(cards[0], SRState(today.plusDays(3), 4), exercise.stableId)
-        storage.updateSRCardState(cards[1], SRState(today.plusDays(1), 4), exercise.stableId)
-        storage.updateSRCardState(cards[2], SRState(today.plusDays(10), 4), exercise.stableId)
+        storage.updateCardState(cards[0], State(SRState(today.plusDays(3), 4)))
+        storage.updateCardState(cards[1], State(SRState(today.plusDays(1), 4)))
+        storage.updateCardState(cards[2], State(SRState(today.plusDays(10), 4)))
 
         // when
-        val due = storage.cardsDueDate(exercise.stableId, deck, today)
+        val due = storage.cardsDueDate(deck, today)
 
         // then
         assertEquals(0, due.size)
@@ -1825,22 +1820,22 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(emptyList(), exercise.stableId)
+        val map = storage.getStatesForCardsWithOriginals(emptyList())
 
         // then
         assertEquals(0, map.size)
 
-        val state1 = SRState(today.plusDays(3), 4)
-        val state2 = SRState(today.plusDays(1), 4)
-        val state3 = SRState(today.plusDays(10), 4)
+        val state1 = State(SRState(today.plusDays(3), 4))
+        val state2 = State(SRState(today.plusDays(1), 4))
+        val state3 = State(SRState(today.plusDays(10), 4))
 
         // given
-        storage.updateSRCardState(cards[0], state1, exercise.stableId)
-        storage.updateSRCardState(cards[1], state2, exercise.stableId)
-        storage.updateSRCardState(cards[2], state3, exercise.stableId)
+        storage.updateCardState(cards[0], state1)
+        storage.updateCardState(cards[1], state2)
+        storage.updateCardState(cards[2], state3)
 
         // when
-        val map2 = storage.getStatesForCardsWithOriginals(emptyList(), exercise.stableId)
+        val map2 = storage.getStatesForCardsWithOriginals(emptyList())
 
         // then
         assertEquals(0, map2.size)
@@ -1852,7 +1847,7 @@ abstract class StorageTest {
         val storage = emptyStorage.value
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(listOf(1L, 5L, 10L), exercise.stableId)
+        val map = storage.getStatesForCardsWithOriginals(listOf(1L, 5L, 10L))
 
         // then
         assertEquals(0, map.size)
@@ -1870,11 +1865,11 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id }, exercise.stableId)
+        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id })
 
         // then
         assertEquals(3, map.size)
-        map.values.forEach { assertEquals(mockEmptySRState(today), it) }
+        map.values.forEach { assertEquals(mockEmptyState(today), it) }
     }
 
     @Test
@@ -1889,16 +1884,16 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
         val today = today
 
-        val state1 = SRState(today.plusDays(3), 4)
-        val state2 = SRState(today.plusDays(1), 4)
-        val state3 = SRState(today.plusDays(10), 4)
+        val state1 = State(SRState(today.plusDays(3), 4))
+        val state2 = State(SRState(today.plusDays(1), 4))
+        val state3 = State(SRState(today.plusDays(10), 4))
 
-        storage.updateSRCardState(cards[0], state1, exercise.stableId)
-        storage.updateSRCardState(cards[1], state2, exercise.stableId)
-        storage.updateSRCardState(cards[2], state3, exercise.stableId)
+        storage.updateCardState(cards[0], state1)
+        storage.updateCardState(cards[1], state2)
+        storage.updateCardState(cards[2], state3)
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id }, exercise.stableId)
+        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id })
 
         // then
         assertEquals(3, map.size)

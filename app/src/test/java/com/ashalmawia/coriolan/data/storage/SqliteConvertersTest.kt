@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.mockExpression
 import com.ashalmawia.coriolan.model.mockLanguage
@@ -216,24 +217,24 @@ class SqliteConvertersTest {
         val cardId = 1L
         val due = DateTime(1519529781000)
         val period = 16
-        val state = SRState(due, period)
+        val state = State(SRState(due, period))
 
         // when
-        val cv = createSRStateContentValues(cardId, state)
+        val cv = createCardStateContentValues(cardId, state)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
         assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
-        assertEquals("$SQLITE_COLUMN_DUE is correct", due, cv.getAsDate(SQLITE_COLUMN_DUE))
-        assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv.get(SQLITE_COLUMN_PERIOD))
+        assertEquals("$SQLITE_COLUMN_STATE_SR_DUE is correct", due, cv.getAsDate(SQLITE_COLUMN_STATE_SR_DUE))
+        assertEquals("$SQLITE_COLUMN_STATE_SR_PERIOD is correct", period, cv.get(SQLITE_COLUMN_STATE_SR_PERIOD))
 
         // when
-        val cv1 = createSRStateContentValues(cardId, state.due, state.period)
+        val cv1 = createCardStateContentValues(cardId, state.spacedRepetition.due, state.spacedRepetition.period)
 
         // then
         assertEquals("values count is correct", 3, cv1.size())
         assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv1.get(SQLITE_COLUMN_CARD_ID))
-        assertEquals("$SQLITE_COLUMN_DUE is correct", due, cv1.getAsDate(SQLITE_COLUMN_DUE))
-        assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv1.get(SQLITE_COLUMN_PERIOD))
+        assertEquals("$SQLITE_COLUMN_STATE_SR_DUE is correct", due, cv1.getAsDate(SQLITE_COLUMN_STATE_SR_DUE))
+        assertEquals("$SQLITE_COLUMN_STATE_SR_PERIOD is correct", period, cv1.get(SQLITE_COLUMN_STATE_SR_PERIOD))
     }
 }

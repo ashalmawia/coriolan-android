@@ -12,8 +12,8 @@ import org.robolectric.annotation.SQLiteMode
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
 class SqliteBackupableRepositoryTest : BackupableRepositoryTest() {
 
-    override fun createRepository(exercisesRegistry: ExercisesRegistry): BackupableRepository {
-        val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application, exercisesRegistry)
-        return SqliteBackupHelper(exercisesRegistry, helper)
+    override fun createRepository(): BackupableRepository {
+        val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application)
+        return SqliteBackupHelper(helper)
     }
 }

@@ -7,7 +7,12 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 
-class DecksRegistry(context: Context, val domain: Domain, private val repository: Repository, private val exercisesRegistry: ExercisesRegistry) {
+class DecksRegistry(
+        context: Context,
+        val domain: Domain,
+        private val repository: Repository,
+        private val exercisesRegistry: ExercisesRegistry
+) {
 
     init {
         val decksCount = repository.allDecks(domain).size
@@ -40,7 +45,7 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         data.forEach { addCard(it) }
     }
 
-    fun editCard(card: Card, cardData: CardData): Card? {
+    fun editCard(card: Card, cardData: CardData): Card {
         val original = findOrAddExpression(
                 cardData.original, domain.langOriginal(card.type)
         )
@@ -51,10 +56,7 @@ class DecksRegistry(context: Context, val domain: Domain, private val repository
         }
 
         val updated = repository.updateCard(card, cardData.deckId, original, translations)
-
-        if (updated != null) {
-            deleteOrphanExpressions(card.translations.plus(card.original))
-        }
+        deleteOrphanExpressions(card.translations.plus(card.original))
 
         return updated
     }

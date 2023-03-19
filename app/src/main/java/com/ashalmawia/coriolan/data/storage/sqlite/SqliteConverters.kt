@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.ExtraType
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.Expression
 import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
@@ -109,15 +109,16 @@ fun createDeckContentValues(domainId: Long, name: String, id: Long? = null): Con
     return cv
 }
 
-// ********** STATE ********************
+// ********** CARD STATE ********************
 
-fun createSRStateContentValues(cardId: Long, state: SRState)
-    = createSRStateContentValues(cardId, state.due, state.period)
+fun createCardStateContentValues(cardId: Long, state: State) : ContentValues {
+    return createCardStateContentValues(cardId, state.spacedRepetition.due, state.spacedRepetition.period)
+}
 
-fun createSRStateContentValues(cardId: Long, due: DateTime, period: Int): ContentValues {
+fun createCardStateContentValues(cardId: Long, due: DateTime, period: Int): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_CARD_ID, cardId)
-    cv.put(SQLITE_COLUMN_DUE, due)
-    cv.put(SQLITE_COLUMN_PERIOD, period)
+    cv.put(SQLITE_COLUMN_STATE_SR_DUE, due)
+    cv.put(SQLITE_COLUMN_STATE_SR_PERIOD, period)
     return cv
 }

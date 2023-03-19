@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
@@ -34,10 +33,7 @@ fun Int?.orZero(): Int {
 
 fun List<Card>.forward() = filter { it.type == CardType.FORWARD }
 fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
+fun  List<CardWithState>.forwardAndReverseWithState() = partition { it.card.type == CardType.FORWARD }
 
-fun <S : State> List<CardWithState<S>>.forwardWithState() = filter { it.card.type == CardType.FORWARD }
-fun <S : State> List<CardWithState<S>>.reverseWithState() = filter { it.card.type == CardType.REVERSE }
-fun <S : State> List<CardWithState<S>>.forwardAndReverseWithState() = partition { it.card.type == CardType.FORWARD }
-
-fun <S : State> List<CardWithState<S>>.new() = this.filter { it.state.status == Status.NEW }
-fun <S : State> List<CardWithState<S>>.review() = this.filter { it.state.status != Status.NEW }
+fun  List<CardWithState>.new() = this.filter { it.state.spacedRepetition.status == Status.NEW }
+fun  List<CardWithState>.review() = this.filter { it.state.spacedRepetition.status != Status.NEW }

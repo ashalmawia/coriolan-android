@@ -22,7 +22,7 @@ interface BackupableRepository {
 
     fun allDecks(offset: Int, limit: Int): List<DeckInfo>
 
-    fun allSRStates(exerciseId: String, offset: Int, limit: Int): List<SRStateInfo>
+    fun allCardStates(offset: Int, limit: Int): List<CardStateInfo>
 
     fun clearAll()
 
@@ -38,7 +38,7 @@ interface BackupableRepository {
 
     fun writeDecks(decks: List<DeckInfo>)
 
-    fun writeSRStates(exerciseId: String, states: List<SRStateInfo>)
+    fun writeCardStates(states: List<CardStateInfo>)
 
     fun hasAtLeastOneCard(): Boolean
 }
@@ -77,7 +77,7 @@ data class DeckInfo(
         val domainId: Long,
         val name: String)
 
-data class SRStateInfo(
+data class CardStateInfo(
         val cardId: Long,
         val due: DateTime,
         val period: Int)

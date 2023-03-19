@@ -1,9 +1,6 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.MockExercisesRegistry
-import com.ashalmawia.coriolan.learning.StateType
 import kotlin.math.min
 
 class MockBackupableRepository(
@@ -13,8 +10,7 @@ class MockBackupableRepository(
         expressionExtras: List<ExpressionExtraInfo>,
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
-        srstates: Map<String, List<SRStateInfo>>,
-        private val exercises: ExercisesRegistry
+        cardStates: List<CardStateInfo>
 ) : BackupableRepository {
 
     private val languages = langauges.toMutableList()
@@ -23,7 +19,7 @@ class MockBackupableRepository(
     private val expressionExtras = expressionExtras.toMutableList()
     private val cards = cards.toMutableList()
     private val decks = decks.toMutableList()
-    private val srstates = srstates.mapValues { it.value.toMutableList() }.toMutableMap()
+    private val cardStates = cardStates.toMutableList()
 
     override fun beginTransaction() {}
     override fun commitTransaction() {}
@@ -47,13 +43,8 @@ class MockBackupableRepository(
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo>
             = decks.subList(min(offset, decks.size), min(offset + limit, decks.size))
 
-    override fun allSRStates(exerciseId: String, offset: Int, limit: Int): List<SRStateInfo> {
-        if (!srstates.containsKey(exerciseId)) {
-            return emptyList()
-        }
-
-        val list = srstates[exerciseId]!!
-        return list.subList(min(offset, list.size), min(offset + limit, list.size))
+    override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo> {
+        return cardStates.subList(min(offset, cardStates.size), min(offset + limit, cardStates.size))
     }
 
     override fun clearAll() {
@@ -63,7 +54,7 @@ class MockBackupableRepository(
         expressionExtras.clear()
         cards.clear()
         decks.clear()
-        srstates.clear()
+        cardStates.clear()
     }
 
     override fun writeLanguages(languages: List<LanguageInfo>) {
@@ -90,10 +81,8 @@ class MockBackupableRepository(
         this.decks.addAll(decks)
     }
 
-    override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) {
-        if (exercises.allExercises().find { it.stableId == exerciseId } != null) {
-            this.srstates.getOrPut(exerciseId, { mutableListOf() }).addAll(states)
-        }
+    override fun writeCardStates(states: List<CardStateInfo>) {
+        this.cardStates.addAll(states)
     }
 
     override fun hasAtLeastOneCard(): Boolean {
@@ -101,7 +90,7 @@ class MockBackupableRepository(
     }
 
     companion object {
-        fun empty(exercises: ExercisesRegistry): MockBackupableRepository {
+        fun empty(): MockBackupableRepository {
             return MockBackupableRepository(
                     emptyList(),
                     emptyList(),
@@ -109,12 +98,11 @@ class MockBackupableRepository(
                     emptyList(),
                     emptyList(),
                     emptyList(),
-                    emptyMap(),
-                    exercises
+                    emptyList()
             )
         }
 
-        fun random(exercises: MockExercisesRegistry): MockBackupableRepository {
+        fun random(): MockBackupableRepository {
             return MockBackupableRepository(
                     JsonBackupTestData.languages,
                     JsonBackupTestData.domains,
@@ -122,9 +110,7 @@ class MockBackupableRepository(
                     JsonBackupTestData.expressionExtras,
                     JsonBackupTestData.cards,
                     JsonBackupTestData.decks,
-                    exercises.allExercises().filter { it.stateType == StateType.SR_STATE }
-                            .map { it.stableId }.associate { id -> Pair(id, JsonBackupTestData.srstates) },
-                    exercises
+                    JsonBackupTestData.cardStates
             )
         }
     }

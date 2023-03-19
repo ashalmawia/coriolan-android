@@ -3,8 +3,8 @@ package com.ashalmawia.coriolan.data.storage
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -47,7 +47,7 @@ interface Repository {
 
     fun cardByValues(domain: Domain, original: Expression): Card?
 
-    fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card?
+    fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card
 
     fun deleteCard(card: Card)
 
@@ -62,31 +62,33 @@ interface Repository {
 
     fun addDeck(domain: Domain, name: String): Deck
 
-    fun updateDeck(deck: Deck, name: String): Deck?
+    fun updateDeck(deck: Deck, name: String): Deck
 
     fun deleteDeck(deck: Deck): Boolean
 
-    fun deckPendingCounts(exerciseId: String, deck: Deck, cardType: CardType, date: DateTime): Counts {
-        val due = cardsDueDate(exerciseId, deck, date)
+    fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
+        val due = cardsDueDate(deck, date)
         val total = cardsOfDeck(deck)
 
         val deckDue = due.filter { it.card.type == cardType }
 
+        // todo: decouple
         return Counts(
-                deckDue.count { it.state.status == Status.NEW },
-                deckDue.count { it.state.status == Status.IN_PROGRESS || it.state.status == Status.LEARNT },
-                deckDue.count { it.state.status == Status.RELEARN },
+                deckDue.count { it.state.spacedRepetition.status == Status.NEW },
+                deckDue.count { it.state.spacedRepetition.status == Status.IN_PROGRESS
+                        || it.state.spacedRepetition.status == Status.LEARNT },
+                deckDue.count { it.state.spacedRepetition.status == Status.RELEARN },
                 total.filter { it.type == cardType }.size
         )
     }
 
-    fun updateSRCardState(card: Card, state: SRState, exerciseId: String)
+    fun updateCardState(card: Card, state: State)
 
-    fun getSRCardState(card: Card, exerciseId: String): SRState
+    fun getCardState(card: Card): State
 
-    fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>>
+    fun cardsDueDate(deck: Deck, date: DateTime): List<CardWithState>
 
-    fun getStatesForCardsWithOriginals(originalIds: List<Long>, exerciseId: String): Map<Long, SRState>
+    fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State>
 
     fun invalidateCache()
 }

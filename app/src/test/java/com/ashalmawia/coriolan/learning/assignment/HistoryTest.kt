@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.mockCardWithState
 import com.ashalmawia.coriolan.model.mockState
 import com.ashalmawia.coriolan.model.mockStateRelearn
@@ -12,10 +11,10 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class HistoryTest {
 
-    private val history = SimpleHistory<SRState>()
+    private val history = SimpleHistory()
 
     @Test(expected = Exception::class)
-    fun `test__empty`() {
+    fun test__empty() {
         // when
         val canGoBack = history.canGoBack()
 
@@ -27,7 +26,7 @@ class HistoryTest {
     }
 
     @Test
-    fun `test__single`() {
+    fun test__single() {
         // given
         val card = mockCardWithState(mockStateRelearn())
 
@@ -45,7 +44,7 @@ class HistoryTest {
     }
 
     @Test
-    fun `test__multiple`() {
+    fun test__multiple() {
         // given
         val list = (0 until 10).map {
             mockCardWithState(mockState(it))

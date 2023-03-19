@@ -8,6 +8,6 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class MockBackupableRepositoryTest : BackupableRepositoryTest() {
 
-    override fun createRepository(exercisesRegistry: ExercisesRegistry): BackupableRepository
-            = MockBackupableRepository.empty(exercisesRegistry)
+    override fun createRepository(): BackupableRepository
+            = MockBackupableRepository.empty()
 }

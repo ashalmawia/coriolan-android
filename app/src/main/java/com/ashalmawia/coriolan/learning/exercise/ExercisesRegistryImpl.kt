@@ -1,29 +1,27 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import android.content.Context
 import com.ashalmawia.coriolan.learning.TodayProvider
-import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionExercise
 
 class ExercisesRegistryImpl(
-        context: Context,
         todayProvider: TodayProvider,
         emptyStateProvider: EmptyStateProvider,
-        scheduler: Scheduler
+        scheduler: SpacedRepetitionScheduler
 ) : ExercisesRegistry {
 
-    private val default = SpacedRepetitionExercise(todayProvider, emptyStateProvider, scheduler)
+    private val default: Exercise = SpacedRepetitionExercise(todayProvider, emptyStateProvider, scheduler)
 
     private val exercises = listOf(
             default
             // all others go here
     )
 
-    override fun allExercises(): List<Exercise<*, *>> {
+    override fun allExercises(): List<Exercise> {
         return exercises
     }
 
-    override fun defaultExercise(): Exercise<*, *> {
+    override fun defaultExercise(): Exercise {
         return default
     }
 }

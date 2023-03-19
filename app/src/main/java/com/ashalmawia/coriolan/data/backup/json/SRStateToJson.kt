@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.data.backup.json
 
-import com.ashalmawia.coriolan.data.backup.SRStateInfo
+import com.ashalmawia.coriolan.data.backup.CardStateInfo
 import com.ashalmawia.coriolan.util.timespamp
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -11,7 +11,7 @@ private const val FIELD_CARD_ID = "id"
 private const val FIELD_DUE = "due"
 private const val FIELD_PERIOD = "period"
 
-fun readSRStateFromJson(json: JsonParser): SRStateInfo {
+fun readSRStateFromJson(json: JsonParser): CardStateInfo {
     var cardId: Long? = null
     var due: Long? = null
     var period: Int? = null
@@ -37,10 +37,10 @@ fun readSRStateFromJson(json: JsonParser): SRStateInfo {
         throw JsonDeserializationException("failed to read SR state, cardId $cardId, due $due, period $period")
     }
 
-    return SRStateInfo(cardId, DateTime(due), period)
+    return CardStateInfo(cardId, DateTime(due), period)
 }
 
-fun writeSRStateToJson(state: SRStateInfo, json: JsonGenerator) {
+fun writeSRStateToJson(state: CardStateInfo, json: JsonGenerator) {
     json.writeStartObject()
 
     json.writeNumberField(FIELD_CARD_ID, state.cardId)

@@ -1,18 +1,13 @@
 package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.learning.*
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
 abstract class BackupableRepositoryTest {
 
-    protected abstract fun createRepository(exercisesRegistry: ExercisesRegistry): BackupableRepository
-
-    private val exercise = MockExercise("some_exercise", StateType.SR_STATE)
-    private val exercises = MockExercisesRegistry(listOf(exercise))
+    protected abstract fun createRepository(): BackupableRepository
 
     private val today = mockToday()
 
@@ -79,18 +74,18 @@ abstract class BackupableRepositoryTest {
     )
 
     private val srstates = listOf(
-            SRStateInfo(5L, today.minusDays(10), 44),
-            SRStateInfo(3L, today.minusDays(5), 52),
-            SRStateInfo(12L, today.plusDays(11), 22),
-            SRStateInfo(11L, today.minusDays(88), 12),
-            SRStateInfo(9L, today.plusDays(23), 50),
-            SRStateInfo(8L, today.minusDays(1), 1),
-            SRStateInfo(6L, today, 0)
+            CardStateInfo(5L, today.minusDays(10), 44),
+            CardStateInfo(3L, today.minusDays(5), 52),
+            CardStateInfo(12L, today.plusDays(11), 22),
+            CardStateInfo(11L, today.minusDays(88), 12),
+            CardStateInfo(9L, today.plusDays(23), 50),
+            CardStateInfo(8L, today.minusDays(1), 1),
+            CardStateInfo(6L, today, 0)
     )
 
     @Before
     fun before() {
-        repo = createRepository(exercises)
+        repo = createRepository()
     }
 
     @Test
@@ -166,16 +161,13 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun `test__srstates__empty`() {
-        // given
-        val exerciseId = exercise.stableId
-
+    fun `test__cardStates__empty`() {
         // then
-        testEmpty({ states -> repo.writeSRStates(exerciseId, states) }, { offset, limit -> repo.allSRStates(exerciseId, offset, limit)})
+        testEmpty({ states -> repo.writeCardStates(states) }, { offset, limit -> repo.allCardStates(offset, limit)})
     }
 
     @Test
-    fun `test__srstates__nonEmpty`() {
+    fun `test__cardStates__nonEmpty`() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
@@ -183,27 +175,23 @@ abstract class BackupableRepositoryTest {
         repo.writeDecks(decks)
         repo.writeCards(cards)
 
-        val exerciseId = exercise.stableId
-
         // then
         testNonEmpty(
                 srstates.sortedBy { it.cardId },
-                { states -> repo.writeSRStates(exerciseId, states) },
-                { offset, limit -> repo.allSRStates(exerciseId, offset, limit).sortedBy { it.cardId } }
+                { states -> repo.writeCardStates(states) },
+                { offset, limit -> repo.allCardStates(offset, limit).sortedBy { it.cardId } }
         )
     }
 
     @Test
     fun `test__clear`() {
         // given
-        val exerciseId = exercise.stableId
-
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
         repo.writeExpressions(expressions)
         repo.writeDecks(decks)
         repo.writeCards(cards)
-        repo.writeSRStates(exerciseId, srstates)
+        repo.writeCardStates(srstates)
 
         // when
         repo.clearAll()
@@ -214,7 +202,7 @@ abstract class BackupableRepositoryTest {
         assertTrue(repo.allExpressions(0, 500).isEmpty())
         assertTrue(repo.allCards(0, 500).isEmpty())
         assertTrue(repo.allDecks(0, 500).isEmpty())
-        assertTrue(repo.allSRStates(exerciseId, 0, 500).isEmpty())
+        assertTrue(repo.allCardStates(0, 500).isEmpty())
     }
 
     @Test

@@ -1,26 +1,25 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.Card
 
-interface History<T : State> {
+interface History {
 
     fun canGoBack(): Boolean
 
-    fun record(card: CardWithState<T>)
+    fun record(card: CardWithState)
 
     fun forget(card: Card)
 
-    fun goBack(): CardWithState<T>
+    fun goBack(): CardWithState
 }
 
 interface HistoryFactory {
 
-    fun <T : State> create(): History<T>
+    fun create(): History
 }
 
 object HistoryFactoryImpl : HistoryFactory {
 
-    override fun <T : State> create() = SimpleHistory<T>()
+    override fun create() = SimpleHistory()
 }

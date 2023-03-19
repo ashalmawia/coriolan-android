@@ -1,7 +1,12 @@
 package com.ashalmawia.coriolan.learning
 
-interface State {
+import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 
+data class State(
+    val spacedRepetition: SRState
+)
+
+interface ExerciseState {
     val status: Status
 }
 

@@ -4,9 +4,6 @@ import com.ashalmawia.coriolan.data.backup.json.JsonBackup
 import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
 import com.ashalmawia.coriolan.data.storage.provideHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
-import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.MockExercisesRegistry
-import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.util.OpenForTesting
 import junit.framework.Assert.assertTrue
 import org.junit.Test
@@ -21,8 +18,7 @@ import java.io.InputStream
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
 class BackupableRepositoryTransactionTest {
 
-    val exercises = MockExercisesRegistry()
-    val realRepo = SqliteBackupHelper(exercises, provideHelper(exercises))
+    val realRepo = SqliteBackupHelper(provideHelper())
 
     val backup: Backup = JsonBackup()
 
@@ -100,8 +96,8 @@ class BackupableRepositoryTransactionTest {
     fun testSRStates() {
         // given
         val repo = object : OpenBackupableRepostory(realRepo) {
-            override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) {
-                super.writeSRStates(exerciseId, states)
+            override fun writeCardStates(states: List<CardStateInfo>) {
+                super.writeCardStates(states)
                 throw Exception()
             }
         }
@@ -115,36 +111,33 @@ class BackupableRepositoryTransactionTest {
         // when
         try {
             backup.restoreFrom(provideBackupInputStream(), repo)
-        } catch (e: Exception) { }
+        } catch (ignored: Exception) { }
 
         // then
-        assertEmpty(repo, exercises.allExercises())
+        assertEmpty(repo)
     }
-
-    private fun provideBackupInputStream(): InputStream = provideBackupInputStream(exercises)
 }
 
-private fun assertEmpty(repository: BackupableRepository, exercises: List<Exercise<*, *>>) {
+private fun assertEmpty(repository: BackupableRepository) {
     assertTrue(repository.allLanguages(0, 500).isEmpty())
     assertTrue(repository.allDomains(0, 500).isEmpty())
     assertTrue(repository.allDecks(0, 500).isEmpty())
     assertTrue(repository.allCards(0, 500).isEmpty())
     assertTrue(repository.allExpressions(0, 500).isEmpty())
-    exercises.forEach { assertTrue(repository.allSRStates(it.stableId, 0, 500).isEmpty()) }
+    assertTrue(repository.allCardStates( 0, 500).isEmpty())
 }
 
-private fun provideBackupInputStream(exercises: MockExercisesRegistry): InputStream {
-    val tempRepo = SqliteBackupHelper(exercises, provideHelper(exercises))
+private fun provideBackupInputStream(): InputStream {
+    val tempRepo = SqliteBackupHelper(provideHelper())
     tempRepo.writeLanguages(JsonBackupTestData.languages)
     tempRepo.writeDomains(JsonBackupTestData.domains)
     tempRepo.writeExpressions(JsonBackupTestData.exressions)
     tempRepo.writeDecks(JsonBackupTestData.decks)
     tempRepo.writeCards(JsonBackupTestData.cards)
-    exercises.allExercises().filter { it.stateType == StateType.SR_STATE }
-            .forEach { tempRepo.writeSRStates(it.stableId, JsonBackupTestData.srstates) }
+    tempRepo.writeCardStates(JsonBackupTestData.cardStates)
 
     val output = ByteArrayOutputStream()
-    JsonBackup().create(tempRepo, exercises.allExercises(), output)
+    JsonBackup().create(tempRepo, output)
 
     return ByteArrayInputStream(output.toByteArray())
 }
@@ -175,8 +168,8 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo> = inner.allDecks(offset, limit)
 
-    override fun allSRStates(exerciseId: String, offset: Int, limit: Int): List<SRStateInfo>
-            = inner.allSRStates(exerciseId, offset, limit)
+    override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo>
+            = inner.allCardStates(offset, limit)
 
     override fun clearAll() = inner.clearAll()
 
@@ -192,7 +185,7 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun writeDecks(decks: List<DeckInfo>) = inner.writeDecks(decks)
 
-    override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) = inner.writeSRStates(exerciseId, states)
+    override fun writeCardStates(states: List<CardStateInfo>) = inner.writeCardStates(states)
 
     override fun hasAtLeastOneCard(): Boolean = inner.hasAtLeastOneCard()
 }

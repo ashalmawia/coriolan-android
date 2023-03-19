@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_NEVER_SCHEDULED
@@ -59,21 +58,21 @@ fun mockCard(
             listOf(mockExpression(back, language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type)))
     )
 }
-fun mockForwardCardWithState(): CardWithState<MockState> = mockCardWithState(MockState(), type = CardType.FORWARD)
-fun mockReverseCardWithState(): CardWithState<MockState> = mockCardWithState(MockState(), type = CardType.REVERSE)
+fun mockForwardCardWithState(): CardWithState = mockCardWithState(mockState(), type = CardType.FORWARD)
+fun mockReverseCardWithState(): CardWithState = mockCardWithState(mockState(), type = CardType.REVERSE)
 
-fun <T : State> mockCardWithState(
-        state: T,
+fun mockCardWithState(
+        state: State = mockState(),
         domain: Domain = mockDomain(),
         id: Long = cardId++,
-        type: CardType = CardType.FORWARD): CardWithState<T> {
+        type: CardType = CardType.FORWARD): CardWithState {
     return CardWithState(mockCard(domain, id, type), state)
 }
 
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
-fun mockState(period: Int = 0) = SRState(mockToday(), period)
+fun mockState(period: Int = 0) = State(SRState(mockToday(), period))
 fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)
 fun mockStateRelearn() = mockState(0)
 fun mockStateInProgress() = mockState(5)

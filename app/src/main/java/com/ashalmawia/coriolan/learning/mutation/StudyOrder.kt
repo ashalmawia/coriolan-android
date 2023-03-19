@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.util.new
 import com.ashalmawia.coriolan.util.review
 
@@ -11,20 +10,20 @@ enum class StudyOrder {
     NEWEST_FIRST
 }
 
-class OrderAdded<S : State>: NewCardsOrderMutation<S>() {
-    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+class OrderAdded: NewCardsOrderMutation() {
+    override fun apply(cards: List<CardWithState>): List<CardWithState> {
         return cards
     }
 }
 
-class NewestFirst<S : State>: NewCardsOrderMutation<S>() {
-    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+class NewestFirst: NewCardsOrderMutation() {
+    override fun apply(cards: List<CardWithState>): List<CardWithState> {
         return cards.new().reversed().plus(cards.review())
     }
 }
 
-class Random<S : State> : NewCardsOrderMutation<S>() {
-    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+class Random : NewCardsOrderMutation() {
+    override fun apply(cards: List<CardWithState>): List<CardWithState> {
         return cards.shuffled()
     }
 }

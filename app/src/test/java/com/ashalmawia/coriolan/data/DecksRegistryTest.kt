@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data
 import android.content.Context
 import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
+import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.MockRepository
 import com.ashalmawia.coriolan.data.storage.justAddExpression
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
@@ -70,7 +71,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardsToDeck__singleTranslation`() {
+    fun addCardsToDeck__singleTranslation() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
         val cardsData = arrayListOf(
@@ -89,7 +90,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardsToDeck__multipleTranslations`() {
+    fun addCardsToDeck__multipleTranslations() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
         val cardsData = arrayListOf(
@@ -108,7 +109,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardsToDeck__expressionsReused__singleTranslation`() {
+    fun addCardsToDeck__expressionsReused__singleTranslation() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -143,7 +144,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardsToDeck__expressionsReused__multipleTranslations`() {
+    fun addCardsToDeck__expressionsReused__multipleTranslations() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -235,7 +236,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardToDeck__testMatching__originalMatch__newTranslation`() {
+    fun addCardToDeck__testMatching__originalMatch__newTranslation() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -261,7 +262,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardToDeck__testMatching__originalMatch__partialDuplicateAndNewTranslation`() {
+    fun addCardToDeck__testMatching__originalMatch__partialDuplicateAndNewTranslation() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -305,7 +306,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardToDeck__testMatching__translationsMatch`() {
+    fun addCardToDeck__testMatching__translationsMatch() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -343,7 +344,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardToDeck__testMatching__noMatch`() {
+    fun addCardToDeck__testMatching__noMatch() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -378,7 +379,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `addCardToDeck__testMatching__duplicate`() {
+    fun addCardToDeck__testMatching__duplicate() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -404,7 +405,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `editCard__changeTypoInOriginal`() {
+    fun editCard__changeTypoInOriginal() {
         // given
         val deckId = 1L
 
@@ -424,14 +425,14 @@ class DecksRegistryTest {
 
         // then
         assertNotNull("edit was successful", edited)
-        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("correct card was edited", card.id, edited.id)
         assertExpressionCorrect(expression2, edited.original)
         assertEquals("translations are preserved", listOf(expression1), edited.translations)
         assertNull("orphan expressions are deleted", mockRepository.expressionById(expression3.id))
     }
 
     @Test
-    fun `editCard__addTranslation`() {
+    fun editCard__addTranslation() {
         // given
         val deckId = 1L
 
@@ -449,7 +450,7 @@ class DecksRegistryTest {
 
         // then
         assertNotNull("edit was successful", edited)
-        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("correct card was edited", card.id, edited.id)
         assertExpressionCorrect(expression1, edited.original)
         assertEquals("translations are updated", listOf(expression2,
                 mockRepository.expressionByValues("весна", domain.langTranslations())), edited.translations)
@@ -476,7 +477,7 @@ class DecksRegistryTest {
 
         // then
         assertNotNull("edit was successful", edited)
-        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("correct card was edited", card.id, edited.id)
         assertEquals("transcription is set", transcription,
                 mockRepository.allExtrasForExpression(edited.original).transcription)
         assertNull("unrelated exprerssions are not affected",
@@ -505,7 +506,7 @@ class DecksRegistryTest {
 
         // then
         assertNotNull("edit was successful", edited)
-        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("correct card was edited", card.id, edited.id)
         assertEquals("transcription is set", transcriptionNew,
                 mockRepository.allExtrasForExpression(edited.original).transcription)
         assertNull("unrelated exprerssions are not affected",
@@ -532,7 +533,7 @@ class DecksRegistryTest {
 
         // then
         assertNotNull("edit was successful", edited)
-        assertEquals("correct card was edited", card.id, edited!!.id)
+        assertEquals("correct card was edited", card.id, edited.id)
         assertNull("transcription is deleted",
                 mockRepository.allExtrasForExpression(edited.original).transcription)
         assertNull("unrelated exprerssions are not affected",
@@ -540,8 +541,8 @@ class DecksRegistryTest {
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 
-    @Test
-    fun `editCard__nonExistentCard`() {
+    @Test(expected = DataProcessingException::class)
+    fun editCard__nonExistentCard() {
         // given
         val deckId = 1L
 
@@ -563,7 +564,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun `deleteCard`() {
+    fun deleteCard() {
         // given
         val deckId = 1L
 
@@ -602,7 +603,7 @@ class DecksRegistryTest {
 
 private fun verifyAddedCardsCorrect(cardsData: ArrayList<CardData>, cardsOfDeck: List<Card>, domain: Domain) {
     val forwardCount = cardsData.size
-    val reverseCount = cardsData.sumBy { it.translations.size }
+    val reverseCount = cardsData.sumOf { it.translations.size }
     val expectedCount = forwardCount + reverseCount
 
     assertEquals("amount of cards is correct", expectedCount, cardsOfDeck.size)

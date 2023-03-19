@@ -3,12 +3,8 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.StateType
 
 private const val SCHEMA_VERSION = 1
-private const val DATABASE_NAME = "data.db"
 
 /**
  * Production classes should never instantiate this class directly but prefer using
@@ -16,9 +12,8 @@ private const val DATABASE_NAME = "data.db"
  * will be a well-known sourse of bugs.
  */
 class SqliteRepositoryOpenHelper(
-        context: Context,
-        private val exercisesRegistry: ExercisesRegistry,
-        dbName: String = DATABASE_NAME
+        private val context: Context,
+        dbName: String = "data.db"
 ) : SQLiteOpenHelper(context, dbName, null, SCHEMA_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -54,7 +49,7 @@ class SqliteRepositoryOpenHelper(
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DOMAINS(
             |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
-            |$SQLITE_COLUMN_NAME TEXT NULLABLE,
+            |$SQLITE_COLUMN_NAME TEXT,
             |$SQLITE_COLUMN_LANG_ORIGINAL INTEGER NOT NULL,
             |$SQLITE_COLUMN_LANG_TRANSLATIONS INTEGER NOT NULL,
             |FOREIGN KEY ($SQLITE_COLUMN_LANG_ORIGINAL) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
@@ -105,28 +100,19 @@ class SqliteRepositoryOpenHelper(
             |   ON UPDATE CASCADE
             |);""".trimMargin()
         )
-        createTablesForExercises(db, exercisesRegistry.allExercises())
+        createTableExerciseState(db)
     }
 
-    private fun createTablesForExercises(db: SQLiteDatabase, exercises: List<Exercise<*, *>>) {
-        exercises.filterNot { it.stateType == StateType.UNKNOWN }
-                .forEach { createTableExerciseState(db, it.stateType, sqliteTableExerciseState(it.stableId)) }
-    }
-
-    private fun createTableExerciseState(db: SQLiteDatabase, type: StateType, tableName: String) {
-        when (type) {
-            StateType.SR_STATE -> db.execSQL("""
-                |CREATE TABLE $tableName(
+    private fun createTableExerciseState(db: SQLiteDatabase) {
+        db.execSQL("""
+                |CREATE TABLE $SQLITE_TABLE_CARD_STATES(
                 |   $SQLITE_COLUMN_CARD_ID INTEGER PRIMARY KEY,
-                |   $SQLITE_COLUMN_DUE INTEGER NOT NULL,
-                |   $SQLITE_COLUMN_PERIOD INTEGER NOT NULL,
+                |   $SQLITE_COLUMN_STATE_SR_DUE INTEGER NOT NULL,
+                |   $SQLITE_COLUMN_STATE_SR_PERIOD INTEGER NOT NULL,
                 |   FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
                 |      ON DELETE CASCADE
                 |      ON UPDATE CASCADE
                 |);""".trimMargin())
-
-            else -> throw IllegalArgumentException("state type $type is not handled")
-        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -139,5 +125,10 @@ class SqliteRepositoryOpenHelper(
         }
 
         db.setForeignKeyConstraintsEnabled(true)
+    }
+
+    fun deleteDatabase() {
+        close()
+        context.deleteDatabase(databaseName)
     }
 }

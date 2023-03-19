@@ -2,11 +2,6 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.backup.SRStateInfo
-import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.MockExercisesRegistry
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.StateType
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,143 +14,105 @@ abstract class JsonBackupTest {
 
     private val backup: Backup = JsonBackup()
     
-    protected abstract fun createEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository
-    protected abstract fun createNonEmptyRepo(exercises: MockExercisesRegistry): BackupableRepository
-
-    private fun exercises(count: Int = 0): List<Exercise<*, *>> {
-        return (1..count).map { MockExercise("exercise_$it", StateType.SR_STATE) }
-    }
+    protected abstract fun createEmptyRepo(): BackupableRepository
+    protected abstract fun createNonEmptyRepo(): BackupableRepository
 
     @Test
-    fun `test__emptyRepository`() {
+    fun test__emptyRepository() {
         // given
-        val exercises = listOf(
-                MockExercise(stateType = StateType.SR_STATE),
-                MockExercise(stateType = StateType.UNKNOWN)
-        )
-        val repo = createEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     @Test
-    fun `test__singleSRStateExercise`() {
+    fun test__singleSRStateExercise() {
         // given
-        val exercises = exercises(1)
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     @Test
-    fun `test__multipleSRStateExercises`() {
+    fun test__multipleSRStateExercises() {
         // given
-        val exercises = exercises(5)
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     @Test
-    fun `test__multipleSRStateExercisesAndSomeWithoutState`() {
+    fun test__multipleSRStateExercisesAndSomeWithoutState() {
         // given
-        val exercises = exercises(5).plus(MockExercise("no_state", StateType.UNKNOWN))
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     @Test
-    fun `test__applyEmptyToANonEmpty`() {
+    fun test__applyEmptyToANonEmpty() {
         // given
-        val exercises = exercises(3)
-        val mockExercisesRegistry = MockExercisesRegistry(exercises)
-
-        val repo = createEmptyRepo(mockExercisesRegistry)
-        val outRepo = createNonEmptyRepo(mockExercisesRegistry)
+        val repo = createEmptyRepo()
+        val outRepo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup, outRepo)
+        test(repo, backup, outRepo)
     }
 
     @Test
-    fun `test__applyNonEmptyToANonEmpty`() {
+    fun test__applyNonEmptyToANonEmpty() {
         // given
-        val exercisesIn = exercises(3)
-        val exercises = exercises(5)
-
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercisesIn))
-        val outRepo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
+        val outRepo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup, outRepo, exercisesIn)
+        test(repo, backup, outRepo)
     }
 
     @Test
-    fun `test__applyNonEmptyToANonEmpty__lessExercises`() {
-        // given
-        val exercisesIn = exercises(5)
-        val exercises = exercises(3)
-
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercisesIn))
-        val outRepo = createNonEmptyRepo(MockExercisesRegistry(exercises))
-
-        // then
-        test(repo, exercises, backup, outRepo, exercisesIn)
-    }
-
-    @Test
-    fun `test__smallPage`() {
+    fun test__smallPage() {
         // given
         val backup = JsonBackup(2)
-
-        val exercises = exercises(2)
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     @Test
-    fun `test__mediumPage`() {
+    fun test__mediumPage() {
         // given
         val backup = JsonBackup(5)
-
-        val exercises = exercises(2)
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     @Test
-    fun `test__bigPage`() {
+    fun test__bigPage() {
         // given
         val backup = JsonBackup(50)
-
-        val exercises = exercises(2)
-        val repo = createNonEmptyRepo(MockExercisesRegistry(exercises))
+        val repo = createNonEmptyRepo()
 
         // then
-        test(repo, exercises, backup)
+        test(repo, backup)
     }
 
     private fun test(
             repo: BackupableRepository,
-            exercises: List<Exercise<*, *>>,
             backup: Backup,
-            outRepo: BackupableRepository = createEmptyRepo(MockExercisesRegistry(exercises)),
-            exercisesIn: List<Exercise<*, *>> = exercises
+            outRepo: BackupableRepository = createEmptyRepo()
     ) {
         // when
         val output = ByteArrayOutputStream()
 
         // when
-        backup.create(repo, exercisesIn, output)
+        backup.create(repo, output)
 
         println(output.toString())
 
@@ -166,22 +123,15 @@ abstract class JsonBackupTest {
         backup.restoreFrom(input, outRepo)
 
         // then
-        assertRepoEquals(repo, outRepo, exercises, exercisesIn)
+        assertRepoEquals(repo, outRepo)
     }
 
-    private fun assertRepoEquals(expected: BackupableRepository, actual: BackupableRepository,
-                                 exercises: List<Exercise<*, *>>, exercisesIn: List<Exercise<*, *>> = exercises) {
+    private fun assertRepoEquals(expected: BackupableRepository, actual: BackupableRepository) {
         assertEquals(expected.allLanguages(0, 500), actual.allLanguages(0, 500))
         assertEquals(expected.allDomains(0, 500), actual.allDomains(0, 500))
         assertEquals(expected.allExpressions(0, 500), actual.allExpressions(0, 500))
         assertEquals(expected.allCards(0, 500), actual.allCards(0, 500))
         assertEquals(expected.allDecks(0, 500), actual.allDecks(0, 500))
-
-        exercises.intersect(exercisesIn).filter { it.stateType == StateType.SR_STATE }.forEach {
-            assertEquals(expected.allSRStates(it.stableId, 0, 500), actual.allSRStates(it.stableId, 0, 500))
-        }
-        exercises.minus(exercisesIn).filter { it.stateType == StateType.SR_STATE }.forEach {
-            assertEquals(emptyList<SRStateInfo>(), actual.allSRStates(it.stableId, 0, 500))
-        }
+        assertEquals(expected.allCardStates(0, 500), actual.allCardStates(0, 500))
     }
 }

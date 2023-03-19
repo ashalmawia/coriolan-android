@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.learning.exercise.sr.Scheduler
+import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -335,7 +335,7 @@ class MultiplierBasedSchedulerTest {
     }
 }
 
-private fun Scheduler.wrong(srState: SRState) = processAnswer(SRAnswer.WRONG, srState)
-private fun Scheduler.correct(srState: SRState) = processAnswer(SRAnswer.CORRECT, srState)
-private fun Scheduler.easy(srState: SRState) = processAnswer(SRAnswer.EASY, srState)
-private fun Scheduler.hard(srState: SRState) = processAnswer(SRAnswer.HARD, srState)
+private fun SpacedRepetitionScheduler.wrong(srState: SRState) = processAnswer(SRAnswer.WRONG, srState)
+private fun SpacedRepetitionScheduler.correct(srState: SRState) = processAnswer(SRAnswer.CORRECT, srState)
+private fun SpacedRepetitionScheduler.easy(srState: SRState) = processAnswer(SRAnswer.EASY, srState)
+private fun SpacedRepetitionScheduler.hard(srState: SRState) = processAnswer(SRAnswer.HARD, srState)

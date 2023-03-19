@@ -7,7 +7,6 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.StateType
-import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
@@ -15,7 +14,7 @@ import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
 
-interface Exercise<S : State, R> {
+interface Exercise {
 
     /**
      * Unique string ID which must never be changed.
@@ -38,13 +37,13 @@ interface Exercise<S : State, R> {
 
     val canUndo: Boolean
 
-    fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState<S>>
+    fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState>
 
-    fun isPending(card: CardWithState<S>): Boolean
+    fun isPending(card: CardWithState): Boolean
 
-    fun getCardWithState(repository: Repository, card: Card): CardWithState<S>
+    fun getCardWithState(repository: Repository, card: Card): CardWithState
 
-    fun updateCardState(repository: Repository, card: CardWithState<S>, newState: S): CardWithState<S>
+    fun updateCardState(repository: Repository, card: CardWithState, newState: State): CardWithState
 
     fun mutations(
             repository: Repository,
@@ -54,11 +53,11 @@ interface Exercise<S : State, R> {
             order: StudyOrder,
             deck: Deck,
             cardType: CardType
-    ): Mutations<S>
+    ): Mutations
 
-    fun processReply(repository: Repository, card: CardWithState<S>, answer: R): CardWithState<S>
+    fun processReply(repository: Repository, card: CardWithState, answer: Any): CardWithState
 
     fun onTranslationAdded(repository: Repository, card: Card)
 
-    fun createRenderer(listener: ExerciseRenderer.Listener<R>): ExerciseRenderer<S, R>
+    fun createRenderer(listener: ExerciseRenderer.Listener): ExerciseRenderer
 }

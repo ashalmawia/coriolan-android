@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.util.OpenForTesting
 import org.joda.time.DateTime
@@ -12,26 +11,27 @@ import kotlin.math.min
 private const val RESCHEDULING_STEP = 20
 
 @OpenForTesting
-class Assignment<T : State>(
+class Assignment(
         val date: DateTime,
-        private val history: History<T>,
-        cards: List<CardWithState<T>>
+        private val history: History,
+        cards: List<CardWithState>
 ) {
     private val queue = LinkedList(cards)
 
-    var current: CardWithState<T>? = null
+    var current: CardWithState? = null
         protected set
 
     fun counts(): Counts {
         val cards = cards()
-        val counts = cards.groupBy { it.state.status }.mapValues { it.value.size }
+        // todo: decouple
+        val counts = cards.groupBy { it.state.spacedRepetition.status }.mapValues { it.value.size }
         return Counts.createFrom(counts, cards.size)
     }
     fun hasNext(): Boolean {
         return queue.size > 0
     }
 
-    fun reschedule(card: CardWithState<T>) {
+    fun reschedule(card: CardWithState) {
         val index = min(RESCHEDULING_STEP, queue.size)
         queue.add(index, card)
     }
@@ -44,7 +44,7 @@ class Assignment<T : State>(
         history.forget(card)
     }
 
-    fun next(): CardWithState<T> {
+    fun next(): CardWithState {
         val current = this.current
         if (current != null) {
             history.record(current)
@@ -55,11 +55,11 @@ class Assignment<T : State>(
         return next
     }
 
-    private fun getNext(): CardWithState<T> {
+    private fun getNext(): CardWithState {
         return queue.poll() ?: throw IllegalStateException("queue is empty")
     }
 
-    fun replace(old: Card, new: CardWithState<T>) {
+    fun replace(old: Card, new: CardWithState) {
         if (current?.card?.id == old.id) {
             current = new
         } else {
@@ -71,7 +71,7 @@ class Assignment<T : State>(
         }
     }
 
-    fun undo(): CardWithState<T> {
+    fun undo(): CardWithState {
         if (!canUndo()) {
             throw IllegalStateException("can not undo")
         }
@@ -85,7 +85,7 @@ class Assignment<T : State>(
 
     fun canUndo() = history.canGoBack()
 
-    private fun cards(): List<CardWithState<T>> {
+    private fun cards(): List<CardWithState> {
         val cur = current
         return if (cur != null) {
             queue.plus(cur)

@@ -1,10 +1,8 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.State
-
-abstract class NewCardsOrderMutation<S : State> : Mutation<S> {
+abstract class NewCardsOrderMutation : Mutation {
     companion object {
-        fun <S : State> from(order: StudyOrder) : NewCardsOrderMutation<S> {
+        fun from(order: StudyOrder) : NewCardsOrderMutation {
             return when (order) {
                 StudyOrder.ORDER_ADDED -> OrderAdded()
                 StudyOrder.RANDOM -> Random()

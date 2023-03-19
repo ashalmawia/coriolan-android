@@ -4,7 +4,6 @@ import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
@@ -12,12 +11,12 @@ import com.ashalmawia.coriolan.model.Deck
 
 interface AssignmentFactory {
 
-    fun <S: State, R> createAssignment(
+    fun createAssignment(
             order: StudyOrder,
-            exercise: Exercise<S, R>,
+            exercise: Exercise,
             deck: Deck,
             cardType: CardType
-    ): Assignment<S>
+    ): Assignment
 }
 
 class AssignmentFactoryImpl(
@@ -28,15 +27,15 @@ class AssignmentFactoryImpl(
         private val historyFactory: HistoryFactory
 ) : AssignmentFactory {
 
-    override fun <S : State, R> createAssignment(
+    override fun createAssignment(
             order: StudyOrder,
-            exercise: Exercise<S, R>,
+            exercise: Exercise,
             deck: Deck,
             cardType: CardType
-    ): Assignment<S> {
+    ): Assignment {
         val date = todayProvider.today()
         val cards = exercise.pendingCards(repository, deck, date)
-        val history = historyFactory.create<S>()
+        val history = historyFactory.create()
         val mutations = exercise.mutations(repository, preferences, journal, date, order, deck, cardType)
         return Assignment(date, history, mutations.apply(cards))
     }

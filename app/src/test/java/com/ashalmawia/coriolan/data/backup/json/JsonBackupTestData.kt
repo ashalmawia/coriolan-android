@@ -90,16 +90,16 @@ object JsonBackupTestData {
     private val random = Random()
     private val today = mockToday()
 
-    val srstates = listOf(
-            SRStateInfo(20L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(6L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(11L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(1L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(9L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(10L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(15L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(21L, today, random.nextInt(500)),
-            SRStateInfo(2L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            SRStateInfo(7L, today, random.nextInt(500))
+    val cardStates = listOf(
+            CardStateInfo(20L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(6L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(11L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(1L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(9L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(10L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(15L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(21L, today, random.nextInt(500)),
+            CardStateInfo(2L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            CardStateInfo(7L, today, random.nextInt(500))
     )
 }

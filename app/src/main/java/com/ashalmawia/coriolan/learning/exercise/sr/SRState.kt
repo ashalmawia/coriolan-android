@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.exercise.sr
 
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.ExerciseState
 import com.ashalmawia.coriolan.learning.Status
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -15,7 +15,7 @@ private val format = DateTimeFormat.forPattern("dd MMM hh:mm").withLocale(Locale
 data class SRState(
         val due: DateTime,
         val period: Int
-) : State {
+) : ExerciseState {
 
     override val status: Status
         get() {

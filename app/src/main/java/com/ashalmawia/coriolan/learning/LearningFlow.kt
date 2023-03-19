@@ -6,26 +6,24 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionExtras
 
-class LearningFlow<S : State, R>(
+class LearningFlow(
         private val repository: Repository,
         assignmentFactory: AssignmentFactory,
         val deck: Deck,
         cardType: CardType,
         studyOrder: StudyOrder,
-        val exercise: Exercise<S, R>,
+        val exercise: Exercise,
         val journal: Journal,
-        private val listener: Listener<S>
+        private val listener: Listener
 ) {
 
-    private val assignment: Assignment<S> = assignmentFactory.createAssignment(
+    private val assignment: Assignment = assignmentFactory.createAssignment(
             studyOrder,
             exercise,
             deck,
@@ -47,14 +45,15 @@ class LearningFlow<S : State, R>(
         }
     }
 
-    fun replyCurrent(reply: R) {
+    fun replyCurrent(reply: Any) {
         val updated = exercise.processReply(repository, card, reply)
-        recordCardStudied(card.state.status, updated.state.status, journal)
+        // todo: decouple
+        recordCardStudied(card.state.spacedRepetition.status, updated.state.spacedRepetition.status, journal)
         rescheduleIfNeeded(updated)
         showNextOrComplete()
     }
 
-    private fun rescheduleIfNeeded(card: CardWithState<S>) {
+    private fun rescheduleIfNeeded(card: CardWithState) {
         if (exercise.isPending(card)) {
             assignment.reschedule(card)
         }
@@ -70,7 +69,8 @@ class LearningFlow<S : State, R>(
         val newState = assignment.current!!.state
         val undone = assignment.undo()
         exercise.updateCardState(repository, undone, undone.state)
-        undoCardStudied(undone.state.status, journal, newState.status != Status.RELEARN)
+        // todo: decouple
+        undoCardStudied(undone.state.spacedRepetition.status, journal, newState.spacedRepetition.status != Status.RELEARN)
         renderCard(undone)
     }
 
@@ -113,7 +113,7 @@ class LearningFlow<S : State, R>(
         }
     }
 
-    fun refetchCard(cardWithState: CardWithState<S>) {
+    fun refetchCard(cardWithState: CardWithState) {
         val card = cardWithState.card
         val updated = repository.cardById(card.id, card.domain)!!
         val updatedWithState = exercise.getCardWithState(repository, updated)
@@ -128,7 +128,7 @@ class LearningFlow<S : State, R>(
         }
     }
 
-    private fun renderCard(card: CardWithState<S>) {
+    private fun renderCard(card: CardWithState) {
         val extras = repository.allExtrasForCard(card.card)
         listener.onRender(card, extras)
     }
@@ -143,33 +143,33 @@ class LearningFlow<S : State, R>(
 
     private fun isCurrent(card: Card) = this.card.card.id == card.id
 
-    interface Listener<S : State> {
-        fun onRender(card: CardWithState<S>, extras: List<ExpressionExtras>)
+    interface Listener {
+        fun onRender(card: CardWithState, extras: List<ExpressionExtras>)
         fun onFinish()
     }
 
-    interface Factory<S : State, R> {
+    interface Factory {
         fun createLearningFlow(
                 deck: Deck,
                 cardType: CardType,
                 studyOrder: StudyOrder,
-                exercise: Exercise<S, R>,
-                listener: Listener<S>
-        ) : LearningFlow<S, R>
+                exercise: Exercise,
+                listener: Listener
+        ) : LearningFlow
     }
 }
 class LearningFlowFactory(
         private val repository: Repository,
         private val assignmentFactory: AssignmentFactory,
         private val journal: Journal
-) : LearningFlow.Factory<SRState, SRAnswer> {
+) : LearningFlow.Factory {
     override fun createLearningFlow(
             deck: Deck,
             cardType: CardType,
             studyOrder: StudyOrder,
-            exercise: Exercise<SRState, SRAnswer>,
-            listener: LearningFlow.Listener<SRState>
-    ): LearningFlow<SRState, SRAnswer> {
+            exercise: Exercise,
+            listener: LearningFlow.Listener
+    ): LearningFlow {
         return LearningFlow(repository, assignmentFactory, deck, cardType, studyOrder, exercise, journal, listener)
     }
 }

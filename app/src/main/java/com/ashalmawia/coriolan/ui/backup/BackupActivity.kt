@@ -116,7 +116,7 @@ private class BackupAsyncTask(
         }
 
         file.outputStream().use {
-            backup.create(repo, exercisesRegistry.allExercises(), it)
+            backup.create(repo, it)
         }
 
         return file

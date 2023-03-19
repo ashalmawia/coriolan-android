@@ -6,15 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.learning.CardView
 import com.ashalmawia.coriolan.ui.learning.CardViewListener
 
 class SpacedRepetitionExerciseRenderer(
-        private val scheduler: Scheduler,
-        private val listener: ExerciseRenderer.Listener<SRAnswer>
-): ExerciseRenderer<SRState, SRAnswer>, CardViewListener {
+        private val listener: ExerciseRenderer.Listener
+): ExerciseRenderer, CardViewListener {
 
     private lateinit var cardView: CardView
 
@@ -26,12 +26,18 @@ class SpacedRepetitionExerciseRenderer(
         return cardView
     }
 
-    override fun renderCard(card: CardWithState<SRState>, extras: List<ExpressionExtras>) {
-        val answers = answers(card.state).asList()
+    override fun renderCard(card: CardWithState, extras: List<ExpressionExtras>) {
+        val answers = answers(card.state.spacedRepetition).asList()
         cardView.bind(card.card, extras, answers)
     }
 
-    private fun answers(state: SRState): Array<SRAnswer> = scheduler.answers(state)
+    private fun answers(state: SRState): Array<SRAnswer> {
+        return when (state.status) {
+            Status.NEW -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT, SRAnswer.EASY)
+            Status.RELEARN -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT)
+            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(SRAnswer.WRONG, SRAnswer.HARD, SRAnswer.CORRECT, SRAnswer.EASY)
+        }
+    }
 
     override fun onEasy() {
         listener.onAnswered(SRAnswer.EASY)

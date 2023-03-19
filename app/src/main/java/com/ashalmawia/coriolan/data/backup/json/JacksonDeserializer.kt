@@ -15,7 +15,7 @@ interface JacksonDeserializer {
 
     fun readCard(json: JsonParser): CardInfo
 
-    fun readCardStateSR(json: JsonParser): SRStateInfo
+    fun readCardStateSR(json: JsonParser): CardStateInfo
 
     fun readDeck(json: JsonParser): DeckInfo
 

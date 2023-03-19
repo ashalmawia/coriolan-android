@@ -3,11 +3,11 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
 import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.*
@@ -18,7 +18,7 @@ import org.joda.time.DateTime
 private val TAG = SqliteStorage::class.java.simpleName
 
 class SqliteStorage(
-        private val helper: SQLiteOpenHelper,
+        private val helper: SqliteRepositoryOpenHelper,
         private val emptyStateProvider: EmptyStateProvider
 ) : Repository {
 
@@ -484,7 +484,7 @@ class SqliteStorage(
         }
     }
 
-    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card? {
+    override fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card {
         if (translations.isEmpty()) {
             throw DataProcessingException("failed to update card with id[$card.id]: translations were empty")
         }
@@ -641,7 +641,7 @@ class SqliteStorage(
         }
     }
 
-    override fun updateDeck(deck: Deck, name: String): Deck? {
+    override fun updateDeck(deck: Deck, name: String): Deck {
         val db = helper.writableDatabase
         val cv = createDeckContentValues(deck.domain.id, name)
 
@@ -781,42 +781,39 @@ class SqliteStorage(
         }
     }
 
-    override fun getSRCardState(card: Card, exerciseId: String): SRState {
+    override fun getCardState(card: Card): State {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM ${sqliteTableExerciseState(exerciseId)}
+            |   FROM $SQLITE_TABLE_CARD_STATES
             |   WHERE $SQLITE_COLUMN_CARD_ID = ?
         """.trimMargin(), arrayOf(card.id.toString()))
 
         cursor.use {
             return if (cursor.moveToNext()) {
-                extractSRState(cursor)
+                extractState(cursor)
             } else {
-                emptyStateProvider.emptySRState()
+                emptyStateProvider.emptyState()
             }
         }
     }
 
-    override fun updateSRCardState(card: Card, state: SRState, exerciseId: String) {
-        val table = sqliteTableExerciseState(exerciseId)
-        val cv = createSRStateContentValues(card.id, state)
+    override fun updateCardState(card: Card, state: State) {
+        val table = SQLITE_TABLE_CARD_STATES
+        val cv = createCardStateContentValues(card.id, state)
         try {
-            val result = helper.writableDatabase.
-                    insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+            val result = helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
 
             if (result < 0) {
-                throw DataProcessingException("failed to updated card state for card ${card.id}, " +
-                        "exercise $exerciseId: error occured")
+                throw DataProcessingException("failed to updated card state for card ${card.id}: error occured")
             }
         } catch (e: Exception) {
-            throw DataProcessingException("failed to updated card state for card $card.id, " +
-                    "exercise $exerciseId: constraint violation", e)
+            throw DataProcessingException("failed to updated card state for card $card.id: constraint violation", e)
         }
     }
 
-    override fun cardsDueDate(exerciseId: String, deck: Deck, date: DateTime): List<CardWithState<SRState>> {
+    override fun cardsDueDate(deck: Deck, date: DateTime): List<CardWithState> {
         val db = helper.readableDatabase
 
         val reverse = allCardsReverse(db)
@@ -841,7 +838,7 @@ class SqliteStorage(
             |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
             |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(EXPRESSIONS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
             |
-            |       LEFT JOIN ${sqliteTableExerciseState(exerciseId)} AS $STATES
+            |       LEFT JOIN $SQLITE_TABLE_CARD_STATES AS $STATES
             |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
             |
             |   WHERE
@@ -851,7 +848,7 @@ class SqliteStorage(
         """.trimMargin(),
                 arrayOf(deck.id.toString(), date.timespamp.toString()))
 
-        val cards = mutableListOf<CardWithState<SRState>>()
+        val cards = mutableListOf<CardWithState>()
         cursor.use {
             while (cursor.moveToNext()) {
                 val cardId = cursor.getId(CARDS)
@@ -862,14 +859,14 @@ class SqliteStorage(
                         it.getExpression(EXPRESSIONS, LANGUAGES),
                         reverse.getValue(cardId)
                 )
-                val state = extractSRState(cursor, STATES)
+                val state = extractState(cursor, STATES)
                 cards.add(CardWithState(card, state))
             }
             return cards
         }
     }
 
-    override fun getStatesForCardsWithOriginals(originalIds: List<Long>, exerciseId: String): Map<Long, SRState> {
+    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State> {
         val db = helper.readableDatabase
 
         val CARDS = "Cards"
@@ -887,18 +884,18 @@ class SqliteStorage(
             |       LEFT JOIN $SQLITE_TABLE_EXPRESSIONS AS $EXPRESSIONS
             |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(EXPRESSIONS)}
             |
-            |       LEFT JOIN ${sqliteTableExerciseState(exerciseId)} AS $STATES
+            |       LEFT JOIN $SQLITE_TABLE_CARD_STATES AS $STATES
             |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
             |
             |   WHERE
             |       ${SQLITE_COLUMN_ID.from(EXPRESSIONS)} IN (${originalIds.joinToString()})
         """.trimMargin(), arrayOf())
 
-        val map = mutableMapOf<Long, SRState>()
+        val map = mutableMapOf<Long, State>()
         cursor.use {
             while (cursor.moveToNext()) {
                 val expressionId = cursor.getId(EXPRESSIONS)
-                val state = extractSRState(cursor, STATES)
+                val state = extractState(cursor, STATES)
                 map[expressionId] = state
             }
             return map
@@ -906,14 +903,19 @@ class SqliteStorage(
     }
 
     private fun onlyPending(statesTableAlias: String) =
-            "(${SQLITE_COLUMN_DUE.from(statesTableAlias)} IS NULL OR ${SQLITE_COLUMN_DUE.from(statesTableAlias)} <= ?)"
+            "(${SQLITE_COLUMN_STATE_SR_DUE.from(statesTableAlias)} IS NULL OR ${SQLITE_COLUMN_STATE_SR_DUE.from(statesTableAlias)} <= ?)"
 
 
     override fun invalidateCache() {
         // nothing to do here
     }
 
-    private fun extractSRState(cursor: Cursor, alias: String? = null) =
-            if (cursor.hasSavedState(alias)) SRState(cursor.getDateDue(alias), cursor.getPeriod(alias))
-            else emptyStateProvider.emptySRState()
+    private fun extractState(cursor: Cursor, alias: String? = null): State {
+        val srState = if (cursor.hasSavedSRState(alias)) {
+            SRState(cursor.getDateDue(alias), cursor.getPeriod(alias))
+        } else {
+            emptyStateProvider.emptySRState()
+        }
+        return State(spacedRepetition = srState)
+    }
 }

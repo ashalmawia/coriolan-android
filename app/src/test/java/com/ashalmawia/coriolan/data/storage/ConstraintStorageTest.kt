@@ -2,10 +2,8 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
-import com.ashalmawia.coriolan.learning.MockExercisesRegistry
-import com.ashalmawia.coriolan.learning.StateType
+import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
@@ -20,9 +18,6 @@ import org.robolectric.annotation.SQLiteMode
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
 class ConstraintStorageTest {
 
-    private val exercise = MockExercise(stateType = StateType.SR_STATE)
-    private val exercises = MockExercisesRegistry(listOf(exercise))
-
     private val today = mockToday()
 
     private lateinit var domain: Domain
@@ -36,7 +31,7 @@ class ConstraintStorageTest {
     private val emptyStorage: Lazy<Repository> = lazy { createStorage() }
 
     private fun createStorage(): Repository {
-        val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application, exercises)
+        val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application)
         return SqliteStorage(helper, MockEmptyStateProvider(today))
     }
 
@@ -441,30 +436,11 @@ class ConstraintStorageTest {
     fun test__updateSRCardState__cardIncorrect() {
         // when
         val storage = prefilledStorage.value
-        val newState = SRState(today.plusDays(8), 8)
+        val newState = State(SRState(today.plusDays(8), 8))
 
         val dummyCard = mockCard(domain = domain)
 
         // when
-        storage.updateSRCardState(dummyCard, newState, exercise.stableId)
-    }
-
-    @Test(expected = DataProcessingException::class)
-    fun test__updateSRCardState__exerciseIncorrect() {
-        // when
-        val storage = prefilledStorage.value
-
-        val deck = storage.addDeck(domain, "My deck")
-
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
-
-        val card = storage.addCard(domain, deck.id, original, listOf(translation))
-        val newState = SRState(today.plusDays(8), 8)
-
-        val dummyExerciseId = "dummy"
-
-        // when
-        storage.updateSRCardState(card, newState, dummyExerciseId)
+        storage.updateCardState(dummyCard, newState)
     }
 }

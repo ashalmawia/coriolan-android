@@ -4,7 +4,6 @@ import com.ashalmawia.coriolan.data.journal.MockJournal
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import junit.framework.Assert.assertEquals
@@ -20,7 +19,7 @@ class LimitCountMutationMutationTest {
     private val date = mockToday()
     private val cards = List(60, { i -> mockCardWithState(procudeMockState(i)) })
 
-    private val mutation = lazy { LimitCountMutation<SRState>(preferences, journal, date) }
+    private val mutation = lazy { LimitCountMutation(preferences, journal, date) }
 
     private fun procudeMockState(i: Int) =
             when (i % 4) {
@@ -31,7 +30,7 @@ class LimitCountMutationMutationTest {
             }
 
     @Test
-    fun `test__noLimits`() {
+    fun test__noLimits() {
         // when
         val processed = mutation.value.apply(cards)
 
@@ -40,7 +39,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__noNew`() {
+    fun test__noNew() {
         // given
         preferences.setNewCardsDailyLimitDefault(0)
 
@@ -53,7 +52,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__noReview`() {
+    fun test__noReview() {
         // given
         preferences.setReviewCardsDailyLimitDefault(0)
 
@@ -66,7 +65,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__allZero`() {
+    fun test__allZero() {
         // given
         preferences.setNewCardsDailyLimitDefault(0)
         preferences.setReviewCardsDailyLimitDefault(0)
@@ -79,7 +78,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__limitOnlyNew`() {
+    fun test__limitOnlyNew() {
         // given
         preferences.setNewCardsDailyLimitDefault(3)
 
@@ -94,7 +93,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__limitOnlyReview`() {
+    fun test__limitOnlyReview() {
         // given
         preferences.setReviewCardsDailyLimitDefault(5)
 
@@ -109,7 +108,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__limitsTooHigh`() {
+    fun test__limitsTooHigh() {
         // given
         preferences.setNewCardsDailyLimitDefault(cards.size * 2)
         preferences.setReviewCardsDailyLimitDefault(cards.size * 2)
@@ -122,7 +121,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__limitsEqual`() {
+    fun test__limitsEqual() {
         // given
         preferences.setNewCardsDailyLimitDefault(15)
         preferences.setReviewCardsDailyLimitDefault(15)
@@ -137,7 +136,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__realLimits__less`() {
+    fun test__realLimits__less() {
         // given
         preferences.setNewCardsDailyLimitDefault(5)
         preferences.setReviewCardsDailyLimitDefault(12)
@@ -152,7 +151,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__withJournal__allLearned`() {
+    fun test__withJournal__allLearned() {
         // given
         journal.setTodayLearned(100, 100, date)
         preferences.setNewCardsDailyLimitDefault(20)
@@ -166,7 +165,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__withJournal__allNewLearned`() {
+    fun test__withJournal__allNewLearned() {
         // given
         journal.setTodayLearned(100, 0, date)
         preferences.setNewCardsDailyLimitDefault(20)
@@ -182,7 +181,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__withJournal__allReviewLearned`() {
+    fun test__withJournal__allReviewLearned() {
         // given
         journal.setTodayLearned(0, 100, date)
         preferences.setNewCardsDailyLimitDefault(5)
@@ -198,7 +197,7 @@ class LimitCountMutationMutationTest {
     }
 
     @Test
-    fun `test__withJournal__partlyLearned`() {
+    fun test__withJournal__partlyLearned() {
         // given
         journal.setTodayLearned(5, 7, date)
         preferences.setNewCardsDailyLimitDefault(12)
@@ -214,10 +213,10 @@ class LimitCountMutationMutationTest {
     }
 }
 
-private fun List<CardWithState<*>>.filter(vararg statuses: Status): List<CardWithState<*>> {
-    return filter { statuses.contains(it.state.status) }
+private fun List<CardWithState>.filter(vararg statuses: Status): List<CardWithState> {
+    return filter { statuses.contains(it.state.spacedRepetition.status) }
 }
 
-private fun List<CardWithState<*>>.count(vararg statuses: Status): Int {
-    return count { statuses.contains(it.state.status) }
+private fun List<CardWithState>.count(vararg statuses: Status): Int {
+    return count { statuses.contains(it.state.spacedRepetition.status) }
 }

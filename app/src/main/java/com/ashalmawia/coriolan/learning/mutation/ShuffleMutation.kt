@@ -1,13 +1,12 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.util.new
 import com.ashalmawia.coriolan.util.review
 
-class ShuffleMutation<S : State>(private val shuffle: Boolean) : Mutation<S> {
+class ShuffleMutation(private val shuffle: Boolean) : Mutation {
 
-    override fun apply(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+    override fun apply(cards: List<CardWithState>): List<CardWithState> {
         return if (shuffle) {
             shuffle(cards)
         } else {
@@ -15,7 +14,7 @@ class ShuffleMutation<S : State>(private val shuffle: Boolean) : Mutation<S> {
         }
     }
 
-    private fun shuffle(cards: List<CardWithState<S>>): List<CardWithState<S>> {
+    private fun shuffle(cards: List<CardWithState>): List<CardWithState> {
         val reviewOnlySize = cards.size / 3
         val newCardsAllowedSize = cards.size - reviewOnlySize
 

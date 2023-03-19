@@ -1,8 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.assignment.MockState
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.model.*
 import junit.framework.Assert.*
 import org.junit.Test
@@ -12,12 +10,12 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class ShuffleMutationTest {
 
-    private val cards = List(50) { i -> mockCardWithState(MockState(), id = i.toLong()) }
+    private val cards = List(50) { i -> mockCardWithState(id = i.toLong()) }
 
     @Test
     fun testNoShuffle() {
         // given
-        val mutation = ShuffleMutation<MockState>(false)
+        val mutation = ShuffleMutation(false)
 
         // when
         val processed = mutation.apply(cards)
@@ -29,7 +27,7 @@ class ShuffleMutationTest {
     @Test
     fun testYesShuffle() {
         // given
-        val mutation = ShuffleMutation<MockState>(true)
+        val mutation = ShuffleMutation(true)
 
         // when
         val processed = mutation.apply(cards)
@@ -42,7 +40,7 @@ class ShuffleMutationTest {
     @Test
     fun testNewCardsInTheBeginning() {
         // given
-        val mutation = ShuffleMutation<SRState>(true)
+        val mutation = ShuffleMutation(true)
         val cards = listOf(
                 mockCardWithState(mockStateNew()),
                 mockCardWithState(mockStateNew()),
@@ -60,6 +58,6 @@ class ShuffleMutationTest {
         assertFalse(cards == processed)
         assertEquals(cards.sortedBy { it.card.id }, processed.sortedBy { it.card.id })
         assertFalse(processed.subList(processed.size - processed.size / 3, processed.size)
-                .any { it.state.status == Status.NEW })
+                .any { it.state.spacedRepetition.status == Status.NEW })
     }
 }

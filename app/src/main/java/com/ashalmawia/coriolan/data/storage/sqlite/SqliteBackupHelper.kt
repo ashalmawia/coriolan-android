@@ -1,13 +1,9 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-import android.database.sqlite.SQLiteOpenHelper
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
-import com.ashalmawia.coriolan.learning.StateType
 
 class SqliteBackupHelper(
-        private val exercisesRegistry: ExercisesRegistry,
-        private val helper: SQLiteOpenHelper
+        private val helper: SqliteRepositoryOpenHelper
 ) : BackupableRepository {
 
     override fun beginTransaction() {
@@ -158,37 +154,27 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun allSRStates(exerciseId: String, offset: Int, limit: Int): List<SRStateInfo> {
+    override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM ${sqliteTableExerciseState(exerciseId)}
+            |   FROM $SQLITE_TABLE_CARD_STATES
             |   ORDER BY $SQLITE_COLUMN_CARD_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
-            val list = mutableListOf<SRStateInfo>()
+            val list = mutableListOf<CardStateInfo>()
             while (cursor.moveToNext()) {
-                list.add(SRStateInfo(cursor.getCardId(), cursor.getDateDue(), cursor.getPeriod()))
+                list.add(CardStateInfo(cursor.getCardId(), cursor.getDateDue(), cursor.getPeriod()))
             }
             return list
         }
     }
 
     override fun clearAll() {
-        val db = helper.writableDatabase
-
-        exercisesRegistry.allExercises().filterNot { it.stateType == StateType.UNKNOWN }.forEach {
-            db.execSQL("DELETE FROM ${sqliteTableExerciseState(it.stableId)}")
-        }
-        db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS_REVERSE")
-        db.execSQL("DELETE FROM $SQLITE_TABLE_CARDS")
-        db.execSQL("DELETE FROM $SQLITE_TABLE_DECKS")
-        db.execSQL("DELETE FROM $SQLITE_TABLE_EXPRESSIONS")
-        db.execSQL("DELETE FROM $SQLITE_TABLE_DOMAINS")
-        db.execSQL("DELETE FROM $SQLITE_TABLE_LANGUAGES")
+        helper.deleteDatabase()
     }
 
     override fun writeLanguages(languages: List<LanguageInfo>) {
@@ -254,17 +240,11 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun writeSRStates(exerciseId: String, states: List<SRStateInfo>) {
-        if (exercisesRegistry.allExercises().find { it.stableId == exerciseId } == null) {
-            // skip this exercise as we don't know it in the current version
-            return
-        }
-
+    override fun writeCardStates(states: List<CardStateInfo>) {
         val db = helper.writableDatabase
-
         states.forEach {
-            db.insertOrThrow(sqliteTableExerciseState(exerciseId), null,
-                    createSRStateContentValues(it.cardId, it.due, it.period)
+            db.insertOrThrow(SQLITE_TABLE_CARD_STATES, null,
+                    createCardStateContentValues(it.cardId, it.due, it.period)
             )
         }
     }
