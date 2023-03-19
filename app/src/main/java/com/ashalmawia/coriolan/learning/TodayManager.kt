@@ -63,7 +63,7 @@ object TodayManager : TodayProvider {
 
     private fun createIntent(context: Context): PendingIntent {
         val intent = Intent(context, DayChangedBroadcastReceiver::class.java)
-        return PendingIntent.getBroadcast(context, REQUEST_CODE, intent, 0)
+        return PendingIntent.getBroadcast(context, REQUEST_CODE, intent, PendingIntent.FLAG_MUTABLE)
     }
 }
 

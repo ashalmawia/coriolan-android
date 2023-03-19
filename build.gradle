@@ -32,7 +32,8 @@ allprojects {
 
 ext {
     COMMON__COMPILE_SDK = 33
-    COMMON__TARGET_SDK = 28
+    COMMON__TARGET_SDK = 33
+    COMMON__MIN_SDK = 23
     COMMON__BUILD_TOOLS = "30.0.3"
     koin_version = '2.0.1'
 }

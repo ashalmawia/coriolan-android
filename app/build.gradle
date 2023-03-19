@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId "com.ashalmawia.coriolan"
         namespace "com.ashalmawia.coriolan"
-        minSdkVersion 21
+        minSdkVersion COMMON__MIN_SDK
         targetSdkVersion COMMON__TARGET_SDK
         versionCode 9
         versionName "0.9-alpha"
