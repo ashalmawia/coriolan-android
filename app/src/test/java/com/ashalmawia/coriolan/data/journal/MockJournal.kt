@@ -1,45 +1,33 @@
 package com.ashalmawia.coriolan.data.journal
 
 import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
 
 class MockJournal : Journal {
 
-    private val new = mutableMapOf<DateTime, Int>()
-    private val review = mutableMapOf<DateTime, Int>()
-    private val relearn = mutableMapOf<DateTime, Int>()
+    private val data = mutableMapOf<Status, Int>()
 
-    fun setTodayLearned(new: Int, review: Int, date: DateTime) {
-        this.new[date] = new
-        this.review[date] = review
+    fun setTodayLearned(new: Int, review: Int) {
+        data[Status.NEW] = new
+        data[Status.IN_PROGRESS] = review
     }
 
     override fun cardsStudiedOnDate(date: DateTime): Counts {
-        return Counts(new[date].orZero(), review[date].orZero(), relearn[date].orZero(), -1)
+        return Counts(data[Status.NEW].orZero(), data[Status.IN_PROGRESS].orZero(), data[Status.RELEARN].orZero(), -1)
     }
 
-    override fun recordNewCardStudied(date: DateTime) {
-        new[date] = new[date].orZero() + 1
+    override fun cardsStudiedOnDate(date: DateTime, exercise: ExerciseId): Counts {
+        return Counts(data[Status.NEW].orZero(), data[Status.IN_PROGRESS].orZero(), data[Status.RELEARN].orZero(), -1)
     }
 
-    override fun recordReviewStudied(date: DateTime) {
-        review[date] = review[date].orZero() + 1
+    override fun incrementCardStudied(date: DateTime, targetStatus: Status, exercise: ExerciseId) {
+        data[targetStatus] = data[targetStatus].orZero() + 1
     }
 
-    override fun recordCardRelearned(date: DateTime) {
-        relearn[date] = relearn[date].orZero() + 1
-    }
-
-    override fun undoNewCardStudied(date: DateTime) {
-        new[date] = new[date]!!.dec()
-    }
-
-    override fun undoReviewStudied(date: DateTime) {
-        review[date] = review[date]!!.dec()
-    }
-
-    override fun undoCardRelearned(date: DateTime) {
-        relearn[date] = relearn[date]!!.dec()
+    override fun decrementCardStudied(date: DateTime, targetStatus: Status, exercise: ExerciseId) {
+        data[targetStatus] = data[targetStatus].orZero() - 1
     }
 }

@@ -78,13 +78,14 @@ class LearningFlow(
         val date = assignment.date
         when (oldStatus) {
             Status.NEW -> {
-                journal.recordNewCardStudied(date)
+                journal.incrementCardStudied(date, Status.NEW, exercise.id)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
-                journal.recordReviewStudied(date)
                 if (newStatus == Status.RELEARN) {
-                    journal.recordCardRelearned(date)
+                    journal.incrementCardStudied(date, Status.RELEARN, exercise.id)
+                } else {
+                    journal.incrementCardStudied(date, Status.IN_PROGRESS, exercise.id)
                 }
             }
 
@@ -97,14 +98,14 @@ class LearningFlow(
         val date = assignment.date
         when (status) {
             Status.NEW -> {
-                journal.undoNewCardStudied(date)
+                journal.decrementCardStudied(date, Status.NEW, exercise.id)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
                 if (correct) {
-                    journal.undoReviewStudied(date)
+                    journal.decrementCardStudied(date, Status.IN_PROGRESS, exercise.id)
                 } else {
-                    journal.undoCardRelearned(date)
+                    journal.decrementCardStudied(date, Status.RELEARN, exercise.id)
                 }
             }
 

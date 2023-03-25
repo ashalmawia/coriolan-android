@@ -6,7 +6,6 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
@@ -20,14 +19,7 @@ interface Exercise {
      * Unique string ID which must never be changed.
      * Data storing relies on it.
      */
-    val stableId: String
-
-    /**
-     * State type is needed to ensure that correct data structures
-     * are preinitialized on the first start to store states for this exercise.
-     * As stableId, it must never change.
-     */
-    val stateType: StateType
+    val id: ExerciseId
 
     /**
      * Each exercise must have it's name
@@ -60,4 +52,10 @@ interface Exercise {
     fun onTranslationAdded(repository: Repository, card: Card)
 
     fun createRenderer(listener: ExerciseRenderer.Listener): ExerciseRenderer
+}
+
+enum class ExerciseId(val value: String) {
+    SPACED_REPETITION("sr"),
+
+    TEST("test")    // testing only
 }

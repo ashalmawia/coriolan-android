@@ -7,11 +7,11 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.StateType
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
@@ -34,11 +34,8 @@ class SpacedRepetitionExercise(
         private val scheduler: SpacedRepetitionScheduler
 ) : Exercise {
 
-    override val stableId: String
-        get() = "simple"
-
-    override val stateType: StateType
-        get() = StateType.SR_STATE
+    override val id: ExerciseId
+        get() = ExerciseId.SPACED_REPETITION
 
     @StringRes
     override fun name(): Int {

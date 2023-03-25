@@ -16,10 +16,14 @@ class SqliteJornalOpenHelper(val context: Context)
 
         db.execSQL("""
             |CREATE TABLE $SQLITE_TABLE_JOURNAL(
-            |   $SQLITE_COLUMN_DATE INTEGER PRIMARY KEY,
+            |   $SQLITE_COLUMN_DATE INTEGER NOT NULL,
+            |   $SQLITE_COLUMN_EXERCISE TEXT NOT NULL,
             |   $SQLITE_COLUMN_CARDS_NEW INTEGER NOT NULL,
             |   $SQLITE_COLUMN_CARDS_REVIEW INTEGER NOT NULL,
-            |   $SQLITE_COLUMN_CARDS_RELEARN INTEGER NOT NULL
+            |   $SQLITE_COLUMN_CARDS_RELEARN INTEGER NOT NULL,
+            |   $SQLITE_COLUMN_CARDS_LEARNT INTEGER NOT NULL,
+            |   
+            |   PRIMARY KEY ($SQLITE_COLUMN_DATE, $SQLITE_COLUMN_EXERCISE)
             |);""".trimMargin())
     }
 

@@ -153,7 +153,7 @@ class LimitCountMutationMutationTest {
     @Test
     fun test__withJournal__allLearned() {
         // given
-        journal.setTodayLearned(100, 100, date)
+        journal.setTodayLearned(100, 100)
         preferences.setNewCardsDailyLimitDefault(20)
         preferences.setReviewCardsDailyLimitDefault(20)
 
@@ -167,7 +167,7 @@ class LimitCountMutationMutationTest {
     @Test
     fun test__withJournal__allNewLearned() {
         // given
-        journal.setTodayLearned(100, 0, date)
+        journal.setTodayLearned(100, 0)
         preferences.setNewCardsDailyLimitDefault(20)
         preferences.setReviewCardsDailyLimitDefault(20)
 
@@ -183,7 +183,7 @@ class LimitCountMutationMutationTest {
     @Test
     fun test__withJournal__allReviewLearned() {
         // given
-        journal.setTodayLearned(0, 100, date)
+        journal.setTodayLearned(0, 100)
         preferences.setNewCardsDailyLimitDefault(5)
         preferences.setReviewCardsDailyLimitDefault(10)
 
@@ -199,7 +199,7 @@ class LimitCountMutationMutationTest {
     @Test
     fun test__withJournal__partlyLearned() {
         // given
-        journal.setTodayLearned(5, 7, date)
+        journal.setTodayLearned(5, 7)
         preferences.setNewCardsDailyLimitDefault(12)
         preferences.setReviewCardsDailyLimitDefault(10)
 

@@ -9,8 +9,3 @@ data class State(
 interface ExerciseState {
     val status: Status
 }
-
-enum class StateType {
-    UNKNOWN,
-    SR_STATE
-}

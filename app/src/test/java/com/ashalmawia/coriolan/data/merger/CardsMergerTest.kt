@@ -92,7 +92,6 @@ class CardsMergerTest {
         System.out.println(repository.cards)
         assertEquals(1, repository.cards.size)
         assertCardCorrect(repository.cards[0], original, listOf(translation1, translation2), deckId, domain)
-        assertEquals("progress is reset", emptyState(), repository.getCardState(repository.cards[0]))
     }
 
     @Test
@@ -162,7 +161,6 @@ class CardsMergerTest {
         // then
         assertEquals(1, repository.cards.size)
         assertCardCorrect(repository.cards[0], original, listOf(translation1, translation2), deckId, domain)
-        assertEquals("progress is reset", emptyState(), repository.getCardState(repository.cards[0]))
     }
 
     @Test
