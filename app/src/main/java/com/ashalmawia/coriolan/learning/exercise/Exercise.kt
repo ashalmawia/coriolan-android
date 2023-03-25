@@ -1,11 +1,13 @@
 package com.ashalmawia.coriolan.learning.exercise
 
+import android.content.Context
+import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
@@ -29,16 +31,9 @@ interface Exercise {
 
     val canUndo: Boolean
 
-    fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState>
-
-    fun isPending(card: CardWithState): Boolean
-
-    fun getCardWithState(repository: Repository, card: Card): CardWithState
-
-    fun updateCardState(repository: Repository, card: CardWithState, newState: State): CardWithState
+    fun pendingCards(deck: Deck, date: DateTime): List<CardWithState>
 
     fun mutations(
-            repository: Repository,
             preferences: Preferences,
             journal: Journal,
             date: DateTime,
@@ -47,11 +42,16 @@ interface Exercise {
             cardType: CardType
     ): Mutations
 
-    fun processReply(repository: Repository, card: CardWithState, answer: Any): CardWithState
+    fun onTranslationAdded(card: Card)
 
-    fun onTranslationAdded(repository: Repository, card: Card)
+    fun createExecutor(
+            context: Context,
+            uiContainer: ViewGroup,
+            journal: Journal,
+            listener: ExerciseListener
+    ): ExerciseExecutor
 
-    fun createRenderer(listener: ExerciseRenderer.Listener): ExerciseRenderer
+    fun status(state: State): Status
 }
 
 enum class ExerciseId(val value: String) {

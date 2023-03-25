@@ -1,5 +1,7 @@
 package com.ashalmawia.coriolan.learning.exercise.sr
 
+import android.content.Context
+import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.journal.Journal
@@ -11,8 +13,9 @@ import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
+import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
@@ -29,9 +32,9 @@ import org.joda.time.DateTime
  * Otherwise, adds it to the end of the queue.
  */
 class SpacedRepetitionExercise(
+        private val repository: Repository,
         private val todayProvider: TodayProvider,
-        private val emptyStateProvider: EmptyStateProvider,
-        private val scheduler: SpacedRepetitionScheduler
+        private val emptyStateProvider: EmptyStateProvider
 ) : Exercise {
 
     override val id: ExerciseId
@@ -45,33 +48,11 @@ class SpacedRepetitionExercise(
     override val canUndo: Boolean
         get() = true
 
-    override fun processReply(repository: Repository, card: CardWithState, answer: Any): CardWithState {
-        val newSrState = scheduler.processAnswer(answer as SRAnswer, card.state.spacedRepetition)
-        return updateCardState(repository, card, card.state.copy(spacedRepetition = newSrState))
-    }
-
-    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<CardWithState> {
-        return repository.cardsDueDate(deck, date)
-    }
-
-    private fun getStatesForCardsWithOriginals(repository: Repository, originals: List<Long>): Map<Long, State> {
+    private fun getStatesForCardsWithOriginals(originals: List<Long>): Map<Long, State> {
         return repository.getStatesForCardsWithOriginals(originals)
     }
 
-    override fun updateCardState(repository: Repository, card: CardWithState, newState: State): CardWithState {
-        // todo: move to the LearningFlow
-        repository.updateCardState(card.card, newState)
-        return CardWithState(card.card, newState)
-    }
-
-    override fun getCardWithState(repository: Repository, card: Card): CardWithState {
-        return CardWithState(card, repository.getCardState(card))
-    }
-
-    override fun isPending(card: CardWithState): Boolean = card.state().due <= todayProvider.today()
-
     override fun mutations(
-            repository: Repository,
             preferences: Preferences,
             journal: Journal,
             date: DateTime,
@@ -80,7 +61,7 @@ class SpacedRepetitionExercise(
             cardType: CardType
     ): Mutations {
         return Mutations(listOf(
-                LearningModeMutation(this, repository),
+                LearningModeMutation(this),
                 CardTypeMutation(cardType),
                 SortReviewsByPeriodMutation,
                 NewCardsOrderMutation.from(order),
@@ -89,18 +70,38 @@ class SpacedRepetitionExercise(
         ))
     }
 
-    override fun onTranslationAdded(repository: Repository, card: Card) {
+    override fun onTranslationAdded(card: Card) {
         repository.updateCardState(card, emptyStateProvider.emptyState())
     }
 
-    override fun createRenderer(listener: ExerciseRenderer.Listener): ExerciseRenderer {
-        return SpacedRepetitionExerciseRenderer(listener)
+    override fun createExecutor(
+            context: Context,
+            uiContainer: ViewGroup,
+            journal: Journal,
+            listener: ExerciseListener
+    ): ExerciseExecutor {
+        return SpacedRepetitionExerciseExecutor(
+                context,
+                this,
+                repository,
+                todayProvider,
+                journal,
+                createScheduler(todayProvider),
+                uiContainer,
+                listener
+        )
     }
 
-    class LearningModeMutation(
-            private val exercise: SpacedRepetitionExercise,
-            private val repository: Repository
-    ) : Mutation {
+    override fun pendingCards(deck: Deck, date: DateTime): List<CardWithState> {
+        return repository.cardsDueDate(deck, date)
+    }
+
+    override fun status(state: State): Status = state.spacedRepetition.status
+
+    private fun createScheduler(todayProvider: TodayProvider) =
+            MultiplierBasedScheduler(todayProvider)
+
+    class LearningModeMutation(private val exercise: SpacedRepetitionExercise) : Mutation {
 
         override fun apply(cards: List<CardWithState>): List<CardWithState> {
             val (forward, reverse) = cards.forwardAndReverseWithState()
@@ -110,7 +111,7 @@ class SpacedRepetitionExercise(
         private fun List<CardWithState>.filterReady() : List<CardWithState> {
             val translationIds = flatMap { it.card.translations }.map { it.id }
 
-            val states = exercise.getStatesForCardsWithOriginals(repository, translationIds)
+            val states = exercise.getStatesForCardsWithOriginals(translationIds)
 
             return filter {
                 it.status() != Status.NEW || it.card.translations.all { exp -> exp.isReady(states) }
@@ -124,5 +125,4 @@ class SpacedRepetitionExercise(
     }
 }
 
-private fun CardWithState.state() = state.spacedRepetition
 private fun CardWithState.status() = state.spacedRepetition.status

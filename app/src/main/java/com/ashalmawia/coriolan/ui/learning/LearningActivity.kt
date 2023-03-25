@@ -16,15 +16,11 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
-import com.ashalmawia.coriolan.learning.CardWithState
-import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.ExpressionExtras
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.util.setStartDrawableTint
@@ -40,7 +36,7 @@ private const val EXTRA_DECK_ID = "extra_deck_id"
 private const val EXTRA_CARD_TYPE = "extra_card_type"
 private const val EXTRA_STUDY_ORDER = "extra_study_order"
 
-class LearningActivity : BaseActivity(), LearningFlow.Listener, ExerciseRenderer.Listener {
+class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
     companion object {
         fun intent(context: Context, deck: Deck, cardType: CardType, studyOrder: StudyOrder): Intent {
@@ -61,18 +57,16 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener, ExerciseRenderer
         val exercisesRegistry = getKoin().get<ExercisesRegistry>()
         val (deck, cardType, studyOrder) = resolveParameters()
         val exercise = exercisesRegistry.defaultExercise()
-        learningFlowFactory.createLearningFlow(deck, cardType, studyOrder, exercise, this)
+        learningFlowFactory.createLearningFlow(
+                this, exerciseContainer, deck, cardType, studyOrder, exercise, this
+        )
     }
-    private val renderer by lazy { flow.exercise.createRenderer(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.learning_activity)
 
         adjustProgressCountsUI()
-
-        setUpToolbar(flow.deck.name)
-        toolbarTitle.text = flow.deck.name
 
         beginExercise()
         delegate.isHandleNativeActionModesEnabled = false
@@ -163,7 +157,9 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener, ExerciseRenderer
     }
 
     private fun beginExercise() {
-        renderer.prepareUi(this, exerciseContainer)
+        setUpToolbar(flow.deck.name)
+        toolbarTitle.text = flow.deck.name
+
         flow.showNextOrComplete()
     }
 
@@ -180,19 +176,13 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener, ExerciseRenderer
         deck_progress_bar__relearn.text = counts.relearn.toString()
     }
 
-    override fun onRender(card: CardWithState, extras: List<ExpressionExtras>) {
-        renderer.renderCard(card, extras)
-
+    override fun onCardRendered() {
         updateProgressCounts()
         invalidateOptionsMenu()
     }
 
     override fun onFinish() {
         finish()
-    }
-
-    override fun onAnswered(answer: Any) {
-        flow.replyCurrent(answer as SRAnswer)
     }
 }
 

@@ -13,22 +13,30 @@ import com.ashalmawia.coriolan.ui.learning.CardView
 import com.ashalmawia.coriolan.ui.learning.CardViewListener
 
 class SpacedRepetitionExerciseRenderer(
+        context: Context,
+        private val uiContainer: ViewGroup,
         private val listener: ExerciseRenderer.Listener
 ): ExerciseRenderer, CardViewListener {
 
-    private lateinit var cardView: CardView
+    private val cardView: CardView
+
+    init {
+        val inflator = LayoutInflater.from(context)
+        cardView = inflator.inflate(R.layout.card_view, uiContainer, false) as CardView
+        cardView.listener = this
+    }
 
     override fun prepareUi(context: Context, parentView: ViewGroup): View {
-        val inflator = LayoutInflater.from(context)
-        cardView = inflator.inflate(R.layout.card_view, parentView, false) as CardView
-        cardView.listener = this
-        parentView.addView(cardView)
         return cardView
     }
 
     override fun renderCard(card: CardWithState, extras: List<ExpressionExtras>) {
+        uiContainer.removeAllViews()
+
         val answers = answers(card.state.spacedRepetition).asList()
         cardView.bind(card.card, extras, answers)
+
+        uiContainer.addView(cardView)
     }
 
     private fun answers(state: SRState): Array<SRAnswer> {

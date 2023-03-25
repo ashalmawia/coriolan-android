@@ -1,20 +1,17 @@
 package com.ashalmawia.coriolan.learning.exercise
 
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.TodayProvider
-import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionExercise
 
 class ExercisesRegistryImpl(
+        repository: Repository,
         todayProvider: TodayProvider,
-        emptyStateProvider: EmptyStateProvider,
-        scheduler: SpacedRepetitionScheduler
+        emptyStateProvider: EmptyStateProvider
 ) : ExercisesRegistry {
 
-    private val default: Exercise = SpacedRepetitionExercise(todayProvider, emptyStateProvider, scheduler)
-
     private val exercises = listOf(
-            default
-            // all others go here
+            SpacedRepetitionExercise(repository, todayProvider, emptyStateProvider)
     )
 
     override fun allExercises(): List<Exercise> {
@@ -22,6 +19,6 @@ class ExercisesRegistryImpl(
     }
 
     override fun defaultExercise(): Exercise {
-        return default
+        return exercises.first()
     }
 }

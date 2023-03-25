@@ -34,9 +34,9 @@ class AssignmentFactoryImpl(
             cardType: CardType
     ): Assignment {
         val date = todayProvider.today()
-        val cards = exercise.pendingCards(repository, deck, date)
+        val cards = exercise.pendingCards(deck, date)
         val history = historyFactory.create()
-        val mutations = exercise.mutations(repository, preferences, journal, date, order, deck, cardType)
+        val mutations = exercise.mutations(preferences, journal, date, order, deck, cardType)
         return Assignment(date, history, mutations.apply(cards))
     }
 }
