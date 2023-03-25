@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.mockEmptyState
 import com.ashalmawia.coriolan.learning.mockToday
@@ -169,11 +168,11 @@ class MockRepository : Repository {
     override fun getCardState(card: Card): State {
         return states[card.id] ?: mockEmptyState(mockToday())
     }
-    override fun cardsDueDate(deck: Deck, date: DateTime): List<CardWithState> {
+    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, State>> {
         return cardsOfDeck(deck)
-                .map { card -> CardWithState(card, getCardState(card)) }
+                .map { card -> Pair(card, getCardState(card)) }
                 .filter {
-                    it.state.spacedRepetition.due <= date
+                    it.second.spacedRepetition.due <= date
                 }
     }
     override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State> {

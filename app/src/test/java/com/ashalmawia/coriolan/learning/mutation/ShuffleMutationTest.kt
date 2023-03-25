@@ -10,7 +10,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class ShuffleMutationTest {
 
-    private val cards = List(50) { i -> mockCardWithState(id = i.toLong()) }
+    private val cards = List(50) { i -> mockTask(id = i.toLong()) }
 
     @Test
     fun testNoShuffle() {
@@ -42,13 +42,13 @@ class ShuffleMutationTest {
         // given
         val mutation = ShuffleMutation(true)
         val cards = listOf(
-                mockCardWithState(mockStateNew()),
-                mockCardWithState(mockStateNew()),
-                mockCardWithState(mockStateInProgress()),
-                mockCardWithState(mockStateLearnt()),
-                mockCardWithState(mockStateInProgress()),
-                mockCardWithState(mockStateNew()),
-                mockCardWithState(mockStateNew())
+                mockTask(mockStateNew()),
+                mockTask(mockStateNew()),
+                mockTask(mockStateInProgress()),
+                mockTask(mockStateLearnt()),
+                mockTask(mockStateInProgress()),
+                mockTask(mockStateNew()),
+                mockTask(mockStateNew())
         )
 
         // when

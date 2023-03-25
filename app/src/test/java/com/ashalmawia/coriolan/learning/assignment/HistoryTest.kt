@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.model.mockCardWithState
+import com.ashalmawia.coriolan.model.mockTask
 import com.ashalmawia.coriolan.model.mockState
 import com.ashalmawia.coriolan.model.mockStateRelearn
 import junit.framework.Assert.*
@@ -28,7 +28,7 @@ class HistoryTest {
     @Test
     fun test__single() {
         // given
-        val card = mockCardWithState(mockStateRelearn())
+        val card = mockTask(mockStateRelearn())
 
         // when
         history.record(card)
@@ -47,7 +47,7 @@ class HistoryTest {
     fun test__multiple() {
         // given
         val list = (0 until 10).map {
-            mockCardWithState(mockState(it))
+            mockTask(mockState(it))
         }
 
         // when

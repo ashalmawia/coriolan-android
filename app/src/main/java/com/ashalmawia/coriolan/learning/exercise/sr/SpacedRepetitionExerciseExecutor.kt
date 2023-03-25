@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
@@ -30,42 +30,42 @@ class SpacedRepetitionExerciseExecutor(
 
     override val canUndo: Boolean = exercise.canUndo
 
-    private var currentCard: CardWithState? = null
+    private var currentTask: Task? = null
 
-    override fun renderCard(card: CardWithState, extras: List<ExpressionExtras>) {
-        currentCard = card
-        renderer.renderCard(card, extras)
+    override fun renderTask(task: Task, extras: List<ExpressionExtras>) {
+        currentTask = task
+        renderer.renderTask(task, extras)
     }
 
     override fun onAnswered(answer: Any) {
-        val card = currentCard!!
+        val card = currentTask!!
         val oldState = card.state
         val updated = processReply(card, answer as SRAnswer)
         logbook.recordCardAction(card.card, oldState, updated.state)
-        listener.onCardStudied(updated)
+        listener.onTaskStudied(updated)
     }
 
-    private fun processReply(card: CardWithState, answer: SRAnswer): CardWithState {
-        val newSrState = scheduler.processAnswer(answer, card.state.spacedRepetition)
-        return updateCardState(card, card.state.copy(spacedRepetition = newSrState))
+    private fun processReply(task: Task, answer: SRAnswer): Task {
+        val newSrState = scheduler.processAnswer(answer, task.state.spacedRepetition)
+        return updateTask(task, task.state.copy(spacedRepetition = newSrState))
     }
 
-    private fun updateCardState(card: CardWithState, newState: State): CardWithState {
-        repository.updateCardState(card.card, newState)
-        return CardWithState(card.card, newState)
+    private fun updateTask(task: Task, newState: State): Task {
+        repository.updateCardState(task.card, newState)
+        return Task(task.card, newState)
     }
 
-    override fun undoCard(card: CardWithState, undoneState: State): CardWithState {
-        val updated = updateCardState(card, card.state)
+    override fun undoTask(task: Task, undoneState: State): Task {
+        val updated = updateTask(task, task.state)
         logbook.unrecordCardAction(updated.card, updated.state, undoneState)
         return updated
     }
 
-    override fun getCardWithState(card: Card): CardWithState {
-        return CardWithState(card, repository.getCardState(card))
+    override fun getTask(card: Card): Task {
+        return Task(card, repository.getCardState(card))
     }
 
-    override fun isPending(card: CardWithState): Boolean = card.state().due <= todayProvider.today()
+    override fun isPending(task: Task): Boolean = task.state().due <= todayProvider.today()
 }
 
-private fun CardWithState.state() = state.spacedRepetition
+private fun Task.state() = state.spacedRepetition

@@ -153,7 +153,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     }
 
     private fun onCurrentCardUpdated() {
-        flow.refetchCard(flow.card)
+        flow.refetchTask(flow.card)
     }
 
     private fun beginExercise() {
@@ -176,7 +176,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
         deck_progress_bar__relearn.text = counts.relearn.toString()
     }
 
-    override fun onCardRendered() {
+    override fun onTaskRendered() {
         updateProgressCounts()
         invalidateOptionsMenu()
     }

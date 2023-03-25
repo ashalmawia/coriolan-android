@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.ExpressionExtras
@@ -9,16 +9,16 @@ interface ExerciseExecutor : ExerciseRenderer.Listener {
 
     val canUndo: Boolean
 
-    fun isPending(card: CardWithState): Boolean
+    fun isPending(task: Task): Boolean
 
-    fun getCardWithState(card: Card): CardWithState
+    fun getTask(card: Card): Task
 
-    fun renderCard(card: CardWithState, extras: List<ExpressionExtras>)
+    fun renderTask(task: Task, extras: List<ExpressionExtras>)
 
-    fun undoCard(card: CardWithState, undoneState: State): CardWithState
+    fun undoTask(task: Task, undoneState: State): Task
 }
 
 interface ExerciseListener {
 
-    fun onCardStudied(updated: CardWithState)
+    fun onTaskStudied(updated: Task)
 }

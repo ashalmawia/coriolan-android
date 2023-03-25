@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.model.ExpressionExtras
@@ -30,11 +30,11 @@ class SpacedRepetitionExerciseRenderer(
         return cardView
     }
 
-    override fun renderCard(card: CardWithState, extras: List<ExpressionExtras>) {
+    override fun renderTask(task: Task, extras: List<ExpressionExtras>) {
         uiContainer.removeAllViews()
 
-        val answers = answers(card.state.spacedRepetition).asList()
-        cardView.bind(card.card, extras, answers)
+        val answers = answers(task.state.spacedRepetition).asList()
+        cardView.bind(task.card, extras, answers)
 
         uiContainer.addView(cardView)
     }

@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 
 interface Mutation {
 
-    fun apply(cards: List<CardWithState>): List<CardWithState>
+    fun apply(tasks: List<Task>): List<Task>
 }

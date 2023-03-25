@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.util.OpenForTesting
 import org.joda.time.DateTime
@@ -14,15 +14,15 @@ private const val RESCHEDULING_STEP = 20
 class Assignment(
         val date: DateTime,
         private val history: History,
-        cards: List<CardWithState>
+        tasks: List<Task>
 ) {
-    private val queue = LinkedList(cards)
+    private val queue = LinkedList(tasks)
 
-    var current: CardWithState? = null
+    var current: Task? = null
         protected set
 
     fun counts(): Counts {
-        val cards = cards()
+        val cards = tasks()
         // todo: decouple
         val counts = cards.groupBy { it.state.spacedRepetition.status }.mapValues { it.value.size }
         return Counts.createFrom(counts, cards.size)
@@ -31,9 +31,9 @@ class Assignment(
         return queue.size > 0
     }
 
-    fun reschedule(card: CardWithState) {
+    fun reschedule(task: Task) {
         val index = min(RESCHEDULING_STEP, queue.size)
-        queue.add(index, card)
+        queue.add(index, task)
     }
 
     fun delete(card: Card) {
@@ -44,7 +44,7 @@ class Assignment(
         history.forget(card)
     }
 
-    fun next(): CardWithState {
+    fun next(): Task {
         val current = this.current
         if (current != null) {
             history.record(current)
@@ -55,11 +55,11 @@ class Assignment(
         return next
     }
 
-    private fun getNext(): CardWithState {
+    private fun getNext(): Task {
         return queue.poll() ?: throw IllegalStateException("queue is empty")
     }
 
-    fun replace(old: Card, new: CardWithState) {
+    fun replace(old: Card, new: Task) {
         if (current?.card?.id == old.id) {
             current = new
         } else {
@@ -71,7 +71,7 @@ class Assignment(
         }
     }
 
-    fun undo(): CardWithState {
+    fun undo(): Task {
         if (!canUndo()) {
             throw IllegalStateException("can not undo")
         }
@@ -85,7 +85,7 @@ class Assignment(
 
     fun canUndo() = history.canGoBack()
 
-    private fun cards(): List<CardWithState> {
+    private fun tasks(): List<Task> {
         val cur = current
         return if (cur != null) {
             queue.plus(cur)

@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
@@ -293,7 +292,7 @@ class SqliteStorage(
         }
     }
 
-    override fun domainById(id: Long): Domain? {
+    override fun domainById(id: Long): Domain {
         val db = helper.readableDatabase
 
         val DOMAINS = "D"
@@ -813,7 +812,7 @@ class SqliteStorage(
         }
     }
 
-    override fun cardsDueDate(deck: Deck, date: DateTime): List<CardWithState> {
+    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, State>> {
         val db = helper.readableDatabase
 
         val reverse = allCardsReverse(db)
@@ -848,7 +847,7 @@ class SqliteStorage(
         """.trimMargin(),
                 arrayOf(deck.id.toString(), date.timespamp.toString()))
 
-        val cards = mutableListOf<CardWithState>()
+        val tasks = mutableListOf<Pair<Card, State>>()
         cursor.use {
             while (cursor.moveToNext()) {
                 val cardId = cursor.getId(CARDS)
@@ -860,9 +859,9 @@ class SqliteStorage(
                         reverse.getValue(cardId)
                 )
                 val state = extractState(cursor, STATES)
-                cards.add(CardWithState(card, state))
+                tasks.add(Pair(card, state))
             }
-            return cards
+            return tasks
         }
     }
 

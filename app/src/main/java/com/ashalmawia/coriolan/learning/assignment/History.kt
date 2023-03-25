@@ -1,17 +1,17 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
 
 interface History {
 
     fun canGoBack(): Boolean
 
-    fun record(card: CardWithState)
+    fun record(task: Task)
 
     fun forget(card: Card)
 
-    fun goBack(): CardWithState
+    fun goBack(): Task
 }
 
 interface HistoryFactory {

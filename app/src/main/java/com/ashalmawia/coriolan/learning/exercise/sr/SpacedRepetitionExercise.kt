@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayProvider
@@ -92,8 +92,10 @@ class SpacedRepetitionExercise(
         )
     }
 
-    override fun pendingCards(deck: Deck, date: DateTime): List<CardWithState> {
-        return repository.cardsDueDate(deck, date)
+    override fun pendingCards(deck: Deck, date: DateTime): List<Task> {
+        return repository.pendingCards(deck, date).map {
+            Task(it.first, it.second)
+        }
     }
 
     override fun status(state: State): Status = state.spacedRepetition.status
@@ -103,12 +105,12 @@ class SpacedRepetitionExercise(
 
     class LearningModeMutation(private val exercise: SpacedRepetitionExercise) : Mutation {
 
-        override fun apply(cards: List<CardWithState>): List<CardWithState> {
-            val (forward, reverse) = cards.forwardAndReverseWithState()
+        override fun apply(tasks: List<Task>): List<Task> {
+            val (forward, reverse) = tasks.forwardAndReverseWithState()
             return forward.plus(reverse.filterReady())
         }
 
-        private fun List<CardWithState>.filterReady() : List<CardWithState> {
+        private fun List<Task>.filterReady() : List<Task> {
             val translationIds = flatMap { it.card.translations }.map { it.id }
 
             val states = exercise.getStatesForCardsWithOriginals(translationIds)
@@ -125,4 +127,4 @@ class SpacedRepetitionExercise(
     }
 }
 
-private fun CardWithState.status() = state.spacedRepetition.status
+private fun Task.status() = state.spacedRepetition.status

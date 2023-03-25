@@ -1744,14 +1744,14 @@ abstract class StorageTest {
         }
 
         // when
-        val due = storage.cardsDueDate(deck, today)
+        val due = storage.pendingCards(deck, today)
 
         // then
         assertEquals("all new cards are due today", count, due.size)
         for (i in 0 until count) {
-            assertCardCorrect(due[i].card, cardData[i], domain)
-            assertEquals("state is correct", today, due[i].state.spacedRepetition.due)
-            assertEquals("state is correct", Status.NEW, due[i].state.spacedRepetition.status)
+            assertCardCorrect(due[i].first, cardData[i], domain)
+            assertEquals("state is correct", today, due[i].second.spacedRepetition.due)
+            assertEquals("state is correct", Status.NEW, due[i].second.spacedRepetition.status)
         }
     }
 
@@ -1777,12 +1777,12 @@ abstract class StorageTest {
         storage.updateCardState(cards[2], State(SRState(today.minusDays(1), 4)))
 
         // when
-        val due = storage.cardsDueDate(deck, today)
+        val due = storage.pendingCards(deck, today)
 
         // then
         assertEquals(2, due.size)
-        assertCardCorrect(due[0].card, cardsData[0], domain)
-        assertCardCorrect(due[1].card, cardsData[2], domain)
+        assertCardCorrect(due[0].first, cardsData[0], domain)
+        assertCardCorrect(due[1].first, cardsData[2], domain)
     }
 
     @Test
@@ -1802,7 +1802,7 @@ abstract class StorageTest {
         storage.updateCardState(cards[2], State(SRState(today.plusDays(10), 4)))
 
         // when
-        val due = storage.cardsDueDate(deck, today)
+        val due = storage.pendingCards(deck, today)
 
         // then
         assertEquals(0, due.size)

@@ -1,10 +1,10 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 
 object SortReviewsByPeriodMutation : Mutation {
 
-    override fun apply(cards: List<CardWithState>): List<CardWithState> {
-        return cards.sortedBy { it.state.spacedRepetition.period }
+    override fun apply(tasks: List<Task>): List<Task> {
+        return tasks.sortedBy { it.state.spacedRepetition.period }
     }
 }

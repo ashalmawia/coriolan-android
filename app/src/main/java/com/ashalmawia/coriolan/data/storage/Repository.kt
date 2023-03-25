@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.storage
 
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.learning.CardWithState
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.*
@@ -67,17 +66,17 @@ interface Repository {
     fun deleteDeck(deck: Deck): Boolean
 
     fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
-        val due = cardsDueDate(deck, date)
+        val due = pendingCards(deck, date)
         val total = cardsOfDeck(deck)
 
-        val deckDue = due.filter { it.card.type == cardType }
+        val deckDue = due.filter { it.first.type == cardType }
 
         // todo: decouple
         return Counts(
-                deckDue.count { it.state.spacedRepetition.status == Status.NEW },
-                deckDue.count { it.state.spacedRepetition.status == Status.IN_PROGRESS
-                        || it.state.spacedRepetition.status == Status.LEARNT },
-                deckDue.count { it.state.spacedRepetition.status == Status.RELEARN },
+                deckDue.count { it.second.spacedRepetition.status == Status.NEW },
+                deckDue.count { it.second.spacedRepetition.status == Status.IN_PROGRESS
+                        || it.second.spacedRepetition.status == Status.LEARNT },
+                deckDue.count { it.second.spacedRepetition.status == Status.RELEARN },
                 total.filter { it.type == cardType }.size
         )
     }
@@ -86,7 +85,7 @@ interface Repository {
 
     fun getCardState(card: Card): State
 
-    fun cardsDueDate(deck: Deck, date: DateTime): List<CardWithState>
+    fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, State>>
 
     fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State>
 

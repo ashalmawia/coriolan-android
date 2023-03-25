@@ -35,20 +35,20 @@ class LearningFlow(
     fun showNextOrComplete() {
         if (assignment.hasNext()) {
             val card = assignment.next()
-            renderCard(card)
+            renderTask(card)
         } else {
             finish()
         }
     }
 
-    override fun onCardStudied(updated: CardWithState) {
+    override fun onTaskStudied(updated: Task) {
         rescheduleIfNeeded(updated)
         showNextOrComplete()
     }
 
-    private fun rescheduleIfNeeded(card: CardWithState) {
-        if (exerciseExecutor.isPending(card)) {
-            assignment.reschedule(card)
+    private fun rescheduleIfNeeded(task: Task) {
+        if (exerciseExecutor.isPending(task)) {
+            assignment.reschedule(task)
         }
     }
 
@@ -62,29 +62,29 @@ class LearningFlow(
         val card = assignment.current!!
         val stateToUndo = card.state
         val undone = assignment.undo()
-        exerciseExecutor.undoCard(undone, stateToUndo)
-        renderCard(undone)
+        exerciseExecutor.undoTask(undone, stateToUndo)
+        renderTask(undone)
     }
 
-    fun refetchCard(cardWithState: CardWithState) {
-        val card = cardWithState.card
+    fun refetchTask(task: Task) {
+        val card = task.card
         val updated = repository.cardById(card.id, card.domain)!!
-        val updatedWithState = exerciseExecutor.getCardWithState(updated)
+        val updatedWithState = exerciseExecutor.getTask(updated)
         if (updated.deckId == deck.id && exerciseExecutor.isPending(updatedWithState)) {
             assignment.replace(card, updatedWithState)
             if (isCurrent(card)) {
                 // make exercise pre-present the card with the changes
-                renderCard(updatedWithState)
+                renderTask(updatedWithState)
             }
         } else {
             dropCard(card)
         }
     }
 
-    private fun renderCard(card: CardWithState) {
-        val extras = repository.allExtrasForCard(card.card)
-        exerciseExecutor.renderCard(card, extras)
-        listener.onCardRendered()
+    private fun renderTask(task: Task) {
+        val extras = repository.allExtrasForCard(task.card)
+        exerciseExecutor.renderTask(task, extras)
+        listener.onTaskRendered()
     }
 
     fun dropCard(card: Card) {
@@ -98,7 +98,7 @@ class LearningFlow(
     private fun isCurrent(card: Card) = this.card.card.id == card.id
 
     interface Listener {
-        fun onCardRendered()
+        fun onTaskRendered()
         fun onFinish()
     }
 

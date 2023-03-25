@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.*
 import junit.framework.Assert.*
 import org.junit.Test
@@ -15,7 +15,7 @@ class SortReviewsByPeriodMutationTest {
     @Test
     fun test__sortedAscending() {
         // when
-        val cards = List(5) { i -> mockCardWithState(mockState(i - 1)) }
+        val cards = List(5) { i -> mockTask(mockState(i - 1)) }
         val processed = mutation.value.apply(cards)
 
         // then
@@ -25,7 +25,7 @@ class SortReviewsByPeriodMutationTest {
     @Test
     fun test__sortedDescending() {
         // when
-        val cards = List(5, { i -> mockCardWithState(mockState(5 - i)) })
+        val cards = List(5, { i -> mockTask(mockState(5 - i)) })
         val processed = mutation.value.apply(cards)
 
         // then
@@ -36,12 +36,12 @@ class SortReviewsByPeriodMutationTest {
     fun test__mixed() {
         // when
         val cards = listOf(
-                mockCardWithState(mockState(5)),
-                mockCardWithState(mockState(-1)),
-                mockCardWithState(mockState(10)),
-                mockCardWithState(mockState(2)),
-                mockCardWithState(mockState(0)),
-                mockCardWithState(mockState(-1))
+                mockTask(mockState(5)),
+                mockTask(mockState(-1)),
+                mockTask(mockState(10)),
+                mockTask(mockState(2)),
+                mockTask(mockState(0)),
+                mockTask(mockState(-1))
         )
         val processed = mutation.value.apply(cards)
 
@@ -50,9 +50,9 @@ class SortReviewsByPeriodMutationTest {
         assertTrue(checkAscending(processed))
     }
 
-    private fun checkAscending(cards: List<CardWithState>): Boolean {
+    private fun checkAscending(tasks: List<Task>): Boolean {
         var previous = -1000
-        cards.forEach {
+        tasks.forEach {
             if (it.state.spacedRepetition.period < previous) return false
             previous = it.state.spacedRepetition.period
         }

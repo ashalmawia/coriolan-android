@@ -1,25 +1,25 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.util.new
 import com.ashalmawia.coriolan.util.review
 
 class ShuffleMutation(private val shuffle: Boolean) : Mutation {
 
-    override fun apply(cards: List<CardWithState>): List<CardWithState> {
+    override fun apply(tasks: List<Task>): List<Task> {
         return if (shuffle) {
-            shuffle(cards)
+            shuffle(tasks)
         } else {
-            cards
+            tasks
         }
     }
 
-    private fun shuffle(cards: List<CardWithState>): List<CardWithState> {
-        val reviewOnlySize = cards.size / 3
-        val newCardsAllowedSize = cards.size - reviewOnlySize
+    private fun shuffle(tasks: List<Task>): List<Task> {
+        val reviewOnlySize = tasks.size / 3
+        val newCardsAllowedSize = tasks.size - reviewOnlySize
 
-        val new = cards.new()
-        val review = cards.review()
+        val new = tasks.new()
+        val review = tasks.review()
 
         return if (new.size >= newCardsAllowedSize) {
             new.shuffled().plus(review.shuffled())

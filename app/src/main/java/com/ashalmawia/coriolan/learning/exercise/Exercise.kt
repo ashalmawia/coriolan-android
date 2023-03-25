@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.learning.CardWithState
+import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.mutation.Mutations
@@ -31,7 +31,7 @@ interface Exercise {
 
     val canUndo: Boolean
 
-    fun pendingCards(deck: Deck, date: DateTime): List<CardWithState>
+    fun pendingCards(deck: Deck, date: DateTime): List<Task>
 
     fun mutations(
             preferences: Preferences,
