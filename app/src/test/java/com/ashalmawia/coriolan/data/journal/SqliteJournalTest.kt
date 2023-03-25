@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.journal
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.sqlite.SqliteJournal
 import com.ashalmawia.coriolan.learning.LearningDay
-import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import org.junit.Assert.*
@@ -167,18 +167,18 @@ class SqliteJournalTest {
         val anotherExerciseId = ExerciseId.TEST
 
         // when
-        journal.incrementCardStudied(date, Status.NEW, exerciseId)
-        journal.incrementCardStudied(date, Status.NEW, exerciseId)
-        journal.incrementCardStudied(date, Status.IN_PROGRESS, exerciseId)
-        journal.incrementCardStudied(date, Status.RELEARN, exerciseId)
-        journal.incrementCardStudied(date, Status.IN_PROGRESS, exerciseId)
+        journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        journal.incrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
+        journal.incrementCardActions(date, exerciseId, CardAction.CARD_RELEARNED)
+        journal.incrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
 
-        journal.incrementCardStudied(date, Status.NEW, anotherExerciseId)
-        journal.incrementCardStudied(date, Status.IN_PROGRESS, anotherExerciseId)
-        journal.incrementCardStudied(date, Status.NEW, anotherExerciseId)
-        journal.incrementCardStudied(date, Status.NEW, anotherExerciseId)
-        journal.incrementCardStudied(date, Status.NEW, anotherExerciseId)
-        journal.decrementCardStudied(date, Status.NEW, anotherExerciseId)
+        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        journal.incrementCardActions(date, anotherExerciseId, CardAction.CARD_REVIEWED)
+        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        journal.decrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
 
         val countsA = journal.cardsStudiedOnDate(date, exerciseId)
         val countsB = journal.cardsStudiedOnDate(date, anotherExerciseId)
@@ -191,27 +191,27 @@ class SqliteJournalTest {
     }
 
     private fun recordCardRelearned(date: LearningDay) {
-        journal.incrementCardStudied(date, Status.RELEARN, exerciseId)
+        journal.incrementCardActions(date, exerciseId, CardAction.CARD_RELEARNED)
     }
 
     private fun recordReviewStudied(date: LearningDay) {
-        journal.incrementCardStudied(date, Status.IN_PROGRESS, exerciseId)
+        journal.incrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
     }
 
     private fun recordNewCardStudied(date: LearningDay) {
-        journal.incrementCardStudied(date, Status.NEW, exerciseId)
+        journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
     }
 
     private fun undoCardRelearned(date: LearningDay) {
-        journal.decrementCardStudied(date, Status.RELEARN, exerciseId)
+        journal.decrementCardActions(date, exerciseId, CardAction.CARD_RELEARNED)
     }
 
     private fun undoReviewStudied(date: LearningDay) {
-        journal.decrementCardStudied(date, Status.IN_PROGRESS, exerciseId)
+        journal.decrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
     }
 
     private fun undoNewCardStudied(date: LearningDay) {
-        journal.decrementCardStudied(date, Status.NEW, exerciseId)
+        journal.decrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
     }
 }
 

@@ -12,9 +12,7 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.exercise.GenericLogbook
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.ExpressionExtras
-import org.joda.time.DateTime
 
 class SpacedRepetitionExerciseExecutor(
         context: Context,
@@ -43,7 +41,7 @@ class SpacedRepetitionExerciseExecutor(
         val card = currentCard!!
         val oldState = card.state
         val updated = processReply(card, answer as SRAnswer)
-        logbook.recordCardStudied(card.card, oldState, updated.state)
+        logbook.recordCardAction(card.card, oldState, updated.state)
         listener.onCardStudied(updated)
     }
 
@@ -59,7 +57,7 @@ class SpacedRepetitionExerciseExecutor(
 
     override fun undoCard(card: CardWithState, undoneState: State): CardWithState {
         val updated = updateCardState(card, card.state)
-        logbook.undoCardStudied(updated.card, updated.state, undoneState)
+        logbook.unrecordCardAction(updated.card, updated.state, undoneState)
         return updated
     }
 

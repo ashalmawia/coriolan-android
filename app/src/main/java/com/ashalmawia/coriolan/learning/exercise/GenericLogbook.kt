@@ -12,18 +12,18 @@ class GenericLogbook(
         private val exercise: Exercise
 ) : ExerciseLogbook {
 
-    override fun recordCardStudied(card: Card, oldState: State, newState: State) {
+    override fun recordCardAction(card: Card, oldState: State, newState: State) {
         val date = todayProvider.today()
         when (exercise.status(oldState)) {
             Status.NEW -> {
-                journal.incrementCardStudied(date, Status.NEW, exercise.id)
+                journal.incrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
                 if (exercise.status(newState) == Status.RELEARN) {
-                    journal.incrementCardStudied(date, Status.RELEARN, exercise.id)
+                    journal.incrementCardActions(date, exercise.id, CardAction.CARD_RELEARNED)
                 } else {
-                    journal.incrementCardStudied(date, Status.IN_PROGRESS, exercise.id)
+                    journal.incrementCardActions(date, exercise.id, CardAction.CARD_REVIEWED)
                 }
             }
 
@@ -32,18 +32,18 @@ class GenericLogbook(
         }
     }
 
-    override fun undoCardStudied(card: Card, state: State, stateThatWasUndone: State) {
+    override fun unrecordCardAction(card: Card, state: State, stateThatWasUndone: State) {
         val date = todayProvider.today()
         when (exercise.status(state)) {
             Status.NEW -> {
-                journal.decrementCardStudied(date, Status.NEW, exercise.id)
+                journal.decrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
                 if (exercise.status(stateThatWasUndone) == Status.RELEARN) {
-                    journal.decrementCardStudied(date, Status.IN_PROGRESS, exercise.id)
+                    journal.decrementCardActions(date, exercise.id, CardAction.CARD_REVIEWED)
                 } else {
-                    journal.decrementCardStudied(date, Status.RELEARN, exercise.id)
+                    journal.decrementCardActions(date, exercise.id, CardAction.CARD_RELEARNED)
                 }
             }
 

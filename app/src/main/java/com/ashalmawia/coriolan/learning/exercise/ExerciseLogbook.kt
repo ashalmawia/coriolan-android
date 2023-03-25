@@ -5,7 +5,13 @@ import com.ashalmawia.coriolan.model.Card
 
 interface ExerciseLogbook {
 
-    fun recordCardStudied(card: Card, oldState: State, newState: State)
+    fun recordCardAction(card: Card, oldState: State, newState: State)
 
-    fun undoCardStudied(card: Card, state: State, stateThatWasUndone: State)
+    fun unrecordCardAction(card: Card, state: State, stateThatWasUndone: State)
+}
+
+enum class CardAction(val value: String) {
+    NEW_CARD_FIRST_SEEN("opened"),
+    CARD_REVIEWED("reviewed"),
+    CARD_RELEARNED("relearned")
 }
