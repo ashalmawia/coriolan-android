@@ -57,40 +57,40 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo> {
+    override fun allTerms(offset: Int, limit: Int): List<TermInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_EXPRESSIONS
+            |   FROM $SQLITE_TABLE_TERMS
             |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
-            val list = mutableListOf<ExpressionInfo>()
+            val list = mutableListOf<TermInfo>()
             while (cursor.moveToNext()) {
-                list.add(ExpressionInfo(cursor.getId(), cursor.getValue(), cursor.getLanguageId()))
+                list.add(TermInfo(cursor.getId(), cursor.getValue(), cursor.getLanguageId()))
             }
             return list
         }
     }
 
-    override fun allExpressionExtras(offset: Int, limit: Int): List<ExpressionExtraInfo> {
+    override fun allTermExtras(offset: Int, limit: Int): List<TermExtraInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_EXPRESSION_EXTRAS
+            |   FROM $SQLITE_TABLE_TERM_EXTRAS
             |   ORDER BY $SQLITE_COLUMN_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
-            val list = mutableListOf<ExpressionExtraInfo>()
+            val list = mutableListOf<TermExtraInfo>()
             while (cursor.moveToNext()) {
-                list.add(ExpressionExtraInfo(
-                        cursor.getId(), cursor.getExpressionId(), cursor.getType(), cursor.getValue()))
+                list.add(TermExtraInfo(
+                        cursor.getId(), cursor.getTermId(), cursor.getType(), cursor.getValue()))
             }
             return list
         }
@@ -128,7 +128,7 @@ class SqliteBackupHelper(
         // TODO: this is disastrously inoptimal, but who cares? https://trello.com/c/fkgQn5KD
         val translations = mutableListOf<Long>()
         while (cursor.moveToNext()) {
-            translations.add(cursor.getExpressionId())
+            translations.add(cursor.getTermId())
         }
 
         cursor.close()
@@ -197,22 +197,22 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun writeExpressions(expressions: List<ExpressionInfo>) {
+    override fun writeTerms(terms: List<TermInfo>) {
         val db = helper.writableDatabase
 
-        expressions.forEach {
-            db.insertOrThrow(SQLITE_TABLE_EXPRESSIONS, null,
-                    createExpressionContentValues(it.value, it.languageId, it.id)
+        terms.forEach {
+            db.insertOrThrow(SQLITE_TABLE_TERMS, null,
+                    createTermContentValues(it.value, it.languageId, it.id)
             )
         }
     }
 
-    override fun writeExpressionExtras(extras: List<ExpressionExtraInfo>) {
+    override fun writeTermExtras(extras: List<TermExtraInfo>) {
         val db = helper.writableDatabase
 
         extras.forEach {
-            db.insertOrThrow(SQLITE_TABLE_EXPRESSION_EXTRAS, null,
-                    createExpressionExtrasContentValues(it.expressionId, it.type, it.value, it.id)
+            db.insertOrThrow(SQLITE_TABLE_TERM_EXTRAS, null,
+                    createTermExtrasContentValues(it.termId, it.type, it.value, it.id)
             )
         }
     }

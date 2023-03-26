@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
-import com.ashalmawia.coriolan.model.mockExpression
+import com.ashalmawia.coriolan.model.mockTerm
 import com.ashalmawia.coriolan.model.mockLanguage
 import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
@@ -28,7 +28,7 @@ class SqliteConvertersTest {
     }
 
     @Test
-    fun `createLanguageContentValuesTest__hasId`() {
+    fun createLanguageContentValuesTest__hasId() {
         // given
         val value = "Russian"
         val id = 5L
@@ -43,13 +43,13 @@ class SqliteConvertersTest {
     }
 
     @Test
-    fun createExpressionContentValuesTest() {
+    fun createTermContentValuesTest() {
         // given
         val value = "some value"
         val lang = mockLanguage(777L, "Russian")
 
         // when
-        val cv = createExpressionContentValues(value, lang)
+        val cv = createTermContentValues(value, lang)
 
         // then
         assertEquals("values count is correct", 2, cv.size())
@@ -58,7 +58,7 @@ class SqliteConvertersTest {
 
         // when
         val id = 7L
-        val cv1 = createExpressionContentValues(value, lang.id, id)
+        val cv1 = createTermContentValues(value, lang.id, id)
 
         // then
         assertEquals("values count is correct", 3, cv1.size())
@@ -101,7 +101,7 @@ class SqliteConvertersTest {
         val deckId = 5L
         val domainId = 2L
         val lang = mockLanguage()
-        val original = mockExpression("some original expression", lang)
+        val original = mockTerm("some original term", lang)
 
         // when
         val cv = createCardContentValues(domainId, deckId, original)
@@ -114,12 +114,12 @@ class SqliteConvertersTest {
     }
 
     @Test
-    fun `createCardContentValuesTest__hasCardId`() {
+    fun createCardContentValuesTest__hasCardId() {
         // given
         val deckId = 5L
         val domainId = 1L
         val lang = mockLanguage()
-        val original = mockExpression("some original expression", lang)
+        val original = mockTerm("some original term", lang)
         val cardId = 7L
 
         // when
@@ -159,7 +159,7 @@ class SqliteConvertersTest {
     }
 
     @Test
-    fun `createDeckContentValuesTest__hasId`() {
+    fun createDeckContentValuesTest__hasId() {
         // given
         val name = "New Deck"
         val domainId = 3L
@@ -181,9 +181,9 @@ class SqliteConvertersTest {
         val cardId = 99L
         val lang = mockLanguage()
         val translations = listOf(
-                mockExpression("firework", lang),
-                mockExpression("rocket", lang),
-                mockExpression( "missile", lang)
+                mockTerm("firework", lang),
+                mockTerm("rocket", lang),
+                mockTerm( "missile", lang)
         )
 
         // when
@@ -195,7 +195,7 @@ class SqliteConvertersTest {
             val cv = cvList[i]
             assertEquals("values count is correct", 2, cv.size())
             assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
-            assertEquals("$SQLITE_COLUMN_EXPRESSION_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_EXPRESSION_ID))
+            assertEquals("$SQLITE_COLUMN_TERM_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_TERM_ID))
         }
 
         // when
@@ -207,7 +207,7 @@ class SqliteConvertersTest {
             val cv = cvList1[i]
             assertEquals("values count is correct", 2, cv.size())
             assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
-            assertEquals("$SQLITE_COLUMN_EXPRESSION_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_EXPRESSION_ID))
+            assertEquals("$SQLITE_COLUMN_TERM_ID is correct", translations[i].id, cv.get(SQLITE_COLUMN_TERM_ID))
         }
     }
 

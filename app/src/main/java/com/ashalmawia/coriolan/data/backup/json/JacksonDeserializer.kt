@@ -9,9 +9,9 @@ interface JacksonDeserializer {
 
     fun readDomain(json: JsonParser): DomainInfo
 
-    fun readExpression(json: JsonParser): ExpressionInfo
+    fun readTerm(json: JsonParser): TermInfo
 
-    fun readExpressionExtra(json: JsonParser): ExpressionExtraInfo
+    fun readTermExtra(json: JsonParser): TermExtraInfo
 
     fun readCard(json: JsonParser): CardInfo
 

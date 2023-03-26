@@ -27,7 +27,7 @@ object JsonCartDataParserTestData {
       ]
     }"""
 
-    val expressionsJson = """{
+    val termsJson = """{
       "cards": [
         {
           "original": "Мне нужно идти.",
@@ -36,7 +36,7 @@ object JsonCartDataParserTestData {
       ]
     }"""
 
-    val expressionsExpected = listOf(
+    val termsExpected = listOf(
             JsonCardData("Мне нужно идти.", null, listOf("I have to go."))
     )
 

@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.ExtraType
-import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
 import org.joda.time.DateTime
 
@@ -18,12 +18,12 @@ fun createLanguageContentValues(value: String, id: Long? = null): ContentValues 
     return cv
 }
 
-// ********** EXPRESSION ********************
+// ********** TERMS ********************
 
-fun createExpressionContentValues(value: String, language: Language)
-    = createExpressionContentValues(value, language.id)
+fun createTermContentValues(value: String, language: Language)
+    = createTermContentValues(value, language.id)
 
-fun createExpressionContentValues(value: String, languageId: Long, id: Long? = null): ContentValues {
+fun createTermContentValues(value: String, languageId: Long, id: Long? = null): ContentValues {
     val cv = ContentValues()
     if (id != null) {
         cv.put(SQLITE_COLUMN_ID, id)
@@ -33,17 +33,17 @@ fun createExpressionContentValues(value: String, languageId: Long, id: Long? = n
     return cv
 }
 
-// ********** EXPRESSION EXTRAS ************
+// ********** TERM EXTRAS ************
 
-fun createExpressionExtrasContentValues(exprerssionId: Long, type: ExtraType, value: String, id: Long? = null) =
-        createExpressionExtrasContentValues(exprerssionId, type.value, value, id)
+fun createTermExtrasContentValues(exprerssionId: Long, type: ExtraType, value: String, id: Long? = null) =
+        createTermExtrasContentValues(exprerssionId, type.value, value, id)
 
-fun createExpressionExtrasContentValues(exprerssionId: Long, type: Int, value: String, id: Long? = null) =
+fun createTermExtrasContentValues(exprerssionId: Long, type: Int, value: String, id: Long? = null) =
         ContentValues().apply {
             if (id != null) {
                 put(SQLITE_COLUMN_ID, id)
             }
-            put(SQLITE_COLUMN_EXPRESSION_ID, exprerssionId)
+            put(SQLITE_COLUMN_TERM_ID, exprerssionId)
             put(SQLITE_COLUMN_TYPE, type)
             put(SQLITE_COLUMN_VALUE, value)
         }
@@ -66,7 +66,7 @@ fun createDomainContentValues(name: String?, langOriginalId: Long, langTranslati
 
 // ********** CARD ********************
 
-fun createCardContentValues(domainId: Long, deckId: Long, original: Expression, cardId: Long? = null)
+fun createCardContentValues(domainId: Long, deckId: Long, original: Term, cardId: Long? = null)
     = createCardContentValues(domainId, deckId, original.id, cardId)
 
 fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, cardId: Long? = null): ContentValues {
@@ -80,8 +80,8 @@ fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, card
     return cv
 }
 
-@JvmName("generateCardsReverseContentValuesExpressions")
-fun generateCardsReverseContentValues(cardId: Long, translations: List<Expression>): List<ContentValues> {
+@JvmName("generateCardsReverseContentValuesTerms")
+fun generateCardsReverseContentValues(cardId: Long, translations: List<Term>): List<ContentValues> {
     return translations.map { toCardsReverseContentValues(cardId, it.id) }
 }
 
@@ -90,10 +90,10 @@ fun generateCardsReverseContentValues(cardId: Long, translationsIds: List<Long>)
     return translationsIds.map { toCardsReverseContentValues(cardId, it) }
 }
 
-private fun toCardsReverseContentValues(cardId: Long, expressionId: Long): ContentValues {
+private fun toCardsReverseContentValues(cardId: Long, termId: Long): ContentValues {
     val cv = ContentValues()
     cv.put(SQLITE_COLUMN_CARD_ID, cardId)
-    cv.put(SQLITE_COLUMN_EXPRESSION_ID, expressionId)
+    cv.put(SQLITE_COLUMN_TERM_ID, termId)
     return cv
 }
 

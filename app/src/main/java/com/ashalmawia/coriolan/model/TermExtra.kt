@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.model
 
-data class ExpressionExtra(
+data class TermExtra(
         val id: Long,
         val type: ExtraType,
         val value: String

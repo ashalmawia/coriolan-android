@@ -11,8 +11,8 @@ private const val PAGE_SIZE_DEFAULT = 20
 
 private const val FIELD_LANGUAGES = "languages"
 private const val FIELD_DOMAINS = "domains"
-private const val FIELD_EXPRESSIONS = "expressions"
-private const val FIELD_EXTRAS = "expression_extras"
+private const val FIELD_TERMS = "expressions"
+private const val FIELD_TERM_EXTRAS = "expression_extras"
 private const val FIELD_CARDS = "cards"
 private const val FIELD_DECKS = "decks"
 private const val FIELD_CARD_STATES = "sr_state"
@@ -43,8 +43,8 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
             when (json.currentName) {
                 FIELD_LANGUAGES -> read(json, deserializer::readLanguage, repository::writeLanguages)
                 FIELD_DOMAINS -> read(json, deserializer::readDomain, repository::writeDomains)
-                FIELD_EXPRESSIONS -> read(json, deserializer::readExpression, repository::writeExpressions)
-                FIELD_EXTRAS -> read(json, deserializer::readExpressionExtra, repository::writeExpressionExtras)
+                FIELD_TERMS -> read(json, deserializer::readTerm, repository::writeTerms)
+                FIELD_TERM_EXTRAS -> read(json, deserializer::readTermExtra, repository::writeTermExtras)
                 FIELD_CARDS -> read(json, deserializer::readCard, repository::writeCards)
                 FIELD_DECKS -> read(json, deserializer::readDeck, repository::writeDecks)
                 FIELD_CARD_STATES -> readSRStates(json, deserializer::readCardStateSR, repository)
@@ -64,8 +64,8 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
         write(FIELD_LANGUAGES, repository::allLanguages, json, serializer::writeLanguage)
         write(FIELD_DOMAINS, repository::allDomains, json, serializer::writeDomain)
-        write(FIELD_EXPRESSIONS, repository::allExpressions, json, serializer::writeExpression)
-        write(FIELD_EXTRAS, repository::allExpressionExtras, json, serializer::writeExpressionExtra)
+        write(FIELD_TERMS, repository::allTerms, json, serializer::writeTerm)
+        write(FIELD_TERM_EXTRAS, repository::allTermExtras, json, serializer::writeTermExtra)
         write(FIELD_DECKS, repository::allDecks, json, serializer::writeDeck)
         write(FIELD_CARDS, repository::allCards, json, serializer::writeCard)
         writeSRStates(repository, json, serializer::writeCardState)

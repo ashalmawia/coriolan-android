@@ -129,7 +129,7 @@ abstract class JsonBackupTest {
     private fun assertRepoEquals(expected: BackupableRepository, actual: BackupableRepository) {
         assertEquals(expected.allLanguages(0, 500), actual.allLanguages(0, 500))
         assertEquals(expected.allDomains(0, 500), actual.allDomains(0, 500))
-        assertEquals(expected.allExpressions(0, 500), actual.allExpressions(0, 500))
+        assertEquals(expected.allTerms(0, 500), actual.allTerms(0, 500))
         assertEquals(expected.allCards(0, 500), actual.allCards(0, 500))
         assertEquals(expected.allDecks(0, 500), actual.allDecks(0, 500))
         assertEquals(expected.allCardStates(0, 500), actual.allCardStates(0, 500))

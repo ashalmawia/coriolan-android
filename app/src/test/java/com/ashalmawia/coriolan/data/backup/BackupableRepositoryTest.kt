@@ -30,22 +30,22 @@ abstract class BackupableRepositoryTest {
             DomainInfo(5L, "Polish", 6L, 2L),
             DomainInfo(6L, "Finnish", 7L, 2L)
     )
-    private val expressions = listOf(
-            ExpressionInfo(1L, "shrimp", 1L),
-            ExpressionInfo(2L, "rocket", 1L),
-            ExpressionInfo(3L, "spring", 1L),
-            ExpressionInfo(4L, "summer", 1L),
-            ExpressionInfo(5L, "victory", 1L),
-            ExpressionInfo(6L, "march", 1L),
-            ExpressionInfo(7L, "креветка", 2L),
-            ExpressionInfo(8L, "ракета", 2L),
-            ExpressionInfo(9L, "источник", 2L),
-            ExpressionInfo(10L, "весна", 2L),
-            ExpressionInfo(11L, "пружина", 2L),
-            ExpressionInfo(12L, "лето", 2L),
-            ExpressionInfo(13L, "победа", 2L),
-            ExpressionInfo(14L, "март", 2L),
-            ExpressionInfo(15L, "марш", 2L)
+    private val terms = listOf(
+            TermInfo(1L, "shrimp", 1L),
+            TermInfo(2L, "rocket", 1L),
+            TermInfo(3L, "spring", 1L),
+            TermInfo(4L, "summer", 1L),
+            TermInfo(5L, "victory", 1L),
+            TermInfo(6L, "march", 1L),
+            TermInfo(7L, "креветка", 2L),
+            TermInfo(8L, "ракета", 2L),
+            TermInfo(9L, "источник", 2L),
+            TermInfo(10L, "весна", 2L),
+            TermInfo(11L, "пружина", 2L),
+            TermInfo(12L, "лето", 2L),
+            TermInfo(13L, "победа", 2L),
+            TermInfo(14L, "март", 2L),
+            TermInfo(15L, "марш", 2L)
     )
     private val decks = listOf(
             DeckInfo(1L, 1L, "Basic English"),
@@ -89,23 +89,23 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun `test__languages__empty`() {
+    fun test__languages__empty() {
         testEmpty(repo::writeLanguages, repo::allLanguages)
     }
 
     @Test
-    fun `test__languages__nonEmpty`() {
+    fun test__languages__nonEmpty() {
         // given
         testNonEmpty(languages, repo::writeLanguages, repo::allLanguages)
     }
 
     @Test
-    fun `test__domains__empty`() {
+    fun test__domains__empty() {
         testEmpty(repo::writeDomains, repo::allDomains)
     }
 
     @Test
-    fun `test__domains__nonEmpty`() {
+    fun test__domains__nonEmpty() {
         // given
         repo.writeLanguages(languages)
 
@@ -114,27 +114,27 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun `test__expressions__empty`() {
-        testEmpty(repo::writeExpressions, repo::allExpressions)
+    fun test__terms__empty() {
+        testEmpty(repo::writeTerms, repo::allTerms)
     }
 
     @Test
-    fun `test__expressions__nonEmpty`() {
+    fun test__terms__nonEmpty() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
 
         // then
-        testNonEmpty(expressions, repo::writeExpressions, repo::allExpressions)
+        testNonEmpty(terms, repo::writeTerms, repo::allTerms)
     }
 
     @Test
-    fun `test__decks__empty`() {
+    fun test__decks__empty() {
         testEmpty(repo::writeDecks, repo::allDecks)
     }
 
     @Test
-    fun `test__decks__nonEmpty`() {
+    fun test__decks__nonEmpty() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
@@ -144,16 +144,16 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun `test__cards__empty`() {
+    fun test__cards__empty() {
         testEmpty(repo::writeCards, repo::allCards)
     }
 
     @Test
-    fun `test__cards__nonEmpty`() {
+    fun test__cards__nonEmpty() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
-        repo.writeExpressions(expressions)
+        repo.writeTerms(terms)
         repo.writeDecks(decks)
 
         // then
@@ -161,17 +161,17 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun `test__cardStates__empty`() {
+    fun test__cardStates__empty() {
         // then
         testEmpty({ states -> repo.writeCardStates(states) }, { offset, limit -> repo.allCardStates(offset, limit)})
     }
 
     @Test
-    fun `test__cardStates__nonEmpty`() {
+    fun test__cardStates__nonEmpty() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
-        repo.writeExpressions(expressions)
+        repo.writeTerms(terms)
         repo.writeDecks(decks)
         repo.writeCards(cards)
 
@@ -184,11 +184,11 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun `test__clear`() {
+    fun test__clear() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
-        repo.writeExpressions(expressions)
+        repo.writeTerms(terms)
         repo.writeDecks(decks)
         repo.writeCards(cards)
         repo.writeCardStates(srstates)
@@ -199,21 +199,21 @@ abstract class BackupableRepositoryTest {
         // then
         assertTrue(repo.allLanguages(0, 500).isEmpty())
         assertTrue(repo.allDomains(0, 500).isEmpty())
-        assertTrue(repo.allExpressions(0, 500).isEmpty())
+        assertTrue(repo.allTerms(0, 500).isEmpty())
         assertTrue(repo.allCards(0, 500).isEmpty())
         assertTrue(repo.allDecks(0, 500).isEmpty())
         assertTrue(repo.allCardStates(0, 500).isEmpty())
     }
 
     @Test
-    fun `test__hasAtLeastOneCard`() {
+    fun test__hasAtLeastOneCard() {
         // clean repo
         assertFalse(repo.hasAtLeastOneCard())
 
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
-        repo.writeExpressions(expressions)
+        repo.writeTerms(terms)
         repo.writeDecks(decks)
 
         // then
@@ -234,7 +234,7 @@ abstract class BackupableRepositoryTest {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
-        repo.writeExpressions(expressions)
+        repo.writeTerms(terms)
         repo.writeDecks(decks)
         repo.writeCards(cards)
 

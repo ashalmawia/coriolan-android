@@ -15,43 +15,43 @@ object JsonBackupTestData {
             DomainInfo(2L, "French", 3L, 2L)
     )
 
-    val exressions = listOf(
+    val terms = listOf(
             // English
-            ExpressionInfo(1L, "shrimp", 1L),
-            ExpressionInfo(2L, "rocket", 1L),
-            ExpressionInfo(3L, "spring", 1L),
-            ExpressionInfo(4L, "summer", 1L),
-            ExpressionInfo(5L, "victory", 1L),
-            ExpressionInfo(6L, "march", 1L),
+            TermInfo(1L, "shrimp", 1L),
+            TermInfo(2L, "rocket", 1L),
+            TermInfo(3L, "spring", 1L),
+            TermInfo(4L, "summer", 1L),
+            TermInfo(5L, "victory", 1L),
+            TermInfo(6L, "march", 1L),
 
             // Russian
-            ExpressionInfo(7L, "креветка", 2L),
-            ExpressionInfo(8L, "ракета", 2L),
-            ExpressionInfo(9L, "источник", 2L),
-            ExpressionInfo(10L, "весна", 2L),
-            ExpressionInfo(11L, "пружина", 2L),
-            ExpressionInfo(12L, "лето", 2L),
-            ExpressionInfo(13L, "победа", 2L),
-            ExpressionInfo(14L, "март", 2L),
-            ExpressionInfo(15L, "марш", 2L),
+            TermInfo(7L, "креветка", 2L),
+            TermInfo(8L, "ракета", 2L),
+            TermInfo(9L, "источник", 2L),
+            TermInfo(10L, "весна", 2L),
+            TermInfo(11L, "пружина", 2L),
+            TermInfo(12L, "лето", 2L),
+            TermInfo(13L, "победа", 2L),
+            TermInfo(14L, "март", 2L),
+            TermInfo(15L, "марш", 2L),
 
             // French
-            ExpressionInfo(16L, "ameloirer", 3L),
-            ExpressionInfo(17L, "chercher", 3L),
-            ExpressionInfo(18L, "voisin", 3L),
+            TermInfo(16L, "ameloirer", 3L),
+            TermInfo(17L, "chercher", 3L),
+            TermInfo(18L, "voisin", 3L),
 
             // Russian
-            ExpressionInfo(19L, "улучшать", 2L),
-            ExpressionInfo(20L, "искать", 2L),
-            ExpressionInfo(21L, "сосед", 2L)
+            TermInfo(19L, "улучшать", 2L),
+            TermInfo(20L, "искать", 2L),
+            TermInfo(21L, "сосед", 2L)
     )
 
-    val expressionExtras = listOf(
-            ExpressionExtraInfo(1L, 2L, 1, "/ˈrɒkɪt \$ ˈrɑː-/"),
-            ExpressionExtraInfo(2L, 3L, 1, "/sprɪŋ/"),
-            ExpressionExtraInfo(3L, 4L, 1, "/ˈsʌmə \$ -ər/"),
-            ExpressionExtraInfo(4L, 5L, 1, "/ˈvɪktəri/"),
-            ExpressionExtraInfo(5L, 6L, 1, "/mɑːtʃ \$ mɑːrtʃ/")
+    val termExtras = listOf(
+            TermExtraInfo(1L, 2L, 1, "/ˈrɒkɪt \$ ˈrɑː-/"),
+            TermExtraInfo(2L, 3L, 1, "/sprɪŋ/"),
+            TermExtraInfo(3L, 4L, 1, "/ˈsʌmə \$ -ər/"),
+            TermExtraInfo(4L, 5L, 1, "/ˈvɪktəri/"),
+            TermExtraInfo(5L, 6L, 1, "/mɑːtʃ \$ mɑːrtʃ/")
     )
 
     val cards = listOf(

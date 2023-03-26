@@ -6,8 +6,8 @@ import kotlin.math.min
 class MockBackupableRepository(
         langauges: List<LanguageInfo>,
         domains: List<DomainInfo>,
-        expressions: List<ExpressionInfo>,
-        expressionExtras: List<ExpressionExtraInfo>,
+        terms: List<TermInfo>,
+        termExtras: List<TermExtraInfo>,
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
         cardStates: List<CardStateInfo>
@@ -15,8 +15,8 @@ class MockBackupableRepository(
 
     private val languages = langauges.toMutableList()
     private val domains = domains.toMutableList()
-    private val expressions = expressions.toMutableList()
-    private val expressionExtras = expressionExtras.toMutableList()
+    private val terms = terms.toMutableList()
+    private val termExtras = termExtras.toMutableList()
     private val cards = cards.toMutableList()
     private val decks = decks.toMutableList()
     private val cardStates = cardStates.toMutableList()
@@ -31,11 +31,11 @@ class MockBackupableRepository(
     override fun allDomains(offset: Int, limit: Int): List<DomainInfo>
             = domains.subList(min(offset, domains.size), min(offset + limit, domains.size))
 
-    override fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo>
-            = expressions.subList(min(offset, expressions.size), min(offset + limit, expressions.size))
+    override fun allTerms(offset: Int, limit: Int): List<TermInfo>
+            = terms.subList(min(offset, terms.size), min(offset + limit, terms.size))
 
-    override fun allExpressionExtras(offset: Int, limit: Int): List<ExpressionExtraInfo>
-            = expressionExtras.subList(min(offset, expressionExtras.size), min(offset + limit, expressionExtras.size))
+    override fun allTermExtras(offset: Int, limit: Int): List<TermExtraInfo>
+            = termExtras.subList(min(offset, termExtras.size), min(offset + limit, termExtras.size))
 
     override fun allCards(offset: Int, limit: Int): List<CardInfo>
             = cards.subList(min(offset, cards.size), min(offset + limit, cards.size))
@@ -50,8 +50,8 @@ class MockBackupableRepository(
     override fun clearAll() {
         languages.clear()
         domains.clear()
-        expressions.clear()
-        expressionExtras.clear()
+        terms.clear()
+        termExtras.clear()
         cards.clear()
         decks.clear()
         cardStates.clear()
@@ -65,12 +65,12 @@ class MockBackupableRepository(
         this.domains.addAll(domains)
     }
 
-    override fun writeExpressions(expressions: List<ExpressionInfo>) {
-        this.expressions.addAll(expressions)
+    override fun writeTerms(terms: List<TermInfo>) {
+        this.terms.addAll(terms)
     }
 
-    override fun writeExpressionExtras(extras: List<ExpressionExtraInfo>) {
-        this.expressionExtras.addAll(extras)
+    override fun writeTermExtras(extras: List<TermExtraInfo>) {
+        this.termExtras.addAll(extras)
     }
 
     override fun writeCards(cards: List<CardInfo>) {
@@ -106,8 +106,8 @@ class MockBackupableRepository(
             return MockBackupableRepository(
                     JsonBackupTestData.languages,
                     JsonBackupTestData.domains,
-                    JsonBackupTestData.exressions,
-                    JsonBackupTestData.expressionExtras,
+                    JsonBackupTestData.terms,
+                    JsonBackupTestData.termExtras,
                     JsonBackupTestData.cards,
                     JsonBackupTestData.decks,
                     JsonBackupTestData.cardStates

@@ -51,11 +51,11 @@ class BackupableRepositoryTransactionTest {
     }
 
     @Test
-    fun testExpressions() {
+    fun testTerms() {
         // given
         val repo = object : OpenBackupableRepostory(realRepo) {
-            override fun writeExpressions(expressions: List<ExpressionInfo>) {
-                super.writeExpressions(expressions)
+            override fun writeTerms(terms: List<TermInfo>) {
+                super.writeTerms(terms)
                 throw Exception()
             }
         }
@@ -123,7 +123,7 @@ private fun assertEmpty(repository: BackupableRepository) {
     assertTrue(repository.allDomains(0, 500).isEmpty())
     assertTrue(repository.allDecks(0, 500).isEmpty())
     assertTrue(repository.allCards(0, 500).isEmpty())
-    assertTrue(repository.allExpressions(0, 500).isEmpty())
+    assertTrue(repository.allTerms(0, 500).isEmpty())
     assertTrue(repository.allCardStates( 0, 500).isEmpty())
 }
 
@@ -131,7 +131,7 @@ private fun provideBackupInputStream(): InputStream {
     val tempRepo = SqliteBackupHelper(provideHelper())
     tempRepo.writeLanguages(JsonBackupTestData.languages)
     tempRepo.writeDomains(JsonBackupTestData.domains)
-    tempRepo.writeExpressions(JsonBackupTestData.exressions)
+    tempRepo.writeTerms(JsonBackupTestData.terms)
     tempRepo.writeDecks(JsonBackupTestData.decks)
     tempRepo.writeCards(JsonBackupTestData.cards)
     tempRepo.writeCardStates(JsonBackupTestData.cardStates)
@@ -160,9 +160,9 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun allDomains(offset: Int, limit: Int): List<DomainInfo> = inner.allDomains(offset, limit)
 
-    override fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo> = inner.allExpressions(offset, limit)
+    override fun allTerms(offset: Int, limit: Int): List<TermInfo> = inner.allTerms(offset, limit)
 
-    override fun allExpressionExtras(offset: Int, limit: Int) = inner.allExpressionExtras(offset, limit)
+    override fun allTermExtras(offset: Int, limit: Int) = inner.allTermExtras(offset, limit)
 
     override fun allCards(offset: Int, limit: Int): List<CardInfo> = inner.allCards(offset, limit)
 
@@ -177,9 +177,9 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun writeDomains(domains: List<DomainInfo>) = inner.writeDomains(domains)
 
-    override fun writeExpressions(expressions: List<ExpressionInfo>) = inner.writeExpressions(expressions)
+    override fun writeTerms(terms: List<TermInfo>) = inner.writeTerms(terms)
 
-    override fun writeExpressionExtras(extras: List<ExpressionExtraInfo>) = inner.writeExpressionExtras(extras)
+    override fun writeTermExtras(extras: List<TermExtraInfo>) = inner.writeTermExtras(extras)
 
     override fun writeCards(cards: List<CardInfo>) = inner.writeCards(cards)
 

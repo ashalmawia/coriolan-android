@@ -7,17 +7,17 @@ fun assertLanguageCorrect(language: Language?, value: String) {
     assertEquals("language has correct values", value, language!!.value)
 }
 
-fun assertExpressionCorrect(expected: Expression, actual: Expression) {
-    assertExpressionCorrect(actual, expected.value, expected.language)
+fun assertTermCorrect(expected: Term, actual: Term) {
+    assertTermCorrect(actual, expected.value, expected.language)
 }
 
-fun assertExpressionCorrect(expression: Expression?, value: String, language: Language) {
-    assertNotNull("expression is found", expression)
-    assertEquals("expression has correct values", value, expression!!.value)
-    assertLanguageCorrect(expression.language, language.value)
+fun assertTermCorrect(term: Term?, value: String, language: Language) {
+    assertNotNull("term is found", term)
+    assertEquals("term has correct values", value, term!!.value)
+    assertLanguageCorrect(term.language, language.value)
 }
 
-fun assertExtrasCorrect(extras: ExpressionExtras, transcription: String?) {
+fun assertExtrasCorrect(extras: TermExtras, transcription: String?) {
     assertEquals("transcription extra is correct", transcription, extras.transcription)
 }
 
@@ -36,13 +36,13 @@ fun assertCardCorrectReverse(card: Card?, data: CardData, domain: Domain) {
 }
 private fun _assertCardCorrect(card: Card?, data: CardData, langOriginal: Language, langTranslations: Language) {
     assertNotNull("card is created", card)
-    assertExpressionCorrect(card!!.original, data.original, langOriginal)
+    assertTermCorrect(card!!.original, data.original, langOriginal)
     assertEquals("translations count is correct", data.translations.size, card.translations.size)
     for (i in 0 until card.translations.size) {
-        assertExpressionCorrect(card.translations[i], data.translations[i], langTranslations)
+        assertTermCorrect(card.translations[i], data.translations[i], langTranslations)
     }
 }
-fun assertCardCorrect(card: Card?, original: Expression, translations: List<Expression>, deckId: Long, domain: Domain) {
+fun assertCardCorrect(card: Card?, original: Term, translations: List<Term>, deckId: Long, domain: Domain) {
     assertNotNull(card)
     card!!
     assertEquals(original, card.original)

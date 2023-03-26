@@ -15,24 +15,24 @@ interface Repository {
 
     fun languageByName(name: String): Language?
 
-    fun addExpression(value: String, language: Language): Expression
+    fun addTerm(value: String, language: Language): Term
 
-    fun setTranscription(expression: Expression, transcription: String?)
-            = setExtra(expression, ExtraType.TRANSCRIPTION, transcription)
+    fun setTranscription(term: Term, transcription: String?)
+            = setExtra(term, ExtraType.TRANSCRIPTION, transcription)
 
-    fun setExtra(expression: Expression, type: ExtraType, value: String?)
+    fun setExtra(term: Term, type: ExtraType, value: String?)
 
-    fun allExtrasForExpression(expression: Expression): ExpressionExtras
+    fun allExtrasForTerm(term: Term): TermExtras
 
-    fun allExtrasForCard(card: Card): List<ExpressionExtras>
+    fun allExtrasForCard(card: Card): List<TermExtras>
 
-    fun expressionById(id: Long): Expression?
+    fun termById(id: Long): Term?
 
-    fun expressionByValues(value: String, language: Language): Expression?
+    fun termByValues(value: String, language: Language): Term?
 
-    fun isUsed(expression: Expression): Boolean
+    fun isUsed(term: Term): Boolean
 
-    fun deleteExpression(expression: Expression)
+    fun deleteTerm(term: Term)
 
     fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain
 
@@ -40,13 +40,13 @@ interface Repository {
 
     fun allDomains(): List<Domain>
 
-    fun addCard(domain: Domain, deckId: Long, original: Expression, translations: List<Expression>): Card
+    fun addCard(domain: Domain, deckId: Long, original: Term, translations: List<Term>): Card
 
     fun cardById(id: Long, domain: Domain): Card?
 
-    fun cardByValues(domain: Domain, original: Expression): Card?
+    fun cardByValues(domain: Domain, original: Term): Card?
 
-    fun updateCard(card: Card, deckId: Long, original: Expression, translations: List<Expression>): Card
+    fun updateCard(card: Card, deckId: Long, original: Term, translations: List<Term>): Card
 
     fun deleteCard(card: Card)
 

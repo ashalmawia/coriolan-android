@@ -19,8 +19,8 @@ class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
 
         repo.writeLanguages(JsonBackupTestData.languages)
         repo.writeDomains(JsonBackupTestData.domains)
-        repo.writeExpressions(JsonBackupTestData.exressions)
-        repo.writeExpressionExtras(JsonBackupTestData.expressionExtras)
+        repo.writeTerms(JsonBackupTestData.terms)
+        repo.writeTermExtras(JsonBackupTestData.termExtras)
         repo.writeDecks(JsonBackupTestData.decks)
         repo.writeCards(JsonBackupTestData.cards)
         repo.writeCardStates(JsonBackupTestData.cardStates)

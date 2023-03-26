@@ -46,29 +46,29 @@ class DecksRegistry(
     }
 
     fun editCard(card: Card, cardData: CardData): Card {
-        val original = findOrAddExpression(
+        val original = findOrAddTerm(
                 cardData.original, domain.langOriginal(card.type)
         )
         repository.setTranscription(original, cardData.transcription)
 
         val translations = cardData.translations.map {
-            findOrAddExpression(it, domain.langTranslations(card.type))
+            findOrAddTerm(it, domain.langTranslations(card.type))
         }
 
         val updated = repository.updateCard(card, cardData.deckId, original, translations)
-        deleteOrphanExpressions(card.translations.plus(card.original))
+        deleteOrphanTerms(card.translations.plus(card.original))
 
         return updated
     }
 
     fun deleteCard(card: Card) {
-        val expressions = card.translations.plus(card.original)
+        val terms = card.translations.plus(card.original)
         repository.deleteCard(card)
-        deleteOrphanExpressions(expressions)
+        deleteOrphanTerms(terms)
     }
 
-    private fun deleteOrphanExpressions(candidates: List<Expression>) {
-        candidates.forEach { if (!repository.isUsed(it)) repository.deleteExpression(it) }
+    private fun deleteOrphanTerms(candidates: List<Term>) {
+        candidates.forEach { if (!repository.isUsed(it)) repository.deleteTerm(it) }
     }
 
     /**
@@ -80,15 +80,15 @@ class DecksRegistry(
      * 3. reverse: "источник -- spring"
      */
     private fun addCard(cardData: CardData): AddCardResult {
-        val original = findOrAddExpression(
+        val original = findOrAddTerm(
                 cardData.original, domain.langOriginal()
         )
-        // todo: write test that transcription is not overriden by adding a new card with the same expression
+        // todo: write test that transcription is not overriden by adding a new card with the same term
         if (cardData.transcription != null)
             repository.setTranscription(original, cardData.transcription)
 
         val translations = cardData.translations.map {
-            findOrAddExpression(it, domain.langTranslations())
+            findOrAddTerm(it, domain.langTranslations())
         }
 
         val duplicate = repository.cardByValues(domain, original)
@@ -102,7 +102,7 @@ class DecksRegistry(
         }
     }
 
-    private fun addForwardAndReverseWithMerging(original: Expression, translations: List<Expression>, cardData: CardData) {
+    private fun addForwardAndReverseWithMerging(original: Term, translations: List<Term>, cardData: CardData) {
         val merger = CardsMerger.create(repository, domain, exercisesRegistry)
 
         merger.mergeOrAdd(original, translations, cardData.deckId)
@@ -111,11 +111,11 @@ class DecksRegistry(
         translations.forEach { merger.mergeOrAdd(it, originalAsList, cardData.deckId) }
     }
 
-    private fun findOrAddExpression(
+    private fun findOrAddTerm(
             value: String,
             language: Language
-    ): Expression {
-        return repository.expressionByValues(value, language) ?: repository.addExpression(value, language)
+    ): Term {
+        return repository.termByValues(value, language) ?: repository.addTerm(value, language)
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {

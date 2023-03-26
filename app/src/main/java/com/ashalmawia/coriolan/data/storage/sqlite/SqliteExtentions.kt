@@ -3,8 +3,8 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.ashalmawia.coriolan.model.Expression
-import com.ashalmawia.coriolan.model.ExpressionExtra
+import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.model.TermExtra
 import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.util.*
@@ -19,7 +19,7 @@ fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID,
 fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }
 fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
 fun Cursor.getFrontId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_FRONT_ID, alias) }
-fun Cursor.getExpressionId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_EXPRESSION_ID, alias) }
+fun Cursor.getTermId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_TERM_ID, alias) }
 fun Cursor.getOriginalLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_ORIGINAL, alias) }
 fun Cursor.getTranslationsLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_TRANSLATIONS, alias) }
 fun Cursor.getLanguageId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANGUAGE_ID, alias) }
@@ -37,20 +37,20 @@ fun Cursor.getLanguage(alias: String? = null): Language {
     )
 }
 
-fun Cursor.getExpression(aliasExpressions: String, aliasLanguages: String): Expression {
-    return Expression(
-            getId(aliasExpressions),
-            getValue(aliasExpressions),
+fun Cursor.getTerm(aliasTerms: String, aliasLanguages: String): Term {
+    return Term(
+            getId(aliasTerms),
+            getValue(aliasTerms),
             getLanguage(aliasLanguages)
     )
 }
 
-fun Cursor.getExpressionType(alias: String? = null): ExtraType = ExtraType.from(getType(alias))
+fun Cursor.getTermType(alias: String? = null): ExtraType = ExtraType.from(getType(alias))
 
-fun Cursor.getExtra(alias: String? = null): ExpressionExtra {
-    return ExpressionExtra(
+fun Cursor.getExtra(alias: String? = null): TermExtra {
+    return TermExtra(
             getId(alias),
-            getExpressionType(alias),
+            getTermType(alias),
             getValue(alias)
     )
 }

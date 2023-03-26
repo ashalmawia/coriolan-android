@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.learning.exercise
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.ExpressionExtras
+import com.ashalmawia.coriolan.model.TermExtras
 import com.ashalmawia.coriolan.model.mockTask
 
 class MockExerciseExecutor(private val exercise: MockExercise) : ExerciseExecutor {
@@ -17,7 +17,7 @@ class MockExerciseExecutor(private val exercise: MockExercise) : ExerciseExecuto
         return mockTask(exercise = exercise)
     }
 
-    override fun renderTask(task: Task, extras: List<ExpressionExtras>) {
+    override fun renderTask(task: Task, extras: List<TermExtras>) {
     }
 
     override fun undoTask(task: Task, undoneState: State): Task {

@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.MockRepository
-import com.ashalmawia.coriolan.data.storage.justAddExpression
+import com.ashalmawia.coriolan.data.storage.justAddTerm
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.model.*
@@ -109,7 +109,7 @@ class DecksRegistryTest {
     }
 
     @Test
-    fun addCardsToDeck__expressionsReused__singleTranslation() {
+    fun addCardsToDeck__termsReused__singleTranslation() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -119,8 +119,8 @@ class DecksRegistryTest {
         val uniqueOriginalValue = "original"
         val uniqueTranslationValue = "перевод"
 
-        val repeatedOriginal = mockRepository.justAddExpression(repeatedOriginalValue, domain.langOriginal())
-        val repeatedTranslation = mockRepository.justAddExpression(repeatedTranslationValue, domain.langTranslations())
+        val repeatedOriginal = mockRepository.justAddTerm(repeatedOriginalValue, domain.langOriginal())
+        val repeatedTranslation = mockRepository.justAddTerm(repeatedTranslationValue, domain.langTranslations())
 
         val cardsData = arrayListOf(
                 mockCardData(repeatedOriginalValue, uniqueTranslationValue, deck.id),
@@ -137,14 +137,14 @@ class DecksRegistryTest {
         val forward = cardsOfDeck.filter { it.type == CardType.FORWARD }
         val reverse = cardsOfDeck.filter { it.type == CardType.REVERSE }
         verifyAddedCardsCorrect(cardsData, cardsOfDeck, domain)
-        assertExpressionCorrect(repeatedOriginal, forward[0].original)
-        assertExpressionCorrect(repeatedOriginal, reverse[0].translations[0])
-        assertExpressionCorrect(repeatedTranslation, forward[1].translations[0])
-        assertExpressionCorrect(repeatedTranslation, reverse[1].original)
+        assertTermCorrect(repeatedOriginal, forward[0].original)
+        assertTermCorrect(repeatedOriginal, reverse[0].translations[0])
+        assertTermCorrect(repeatedTranslation, forward[1].translations[0])
+        assertTermCorrect(repeatedTranslation, reverse[1].original)
     }
 
     @Test
-    fun addCardsToDeck__expressionsReused__multipleTranslations() {
+    fun addCardsToDeck__termsReused__multipleTranslations() {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
@@ -153,9 +153,9 @@ class DecksRegistryTest {
         val repeatedTranslation2Value = "источник"
         val uniqueTranslationValue = "перевод"
 
-        val repeatedOriginal = mockRepository.justAddExpression(repeatedOriginalValue, domain.langOriginal())
-        val repeatedTranslation = mockRepository.justAddExpression(repeatedTranslationValue, domain.langTranslations())
-        val repeatedTranslation2 = mockRepository.justAddExpression(repeatedTranslation2Value, domain.langTranslations())
+        val repeatedOriginal = mockRepository.justAddTerm(repeatedOriginalValue, domain.langOriginal())
+        val repeatedTranslation = mockRepository.justAddTerm(repeatedTranslationValue, domain.langTranslations())
+        val repeatedTranslation2 = mockRepository.justAddTerm(repeatedTranslation2Value, domain.langTranslations())
 
         val cardsData = arrayListOf(
                 mockCardData(
@@ -172,9 +172,9 @@ class DecksRegistryTest {
         // then
         val cardsOfDeck = mockRepository.cardsOfDeck(deck)
         verifyAddedCardsCorrect(cardsData, cardsOfDeck, domain)
-        assertExpressionCorrect(repeatedOriginal, cardsOfDeck[0].original)
-        assertExpressionCorrect(repeatedTranslation, cardsOfDeck[0].translations[0])
-        assertExpressionCorrect(repeatedTranslation2, cardsOfDeck[0].translations[2])
+        assertTermCorrect(repeatedOriginal, cardsOfDeck[0].original)
+        assertTermCorrect(repeatedTranslation, cardsOfDeck[0].translations[0])
+        assertTermCorrect(repeatedTranslation2, cardsOfDeck[0].translations[2])
     }
 
     @Test
@@ -197,9 +197,9 @@ class DecksRegistryTest {
         assertTrue(result is AddCardResult.Success)
 
         val card = mockRepository.cards[0]
-        assertExpressionCorrect(card.original, originalValue, domain.langOriginal())
-        assertExpressionCorrect(card.translations[0], firstTranslationValue, domain.langTranslations())
-        assertExpressionCorrect(card.translations[1], secondTranslationValue, domain.langTranslations())
+        assertTermCorrect(card.original, originalValue, domain.langOriginal())
+        assertTermCorrect(card.translations[0], firstTranslationValue, domain.langTranslations())
+        assertTermCorrect(card.translations[1], secondTranslationValue, domain.langTranslations())
         assertCardCorrect(card, cardData, domain)
     }
 
@@ -229,9 +229,9 @@ class DecksRegistryTest {
         assertTrue(result is AddCardResult.Success)
 
         val card = mockRepository.cards[0]
-        assertExpressionCorrect(card.original, originalValue, domain.langOriginal())
-        assertExpressionCorrect(card.translations[0], firstTranslationValue, domain.langTranslations())
-        assertExpressionCorrect(card.translations[1], secondTranslationValue, domain.langTranslations())
+        assertTermCorrect(card.original, originalValue, domain.langOriginal())
+        assertTermCorrect(card.translations[0], firstTranslationValue, domain.langTranslations())
+        assertTermCorrect(card.translations[1], secondTranslationValue, domain.langTranslations())
         assertCardCorrect(card, cardData, domain)
     }
 
@@ -241,9 +241,9 @@ class DecksRegistryTest {
         val deck = mockRepository.addDeck(domain, "Mock")
 
         val repeatedOriginalValue = "spring"
-        val repeatedOriginal = mockRepository.justAddExpression(repeatedOriginalValue, domain.langOriginal())
+        val repeatedOriginal = mockRepository.justAddTerm(repeatedOriginalValue, domain.langOriginal())
 
-        val firstTranslation = mockRepository.justAddExpression("весна", domain.langTranslations())
+        val firstTranslation = mockRepository.justAddTerm("весна", domain.langTranslations())
 
         val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
@@ -267,10 +267,10 @@ class DecksRegistryTest {
         val deck = mockRepository.addDeck(domain, "Mock")
 
         val repeatedOriginalValue = "spring"
-        val repeatedOriginal = mockRepository.justAddExpression(repeatedOriginalValue, domain.langOriginal())
+        val repeatedOriginal = mockRepository.justAddTerm(repeatedOriginalValue, domain.langOriginal())
 
         val firstTranslationValue = "весна"
-        val firstTranslation = mockRepository.justAddExpression(firstTranslationValue, domain.langTranslations())
+        val firstTranslation = mockRepository.justAddTerm(firstTranslationValue, domain.langTranslations())
 
         val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
@@ -290,19 +290,19 @@ class DecksRegistryTest {
         assertCardsMerged(deck, forward, repeatedOriginal, firstTranslation, secondTranslationValue, reverse)
     }
 
-    private fun assertCardsMerged(deck: Deck, forward: Card, repeatedOriginal: Expression, firstTranslation: Expression, secondTranslationValue: String, reverse: Card) {
+    private fun assertCardsMerged(deck: Deck, forward: Card, repeatedOriginal: Term, firstTranslation: Term, secondTranslationValue: String, reverse: Card) {
         val cardsOfDeck = mockRepository.cardsOfDeck(deck)
         assertEquals("new forward card was not added", 1, cardsOfDeck.forward().size)
         assertEquals("forward: card id was kept", forward.id, cardsOfDeck.forward()[0].id)
-        assertExpressionCorrect(repeatedOriginal, cardsOfDeck.forward()[0].original)
+        assertTermCorrect(repeatedOriginal, cardsOfDeck.forward()[0].original)
         assertEquals("forward: translations are merged", 2, cardsOfDeck.forward()[0].translations.size)
-        assertExpressionCorrect(firstTranslation, cardsOfDeck.forward()[0].translations[0])
+        assertTermCorrect(firstTranslation, cardsOfDeck.forward()[0].translations[0])
         assertEquals("forward: translations are merged", secondTranslationValue, cardsOfDeck.forward()[0].translations[1].value)
         assertEquals("new reverse card was added", 2, cardsOfDeck.reverse().size)
         assertEquals("reverse is kept", reverse, cardsOfDeck.reverse()[0])
         assertEquals("new reverse is added", secondTranslationValue, cardsOfDeck.reverse()[1].original.value)
         assertTrue("new reverse is added", cardsOfDeck.reverse()[1].translations.size == 1)
-        assertExpressionCorrect(repeatedOriginal, cardsOfDeck.reverse()[1].translations[0])
+        assertTermCorrect(repeatedOriginal, cardsOfDeck.reverse()[1].translations[0])
     }
 
     @Test
@@ -311,10 +311,10 @@ class DecksRegistryTest {
         val deck = mockRepository.addDeck(domain, "Mock")
 
         val firstOriginalValue = "весна"
-        val firstOriginal = mockRepository.justAddExpression(firstOriginalValue, domain.langOriginal())
+        val firstOriginal = mockRepository.justAddTerm(firstOriginalValue, domain.langOriginal())
 
         val repeatedTranslationValue = "spring"
-        val repeatedTranslation = mockRepository.justAddExpression(repeatedTranslationValue, domain.langTranslations())
+        val repeatedTranslation = mockRepository.justAddTerm(repeatedTranslationValue, domain.langTranslations())
 
         val forward = mockRepository.addCard(domain, deck.id, firstOriginal, listOf(repeatedTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, repeatedTranslation, listOf(firstOriginal))
@@ -348,8 +348,8 @@ class DecksRegistryTest {
         // given
         val deck = mockRepository.addDeck(domain, "Mock")
 
-        val firstOriginal = mockRepository.justAddExpression("spring", domain.langOriginal())
-        val firstTranslation = mockRepository.justAddExpression("весна", domain.langTranslations())
+        val firstOriginal = mockRepository.justAddTerm("spring", domain.langOriginal())
+        val firstTranslation = mockRepository.justAddTerm("весна", domain.langTranslations())
 
         val forward = mockRepository.addCard(domain, deck.id, firstOriginal, listOf(firstTranslation))
         val reverse = mockRepository.addCard(domain, deck.id, firstTranslation, listOf(firstOriginal))
@@ -384,10 +384,10 @@ class DecksRegistryTest {
         val deck = mockRepository.addDeck(domain, "Mock")
 
         val repeatedOriginalValue = "spring"
-        val repeatedOriginal = mockRepository.justAddExpression(repeatedOriginalValue, domain.langOriginal())
+        val repeatedOriginal = mockRepository.justAddTerm(repeatedOriginalValue, domain.langOriginal())
 
         val firstTranslationValue = "весна"
-        val firstTranslation = mockRepository.justAddExpression(firstTranslationValue, domain.langTranslations())
+        val firstTranslation = mockRepository.justAddTerm(firstTranslationValue, domain.langTranslations())
 
         val forward = mockRepository.addCard(domain, deck.id, repeatedOriginal, listOf(firstTranslation))
         mockRepository.addCard(domain, deck.id, firstTranslation, listOf(repeatedOriginal))
@@ -409,13 +409,13 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.justAddExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.justAddExpression("весна", domain.langTranslations())
-        val expression3 = mockRepository.justAddExpression("весло", domain.langTranslations())
-        val expression4 = mockRepository.justAddExpression("источник", domain.langTranslations())
+        val term1 = mockRepository.justAddTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.justAddTerm("весна", domain.langTranslations())
+        val term3 = mockRepository.justAddTerm("весло", domain.langTranslations())
+        val term4 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
-        mockRepository.addCard(domain, deckId, expression1, listOf(expression2, expression4))
-        val card = mockRepository.addCard(domain, deckId, expression3, listOf(expression1))
+        mockRepository.addCard(domain, deckId, term1, listOf(term2, term4))
+        val card = mockRepository.addCard(domain, deckId, term3, listOf(term1))
 
         val mockRegistry = createDeckRegistry()
 
@@ -426,9 +426,9 @@ class DecksRegistryTest {
         // then
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
-        assertExpressionCorrect(expression2, edited.original)
-        assertEquals("translations are preserved", listOf(expression1), edited.translations)
-        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression3.id))
+        assertTermCorrect(term2, edited.original)
+        assertEquals("translations are preserved", listOf(term1), edited.translations)
+        assertNull("orphan terms are deleted", mockRepository.termById(term3.id))
     }
 
     @Test
@@ -436,11 +436,11 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.justAddExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.justAddExpression("источник", domain.langTranslations())
+        val term1 = mockRepository.justAddTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
-        val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2))
-        mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
+        val card = mockRepository.addCard(domain, deckId, term1, listOf(term2))
+        mockRepository.addCard(domain, deckId, term2, listOf(term1))
 
         val mockRegistry = createDeckRegistry()
 
@@ -451,9 +451,9 @@ class DecksRegistryTest {
         // then
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
-        assertExpressionCorrect(expression1, edited.original)
-        assertEquals("translations are updated", listOf(expression2,
-                mockRepository.expressionByValues("весна", domain.langTranslations())), edited.translations)
+        assertTermCorrect(term1, edited.original)
+        assertEquals("translations are updated", listOf(term2,
+                mockRepository.termByValues("весна", domain.langTranslations())), edited.translations)
     }
 
     @Test
@@ -461,11 +461,11 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.addExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.addExpression("источник", domain.langTranslations())
+        val term1 = mockRepository.addTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.addTerm("источник", domain.langTranslations())
 
-        val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2))
-        mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
+        val card = mockRepository.addCard(domain, deckId, term1, listOf(term2))
+        mockRepository.addCard(domain, deckId, term2, listOf(term1))
 
         val transcription = "[sprɪŋ]"
 
@@ -479,9 +479,9 @@ class DecksRegistryTest {
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
         assertEquals("transcription is set", transcription,
-                mockRepository.allExtrasForExpression(edited.original).transcription)
+                mockRepository.allExtrasForTerm(edited.original).transcription)
         assertNull("unrelated exprerssions are not affected",
-                mockRepository.allExtrasForExpression(edited.translations[0]).transcription)
+                mockRepository.allExtrasForTerm(edited.translations[0]).transcription)
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 
@@ -490,11 +490,11 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.addExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.justAddExpression("источник", domain.langTranslations())
+        val term1 = mockRepository.addTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
-        val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2))
-        mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
+        val card = mockRepository.addCard(domain, deckId, term1, listOf(term2))
+        mockRepository.addCard(domain, deckId, term2, listOf(term1))
 
         val transcriptionNew = "[sprɪŋ]"
 
@@ -508,9 +508,9 @@ class DecksRegistryTest {
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
         assertEquals("transcription is set", transcriptionNew,
-                mockRepository.allExtrasForExpression(edited.original).transcription)
+                mockRepository.allExtrasForTerm(edited.original).transcription)
         assertNull("unrelated exprerssions are not affected",
-                mockRepository.allExtrasForExpression(edited.translations[0]).transcription)
+                mockRepository.allExtrasForTerm(edited.translations[0]).transcription)
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 
@@ -519,11 +519,11 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.addExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.justAddExpression("источник", domain.langTranslations())
+        val term1 = mockRepository.addTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
-        val card = mockRepository.addCard(domain, deckId, expression1, listOf(expression2))
-        mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
+        val card = mockRepository.addCard(domain, deckId, term1, listOf(term2))
+        mockRepository.addCard(domain, deckId, term2, listOf(term1))
 
         val mockRegistry = createDeckRegistry()
 
@@ -535,9 +535,9 @@ class DecksRegistryTest {
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
         assertNull("transcription is deleted",
-                mockRepository.allExtrasForExpression(edited.original).transcription)
+                mockRepository.allExtrasForTerm(edited.original).transcription)
         assertNull("unrelated exprerssions are not affected",
-                mockRepository.allExtrasForExpression(edited.translations[0]).transcription)
+                mockRepository.allExtrasForTerm(edited.translations[0]).transcription)
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 
@@ -546,14 +546,14 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.justAddExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.justAddExpression("источник", domain.langTranslations())
+        val term1 = mockRepository.justAddTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
-        mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
+        mockRepository.addCard(domain, deckId, term2, listOf(term1))
 
         val mockRegistry = createDeckRegistry()
 
-        val card = Card(77L, deckId, domain, expression1, listOf(expression2))
+        val card = Card(77L, deckId, domain, term1, listOf(term2))
 
         // when
         val edited = mockRegistry.editCard(card,
@@ -568,17 +568,17 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val expression1 = mockRepository.justAddExpression("spring", domain.langOriginal())
-        val expression2 = mockRepository.justAddExpression("весна", domain.langTranslations())
-        val expression3 = mockRepository.justAddExpression("источник", domain.langTranslations())
-        val expression4 = mockRepository.justAddExpression("rocket", domain.langOriginal())
-        val expression5 = mockRepository.justAddExpression("ракета", domain.langTranslations())
+        val term1 = mockRepository.justAddTerm("spring", domain.langOriginal())
+        val term2 = mockRepository.justAddTerm("весна", domain.langTranslations())
+        val term3 = mockRepository.justAddTerm("источник", domain.langTranslations())
+        val term4 = mockRepository.justAddTerm("rocket", domain.langOriginal())
+        val term5 = mockRepository.justAddTerm("ракета", domain.langTranslations())
 
-        val forward = mockRepository.addCard(domain, deckId, expression1, listOf(expression2, expression3))
-//        val reverse1 = mockRepository.addCard(domain, deckId, expression2, listOf(expression1))
-//        val reverse2 = mockRepository.addCard(domain, deckId, expression3, listOf(expression1))
-        val otherForward = mockRepository.addCard(domain, deckId, expression4, listOf(expression5))
-        val otherReverse = mockRepository.addCard(domain, deckId, expression5, listOf(expression4))
+        val forward = mockRepository.addCard(domain, deckId, term1, listOf(term2, term3))
+//        val reverse1 = mockRepository.addCard(domain, deckId, term2, listOf(term1))
+//        val reverse2 = mockRepository.addCard(domain, deckId, term3, listOf(term1))
+        val otherForward = mockRepository.addCard(domain, deckId, term4, listOf(term5))
+        val otherReverse = mockRepository.addCard(domain, deckId, term5, listOf(term4))
 
         val mockRegistry = createDeckRegistry()
 
@@ -590,14 +590,14 @@ class DecksRegistryTest {
 //        assertNull("reverses are deleted", mockRepository.cardById(reverse1.id, domain))
 //        assertNull("reverses are deleted", mockRepository.cardById(reverse2.id, domain))
 
-//        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression1.id))
-//        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression2.id))
-//        assertNull("orphan expressions are deleted", mockRepository.expressionById(expression3.id))
+//        assertNull("orphan terms are deleted", mockRepository.termById(term1.id))
+//        assertNull("orphan terms are deleted", mockRepository.termById(term2.id))
+//        assertNull("orphan terms are deleted", mockRepository.termById(term3.id))
 
         assertNotNull("other cards are preserved", mockRepository.cardById(otherForward.id, domain))
         assertNotNull("other cards are preserved", mockRepository.cardById(otherReverse.id, domain))
-        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression4.id))
-        assertNotNull("used expressions are preserved", mockRepository.expressionById(expression5.id))
+        assertNotNull("used terms are preserved", mockRepository.termById(term4.id))
+        assertNotNull("used terms are preserved", mockRepository.termById(term5.id))
     }
 }
 

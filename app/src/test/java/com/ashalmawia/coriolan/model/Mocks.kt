@@ -33,13 +33,13 @@ fun mockCardData(
         deckId: Long = 1L
 ) = mockCardData(original, listOf(translation), deckId)
 
-private var expressionId = 1L
-fun mockExpression(value: String = "mock value", language: Language = mockLanguage(), transcription: String? = null)
-        = Expression(expressionId++, value, language)
+private var termId = 1L
+fun mockTerm(value: String = "mock value", language: Language = mockLanguage(), transcription: String? = null)
+        = Term(termId++, value, language)
 
 private var extraId = 1L
 fun mockExtra(value: String, type: ExtraType = ExtraType.TRANSCRIPTION, id: Long = extraId++)
-        = ExpressionExtra(id, type, value)
+        = TermExtra(id, type, value)
 
 private var domainId = 1L
 fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())
@@ -56,8 +56,8 @@ fun mockCard(
             id,
             deckId,
             domain,
-            mockExpression(front, language = domain.langOriginal(type)),
-            listOf(mockExpression(back, language = domain.langTranslations(type)), mockExpression(language = domain.langTranslations(type)))
+            mockTerm(front, language = domain.langOriginal(type)),
+            listOf(mockTerm(back, language = domain.langTranslations(type)), mockTerm(language = domain.langTranslations(type)))
     )
 }
 

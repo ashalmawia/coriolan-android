@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.ExpressionExtras
+import com.ashalmawia.coriolan.model.TermExtras
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.card_translation_item.view.*
@@ -43,8 +43,8 @@ class CardView : FrameLayout {
         touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
     }
 
-    fun bind(card: Card, extras: List<ExpressionExtras>, answers: List<SRAnswer>) {
-        val extrasMap = extras.associateBy { it.expression }
+    fun bind(card: Card, extras: List<TermExtras>, answers: List<SRAnswer>) {
+        val extrasMap = extras.associateBy { it.term }
 
         frontText.text = card.original.value
         transcriptionText.bindTranscription(extrasMap[card.original]?.transcription)

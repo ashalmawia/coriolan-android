@@ -20,7 +20,7 @@ import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.Expression
+import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.util.forwardAndReverseWithState
 import org.joda.time.DateTime
 
@@ -120,7 +120,7 @@ class SpacedRepetitionExercise(
             }
         }
 
-        private fun Expression.isReady(states: Map<Long, State>): Boolean {
+        private fun Term.isReady(states: Map<Long, State>): Boolean {
             val state = states[id]
             return state != null && state.spacedRepetition.period >= 4
         }

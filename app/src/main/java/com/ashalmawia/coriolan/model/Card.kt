@@ -4,8 +4,8 @@ data class Card(
         val id: Long,
         val deckId: Long,
         val domain: Domain,
-        val original: Expression,
-        val translations: List<Expression>
+        val original: Term,
+        val translations: List<Term>
 ) {
     val type: CardType
         get() {

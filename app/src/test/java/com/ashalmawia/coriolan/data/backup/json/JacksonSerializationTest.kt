@@ -39,12 +39,12 @@ class JacksonSerializationTest {
     }
 
     @Test
-    fun testExpressionInfo() {
+    fun testTermInfo() {
         // given
-        val info = ExpressionInfo(13L, "My expression value.", 5L)
+        val info = TermInfo(13L, "My term value.", 5L)
 
         // then
-        test(info, serializer::writeExpression, deserializer::readExpression)
+        test(info, serializer::writeTerm, deserializer::readTerm)
     }
 
     @Test

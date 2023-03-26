@@ -9,9 +9,9 @@ class JacksonDeserializerImpl : JacksonDeserializer {
 
     override fun readDomain(json: JsonParser): DomainInfo = readDomainFromJson(json)
 
-    override fun readExpression(json: JsonParser): ExpressionInfo = readExpressionFromJson(json)
+    override fun readTerm(json: JsonParser): TermInfo = readTermFromJson(json)
 
-    override fun readExpressionExtra(json: JsonParser): ExpressionExtraInfo = readExpressionExtraFromJson(json)
+    override fun readTermExtra(json: JsonParser): TermExtraInfo = readTermExtraFromJson(json)
 
     override fun readCard(json: JsonParser): CardInfo = readCardFromJson(json)
 

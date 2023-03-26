@@ -9,11 +9,11 @@ class JacksonSerializerImpl : JacksonSerializer {
 
     override fun writeDomain(domain: DomainInfo, json: JsonGenerator) = writeDomainToJson(domain, json)
 
-    override fun writeExpression(expression: ExpressionInfo, json: JsonGenerator)
-            = writeExpressionToJson(expression, json)
+    override fun writeTerm(term: TermInfo, json: JsonGenerator)
+            = writeTermToJson(term, json)
 
-    override fun writeExpressionExtra(extra: ExpressionExtraInfo, json: JsonGenerator)
-            = writeExpressionExtraToJson(extra, json)
+    override fun writeTermExtra(extra: TermExtraInfo, json: JsonGenerator)
+            = writeTermExtraToJson(extra, json)
 
     override fun writeCard(card: CardInfo, json: JsonGenerator) = writeCardToJson(card, json)
 

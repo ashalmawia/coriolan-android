@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
-import com.ashalmawia.coriolan.model.ExpressionExtras
+import com.ashalmawia.coriolan.model.TermExtras
 import com.ashalmawia.coriolan.ui.learning.CardView
 import com.ashalmawia.coriolan.ui.learning.CardViewListener
 
@@ -30,7 +30,7 @@ class SpacedRepetitionExerciseRenderer(
         return cardView
     }
 
-    override fun renderTask(task: Task, extras: List<ExpressionExtras>) {
+    override fun renderTask(task: Task, extras: List<TermExtras>) {
         uiContainer.removeAllViews()
 
         val answers = answers(task.state.spacedRepetition).asList()

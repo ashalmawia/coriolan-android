@@ -5,15 +5,15 @@ private val languages = arrayOf(
         SQLITE_COLUMN_LANG_VALUE
 )
 
-private val expressions = arrayOf(
+private val terms = arrayOf(
         SQLITE_COLUMN_ID,
         SQLITE_COLUMN_VALUE,
         SQLITE_COLUMN_LANGUAGE_ID
 )
 
-private val expressionExtras = arrayOf(
+private val termExtras = arrayOf(
         SQLITE_COLUMN_ID,
-        SQLITE_COLUMN_EXPRESSION_ID,
+        SQLITE_COLUMN_TERM_ID,
         SQLITE_COLUMN_TYPE,
         SQLITE_COLUMN_VALUE
 )
@@ -40,7 +40,7 @@ private val cards = arrayOf(
 
 private val translations = arrayOf(
         SQLITE_COLUMN_CARD_ID,
-        SQLITE_COLUMN_EXPRESSION_ID
+        SQLITE_COLUMN_TERM_ID
 )
 
 private val states = arrayOf(
@@ -52,8 +52,8 @@ private val states = arrayOf(
 fun String.from(alias: String?): String = if (alias != null) "${alias}_$this" else this
 
 fun allColumnsLanguages(alias: String? = null): String = allColumns(languages, alias)
-fun allColumnsExpressions(alias: String? = null): String = allColumns(expressions, alias)
-fun allColumnsExtras(alias: String? = null): String = allColumns(expressionExtras, alias)
+fun allColumnsTerms(alias: String? = null): String = allColumns(terms, alias)
+fun allColumnsExtras(alias: String? = null): String = allColumns(termExtras, alias)
 fun allColumnsDomains(alias: String? = null): String = allColumns(domains, alias)
 fun allColumnsDecks(alias: String? = null): String = allColumns(decks, alias)
 fun allColumnsCards(alias: String? = null): String = allColumns(cards, alias)

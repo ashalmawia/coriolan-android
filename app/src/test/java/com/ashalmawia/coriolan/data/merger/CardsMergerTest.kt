@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.assertCardCorrect
 import com.ashalmawia.coriolan.model.mockDomain
-import com.ashalmawia.coriolan.model.mockExpression
+import com.ashalmawia.coriolan.model.mockTerm
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,8 +27,8 @@ class CardsMergerTest {
 
     private val merger = CardsMergerImpl(repository, domain, exersicesRegistry)
 
-    private fun original(value: String) = mockExpression(value, language = domain.langOriginal())
-    private fun translation(value: String) = mockExpression(value, language = domain.langTranslations())
+    private fun original(value: String) = mockTerm(value, language = domain.langOriginal())
+    private fun translation(value: String) = mockTerm(value, language = domain.langTranslations())
 
     private fun emptyState() = mockEmptyState(today)
 

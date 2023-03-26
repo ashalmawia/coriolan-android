@@ -1,18 +1,18 @@
 package com.ashalmawia.coriolan.data.backup.json
 
-import com.ashalmawia.coriolan.data.backup.ExpressionExtraInfo
+import com.ashalmawia.coriolan.data.backup.TermExtraInfo
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
 
 private const val FIELD_ID = "id"
-private const val FIELD_EXPRESSION_ID = "expression_id"
+private const val FIELD_TERM_ID = "expression_id"
 private const val FIELD_TYPE = "type"
 private const val FIELD_VALUE = "value"
 
-fun readExpressionExtraFromJson(json: JsonParser): ExpressionExtraInfo {
+fun readTermExtraFromJson(json: JsonParser): TermExtraInfo {
     var id: Long? = null
-    var expressionId: Long? = null
+    var termId: Long? = null
     var type: Int? = null
     var value: String? = null
 
@@ -22,9 +22,9 @@ fun readExpressionExtraFromJson(json: JsonParser): ExpressionExtraInfo {
                 json.nextToken()
                 id = json.longValue
             }
-            FIELD_EXPRESSION_ID -> {
+            FIELD_TERM_ID -> {
                 json.nextToken()
-                expressionId = json.longValue
+                termId = json.longValue
             }
             FIELD_TYPE -> {
                 json.nextToken()
@@ -37,19 +37,19 @@ fun readExpressionExtraFromJson(json: JsonParser): ExpressionExtraInfo {
         }
     }
 
-    if (id == null || expressionId == null || type == null || value == null) {
-        throw JsonDeserializationException("failed to read expression, " +
-                "id $id, expressionId $expressionId, type $type value[$value]")
+    if (id == null || termId == null || type == null || value == null) {
+        throw JsonDeserializationException("failed to read term, " +
+                "id $id, termId $termId, type $type value[$value]")
     }
 
-    return ExpressionExtraInfo(id, expressionId, type, value)
+    return TermExtraInfo(id, termId, type, value)
 }
 
-fun writeExpressionExtraToJson(extra: ExpressionExtraInfo, json: JsonGenerator) {
+fun writeTermExtraToJson(extra: TermExtraInfo, json: JsonGenerator) {
     json.writeStartObject()
 
     json.writeNumberField(FIELD_ID, extra.id)
-    json.writeNumberField(FIELD_EXPRESSION_ID, extra.expressionId)
+    json.writeNumberField(FIELD_TERM_ID, extra.termId)
     json.writeNumberField(FIELD_TYPE, extra.type)
     json.writeStringField(FIELD_VALUE, extra.value)
 

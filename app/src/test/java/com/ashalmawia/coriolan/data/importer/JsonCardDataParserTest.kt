@@ -40,8 +40,8 @@ class JsonCardDataParserTest {
     }
 
     @Test
-    fun `expressions parsed`() {
-        testParser(JsonCartDataParserTestData.expressionsJson, JsonCartDataParserTestData.expressionsExpected)
+    fun `terms parsed`() {
+        testParser(JsonCartDataParserTestData.termsJson, JsonCartDataParserTestData.termsExpected)
     }
 
     @Test(expected = ParsingException::class)

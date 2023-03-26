@@ -14,9 +14,9 @@ interface BackupableRepository {
 
     fun allDomains(offset: Int, limit: Int): List<DomainInfo>
 
-    fun allExpressions(offset: Int, limit: Int): List<ExpressionInfo>
+    fun allTerms(offset: Int, limit: Int): List<TermInfo>
 
-    fun allExpressionExtras(offset: Int, limit: Int): List<ExpressionExtraInfo>
+    fun allTermExtras(offset: Int, limit: Int): List<TermExtraInfo>
 
     fun allCards(offset: Int, limit: Int): List<CardInfo>
 
@@ -30,9 +30,9 @@ interface BackupableRepository {
 
     fun writeDomains(domains: List<DomainInfo>)
 
-    fun writeExpressions(expressions: List<ExpressionInfo>)
+    fun writeTerms(terms: List<TermInfo>)
 
-    fun writeExpressionExtras(extras: List<ExpressionExtraInfo>)
+    fun writeTermExtras(extras: List<TermExtraInfo>)
 
     fun writeCards(cards: List<CardInfo>)
 
@@ -54,14 +54,14 @@ data class DomainInfo(
         val origLangId: Long,
         val transLangId: Long)
 
-data class ExpressionInfo(
+data class TermInfo(
         val id: Long,
         val value: String,
         val languageId: Long)
 
-data class ExpressionExtraInfo(
+data class TermExtraInfo(
         val id: Long,
-        val expressionId: Long,
+        val termId: Long,
         val type: Int,
         val value: String)
 

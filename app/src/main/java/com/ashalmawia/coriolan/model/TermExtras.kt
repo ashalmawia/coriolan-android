@@ -1,5 +1,5 @@
 package com.ashalmawia.coriolan.model
 
-data class ExpressionExtras(val expression: Expression, val map: Map<ExtraType, ExpressionExtra>) {
+data class TermExtras(val term: Term, val map: Map<ExtraType, TermExtra>) {
     val transcription = map[ExtraType.TRANSCRIPTION]?.value
 }

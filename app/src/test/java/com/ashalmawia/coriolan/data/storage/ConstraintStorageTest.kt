@@ -47,7 +47,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun test__addExpression__valueUnique() {
+    fun test__addTerm__valueUnique() {
         // given
         val storage = prefilledStorage.value
 
@@ -55,24 +55,24 @@ class ConstraintStorageTest {
         val lang = domain.langOriginal()
 
         // when
-        storage.justAddExpression(value, lang)
-        storage.justAddExpression(value, lang)
+        storage.justAddTerm(value, lang)
+        storage.justAddTerm(value, lang)
     }
 
     @Test
-    fun test__addExpression__sameValueDifferentLangs() {
+    fun test__addTerm__sameValueDifferentLangs() {
         // given
         val storage = prefilledStorage.value
 
         val value = "shrimp"
 
         // when
-        storage.justAddExpression(value, domain.langOriginal())
-        storage.justAddExpression(value, domain.langTranslations())
+        storage.justAddTerm(value, domain.langOriginal())
+        storage.justAddTerm(value, domain.langTranslations())
     }
 
     @Test(expected = DataProcessingException::class)
-    fun test__addExpression__languageIncorrect() {
+    fun test__addTerm__languageIncorrect() {
         // given
         val storage = emptyStorage.value
 
@@ -80,31 +80,31 @@ class ConstraintStorageTest {
         val lang = mockLanguage(value = "Russian")
 
         // when
-        storage.justAddExpression(value, lang)
+        storage.justAddTerm(value, lang)
     }
 
     @Test(expected = DataProcessingException::class)
-    fun test__deleteExpression__expressionIncorrect__emptyStorage() {
+    fun test__deleteTerm__termIncorrect__emptyStorage() {
         // given
         val storage = prefilledStorage.value
-        val expression = mockExpression("креветка", domain.langTranslations())
+        val term = mockTerm("креветка", domain.langTranslations())
 
         // when
-        storage.deleteExpression(expression)
+        storage.deleteTerm(term)
     }
 
     @Test(expected = DataProcessingException::class)
-    fun test__deleteExpression__expressionIncorrect__notPresent() {
+    fun test__deleteTerm__termIncorrect__notPresent() {
         // given
         val storage = prefilledStorage.value
 
-        storage.justAddExpression("shrimp", domain.langOriginal())
-        storage.justAddExpression("креветка", domain.langTranslations())
+        storage.justAddTerm("shrimp", domain.langOriginal())
+        storage.justAddTerm("креветка", domain.langTranslations())
 
-        val expression = mockExpression("spring", domain.langOriginal())
+        val term = mockTerm("spring", domain.langOriginal())
 
         // when
-        storage.deleteExpression(expression)
+        storage.deleteTerm(term)
     }
 
     @Test(expected = DataProcessingException::class)
@@ -144,8 +144,8 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val dummyDomain = Domain(5L, "some name", domain.langOriginal(), domain.langTranslations())
 
@@ -158,8 +158,8 @@ class ConstraintStorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val dummyDeckId = 5L
 
@@ -174,9 +174,9 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
-        val dummyOriginal = mockExpression("shrimp", domain.langOriginal())
+        val dummyOriginal = mockTerm("shrimp", domain.langOriginal())
 
         // when
         storage.addCard(domain, deck.id, dummyOriginal, listOf(translation))
@@ -189,9 +189,9 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
 
-        val dummyTranslation = mockExpression("креветка", domain.langTranslations())
+        val dummyTranslation = mockTerm("креветка", domain.langTranslations())
 
         // when
         storage.addCard(domain, deck.id, original, listOf(dummyTranslation))
@@ -204,10 +204,10 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
-        val dummyTranslation = mockExpression("dummy", domain.langTranslations())
+        val dummyTranslation = mockTerm("dummy", domain.langTranslations())
 
         // when
         storage.addCard(domain, deck.id, original, listOf(translation, dummyTranslation))
@@ -220,7 +220,7 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
 
         // when
         storage.addCard(domain, deck.id, original, listOf())
@@ -233,7 +233,7 @@ class ConstraintStorageTest {
         val card = mockCard()
 
         // when
-        storage.updateCard(card, 2L, mockExpression(), listOf(mockExpression()))
+        storage.updateCard(card, 2L, mockTerm(), listOf(mockTerm()))
     }
 
     @Test(expected = DataProcessingException::class)
@@ -243,8 +243,8 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
 
@@ -261,12 +261,12 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
 
-        val dummyOriginal = mockExpression("shrimp", domain.langOriginal())
+        val dummyOriginal = mockTerm("shrimp", domain.langOriginal())
 
         // when
         storage.updateCard(card, deck.id, dummyOriginal, listOf(translation))
@@ -279,12 +279,12 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
 
-        val dummyTranslation = mockExpression("креветка", domain.langTranslations())
+        val dummyTranslation = mockTerm("креветка", domain.langTranslations())
 
         // when
         storage.updateCard(card, deck.id, original, listOf(dummyTranslation))
@@ -297,12 +297,12 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
 
-        val dummyTranslation = mockExpression("dummy", domain.langTranslations())
+        val dummyTranslation = mockTerm("dummy", domain.langTranslations())
 
         // when
         storage.updateCard(card, deck.id, original, listOf(translation, dummyTranslation))
@@ -315,8 +315,8 @@ class ConstraintStorageTest {
 
         val deck = storage.addDeck(domain, "My deck")
 
-        val original = storage.justAddExpression("shrimp", domain.langOriginal())
-        val translation = storage.justAddExpression("креветка", domain.langTranslations())
+        val original = storage.justAddTerm("shrimp", domain.langOriginal())
+        val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
 

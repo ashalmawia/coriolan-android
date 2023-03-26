@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.learning.exercise
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.ExpressionExtras
+import com.ashalmawia.coriolan.model.TermExtras
 
 interface ExerciseExecutor : ExerciseRenderer.Listener {
 
@@ -13,7 +13,7 @@ interface ExerciseExecutor : ExerciseRenderer.Listener {
 
     fun getTask(card: Card): Task
 
-    fun renderTask(task: Task, extras: List<ExpressionExtras>)
+    fun renderTask(task: Task, extras: List<TermExtras>)
 
     fun undoTask(task: Task, undoneState: State): Task
 }

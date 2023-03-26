@@ -9,9 +9,9 @@ interface JacksonSerializer {
 
     fun writeDomain(domain: DomainInfo, json: JsonGenerator)
 
-    fun writeExpression(expression: ExpressionInfo, json: JsonGenerator)
+    fun writeTerm(term: TermInfo, json: JsonGenerator)
 
-    fun writeExpressionExtra(extra: ExpressionExtraInfo, json: JsonGenerator)
+    fun writeTermExtra(extra: TermExtraInfo, json: JsonGenerator)
 
     fun writeCard(card: CardInfo, json: JsonGenerator)
 

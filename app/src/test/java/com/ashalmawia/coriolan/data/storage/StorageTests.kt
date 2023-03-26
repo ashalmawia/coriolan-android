@@ -114,7 +114,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun test__addExpression__Word() {
+    fun test__addTerm__Word() {
         // given
         val storage = prefilledStorage.value
 
@@ -122,14 +122,14 @@ abstract class StorageTest {
         val lang = domain.langTranslations()
 
         // when
-        val expression = storage.addExpression(value, lang)
+        val term = storage.addTerm(value, lang)
 
         // then
-        assertExpressionCorrect(expression, value, lang)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
-    fun test__addExpression__Sentence() {
+    fun test__addTerm__Sentence() {
         // given
         val storage = prefilledStorage.value
 
@@ -137,14 +137,14 @@ abstract class StorageTest {
         val lang = domain.langTranslations()
 
         // when
-        val expression = storage.addExpression(value, lang)
+        val term = storage.addTerm(value, lang)
 
         // then
-        assertExpressionCorrect(expression, value, lang)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
-    fun `addExpression() with transcription`() {
+    fun `addTerm() with transcription`() {
         // given
         val storage = prefilledStorage.value
 
@@ -153,10 +153,10 @@ abstract class StorageTest {
         val value = "exaggeration"
 
         // when
-        val expression = storage.addExpression(value, lang)
+        val term = storage.addTerm(value, lang)
 
         // then
-        assertExpressionCorrect(expression, value, lang)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
@@ -169,11 +169,11 @@ abstract class StorageTest {
         val value = "exaggeration"
         val transcriptionNew = null
 
-        val expression = storage.addExpression(value, lang)
+        val term = storage.addTerm(value, lang)
 
         // when
-        storage.setTranscription(expression, transcriptionNew)
-        val extras = storage.allExtrasForExpression(expression)
+        storage.setTranscription(term, transcriptionNew)
+        val extras = storage.allExtrasForTerm(term)
 
         // then
         assertExtrasCorrect(extras, transcriptionNew)
@@ -190,12 +190,12 @@ abstract class StorageTest {
         val transcriptionOld = null
         val transcriptionNew = "[ɪɡˌzædʒəˈreɪʃən]"
 
-        val expression = storage.addExpression(value, lang)
-        storage.setTranscription(expression, transcriptionOld)
+        val term = storage.addTerm(value, lang)
+        storage.setTranscription(term, transcriptionOld)
 
         // when
-        storage.setTranscription(expression, transcriptionNew)
-        val extras = storage.allExtrasForExpression(expression)
+        storage.setTranscription(term, transcriptionNew)
+        val extras = storage.allExtrasForTerm(term)
 
         // then
         assertExtrasCorrect(extras, transcriptionNew)
@@ -212,12 +212,12 @@ abstract class StorageTest {
         val transcriptionOld = "[ɪɡˌzædʒəˈreɪʃən]"
         val transcriptionNew = null
 
-        val expression = storage.addExpression(value, lang)
-        storage.setTranscription(expression, transcriptionOld)
+        val term = storage.addTerm(value, lang)
+        storage.setTranscription(term, transcriptionOld)
 
         // when
-        storage.setTranscription(expression, transcriptionNew)
-        val extras = storage.allExtrasForExpression(expression)
+        storage.setTranscription(term, transcriptionNew)
+        val extras = storage.allExtrasForTerm(term)
 
         // then
         assertExtrasCorrect(extras, transcriptionNew)
@@ -234,12 +234,12 @@ abstract class StorageTest {
         val transcriptionOld = "[mɑːtʃ]"
         val transcriptionNew = "[ɪɡˌzædʒəˈreɪʃən]"
 
-        val expression = storage.addExpression(value, lang)
-        storage.setTranscription(expression, transcriptionOld)
+        val term = storage.addTerm(value, lang)
+        storage.setTranscription(term, transcriptionOld)
 
         // when
-        storage.setTranscription(expression, transcriptionNew)
-        val extras = storage.allExtrasForExpression(expression)
+        storage.setTranscription(term, transcriptionNew)
+        val extras = storage.allExtrasForTerm(term)
 
         // then
         assertExtrasCorrect(extras, transcriptionNew)
@@ -256,13 +256,13 @@ abstract class StorageTest {
         val transcription = "[mɑːtʃ]"
         val unknown = "blah blah"
 
-        val expression = storage.addExpression(value, lang)
+        val term = storage.addTerm(value, lang)
 
         // when
-        storage.setTranscription(expression, transcription)
-        storage.setExtra(expression, ExtraType.UNKNOWN, unknown)
+        storage.setTranscription(term, transcription)
+        storage.setExtra(term, ExtraType.UNKNOWN, unknown)
 
-        val extras = storage.allExtrasForExpression(expression)
+        val extras = storage.allExtrasForTerm(term)
 
         // then
         extras.also {
@@ -272,9 +272,9 @@ abstract class StorageTest {
         }
 
         // when
-        storage.setTranscription(expression, null)
+        storage.setTranscription(term, null)
 
-        val withoutTranscription = storage.allExtrasForExpression(expression)
+        val withoutTranscription = storage.allExtrasForTerm(term)
 
         // then
         withoutTranscription.also {
@@ -284,19 +284,19 @@ abstract class StorageTest {
         }
 
         // when
-        storage.setExtra(expression, ExtraType.UNKNOWN, null)
+        storage.setExtra(term, ExtraType.UNKNOWN, null)
 
-        val empty = storage.allExtrasForExpression(expression)
+        val empty = storage.allExtrasForTerm(term)
 
         // then
         assertTrue(empty.map.isEmpty())
 
         // when
         val newUnknown = "lalflalfl"
-        storage.setExtra(expression, ExtraType.UNKNOWN, newUnknown)
-        storage.setTranscription(expression, null)
+        storage.setExtra(term, ExtraType.UNKNOWN, newUnknown)
+        storage.setTranscription(term, null)
 
-        val withUnknown = storage.allExtrasForExpression(expression)
+        val withUnknown = storage.allExtrasForTerm(term)
 
         // then
         withUnknown.also {
@@ -313,20 +313,20 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val expression1 = storage.addExpression("ходить", domain.langTranslations())
-        val expression2 = storage.addExpression("go", domain.langOriginal())
-        val expression3 = storage.addExpression("walk", domain.langOriginal())
+        val term1 = storage.addTerm("ходить", domain.langTranslations())
+        val term2 = storage.addTerm("go", domain.langOriginal())
+        val term3 = storage.addTerm("walk", domain.langOriginal())
 
         val transcription2 = "[gəu]"
         val transcription3 = "[wɔːk]"
 
-        storage.setTranscription(expression2, transcription2)
-        storage.setTranscription(expression3, transcription3)
+        storage.setTranscription(term2, transcription2)
+        storage.setTranscription(term3, transcription3)
 
         // when
-        val card1 = storage.addCard(domain, deck.id, expression2, listOf(expression1))
-        val card2 = storage.addCard(domain, deck.id, expression3, listOf(expression1))
-        val card3 = storage.addCard(domain, deck.id, expression1, listOf(expression2, expression3))
+        val card1 = storage.addCard(domain, deck.id, term2, listOf(term1))
+        val card2 = storage.addCard(domain, deck.id, term3, listOf(term1))
+        val card3 = storage.addCard(domain, deck.id, term1, listOf(term2, term3))
 
         // when
         val extras1 = storage.allExtrasForCard(card1)
@@ -335,7 +335,7 @@ abstract class StorageTest {
         extras1.also {
             assertEquals(1, it.size)
             assertExtrasCorrect(it[0], transcription2)
-            assertEquals(it[0], storage.allExtrasForExpression(expression2))
+            assertEquals(it[0], storage.allExtrasForTerm(term2))
         }
 
         // when
@@ -345,7 +345,7 @@ abstract class StorageTest {
         extras2.also {
             assertEquals(1, it.size)
             assertExtrasCorrect(it[0], transcription3)
-            assertEquals(it[0], storage.allExtrasForExpression(expression3))
+            assertEquals(it[0], storage.allExtrasForTerm(term3))
         }
 
         // when
@@ -355,31 +355,31 @@ abstract class StorageTest {
         extras3.also {
             assertEquals(2, it.size)
             assertExtrasCorrect(it[0], transcription2)
-            assertEquals(it[0], storage.allExtrasForExpression(expression2))
+            assertEquals(it[0], storage.allExtrasForTerm(term2))
             assertExtrasCorrect(it[1], transcription3)
-            assertEquals(it[1], storage.allExtrasForExpression(expression3))
+            assertEquals(it[1], storage.allExtrasForTerm(term3))
         }
     }
 
     @Test
-    fun test__expressionById__Word() {
+    fun test__termById__Word() {
         // given
         val storage = emptyStorage.value
 
         val lang = storage.addLanguage("Russian")
 
         val value = "shrimp"
-        val id = storage.addExpression(value, lang).id
+        val id = storage.addTerm(value, lang).id
 
         // when
-        val expression = storage.expressionById(id)
+        val term = storage.termById(id)
 
         // then
-        assertExpressionCorrect(expression, value, lang)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
-    fun test__expressionById__Sentence() {
+    fun test__termById__Sentence() {
         // given
         val storage = emptyStorage.value
 
@@ -387,17 +387,17 @@ abstract class StorageTest {
 
         val value = "Shrimp is going out on Fridays."
 
-        val id = storage.addExpression(value, lang).id
+        val id = storage.addTerm(value, lang).id
 
         // when
-        val expression = storage.expressionById(id)
+        val term = storage.termById(id)
 
         // then
-        assertExpressionCorrect(expression, value, lang)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
-    fun `expressionById() - with transcription`() {
+    fun `termById() - with transcription`() {
         // given
         val storage = emptyStorage.value
 
@@ -405,17 +405,17 @@ abstract class StorageTest {
 
         val value = "exaggeration"
 
-        val id = storage.addExpression(value, lang).id
+        val id = storage.addTerm(value, lang).id
 
         // when
-        val expression = storage.expressionById(id)
+        val term = storage.termById(id)
 
         // then
-        assertExpressionCorrect(expression, value, lang)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
-    fun `expressionByValues() - does not exist - storage empty`() {
+    fun `termByValues() - does not exist - storage empty`() {
         // given
         val storage = emptyStorage.value
 
@@ -424,31 +424,31 @@ abstract class StorageTest {
         val value = "shrimp"
 
         // when
-        val expression = storage.expressionByValues(value, lang)
+        val term = storage.termByValues(value, lang)
 
         // then
-        assertNull(expression)
+        assertNull(term)
     }
 
     @Test
-    fun test__expressionByValues__DoesNotExist_WrongValue() {
+    fun test__termByValues__DoesNotExist_WrongValue() {
         // given
         val storage = emptyStorage.value
 
         val lang = storage.addLanguage("Russian")
 
-        storage.addExpression("aaa", lang)
-        storage.addExpression("bbb", lang)
+        storage.addTerm("aaa", lang)
+        storage.addTerm("bbb", lang)
 
         // when
-        val expression = storage.expressionByValues("shrimp", lang)
+        val term = storage.termByValues("shrimp", lang)
 
         // then
-        assertNull(expression)
+        assertNull(term)
     }
 
     @Test
-    fun test__expressionByValues__DoesNotExist_WrongLanguage() {
+    fun test__termByValues__DoesNotExist_WrongLanguage() {
         // given
         val storage = emptyStorage.value
 
@@ -457,17 +457,17 @@ abstract class StorageTest {
         val langRussian = storage.addLanguage("Russian")
         val langFrench = storage.addLanguage("French")
 
-        storage.addExpression(value, langRussian)
+        storage.addTerm(value, langRussian)
 
         // when
-        val expression = storage.expressionByValues(value, langFrench)
+        val term = storage.termByValues(value, langFrench)
 
         // then
-        assertNull(expression)
+        assertNull(term)
     }
 
     @Test
-    fun test__expressionByValues__DoesNotExist_WrongEverything() {
+    fun test__termByValues__DoesNotExist_WrongEverything() {
         // given
         val storage = emptyStorage.value
 
@@ -475,18 +475,18 @@ abstract class StorageTest {
         val langEnglish = storage.addLanguage("English")
         val langFrench = storage.addLanguage("French")
 
-        storage.addExpression("она", langRussian)
-        storage.addExpression("she", langEnglish)
+        storage.addTerm("она", langRussian)
+        storage.addTerm("she", langEnglish)
 
         // when
-        val expression = storage.expressionByValues("elle", langFrench)
+        val term = storage.termByValues("elle", langFrench)
 
         // then
-        assertNull(expression)
+        assertNull(term)
     }
 
     @Test
-    fun `expressionByValues() exists`() {
+    fun `termByValues() exists`() {
         // given
         val storage = prefilledStorage.value
 
@@ -494,15 +494,15 @@ abstract class StorageTest {
 
         val value = "shrimp"
 
-        val id = storage.addExpression(value, lang).id
+        val id = storage.addTerm(value, lang).id
 
         // when
-        val expression = storage.expressionByValues(value, lang)
+        val term = storage.termByValues(value, lang)
 
         // then
-        assertNotNull(expression)
-        assertEquals(id, expression!!.id)
-        assertExpressionCorrect(expression, value, lang)
+        assertNotNull(term)
+        assertEquals(id, term!!.id)
+        assertTermCorrect(term, value, lang)
     }
 
     @Test
@@ -510,10 +510,10 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val expression = mockExpression("креветка", domain.langTranslations())
+        val term = mockTerm("креветка", domain.langTranslations())
 
         // when
-        val used = storage.isUsed(expression)
+        val used = storage.isUsed(term)
 
         // then
         assertFalse(used)
@@ -524,12 +524,12 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        storage.addExpression("shrimp", domain.langOriginal())
-        storage.addExpression("креветка", domain.langTranslations())
-        val expression = Expression(5L, "spring", domain.langOriginal())
+        storage.addTerm("shrimp", domain.langOriginal())
+        storage.addTerm("креветка", domain.langTranslations())
+        val term = Term(5L, "spring", domain.langOriginal())
 
         // when
-        val used = storage.isUsed(expression)
+        val used = storage.isUsed(term)
 
         // then
         assertFalse(used)
@@ -540,11 +540,11 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        storage.addExpression("shrimp", domain.langOriginal())
-        val expression = storage.addExpression("креветка", domain.langTranslations())
+        storage.addTerm("shrimp", domain.langOriginal())
+        val term = storage.addTerm("креветка", domain.langTranslations())
 
         // when
-        val used = storage.isUsed(expression)
+        val used = storage.isUsed(term)
 
         // then
         assertFalse(used)
@@ -557,18 +557,18 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", domain.langTranslations())
-        val expression3 = storage.addExpression("spring", domain.langOriginal())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal())
+        val term2 = storage.addTerm("креветка", domain.langTranslations())
+        val term3 = storage.addTerm("spring", domain.langOriginal())
 
         // when
-        storage.addCard(domain, deck.id, expression1, listOf(expression2))
-        storage.addCard(domain, deck.id, expression2, listOf(expression3))
+        storage.addCard(domain, deck.id, term1, listOf(term2))
+        storage.addCard(domain, deck.id, term2, listOf(term3))
 
         // then
-        assertTrue(storage.isUsed(expression1))
-        assertTrue(storage.isUsed(expression2))
-        assertTrue(storage.isUsed(expression3))
+        assertTrue(storage.isUsed(term1))
+        assertTrue(storage.isUsed(term2))
+        assertTrue(storage.isUsed(term3))
     }
 
     @Test
@@ -578,37 +578,37 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", domain.langTranslations())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal())
+        val term2 = storage.addTerm("креветка", domain.langTranslations())
 
         // when
-        val card = storage.addCard(domain, deck.id, expression1, listOf(expression2))
+        val card = storage.addCard(domain, deck.id, term1, listOf(term2))
         storage.deleteCard(card)
 
         // then
-        assertFalse(storage.isUsed(expression1))
-        assertFalse(storage.isUsed(expression2))
+        assertFalse(storage.isUsed(term1))
+        assertFalse(storage.isUsed(term2))
     }
 
     @Test
-    fun test__isUsed__addAndRemoveMultipleExpressions() {
+    fun test__isUsed__addAndRemoveMultipleTerms() {
         // given
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
 
-        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", domain.langTranslations())
-        val expression3 = storage.addExpression("spring", domain.langOriginal())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal())
+        val term2 = storage.addTerm("креветка", domain.langTranslations())
+        val term3 = storage.addTerm("spring", domain.langOriginal())
 
         // when
-        val card = storage.addCard(domain, deck.id, expression1, listOf(expression2, expression3))
+        val card = storage.addCard(domain, deck.id, term1, listOf(term2, term3))
         storage.deleteCard(card)
 
         // then
-        assertFalse(storage.isUsed(expression1))
-        assertFalse(storage.isUsed(expression2))
-        assertFalse(storage.isUsed(expression3))
+        assertFalse(storage.isUsed(term1))
+        assertFalse(storage.isUsed(term2))
+        assertFalse(storage.isUsed(term3))
     }
 
     @Test
@@ -618,40 +618,40 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", domain.langTranslations())
-        val expression3 = storage.addExpression("spring", domain.langOriginal())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal())
+        val term2 = storage.addTerm("креветка", domain.langTranslations())
+        val term3 = storage.addTerm("spring", domain.langOriginal())
 
         // when
-        val card1 = storage.addCard(domain, deck.id, expression1, listOf(expression2))
-        storage.addCard(domain, deck.id, expression2, listOf(expression3))
+        val card1 = storage.addCard(domain, deck.id, term1, listOf(term2))
+        storage.addCard(domain, deck.id, term2, listOf(term3))
 
         storage.deleteCard(card1)
 
         // then
-        assertFalse(storage.isUsed(expression1))
-        assertTrue(storage.isUsed(expression2))
-        assertTrue(storage.isUsed(expression3))
+        assertFalse(storage.isUsed(term1))
+        assertTrue(storage.isUsed(term2))
+        assertTrue(storage.isUsed(term3))
     }
 
     @Test
-    fun test__deleteExpression__present() {
+    fun test__deleteTerm__present() {
         // given
         val storage = prefilledStorage.value
 
-        val expression1 = storage.addExpression("shrimp", domain.langOriginal())
-        val expression2 = storage.addExpression("креветка", domain.langTranslations())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal())
+        val term2 = storage.addTerm("креветка", domain.langTranslations())
 
         // when
-        storage.deleteExpression(expression1)
-        val read1 = storage.expressionById(expression1.id)
+        storage.deleteTerm(term1)
+        val read1 = storage.termById(term1.id)
 
         // then
         assertNull(read1)
 
         // when
-        storage.deleteExpression(expression2)
-        val read2 = storage.expressionById(expression2.id)
+        storage.deleteTerm(term2)
+        val read2 = storage.termById(term2.id)
 
         // then
         assertNull(read2)
@@ -860,10 +860,10 @@ abstract class StorageTest {
 
         addMockCard(storage, deck.id)
 
-        val original = addMockExpressionOriginal(storage, "my original", domain = domain)
+        val original = addMockTermOriginal(storage, "my original", domain = domain)
         val translations = listOf(
-                addMockExpressionTranslation(storage, "translation 1", domain = domain),
-                addMockExpressionTranslation(storage, "translation 2", domain = domain)
+                addMockTermTranslation(storage, "translation 1", domain = domain),
+                addMockTermTranslation(storage, "translation 2", domain = domain)
         )
         val card = storage.addCard(domain, deck.id, original, translations)
 
@@ -886,10 +886,10 @@ abstract class StorageTest {
 
         addMockCard(storage, deck.id)
 
-        val original = addMockExpressionOriginal(storage, "my original", domain = domain)
+        val original = addMockTermOriginal(storage, "my original", domain = domain)
 
-        addMockExpressionTranslation(storage, "translation 1", domain = domain)
-        addMockExpressionTranslation(storage, "translation 2", domain = domain)
+        addMockTermTranslation(storage, "translation 1", domain = domain)
+        addMockTermTranslation(storage, "translation 2", domain = domain)
 
         addMockCard(storage, deck.id)
         addMockCard(storage, deck.id)
@@ -910,8 +910,8 @@ abstract class StorageTest {
 
         addMockCard(storage, deck.id)
 
-        val original = addMockExpressionOriginal(storage, "my original", domain = domain)
-        val translation = addMockExpressionTranslation(storage, "translation", domain = domain)
+        val original = addMockTermOriginal(storage, "my original", domain = domain)
+        val translation = addMockTermTranslation(storage, "translation", domain = domain)
         storage.addCard(domain, deck.id, translation, listOf(original))
 
         addMockCard(storage, deck.id)
@@ -984,7 +984,7 @@ abstract class StorageTest {
         val card = addMockCard(storage, deck.id)
         addMockCard(storage, deck.id)
 
-        val newOriginal = addMockExpressionOriginal(storage, "new value", domain = domain)
+        val newOriginal = addMockTermOriginal(storage, "new value", domain = domain)
 
         // when
         val updated = storage.updateCard(card, card.deckId, newOriginal, card.translations)
@@ -1021,7 +1021,7 @@ abstract class StorageTest {
         val card = addMockCard(storage, deck.id)
         addMockCard(storage, deck.id)
 
-        val newTranslation = addMockExpressionTranslation(storage, "new translation", domain = domain)
+        val newTranslation = addMockTermTranslation(storage, "new translation", domain = domain)
         val newTranslations = card.translations.plus(newTranslation)
 
         // when
@@ -1060,7 +1060,7 @@ abstract class StorageTest {
         addMockCard(storage, deck.id)
 
         val toBeRemoved = card.translations.find { it.value == "my translation" }!!
-        val newTranslation = addMockExpressionTranslation(storage, "new value", domain = domain)
+        val newTranslation = addMockTermTranslation(storage, "new value", domain = domain)
 
         val newTranslations = card.translations.minus(toBeRemoved).plus(newTranslation)
 
@@ -1140,10 +1140,10 @@ abstract class StorageTest {
 
         val newDeck = storage.addDeck(domain, "New deck")
 
-        val newOriginal = addMockExpressionOriginal(storage, "new original", domain = domain)
+        val newOriginal = addMockTermOriginal(storage, "new original", domain = domain)
 
         val toBeRemoved = card.translations.find { it.value == "my translation" }!!
-        val newTranslation = addMockExpressionTranslation(storage, "new translation", domain = domain)
+        val newTranslation = addMockTermTranslation(storage, "new translation", domain = domain)
         val newTranslations = card.translations.minus(toBeRemoved).plus(newTranslation)
 
         // when
@@ -1252,8 +1252,8 @@ abstract class StorageTest {
         assertEquals(listOf(card), cards)
 
         // when
-        val newOriginal = addMockExpressionOriginal(storage, "new original", domain = domain)
-        val newTranslation = addMockExpressionTranslation(storage, "new translation", domain = domain)
+        val newOriginal = addMockTermOriginal(storage, "new original", domain = domain)
+        val newTranslation = addMockTermTranslation(storage, "new translation", domain = domain)
         val newDeck = storage.addDeck(domain, "new deck")
         val updated = storage.updateCard(card, newDeck.id, newOriginal, listOf(newTranslation))
 
@@ -1842,7 +1842,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun test__getStatesForCardsWithOriginals__expressionsNotThere() {
+    fun test__getStatesForCardsWithOriginals__termsNotThere() {
         // when
         val storage = emptyStorage.value
 
