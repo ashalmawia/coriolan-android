@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
@@ -54,7 +54,7 @@ class SpacedRepetitionExercise(
 
     override fun mutations(
             preferences: Preferences,
-            journal: Journal,
+            logbook: Logbook,
             date: DateTime,
             order: StudyOrder,
             deck: Deck,
@@ -65,7 +65,7 @@ class SpacedRepetitionExercise(
                 CardTypeMutation(cardType),
                 SortReviewsByPeriodMutation,
                 NewCardsOrderMutation.from(order),
-                LimitCountMutation(preferences, journal, date),
+                LimitCountMutation(preferences, logbook, date),
                 ShuffleMutation(order == StudyOrder.RANDOM)
         )
     }
@@ -77,7 +77,7 @@ class SpacedRepetitionExercise(
     override fun createExecutor(
             context: Context,
             uiContainer: ViewGroup,
-            journal: Journal,
+            logbook: Logbook,
             listener: ExerciseListener
     ): ExerciseExecutor {
         return SpacedRepetitionExerciseExecutor(
@@ -85,7 +85,7 @@ class SpacedRepetitionExercise(
                 this,
                 repository,
                 todayProvider,
-                journal,
+                logbook,
                 createScheduler(todayProvider),
                 uiContainer,
                 listener

@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning.exercise.sr
 
 import android.content.Context
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
@@ -20,14 +20,14 @@ class SpacedRepetitionExerciseExecutor(
         private val exercise: Exercise,
         private val repository: Repository,
         private val todayProvider: TodayProvider,
-        journal: Journal,
+        logbook: Logbook,
         private val scheduler: SpacedRepetitionScheduler,
         uiContainer: ViewGroup,
         private val listener: ExerciseListener
 ) : ExerciseExecutor {
 
     private val renderer = SpacedRepetitionExerciseRenderer(context, uiContainer, this)
-    private val logbook = GenericLogbook(journal, todayProvider, exercise)
+    private val logbook = GenericLogbook(logbook, todayProvider, exercise)
 
     override val exerciseId: ExerciseId
         get() = exercise.id

@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.data.journal.MockJournal
+import com.ashalmawia.coriolan.data.logbook.MockLogbook
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.Status
@@ -15,7 +15,7 @@ import org.junit.runners.JUnit4
 class LimitCountMutationMutationTest {
 
     private val preferences = MockPreferences()
-    private val journal = MockJournal()
+    private val journal = MockLogbook()
     private val date = mockToday()
     private val cards = List(60, { i -> mockTask(procudeMockState(i)) })
 

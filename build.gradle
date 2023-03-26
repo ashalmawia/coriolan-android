@@ -4,6 +4,7 @@ buildscript {
     ext.kotlin_version = '1.6.20'
     ext.support_version = '27.0.2'
     ext.moshi_version = '1.14.0'
+    ext.jackson_version = '2.13.3'
 
     repositories {
         maven { url 'https://maven.fabric.io/public' }

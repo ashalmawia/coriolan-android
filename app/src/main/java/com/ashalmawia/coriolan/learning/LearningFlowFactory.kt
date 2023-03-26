@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning
 
 import android.content.Context
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
@@ -14,7 +14,7 @@ class LearningFlowFactory(
         private val repository: Repository,
         private val exercisesRegistry: ExercisesRegistry,
         private val assignmentFactory: AssignmentFactory,
-        private val journal: Journal
+        private val logbook: Logbook
 ) : LearningFlow.Factory {
     override fun createLearningFlow(
             context: Context,
@@ -25,6 +25,6 @@ class LearningFlowFactory(
             listener: LearningFlow.Listener
     ): LearningFlow {
         val assignment = assignmentFactory.createAssignment(studyOrder, deck, cardType)
-        return LearningFlow(context, repository, assignment, deck, exercisesRegistry, journal, uiContainer, listener)
+        return LearningFlow(context, repository, assignment, deck, exercisesRegistry, logbook, uiContainer, listener)
     }
 }

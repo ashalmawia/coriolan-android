@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.learning
 import android.content.Context
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
@@ -20,13 +20,13 @@ class LearningFlow(
         private val assignment: Assignment,
         val deck: Deck,
         exercisesRegistry: ExercisesRegistry,
-        journal: Journal,
+        logbook: Logbook,
         uiContainer: ViewGroup,
         private val listener: Listener
 ) : ExerciseListener {
 
     private val executors = exercisesRegistry.enabledExercises()
-            .map { it.createExecutor(context, uiContainer, journal, this) }
+            .map { it.createExecutor(context, uiContainer, logbook, this) }
 
     val card
         get() = assignment.current!!

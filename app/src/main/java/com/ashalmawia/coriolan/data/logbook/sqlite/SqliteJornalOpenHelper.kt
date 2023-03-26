@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.data.journal.sqlite
+package com.ashalmawia.coriolan.data.logbook.sqlite
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -16,13 +16,8 @@ class SqliteJornalOpenHelper(val context: Context)
 
         db.execSQL("""
             |CREATE TABLE $SQLITE_TABLE_JOURNAL(
-            |   $SQLITE_COLUMN_DATE INTEGER NOT NULL,
-            |   $SQLITE_COLUMN_EXERCISE TEXT NOT NULL,
-            |   $SQLITE_COLUMN_CARDS_FIRST_SEEN INTEGER NOT NULL,
-            |   $SQLITE_COLUMN_CARDS_REVIEWED INTEGER NOT NULL,
-            |   $SQLITE_COLUMN_CARDS_RELEARNED INTEGER NOT NULL,
-            |   
-            |   PRIMARY KEY ($SQLITE_COLUMN_DATE, $SQLITE_COLUMN_EXERCISE)
+            |   $SQLITE_COLUMN_DATE INTEGER PRIMARY KEY,
+            |   $SQLITE_COLUMN_PAYLOAD TEXT NOT NULL
             |);""".trimMargin())
     }
 

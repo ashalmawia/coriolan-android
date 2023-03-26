@@ -10,8 +10,8 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.json.JsonBackup
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.data.importer.ImporterRegistryImpl
-import com.ashalmawia.coriolan.data.journal.Journal
-import com.ashalmawia.coriolan.data.journal.sqlite.SqliteJournal
+import com.ashalmawia.coriolan.data.logbook.Logbook
+import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.prefs.SharedPreferencesImpl
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -36,7 +36,7 @@ val mainModule = module {
     single<TodayProvider> { TodayManager }
     single<Repository> { SqliteStorage(get(), get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
-    single<Journal> { SqliteJournal(get()) }
+    single<Logbook> { SqliteLogbook(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get()) }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }

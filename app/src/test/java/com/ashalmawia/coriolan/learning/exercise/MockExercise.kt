@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning.exercise
 
 import android.content.Context
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
@@ -22,11 +22,11 @@ class MockExercise : Exercise {
     override val canUndo: Boolean
         get() = true
 
-    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): List<Mutation> {
+    override fun mutations(preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): List<Mutation> {
         return emptyList()
     }
 
-    override fun createExecutor(context: Context, uiContainer: ViewGroup, journal: Journal, listener: ExerciseListener): ExerciseExecutor {
+    override fun createExecutor(context: Context, uiContainer: ViewGroup, logbook: Logbook, listener: ExerciseListener): ExerciseExecutor {
         return MockExerciseExecutor(this)
     }
 

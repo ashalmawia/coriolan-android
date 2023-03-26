@@ -1,11 +1,11 @@
-package com.ashalmawia.coriolan.data.journal
+package com.ashalmawia.coriolan.data.logbook
 
-import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.data.journal.sqlite.SqliteJournal
+import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbook
 import com.ashalmawia.coriolan.learning.LearningDay
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.util.orZero
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,9 +15,9 @@ import org.robolectric.annotation.SQLiteMode
 
 @RunWith(RobolectricTestRunner::class)
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
-class SqliteJournalTest {
+class SqliteLogbookTest {
 
-    private val journal = SqliteJournal(RuntimeEnvironment.application)
+    private val journal = SqliteLogbook(RuntimeEnvironment.application)
 
     private val today = mockToday()
     private val exerciseId = ExerciseId.SPACED_REPETITION
@@ -157,7 +157,7 @@ class SqliteJournalTest {
         assertEquals(counts2, journal.cardsStudiedOnDate(date))
 
         // then
-        assertValues(counts.new - 1, counts.review + 2, 2, counts2)
+        assertValues(3, 5, 2, counts2)
     }
 
     @Test
@@ -215,9 +215,11 @@ class SqliteJournalTest {
     }
 }
 
-private fun assertValues(expectedNew: Int, expectedReview: Int, expectedRelearn: Int, counts: Counts) {
-    assertEquals(Counts(expectedNew, expectedReview, expectedRelearn, expectedNew + expectedReview + expectedRelearn), counts)
+private fun assertValues(expectedNew: Int, expectedReview: Int, expectedRelearn: Int, counts: Map<CardAction, Int>) {
+    assertEquals(expectedNew, counts[CardAction.NEW_CARD_FIRST_SEEN].orZero())
+    assertEquals(expectedReview, counts[CardAction.CARD_REVIEWED].orZero())
+    assertEquals(expectedRelearn, counts[CardAction.CARD_RELEARNED].orZero())
 }
-private fun assertEmpty(counts: Counts) {
+private fun assertEmpty(counts: Map<CardAction, Int>) {
     assertValues(0, 0, 0, counts)
 }

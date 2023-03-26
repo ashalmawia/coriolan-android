@@ -1,12 +1,11 @@
-package com.ashalmawia.coriolan.data.journal
+package com.ashalmawia.coriolan.data.logbook
 
-import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
 
-class MockJournal : Journal {
+class MockLogbook : Logbook {
 
     private val data = mutableMapOf<CardAction, Int>()
 
@@ -15,18 +14,12 @@ class MockJournal : Journal {
         data[CardAction.CARD_REVIEWED] = review
     }
 
-    override fun cardsStudiedOnDate(date: DateTime): Counts {
-        return Counts(
-                data[CardAction.NEW_CARD_FIRST_SEEN].orZero(),
-                data[CardAction.CARD_REVIEWED].orZero(),
-                data[CardAction.CARD_RELEARNED].orZero(), -1)
+    override fun cardsStudiedOnDate(date: DateTime): Map<CardAction, Int> {
+        return data
     }
 
-    override fun cardsStudiedOnDate(date: DateTime, exercise: ExerciseId): Counts {
-        return Counts(
-                data[CardAction.NEW_CARD_FIRST_SEEN].orZero(),
-                data[CardAction.CARD_REVIEWED].orZero(),
-                data[CardAction.CARD_RELEARNED].orZero(), -1)
+    override fun cardsStudiedOnDate(date: DateTime, exercise: ExerciseId): Map<CardAction, Int> {
+        return data
     }
 
     override fun incrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction) {

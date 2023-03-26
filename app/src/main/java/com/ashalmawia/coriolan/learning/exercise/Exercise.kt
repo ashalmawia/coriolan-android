@@ -3,7 +3,7 @@ package com.ashalmawia.coriolan.learning.exercise
 import android.content.Context
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
@@ -35,7 +35,7 @@ interface Exercise {
 
     fun mutations(
             preferences: Preferences,
-            journal: Journal,
+            logbook: Logbook,
             date: DateTime,
             order: StudyOrder,
             deck: Deck,
@@ -47,7 +47,7 @@ interface Exercise {
     fun createExecutor(
             context: Context,
             uiContainer: ViewGroup,
-            journal: Journal,
+            logbook: Logbook,
             listener: ExerciseListener
     ): ExerciseExecutor
 

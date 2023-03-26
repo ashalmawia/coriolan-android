@@ -1,14 +1,14 @@
-package com.ashalmawia.coriolan.data.journal
+package com.ashalmawia.coriolan.data.logbook
 
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import org.joda.time.DateTime
 
-interface Journal {
+interface Logbook {
 
-    fun cardsStudiedOnDate(date: DateTime): Counts
-    fun cardsStudiedOnDate(date: DateTime, exercise: ExerciseId): Counts
+    fun cardsStudiedOnDate(date: DateTime): Map<CardAction, Int>
+    fun cardsStudiedOnDate(date: DateTime, exercise: ExerciseId): Map<CardAction, Int>
 
     fun incrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction)
     fun decrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction)

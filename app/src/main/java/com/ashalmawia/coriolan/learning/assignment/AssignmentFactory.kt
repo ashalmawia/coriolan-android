@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.data.journal.Journal
+import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
@@ -21,7 +21,7 @@ interface AssignmentFactory {
 class AssignmentFactoryImpl(
         private val preferences: Preferences,
         private val exercisesRegistry: ExercisesRegistry,
-        private val journal: Journal,
+        private val logbook: Logbook,
         private val todayProvider: TodayProvider,
         private val historyFactory: HistoryFactory
 ) : AssignmentFactory {
@@ -35,7 +35,7 @@ class AssignmentFactoryImpl(
         val cards = exercisesRegistry.enabledExercises().flatMap { it.pendingCards(deck, date) }
         val history = historyFactory.create()
         val mutationList = exercisesRegistry.enabledExercises().flatMap {
-            it.mutations(preferences, journal, date, order, deck, cardType)
+            it.mutations(preferences, logbook, date, order, deck, cardType)
         }
         val mutations = Mutations(mutationList)
         return Assignment(date, history, mutations.apply(cards))
