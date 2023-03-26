@@ -21,6 +21,20 @@
 
 	</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/settings__category__backup">
+
+		<Preference
+			android:key="create_backup"
+			android:title="@string/backup__create_title"
+			/>
+
+		<Preference
+			android:key="restore_from_backup"
+			android:title="@string/backup__restore_title"
+			/>
+
+	</PreferenceCategory>
+
 	<PreferenceCategory android:title="@string/settings__category__general">
 
 		<Preference

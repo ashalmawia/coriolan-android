@@ -1,14 +1,18 @@
 package com.ashalmawia.coriolan.ui.settings
 
+import android.content.Context
 import android.os.Bundle
 import androidx.preference.PreferenceDataStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.preference.Preference
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.ui.backup.BackupActivity
+import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.takisoft.fix.support.v7.preference.EditTextPreference
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
 import org.koin.android.ext.android.inject
@@ -16,6 +20,8 @@ import org.koin.android.ext.android.inject
 private const val PREFERENCE_DAILY_LIMITS_NEW = "daily_limit_new_cards"
 private const val PREFERENCE_DAILY_LIMITS_REVIEW = "daily_limit_review_cards"
 private const val PREFERENCE_VERSION = "app_version"
+private const val PREFERENCE_CREATE_BACKUP = "create_backup"
+private const val PREFERENCE_RESTORE_FROM_BACKUP = "restore_from_backup"
 
 class SettingsFragment : PreferenceFragmentCompatDividers() {
 
@@ -27,6 +33,14 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
 
         setUpDailyLimits()
         setUpVersionInfo()
+    }
+
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
+            PREFERENCE_CREATE_BACKUP -> createBackup(requireContext())
+            PREFERENCE_RESTORE_FROM_BACKUP -> restoreFromBackup(requireContext())
+        }
+        return super.onPreferenceTreeClick(preference)
     }
 
     private fun setUpVersionInfo() {
@@ -80,6 +94,16 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
                     or DIVIDER_CATEGORY_BETWEEN)
         }
     }
+
+    private fun createBackup(context: Context) {
+        val intent = BackupActivity.intent(context)
+        context.startActivity(intent)
+    }
+
+    private fun restoreFromBackup(context: Context) {
+        val intent = RestoreFromBackupActivity.intent(context)
+        startActivity(intent)
+    }
 }
 
 class CoriolanPreferencesDataStore(
@@ -90,13 +114,13 @@ class CoriolanPreferencesDataStore(
         when (key ?: return) {
             PREFERENCE_DAILY_LIMITS_NEW ->
                 if (!value.isNullOrBlank())
-                    prefs.setNewCardsDailyLimitDefault(value!!.toInt())
+                    prefs.setNewCardsDailyLimitDefault(value.toInt())
                 else
                     prefs.clearNewCardsDailyLimit()
 
             PREFERENCE_DAILY_LIMITS_REVIEW ->
                 if (!value.isNullOrBlank())
-                    prefs.setReviewCardsDailyLimitDefault(value!!.toInt())
+                    prefs.setReviewCardsDailyLimitDefault(value.toInt())
                 else
                     prefs.clearReviewCardsDailyLimit()
         }

@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.ui.backup.BackupActivity
-import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.importer.DataImportCallback
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry
@@ -72,10 +70,6 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
         builder.addCategory(R.string.import__category_title)
         builder.addOption(R.string.import_from_file, { importFromFile() })
-
-        builder.addCategory(R.string.backup__category_title)
-        builder.addOption(R.string.backup__create_title, { createBackup(it) })
-        builder.addOption(R.string.backup__restore_title, { restoreFromBackup(it) })
 
         return builder.build()
     }
@@ -140,16 +134,6 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
             }
         }
         flow.start()
-    }
-
-    private fun createBackup(context: Context) {
-        val intent = BackupActivity.intent(context)
-        context.startActivity(intent)
-    }
-
-    private fun restoreFromBackup(context: Context) {
-        val intent = RestoreFromBackupActivity.intent(context)
-        startActivity(intent)
     }
 
     private fun notifyDataUpdated() {

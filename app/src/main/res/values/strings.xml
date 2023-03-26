@@ -123,6 +123,7 @@
 	<string name="settings__version">Version</string>
 	<string name="settings__error_number_negative">Number \"%s\" is incorrect, must be non-negative.</string>
 	<string name="settings__error_number_incorrect">Number \"%s\" is incorrect.</string>
+	<string name="settings__category__backup">Backup</string>
 
 	<!-- Back up -->
 	<string name="backup__category_title">Backup</string>
