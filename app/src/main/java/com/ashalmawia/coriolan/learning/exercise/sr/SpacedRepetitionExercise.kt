@@ -94,7 +94,7 @@ class SpacedRepetitionExercise(
 
     override fun pendingCards(deck: Deck, date: DateTime): List<Task> {
         return repository.pendingCards(deck, date).map {
-            Task(it.first, it.second)
+            Task(it.first, it.second, this)
         }
     }
 

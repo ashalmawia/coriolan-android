@@ -16,7 +16,7 @@ import com.ashalmawia.coriolan.model.ExpressionExtras
 
 class SpacedRepetitionExerciseExecutor(
         context: Context,
-        exercise: Exercise,
+        private val exercise: Exercise,
         private val repository: Repository,
         private val todayProvider: TodayProvider,
         journal: Journal,
@@ -52,7 +52,7 @@ class SpacedRepetitionExerciseExecutor(
 
     private fun updateTask(task: Task, newState: State): Task {
         repository.updateCardState(task.card, newState)
-        return Task(task.card, newState)
+        return Task(task.card, newState, exercise)
     }
 
     override fun undoTask(task: Task, undoneState: State): Task {
@@ -62,7 +62,7 @@ class SpacedRepetitionExerciseExecutor(
     }
 
     override fun getTask(card: Card): Task {
-        return Task(card, repository.getCardState(card))
+        return Task(card, repository.getCardState(card), exercise)
     }
 
     override fun isPending(task: Task): Boolean = task.state().due <= todayProvider.today()

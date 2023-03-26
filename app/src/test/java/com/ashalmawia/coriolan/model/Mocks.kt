@@ -3,6 +3,8 @@ package com.ashalmawia.coriolan.model
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mockToday
@@ -59,12 +61,23 @@ fun mockCard(
     )
 }
 
+fun mockExercise() = MockExercise()
+
+fun mockTask(
+        card: Card = mockCard(),
+        state: State = mockState(),
+        exercise: Exercise = mockExercise()
+): Task {
+    return Task(card, state, exercise)
+}
 fun mockTask(
         state: State = mockState(),
         domain: Domain = mockDomain(),
         id: Long = cardId++,
-        type: CardType = CardType.FORWARD): Task {
-    return Task(mockCard(domain, id, type), state)
+        type: CardType = CardType.FORWARD,
+        exercise: Exercise = mockExercise()
+): Task {
+    return Task(mockCard(domain, id, type), state, exercise)
 }
 
 private var deckId = 1L

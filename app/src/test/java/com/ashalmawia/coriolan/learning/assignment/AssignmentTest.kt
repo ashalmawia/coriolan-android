@@ -1,7 +1,8 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.model.mockState
+import com.ashalmawia.coriolan.model.mockCard
+import com.ashalmawia.coriolan.model.mockTask
 import org.joda.time.DateTime
 
 import org.junit.Assert.*
@@ -36,7 +37,7 @@ class AssignmentTest {
         // given
         val map = mutableMapOf<Task, Int>()
         for (i in 0 until MAGIC_COLLECTION_LENGTH) {
-            map.put(mockCard(), 0)
+            map.put(mockTask(), 0)
         }
         val cards = map.keys.toList()
 
@@ -69,7 +70,7 @@ class AssignmentTest {
         // given
         val map = mutableMapOf<Task, Boolean>()     // boolean means - to be rescheduled
         for (i in 0 until MAGIC_COLLECTION_LENGTH) {
-            map.put(mockCard(), i % 2 == 0)
+            map.put(mockTask(), i % 2 == 0)
         }
         val cards = map.keys.toList()
 
@@ -99,7 +100,7 @@ class AssignmentTest {
     @Test
     fun test__rescheduledDoesNotAppearImmediately() {
         // given
-        val cards = listOf(mockCard(), mockCard())      // only 2 items
+        val cards = listOf(mockTask(), mockTask())      // only 2 items
         var lastMet: Task? = null
 
         // when
@@ -136,9 +137,9 @@ class AssignmentTest {
     fun test__undo__forthAndBack() {
         // given
         val cards = (0 until 20).map {
-            Task(com.ashalmawia.coriolan.model.mockCard(
+            mockTask(mockCard(
                     front = "front $it", back = "back $it"
-            ), mockState())
+            ))
         }
 
         // when
@@ -164,9 +165,9 @@ class AssignmentTest {
     fun test__undo__fullQueue() {
         // given
         val cards = (0 until 20).map {
-            Task(com.ashalmawia.coriolan.model.mockCard(
+            mockTask(mockCard(
                     front = "front $it", back = "back $it"
-            ), mockState())
+            ))
         }
 
         // when
@@ -191,9 +192,9 @@ class AssignmentTest {
     fun test__undo__reschedule() {
         // given
         val cards = (1 .. 2).map {
-            Task(com.ashalmawia.coriolan.model.mockCard(
+            mockTask(mockCard(
                     front = "front $it", back = "back $it"
-            ), mockState())
+            ))
         }
 
         // when
@@ -219,5 +220,3 @@ class AssignmentTest {
         assertFalse(assignment.hasNext())
     }
 }
-
-private fun mockCard() = Task(com.ashalmawia.coriolan.model.mockCard(), mockState())
