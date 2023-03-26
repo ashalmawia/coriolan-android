@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:title="@string/settings__title">
 
 	<PreferenceCategory android:title="@string/settings__category__daily_limits">
 
-		<AutoSummaryEditTextPreference
+		<EditTextPreference
 			android:dialogMessage="@string/settings__daily_limit_leave_blank"
 			android:inputType="numberSigned"
 			android:key="daily_limit_new_cards"
 			android:summary="@string/settings__daily_limit_no_limit"
+			app:useSimpleSummaryProvider="true"
 			android:title="@string/settings__daily_limit_new_cards"/>
 
-		<AutoSummaryEditTextPreference
+		<EditTextPreference
 			android:dialogMessage="@string/settings__daily_limit_leave_blank"
 			android:inputType="numberSigned"
 			android:key="daily_limit_review_cards"
 			android:summary="@string/settings__daily_limit_no_limit"
+			app:useSimpleSummaryProvider="true"
 			android:title="@string/settings__daily_limit_review"/>
 
 	</PreferenceCategory>

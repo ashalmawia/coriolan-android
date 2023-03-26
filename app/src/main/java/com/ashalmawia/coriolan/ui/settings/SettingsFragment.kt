@@ -3,18 +3,14 @@ package com.ashalmawia.coriolan.ui.settings
 import android.content.Context
 import android.os.Bundle
 import androidx.preference.PreferenceDataStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.ui.backup.BackupActivity
 import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
-import com.takisoft.fix.support.v7.preference.EditTextPreference
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
 import org.koin.android.ext.android.inject
 
 private const val PREFERENCE_DAILY_LIMITS_NEW = "daily_limit_new_cards"
@@ -23,11 +19,11 @@ private const val PREFERENCE_VERSION = "app_version"
 private const val PREFERENCE_CREATE_BACKUP = "create_backup"
 private const val PREFERENCE_RESTORE_FROM_BACKUP = "restore_from_backup"
 
-class SettingsFragment : PreferenceFragmentCompatDividers() {
+class SettingsFragment : PreferenceFragmentCompat() {
 
     private val dataStore: PreferenceDataStore by inject()
 
-    override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = dataStore
         addPreferencesFromResource(R.xml.settings)
 
@@ -44,12 +40,12 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
     }
 
     private fun setUpVersionInfo() {
-        findPreference(PREFERENCE_VERSION).summary = BuildConfig.VERSION_NAME
+        preference(PREFERENCE_VERSION).summary = BuildConfig.VERSION_NAME
     }
 
     private fun setUpDailyLimits() {
-        val limitNew = findPreference(PREFERENCE_DAILY_LIMITS_NEW) as EditTextPreference
-        val limitReview = findPreference(PREFERENCE_DAILY_LIMITS_REVIEW) as EditTextPreference
+        val limitNew = preference(PREFERENCE_DAILY_LIMITS_NEW)
+        val limitReview = preference(PREFERENCE_DAILY_LIMITS_REVIEW)
 
         limitNew.setOnPreferenceChangeListener { _, value ->
             val stringValue = value as String
@@ -61,6 +57,8 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
             verifyDailyLimit(stringValue)
         }
     }
+
+    private fun preference(tag: String): Preference = findPreference(tag)!!
 
     private fun verifyDailyLimit(value: String): Boolean {
         if (value.isEmpty()) {
@@ -83,16 +81,6 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
 
     private fun showMessage(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        try {
-            return super.onCreateView(inflater, container, savedInstanceState)
-        } finally {
-            setDividerPreferences(DIVIDER_PADDING_CHILD
-                    or DIVIDER_CATEGORY_AFTER_LAST
-                    or DIVIDER_CATEGORY_BETWEEN)
-        }
     }
 
     private fun createBackup(context: Context) {

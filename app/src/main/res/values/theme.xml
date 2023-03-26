@@ -3,7 +3,7 @@
 
 	<style name="Coriolan" />
 
-	<style name="Coriolan.Theme" parent="PreferenceFixTheme.Light.NoActionBar">
+	<style name="Coriolan.Theme" parent="Theme.AppCompat.Light.NoActionBar">
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 		<item name="colorAccent">@color/colorAccent</item>
@@ -11,7 +11,7 @@
 		<item name="android:textColor">@color/textColorPrimary</item>
 		<item name="android:textColorPrimary">@color/textColorPrimary</item>
 
-		<item name="pref_categoryColor">@color/colorAccentContrast</item>
+		<item name="preferenceCategoryTitleTextColor">@color/colorAccentContrast</item>
 
 		<item name="buttonBarButtonStyle">@style/Coriolan.ButtonBarButton</item>
 	</style>
