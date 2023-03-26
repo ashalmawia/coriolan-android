@@ -6,8 +6,9 @@ import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.journal.Journal
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
-import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
+import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
@@ -18,13 +19,14 @@ class LearningFlow(
         private val repository: Repository,
         private val assignment: Assignment,
         val deck: Deck,
-        exercise: Exercise,
+        exercisesRegistry: ExercisesRegistry,
         journal: Journal,
         uiContainer: ViewGroup,
         private val listener: Listener
 ) : ExerciseListener {
 
-    private val exerciseExecutor = exercise.createExecutor(context, uiContainer, journal, this)
+    private val executors = exercisesRegistry.enabledExercises()
+            .map { it.createExecutor(context, uiContainer, journal, this) }
 
     val card
         get() = assignment.current!!
@@ -47,7 +49,7 @@ class LearningFlow(
     }
 
     private fun rescheduleIfNeeded(task: Task) {
-        if (exerciseExecutor.isPending(task)) {
+        if (task.executor().isPending(task)) {
             assignment.reschedule(task)
         }
     }
@@ -56,21 +58,27 @@ class LearningFlow(
         listener.onFinish()
     }
 
-    fun canUndo() = exerciseExecutor.canUndo && assignment.canUndo()
+    private fun Task.executor(): ExerciseExecutor {
+        val exerciseId = this.exercise.id
+        return executors.find { it.exerciseId == exerciseId }
+                ?: throw IllegalStateException("could not find executor for exercise $exerciseId")
+    }
+
+    fun canUndo() = assignment.canUndo()
 
     fun undo() {
         val card = assignment.current!!
         val stateToUndo = card.state
         val undone = assignment.undo()
-        exerciseExecutor.undoTask(undone, stateToUndo)
+        undone.executor().undoTask(undone, stateToUndo)
         renderTask(undone)
     }
 
     fun refetchTask(task: Task) {
         val card = task.card
         val updated = repository.cardById(card.id, card.domain)!!
-        val updatedWithState = exerciseExecutor.getTask(updated)
-        if (updated.deckId == deck.id && exerciseExecutor.isPending(updatedWithState)) {
+        val updatedWithState = task.executor().getTask(updated)
+        if (updated.deckId == deck.id && task.executor().isPending(updatedWithState)) {
             assignment.replace(card, updatedWithState)
             if (isCurrent(card)) {
                 // make exercise pre-present the card with the changes
@@ -83,7 +91,7 @@ class LearningFlow(
 
     private fun renderTask(task: Task) {
         val extras = repository.allExtrasForCard(task.card)
-        exerciseExecutor.renderTask(task, extras)
+        task.executor().renderTask(task, extras)
         listener.onTaskRendered()
     }
 
@@ -109,7 +117,6 @@ class LearningFlow(
                 deck: Deck,
                 cardType: CardType,
                 studyOrder: StudyOrder,
-                exercise: Exercise,
                 listener: Listener
         ) : LearningFlow
     }

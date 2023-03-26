@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.mutation.Mutations
+import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
@@ -40,7 +40,7 @@ interface Exercise {
             order: StudyOrder,
             deck: Deck,
             cardType: CardType
-    ): Mutations
+    ): List<Mutation>
 
     fun onTranslationAdded(card: Card)
 

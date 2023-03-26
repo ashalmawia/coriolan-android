@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.exercise.GenericLogbook
 import com.ashalmawia.coriolan.model.Card
@@ -28,7 +29,8 @@ class SpacedRepetitionExerciseExecutor(
     private val renderer = SpacedRepetitionExerciseRenderer(context, uiContainer, this)
     private val logbook = GenericLogbook(journal, todayProvider, exercise)
 
-    override val canUndo: Boolean = exercise.canUndo
+    override val exerciseId: ExerciseId
+        get() = exercise.id
 
     private var currentTask: Task? = null
 

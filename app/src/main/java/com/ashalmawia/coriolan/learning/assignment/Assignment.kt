@@ -83,7 +83,7 @@ class Assignment(
         return previous
     }
 
-    fun canUndo() = history.canGoBack()
+    fun canUndo() = history.canGoBack() && current?.exercise?.canUndo ?: false
 
     private fun tasks(): List<Task> {
         val cur = current

@@ -59,15 +59,15 @@ class SpacedRepetitionExercise(
             order: StudyOrder,
             deck: Deck,
             cardType: CardType
-    ): Mutations {
-        return Mutations(listOf(
+    ): List<Mutation> {
+        return listOf(
                 LearningModeMutation(this),
                 CardTypeMutation(cardType),
                 SortReviewsByPeriodMutation,
                 NewCardsOrderMutation.from(order),
                 LimitCountMutation(preferences, journal, date),
                 ShuffleMutation(order == StudyOrder.RANDOM)
-        ))
+        )
     }
 
     override fun onTranslationAdded(card: Card) {

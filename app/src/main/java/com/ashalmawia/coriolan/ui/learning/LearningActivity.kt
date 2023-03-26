@@ -17,7 +17,6 @@ import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
@@ -27,7 +26,6 @@ import com.ashalmawia.coriolan.util.setStartDrawableTint
 import kotlinx.android.synthetic.main.learning_activity.*
 import kotlinx.android.synthetic.main.deck_progress_bar.*
 import org.koin.android.ext.android.get
-import org.koin.android.ext.android.getKoin
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
@@ -54,11 +52,9 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
     private val flow by lazy {
         val learningFlowFactory: LearningFlow.Factory = get()
-        val exercisesRegistry = getKoin().get<ExercisesRegistry>()
         val (deck, cardType, studyOrder) = resolveParameters()
-        val exercise = exercisesRegistry.defaultExercise()
         learningFlowFactory.createLearningFlow(
-                this, exerciseContainer, deck, cardType, studyOrder, exercise, this
+                this, exerciseContainer, deck, cardType, studyOrder, this
         )
     }
 

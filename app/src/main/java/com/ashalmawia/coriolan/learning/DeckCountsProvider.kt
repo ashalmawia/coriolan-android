@@ -17,6 +17,6 @@ class DeckCountsProviderImpl(
 ) : DeckCountsProvider {
 
     override fun peekCounts(exercise: Exercise, deck: Deck, cardType: CardType): Counts {
-        return assignmentFactory.createAssignment(StudyOrder.RANDOM, exercise, deck, cardType).counts()
+        return assignmentFactory.createAssignment(StudyOrder.RANDOM, deck, cardType).counts()
     }
 }

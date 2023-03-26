@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.model.ExpressionExtras
 
 interface ExerciseExecutor : ExerciseRenderer.Listener {
 
-    val canUndo: Boolean
+    val exerciseId: ExerciseId
 
     fun isPending(task: Task): Boolean
 

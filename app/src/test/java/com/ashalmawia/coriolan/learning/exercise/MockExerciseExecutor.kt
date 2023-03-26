@@ -8,8 +8,8 @@ import com.ashalmawia.coriolan.model.mockTask
 
 class MockExerciseExecutor(private val exercise: MockExercise) : ExerciseExecutor {
 
-    override val canUndo: Boolean
-        get() = false
+    override val exerciseId: ExerciseId
+        get() = exercise.id
 
     override fun isPending(task: Task): Boolean = false
 

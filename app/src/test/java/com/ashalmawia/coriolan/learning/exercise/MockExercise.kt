@@ -7,7 +7,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.mutation.Mutations
+import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
@@ -22,8 +22,8 @@ class MockExercise : Exercise {
     override val canUndo: Boolean
         get() = true
 
-    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): Mutations {
-        return Mutations(emptyList())
+    override fun mutations(preferences: Preferences, journal: Journal, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): List<Mutation> {
+        return emptyList()
     }
 
     override fun createExecutor(context: Context, uiContainer: ViewGroup, journal: Journal, listener: ExerciseListener): ExerciseExecutor {

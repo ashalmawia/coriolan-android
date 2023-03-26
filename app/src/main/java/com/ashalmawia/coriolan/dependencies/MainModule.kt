@@ -48,7 +48,7 @@ val mainModule = module {
     single<SpacedRepetitionScheduler> { MultiplierBasedScheduler(get()) }
     single<HistoryFactory> { HistoryFactoryImpl }
     single<EmptyStateProvider> { EmptyStateProviderImpl(get()) }
-    single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get()) }
+    single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get(), get()) }
     single<Backup> { JsonBackup() }
 
     factory<FirstStart> { FirstStartImpl(get()) }
