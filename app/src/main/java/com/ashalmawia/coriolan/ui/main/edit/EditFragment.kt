@@ -2,31 +2,23 @@ package com.ashalmawia.coriolan.ui.main.edit
 
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.data.importer.DataImportCallback
-import com.ashalmawia.coriolan.data.importer.DataImportFlow
-import com.ashalmawia.coriolan.data.importer.ImporterRegistry
-import com.ashalmawia.coriolan.dependencies.dataImportScope
 import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
-import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
-import kotlinx.android.synthetic.main.edit.*
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
+import kotlinx.android.synthetic.main.edit.list
 
 class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
-    private val importerRegistry: ImporterRegistry by inject()
     private val decksRegistry: DecksRegistry = domainScope().get()
 
     private lateinit var listener: EditFragmentListener
@@ -68,8 +60,8 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         builder.addDecks(decks(), this)
         builder.addOption(R.string.add_deck__title, { createNewDeck(it) }, R.drawable.ic_add)
 
-        builder.addCategory(R.string.import__category_title)
-        builder.addOption(R.string.import_from_file, { importFromFile() })
+//        builder.addCategory(R.string.import__category_title)
+//        builder.addOption(R.string.import_from_file, { importFromFile() })
 
         return builder.build()
     }
@@ -119,26 +111,26 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         startActivity(intent)
     }
 
-    private fun importFromFile() {
-        val flow = dataImportScope().get<DataImportFlow> { parametersOf(importerRegistry.default()) }
-        flow.callback = object : DataImportCallback {
-            override fun onSuccess() {
-                Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
-                notifyDataUpdated()
-                dataImportScope().close()
-            }
+//    private fun importFromFile() {
+//        val flow = dataImportScope().get<DataImportFlow> { parametersOf(importerRegistry.default()) }
+//        flow.callback = object : DataImportCallback {
+//            override fun onSuccess() {
+//                Toast.makeText(context, R.string.import_success, Toast.LENGTH_SHORT).show()
+//                notifyDataUpdated()
+//                dataImportScope().close()
+//            }
+//
+//            override fun onError(message: String) {
+//                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+//                dataImportScope().close()
+//            }
+//        }
+//        flow.start()
+//    }
 
-            override fun onError(message: String) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                dataImportScope().close()
-            }
-        }
-        flow.start()
-    }
-
-    private fun notifyDataUpdated() {
-        listener.onDataUpdated()
-    }
+//    private fun notifyDataUpdated() {
+//        listener.onDataUpdated()
+//    }
 }
 
 interface EditFragmentListener {
