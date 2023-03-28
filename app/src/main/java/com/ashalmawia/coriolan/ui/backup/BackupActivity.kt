@@ -1,11 +1,14 @@
 package com.ashalmawia.coriolan.ui.backup
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
@@ -14,13 +17,16 @@ import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
-import java.io.File
 
 class BackupActivity : BaseActivity(), BackupCreationListener {
 
-    private val backupDir = BackupUtils.backupDirectory()
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
+
+    private val createDocumentLauncher = registerForActivityResult(
+            ActivityResultContracts.CreateDocument("*/*")) { uri ->
+        createBackup(uri)
+    }
 
     private var task: BackupAsyncTask? = null
 
@@ -35,7 +41,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 
     private fun onCreateBackupClicked() {
-        createBackup()
+        createDocumentLauncher.launch(fileName())
     }
 
     private fun updateUiCreatingBackup() {
@@ -46,10 +52,13 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
         dividerCreating.visible = true
     }
 
-    private fun createBackup() {
+    private fun createBackup(uri: Uri?) {
+        uri ?: return
+
         updateUiCreatingBackup()
 
-        val task = BackupAsyncTask(backupableRepository, backupDir, backup)
+        val resolver = applicationContext.contentResolver
+        val task = BackupAsyncTask(resolver, backupableRepository, uri, backup)
         task.listener = this
         this.task = task
 
@@ -57,13 +66,13 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onBackupCreated(file: File) {
+    override fun onBackupCreated(uri: Uri) {
         labelCreating.visible = false
         dividerCreating.visible = false
 
         labelCreated.setText(R.string.backup__created)
         labelCreated.visible = true
-        labelPath.text = file.absolutePath
+        labelPath.text = uri.path
         labelPath.visible = true
         dividerCreated.visible = true
 
@@ -84,6 +93,11 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
         task = null
     }
 
+    private fun fileName(): String {
+        val time = DateTime.now().toString("yyyy-MM-dd_HH:mm:ss")
+        return "coriolan_$time.backup"
+    }
+
     companion object {
         fun intent(context: Context): Intent {
             return Intent(context, BackupActivity::class.java)
@@ -92,53 +106,35 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 }
 
 private class BackupAsyncTask(
+        private val resolver: ContentResolver,
         private val repo: BackupableRepository,
-        private val backupDir: File,
+        private val backupUri: Uri,
         private val backup: Backup
-) : AsyncTask<Any, Nothing, File?>() {
+) : AsyncTask<Any, Nothing, Uri?>() {
 
     var listener: BackupCreationListener? = null
 
-    override fun doInBackground(vararg params: Any): File? {
-        if (!backupDir.exists()) {
-            val result = backupDir.mkdirs()
-            if (!result) {
-                return null
-            }
-        }
+    override fun doInBackground(vararg params: Any): Uri? {
+        val stream = resolver.openOutputStream(backupUri) ?: return null
 
-        val file = File(backupDir, name())
-        if (!file.createNewFile()) {
-            return null
-        }
-
-        file.outputStream().use {
+        stream.use {
             backup.create(repo, it)
         }
-
-        return file
+        return backupUri
     }
 
-    private fun name(): String {
-        val time = DateTime.now().toString("yyyy-MM-dd_HH:mm:ss")
-        return "backup_$time.coriolan"
-    }
-
-    override fun onPostExecute(file: File?) {
-        val listener = this.listener
-        if (listener != null) {
-            if (file != null) {
-                listener.onBackupCreated(file)
-            } else {
-                listener.onError()
-            }
+    override fun onPostExecute(uri: Uri?) {
+        if (uri != null) {
+            listener?.onBackupCreated(uri)
+        } else {
+            listener?.onError()
         }
     }
 }
 
 private interface BackupCreationListener {
 
-    fun onBackupCreated(file: File)
+    fun onBackupCreated(uri: Uri)
 
     fun onError()
 }
