@@ -1,10 +1,7 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-import android.util.Log
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.util.getString
-
-private const val TAG = "SqliteBackupHelper"
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
@@ -176,9 +173,6 @@ class SqliteBackupHelper(
             helper.initializeDatabaseSchema(db)
             override(this)
             db.setTransactionSuccessful()
-        } catch(e: Throwable) {
-            Log.e(TAG, "failed to restore from backup", e)
-            throw e
         } finally {
             db.endTransaction()
         }

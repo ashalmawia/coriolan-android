@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import com.ashalmawia.coriolan.R
@@ -21,6 +22,8 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
 import org.koin.android.ext.android.inject
+
+private const val TAG = "RestoreFromBackupActivity"
 
 class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
@@ -141,6 +144,7 @@ private class RestoreFromBackupAsyncTask(
             }
             return true
         } catch (e: Throwable) {
+            Log.e(TAG, "failed to restore from backup", e)
             return false
         }
     }
