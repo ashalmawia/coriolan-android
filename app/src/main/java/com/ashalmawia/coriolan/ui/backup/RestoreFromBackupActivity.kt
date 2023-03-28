@@ -66,8 +66,8 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     @SuppressLint("SetTextI18n")
     private fun onRestoreConfirmed(uri: Uri) {
-        buttonOk.isEnabled = false
-        buttonCancel.isEnabled = false
+        buttonOk.visible = false
+        buttonCancel.visible = false
 
         dividerRestoring.visible = true
         labelStatus.visible = true
@@ -99,7 +99,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
         progress.visible = false
 
         buttonCancel.visible = false
-        buttonOk.isEnabled = true
+        buttonOk.visible = true
         buttonOk.setText(R.string.button_ok)
         buttonOk.setOnClickListener { restartApp() }
     }
