@@ -21,10 +21,6 @@ class MockBackupableRepository(
     private val decks = decks.toMutableList()
     private val cardStates = cardStates.toMutableList()
 
-    override fun beginTransaction() {}
-    override fun commitTransaction() {}
-    override fun rollbackTransaction() {}
-
     override fun allLanguages(offset: Int, limit: Int): List<LanguageInfo>
             = languages.subList(min(offset, languages.size), min(offset + limit, languages.size))
 
@@ -47,7 +43,12 @@ class MockBackupableRepository(
         return cardStates.subList(min(offset, cardStates.size), min(offset + limit, cardStates.size))
     }
 
-    override fun clearAll() {
+    override fun overrideRepositoryData(override: (BackupableRepository) -> Unit) {
+        clearAll()
+        override(this)
+    }
+
+    private fun clearAll() {
         languages.clear()
         domains.clear()
         terms.clear()

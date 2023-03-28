@@ -4,12 +4,6 @@ import org.joda.time.DateTime
 
 interface BackupableRepository {
 
-    fun beginTransaction()
-
-    fun commitTransaction()
-
-    fun rollbackTransaction()
-
     fun allLanguages(offset: Int, limit: Int): List<LanguageInfo>
 
     fun allDomains(offset: Int, limit: Int): List<DomainInfo>
@@ -24,8 +18,6 @@ interface BackupableRepository {
 
     fun allCardStates(offset: Int, limit: Int): List<CardStateInfo>
 
-    fun clearAll()
-
     fun writeLanguages(languages: List<LanguageInfo>)
 
     fun writeDomains(domains: List<DomainInfo>)
@@ -39,6 +31,8 @@ interface BackupableRepository {
     fun writeDecks(decks: List<DeckInfo>)
 
     fun writeCardStates(states: List<CardStateInfo>)
+
+    fun overrideRepositoryData(override: (BackupableRepository) -> Unit)
 
     fun hasAtLeastOneCard(): Boolean
 }

@@ -24,14 +24,8 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
     }
 
     override fun restoreFrom(stream: InputStream, repository: BackupableRepository) {
-        repository.clearAll()
-        repository.beginTransaction()
-        try {
+        repository.overrideRepositoryData {
             restoreFrom(stream, repository, JacksonDeserializer.instance())
-            repository.commitTransaction()
-        } catch (e: Throwable) {
-            repository.rollbackTransaction()
-            throw e
         }
     }
 

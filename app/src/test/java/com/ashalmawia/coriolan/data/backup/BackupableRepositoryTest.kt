@@ -73,7 +73,7 @@ abstract class BackupableRepositoryTest {
             CardInfo(12L, 1L, 1L, 12L, listOf(4L))
     )
 
-    private val srstates = listOf(
+    private val cardStates = listOf(
             CardStateInfo(5L, today.minusDays(10), 44),
             CardStateInfo(3L, today.minusDays(5), 52),
             CardStateInfo(12L, today.plusDays(11), 22),
@@ -177,24 +177,24 @@ abstract class BackupableRepositoryTest {
 
         // then
         testNonEmpty(
-                srstates.sortedBy { it.cardId },
+                cardStates.sortedBy { it.cardId },
                 { states -> repo.writeCardStates(states) },
                 { offset, limit -> repo.allCardStates(offset, limit).sortedBy { it.cardId } }
         )
     }
 
     @Test
-    fun test__clear() {
+    fun test__overrideRepositoryData__emptyData() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
         repo.writeTerms(terms)
         repo.writeDecks(decks)
         repo.writeCards(cards)
-        repo.writeCardStates(srstates)
+        repo.writeCardStates(cardStates)
 
         // when
-        repo.clearAll()
+        repo.overrideRepositoryData { }
 
         // then
         assertTrue(repo.allLanguages(0, 500).isEmpty())
@@ -203,6 +203,35 @@ abstract class BackupableRepositoryTest {
         assertTrue(repo.allCards(0, 500).isEmpty())
         assertTrue(repo.allDecks(0, 500).isEmpty())
         assertTrue(repo.allCardStates(0, 500).isEmpty())
+    }
+
+    @Test
+    fun test__overrideRepositoryData__nonEmptyData() {
+        // given
+        repo.writeLanguages(languages)
+        repo.writeDomains(domains)
+        repo.writeTerms(terms)
+        repo.writeDecks(decks)
+        repo.writeCards(cards)
+        repo.writeCardStates(cardStates)
+
+        // when
+        repo.overrideRepositoryData { repo ->
+            repo.writeLanguages(languages)
+            repo.writeDomains(domains)
+            repo.writeTerms(terms)
+            repo.writeDecks(decks)
+            repo.writeCards(cards)
+            repo.writeCardStates(cardStates)
+        }
+
+        // then
+        assertEquals(languages, repo.allLanguages(0, 500))
+        assertEquals(domains, repo.allDomains(0, 500))
+        assertEquals(terms, repo.allTerms(0, 500))
+        assertEquals(cards, repo.allCards(0, 500))
+        assertEquals(decks, repo.allDecks(0, 500))
+        assertEquals(cardStates.sortedBy { it.cardId }, repo.allCardStates(0, 500).sortedBy { it.cardId })
     }
 
     @Test
@@ -226,7 +255,7 @@ abstract class BackupableRepositoryTest {
         assertTrue(repo.hasAtLeastOneCard())
 
         // given
-        repo.clearAll()
+        repo.overrideRepositoryData { }
 
         // then
         assertFalse(repo.hasAtLeastOneCard())

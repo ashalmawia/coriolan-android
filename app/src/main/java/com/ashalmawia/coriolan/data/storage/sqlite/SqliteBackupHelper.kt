@@ -1,23 +1,14 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
+import android.util.Log
 import com.ashalmawia.coriolan.data.backup.*
+import com.ashalmawia.coriolan.util.getString
+
+private const val TAG = "SqliteBackupHelper"
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
 ) : BackupableRepository {
-
-    override fun beginTransaction() {
-        helper.writableDatabase.beginTransaction()
-    }
-
-    override fun commitTransaction() {
-        helper.writableDatabase.setTransactionSuccessful()
-        helper.writableDatabase.endTransaction()
-    }
-
-    override fun rollbackTransaction() {
-        helper.writableDatabase.endTransaction()
-    }
 
     override fun allLanguages(offset: Int, limit: Int): List<LanguageInfo> {
         val db = helper.readableDatabase
@@ -173,8 +164,52 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun clearAll() {
-        helper.deleteDatabase()
+    override fun overrideRepositoryData(override: (BackupableRepository) -> Unit) {
+        val db = helper.writableDatabase
+
+        // must be done outside a transaction
+        db.setForeignKeyConstraintsEnabled(false)
+
+        db.beginTransaction()
+        try {
+            dropAllTables()
+            helper.initializeDatabaseSchema(db)
+            override(this)
+            db.setTransactionSuccessful()
+        } catch(e: Throwable) {
+            Log.e(TAG, "failed to restore from backup", e)
+            throw e
+        } finally {
+            db.endTransaction()
+        }
+
+        // must be done outside a transaction
+        db.setForeignKeyConstraintsEnabled(true)
+    }
+
+    private fun dropAllTables() {
+        val db = helper.writableDatabase
+
+        val cursor = db.rawQuery("""
+            SELECT name
+                FROM sqlite_master
+                WHERE type='table'
+        """.trimIndent(), null)
+        val tables = cursor.use {
+            val result = mutableListOf<String>()
+            while (it.moveToNext()) {
+                val name = it.getString("name", null)
+                if (name == "android_metadata" || name == "sqlite_sequence") {
+                    continue
+                }
+                result.add(name)
+            }
+            result
+        }
+
+        tables.forEach { name ->
+            db.execSQL("DROP TABLE IF EXISTS '$name'")
+        }
     }
 
     override fun writeLanguages(languages: List<LanguageInfo>) {

@@ -144,17 +144,6 @@ private fun provideBackupInputStream(): InputStream {
 
 @OpenForTesting
 class OpenBackupableRepostory(private val inner: BackupableRepository) : BackupableRepository {
-    override fun beginTransaction() {
-        inner.beginTransaction()
-    }
-
-    override fun commitTransaction() {
-        inner.commitTransaction()
-    }
-
-    override fun rollbackTransaction() {
-        inner.rollbackTransaction()
-    }
 
     override fun allLanguages(offset: Int, limit: Int): List<LanguageInfo> = inner.allLanguages(offset, limit)
 
@@ -171,7 +160,9 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
     override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo>
             = inner.allCardStates(offset, limit)
 
-    override fun clearAll() = inner.clearAll()
+    override fun overrideRepositoryData(override: (BackupableRepository) -> Unit) {
+        inner.overrideRepositoryData(override)
+    }
 
     override fun writeLanguages(languages: List<LanguageInfo>) = inner.writeLanguages(languages)
 
