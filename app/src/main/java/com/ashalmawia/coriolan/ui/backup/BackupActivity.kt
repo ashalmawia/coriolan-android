@@ -9,7 +9,6 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.backup.*
@@ -19,10 +18,9 @@ import java.io.File
 
 class BackupActivity : BaseActivity(), BackupCreationListener {
 
-    private val backupDir by lazy { BackupUtils.createBackupDir(this) }
+    private val backupDir = BackupUtils.backupDirectory()
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
-    private val exercisesRegistry: ExercisesRegistry by inject()
 
     private var task: BackupAsyncTask? = null
 
@@ -51,7 +49,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     private fun createBackup() {
         updateUiCreatingBackup()
 
-        val task = BackupAsyncTask(backupableRepository, backupDir, backup, exercisesRegistry)
+        val task = BackupAsyncTask(backupableRepository, backupDir, backup)
         task.listener = this
         this.task = task
 
@@ -96,8 +94,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 private class BackupAsyncTask(
         private val repo: BackupableRepository,
         private val backupDir: File,
-        private val backup: Backup,
-        private val exercisesRegistry: ExercisesRegistry
+        private val backup: Backup
 ) : AsyncTask<Any, Nothing, File?>() {
 
     var listener: BackupCreationListener? = null

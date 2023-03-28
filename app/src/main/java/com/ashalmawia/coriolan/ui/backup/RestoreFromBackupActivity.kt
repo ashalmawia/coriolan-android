@@ -2,12 +2,15 @@ package com.ashalmawia.coriolan.ui.backup
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import androidx.annotation.StringRes
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
@@ -18,7 +21,6 @@ import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
 import org.koin.android.ext.android.inject
-import java.io.File
 
 class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
@@ -27,8 +29,9 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     private val repository: Repository by inject()
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
-    private val backupDir by lazy { BackupUtils.createBackupDir(this) }
     private val preferences: Preferences by inject()
+
+    private val openDocumentLauncher = registerForActivityResult(OpenDocument(), this::onFileSelected)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,30 +44,12 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     private fun selectBackup() {
-        if (!backupDir.exists()) {
-            onError(R.string.backup__restore_failed_no_backup)
-            return
-        }
-
-        val files = backupDir.listFiles { file -> file.isFile && file.name.endsWith(".coriolan") }
-        if (files.isNullOrEmpty()) {
-            onError(R.string.backup__restore_failed_no_backup)
-            return
-        }
-
-        val fileNames = files.map { it.name }.toTypedArray()
-
-        val dialog = AlertDialog.Builder(this)
-                .setTitle(R.string.backup__restore_select_file)
-                .setSingleChoiceItems(fileNames, 0) { dialog, position ->
-                    onFileSelected(files[position])
-                    dialog.dismiss()
-                }
-                .create()
-        dialog.show()
+        openDocumentLauncher.launch(arrayOf("*/*"))
     }
 
-    private fun onFileSelected(file: File) {
+    private fun onFileSelected(uri: Uri?) {
+        uri ?: return
+
         val hasValuableData = backupableRepository.hasAtLeastOneCard()
 
         if (hasValuableData) {
@@ -72,32 +57,33 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
                     .setTitle(R.string.backup__restore_final_warning_title)
                     .setMessage(R.string.backup__restore_final_warning_message)
                     .setNegativeButton(R.string.button_cancel, null)
-                    .setPositiveButton(R.string.backup__restore_confirm) { _, _ -> onRestoreConfirmed(file) }
+                    .setPositiveButton(R.string.backup__restore_confirm) { _, _ -> onRestoreConfirmed(uri) }
             dialog.show()
         } else {
-            onRestoreConfirmed(file)
+            onRestoreConfirmed(uri)
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun onRestoreConfirmed(file: File) {
+    private fun onRestoreConfirmed(uri: Uri) {
         buttonOk.isEnabled = false
         buttonCancel.isEnabled = false
 
         dividerRestoring.visible = true
         labelStatus.visible = true
 
-        labelPath.text = "sdcard/Coriolan/backup/${file.name}"
+        labelPath.text = uri.path
         labelPath.visible = true
 
         labelRestoring.visible = true
         progress.visible = true
 
-        restoreFrom(file)
+        restoreFrom(uri)
     }
 
-    private fun restoreFrom(file: File) {
-        val task = RestoreFromBackupAsyncTask(backupableRepository, file, backup, preferences)
+    private fun restoreFrom(uri: Uri) {
+        val resolver = applicationContext.contentResolver
+        val task = RestoreFromBackupAsyncTask(resolver, backupableRepository, uri, backup, preferences)
         task.listener = this
         this.task = task
 
@@ -136,8 +122,9 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 }
 
 private class RestoreFromBackupAsyncTask(
+        private val resolver: ContentResolver,
         private val repo: BackupableRepository,
-        private val backupFile: File,
+        private val backupFile: Uri,
         private val backup: Backup,
         private val preferences: Preferences
 ) : AsyncTask<Any, Unit, Boolean>() {
@@ -145,11 +132,13 @@ private class RestoreFromBackupAsyncTask(
     var listener: BackupRestoringListener? = null
 
     override fun doInBackground(vararg params: Any): Boolean {
-        if (!backupFile.exists() || !backupFile.isFile) {
+        val stream = resolver.openInputStream(backupFile)
+        if (stream == null) {
+            showError()
             return false
         }
 
-        backupFile.inputStream().use {
+        stream.use {
             backup.restoreFrom(it, repo)
             preferences.clearLastTranslationsLanguageId()
         }
@@ -158,14 +147,15 @@ private class RestoreFromBackupAsyncTask(
     }
 
     override fun onPostExecute(success: Boolean) {
-        val listener = this.listener
-        if (listener != null) {
-            if (success) {
-                listener.onRestored()
-            } else {
-                listener.onError(R.string.backup__restore_failed)
-            }
+        if (success) {
+            listener?.onRestored()
+        } else {
+            showError()
         }
+    }
+
+    private fun showError() {
+        listener?.onError(R.string.backup__restore_failed)
     }
 }
 
