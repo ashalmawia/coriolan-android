@@ -22,7 +22,7 @@ fun AlertDialog.setPositiveButton(title: String, listener: () -> Unit = {}) {
 fun AlertDialog.setPositiveButton(@StringRes titleRes: Int, listener: () -> Unit = {}) {
     setPositiveButton(context.getString(titleRes), listener)
 }
-fun Activity.showAlert(@StringRes titleRes: Int, @StringRes messageRes: Int) {
+fun Activity.finishWithAlert(@StringRes titleRes: Int, @StringRes messageRes: Int) {
     AlertDialog.Builder(this)
             .setTitle(titleRes)
             .setMessage(messageRes)
@@ -32,7 +32,7 @@ fun Activity.showAlert(@StringRes titleRes: Int, @StringRes messageRes: Int) {
 }
 
 fun Activity.showStoragePermissionDeniedAlert() {
-    showAlert(R.string.permissions__permission_denied_title, R.string.permissions__storage_permission_denied_message)
+    finishWithAlert(R.string.permissions__permission_denied_title, R.string.permissions__storage_permission_denied_message)
 }
 
 fun manageStoragePermission(): String {

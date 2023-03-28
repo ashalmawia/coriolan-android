@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import androidx.annotation.StringRes
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
@@ -17,6 +16,7 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.util.finishWithAlert
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.restore_from_backup.*
@@ -105,7 +105,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     }
 
     override fun onError(@StringRes messageRes: Int) {
-        Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show()
+        finishWithAlert(R.string.backup__restore_failed_title, messageRes)
     }
 
     override fun onStop() {
@@ -132,30 +132,25 @@ private class RestoreFromBackupAsyncTask(
     var listener: BackupRestoringListener? = null
 
     override fun doInBackground(vararg params: Any): Boolean {
-        val stream = resolver.openInputStream(backupFile)
-        if (stream == null) {
-            showError()
+        val stream = resolver.openInputStream(backupFile) ?: return false
+
+        try {
+            stream.use {
+                backup.restoreFrom(it, repo)
+                preferences.clearLastTranslationsLanguageId()
+            }
+            return true
+        } catch (e: Throwable) {
             return false
         }
-
-        stream.use {
-            backup.restoreFrom(it, repo)
-            preferences.clearLastTranslationsLanguageId()
-        }
-
-        return true
     }
 
     override fun onPostExecute(success: Boolean) {
         if (success) {
             listener?.onRestored()
         } else {
-            showError()
+            listener?.onError(R.string.backup__restore_failed)
         }
-    }
-
-    private fun showError() {
-        listener?.onError(R.string.backup__restore_failed)
     }
 }
 

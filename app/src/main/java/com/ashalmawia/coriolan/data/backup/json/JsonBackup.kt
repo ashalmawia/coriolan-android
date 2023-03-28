@@ -39,7 +39,10 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         val factory = JsonFactory()
         val json = factory.createParser(stream)
 
-        while (json.nextToken() != JsonToken.END_OBJECT) {
+        while (true) {
+            val token = json.nextToken()
+            if (token == null || token == JsonToken.END_OBJECT) break
+
             when (json.currentName) {
                 FIELD_LANGUAGES -> read(json, deserializer::readLanguage, repository::writeLanguages)
                 FIELD_DOMAINS -> read(json, deserializer::readDomain, repository::writeDomains)
