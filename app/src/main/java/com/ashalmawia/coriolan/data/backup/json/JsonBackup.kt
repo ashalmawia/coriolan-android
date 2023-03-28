@@ -12,11 +12,14 @@ private const val PAGE_SIZE_DEFAULT = 20
 
 private const val FIELD_LANGUAGES = "languages"
 private const val FIELD_DOMAINS = "domains"
-private const val FIELD_TERMS = "expressions"
-private const val FIELD_TERM_EXTRAS = "expression_extras"
+private const val FIELD_TERMS = "terms"
+private const val FIELD_TERMS_LEGACY = "expressions"
+private const val FIELD_TERM_EXTRAS = "term_extras"
+private const val FIELD_TERM_EXTRAS_LEGACY = "expression_extras"
 private const val FIELD_CARDS = "cards"
 private const val FIELD_DECKS = "decks"
-private const val FIELD_CARD_STATES = "sr_state"
+private const val FIELD_CARD_STATES = "card_states"
+private const val FIELD_CARD_STATES_LEGACY = "sr_state"
 
 class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
@@ -44,11 +47,11 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
             when (json.currentName) {
                 FIELD_LANGUAGES -> read(json, deserializer::readLanguage, repository::writeLanguages)
                 FIELD_DOMAINS -> read(json, deserializer::readDomain, repository::writeDomains)
-                FIELD_TERMS -> read(json, deserializer::readTerm, repository::writeTerms)
-                FIELD_TERM_EXTRAS -> read(json, deserializer::readTermExtra, repository::writeTermExtras)
+                FIELD_TERMS, FIELD_TERMS_LEGACY -> read(json, deserializer::readTerm, repository::writeTerms)
+                FIELD_TERM_EXTRAS, FIELD_TERM_EXTRAS_LEGACY -> read(json, deserializer::readTermExtra, repository::writeTermExtras)
                 FIELD_CARDS -> read(json, deserializer::readCard, repository::writeCards)
                 FIELD_DECKS -> read(json, deserializer::readDeck, repository::writeDecks)
-                FIELD_CARD_STATES -> readSRStates(json, deserializer::readCardStateSR, repository)
+                FIELD_CARD_STATES, FIELD_CARD_STATES_LEGACY -> readSRStates(json, deserializer::readCardStateSR, repository)
             }
         }
 
