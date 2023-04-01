@@ -8,7 +8,7 @@
 	<string name="tab_settings">Settings</string>
 
 	<!-- Exercise types -->
-	<string name="exercise_simple">Simple exercise</string>
+	<string name="exercise_flashcards">Flashcards</string>
 
 	<!-- Data import -->
 	<string name="import__category_title">Import</string>

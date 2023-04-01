@@ -20,7 +20,7 @@ class SqliteLogbookTest {
     private val journal = SqliteLogbook(RuntimeEnvironment.application)
 
     private val today = mockToday()
-    private val exerciseId = ExerciseId.SPACED_REPETITION
+    private val exerciseId = ExerciseId.FLASHCARDS
 
     @Test
     fun test__cardsStudiedOnDate__noEntry() {

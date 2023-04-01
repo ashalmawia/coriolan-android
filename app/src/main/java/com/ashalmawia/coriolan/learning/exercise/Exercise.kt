@@ -55,7 +55,7 @@ interface Exercise {
 }
 
 enum class ExerciseId(val value: String) {
-    SPACED_REPETITION("sr"),
+    FLASHCARDS("flashcards"),
 
     TEST("test")    // testing only
 }

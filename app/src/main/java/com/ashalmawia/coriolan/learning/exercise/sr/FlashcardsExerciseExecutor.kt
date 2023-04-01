@@ -14,7 +14,7 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.exercise.GenericLogbook
 import com.ashalmawia.coriolan.model.Card
 
-class SpacedRepetitionExerciseExecutor(
+class FlashcardsExerciseExecutor(
         context: Context,
         private val exercise: Exercise,
         private val repository: Repository,
@@ -25,7 +25,7 @@ class SpacedRepetitionExerciseExecutor(
         private val listener: ExerciseListener
 ) : ExerciseExecutor {
 
-    private val renderer = SpacedRepetitionExerciseRenderer(context, uiContainer, this)
+    private val renderer = FlashcardsExerciseRenderer(context, uiContainer, this)
     private val logbook = GenericLogbook(logbook, todayProvider, exercise)
 
     override val exerciseId: ExerciseId

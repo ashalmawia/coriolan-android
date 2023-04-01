@@ -31,18 +31,18 @@ import org.joda.time.DateTime
  * If the card is answered correctly, it removes it from the queue.
  * Otherwise, adds it to the end of the queue.
  */
-class SpacedRepetitionExercise(
+class FlashcardsExercise(
         private val repository: Repository,
         private val todayProvider: TodayProvider,
         private val emptyStateProvider: EmptyStateProvider
 ) : Exercise {
 
     override val id: ExerciseId
-        get() = ExerciseId.SPACED_REPETITION
+        get() = ExerciseId.FLASHCARDS
 
     @StringRes
     override fun name(): Int {
-        return R.string.exercise_simple
+        return R.string.exercise_flashcards
     }
 
     override val canUndo: Boolean
@@ -80,7 +80,7 @@ class SpacedRepetitionExercise(
             logbook: Logbook,
             listener: ExerciseListener
     ): ExerciseExecutor {
-        return SpacedRepetitionExerciseExecutor(
+        return FlashcardsExerciseExecutor(
                 context,
                 this,
                 repository,
@@ -103,7 +103,7 @@ class SpacedRepetitionExercise(
     private fun createScheduler(todayProvider: TodayProvider) =
             MultiplierBasedScheduler(todayProvider)
 
-    class LearningModeMutation(private val exercise: SpacedRepetitionExercise) : Mutation {
+    class LearningModeMutation(private val exercise: FlashcardsExercise) : Mutation {
 
         override fun apply(tasks: List<Task>): List<Task> {
             val (forward, reverse) = tasks.forwardAndReverseWithState()

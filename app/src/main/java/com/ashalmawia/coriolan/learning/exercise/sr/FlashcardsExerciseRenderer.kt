@@ -11,7 +11,7 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.ui.learning.CardView
 import com.ashalmawia.coriolan.ui.learning.CardViewListener
 
-class SpacedRepetitionExerciseRenderer(
+class FlashcardsExerciseRenderer(
         context: Context,
         private val uiContainer: ViewGroup,
         private val listener: ExerciseRenderer.Listener

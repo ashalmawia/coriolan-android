@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning.exercise
 
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.TodayProvider
-import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionExercise
+import com.ashalmawia.coriolan.learning.exercise.sr.FlashcardsExercise
 
 class ExercisesRegistryImpl(
         repository: Repository,
@@ -11,7 +11,7 @@ class ExercisesRegistryImpl(
 ) : ExercisesRegistry {
 
     private val exercises = listOf(
-            SpacedRepetitionExercise(repository, todayProvider, emptyStateProvider)
+            FlashcardsExercise(repository, todayProvider, emptyStateProvider)
     )
 
     override fun allExercises(): List<Exercise> {
