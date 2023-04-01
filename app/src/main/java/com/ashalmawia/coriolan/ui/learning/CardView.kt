@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.TermExtras
+import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
 import com.ashalmawia.coriolan.ui.view.visible
 import kotlinx.android.synthetic.main.card_translation_item.view.*
@@ -43,14 +43,12 @@ class CardView : FrameLayout {
         touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
     }
 
-    fun bind(card: Card, extras: List<TermExtras>, answers: List<SRAnswer>) {
-        val extrasMap = extras.associateBy { it.term }
-
+    fun bind(card: Card, answers: List<SRAnswer>) {
         frontText.text = card.original.value
-        transcriptionText.bindTranscription(extrasMap[card.original]?.transcription)
+        transcriptionText.bindTranscription(card.original.extras.transcription)
 
         clearTranslationItems()
-        card.translations.forEach { addTranslationItem(it.value, extrasMap[it]?.transcription) }
+        card.translations.forEach { addTranslationItem(it) }
 
         configureButtonsBar(answers)
 
@@ -106,10 +104,10 @@ class CardView : FrameLayout {
         animator.start()
     }
 
-    private fun addTranslationItem(value: String, transcription: String?) {
+    private fun addTranslationItem(term: Term) {
         val view = LayoutInflater.from(context).inflate(R.layout.card_translation_item, translations, false)
-        view.text.text = value
-        view.transcription.bindTranscription(transcription)
+        view.text.text = term.value
+        view.transcription.bindTranscription(term.extras.transcription)
         translations.addView(view)
     }
 

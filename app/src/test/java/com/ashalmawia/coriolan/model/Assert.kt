@@ -17,7 +17,7 @@ fun assertTermCorrect(term: Term?, value: String, language: Language) {
     assertLanguageCorrect(term.language, language.value)
 }
 
-fun assertExtrasCorrect(extras: TermExtras, transcription: String?) {
+fun assertExtrasCorrect(extras: Extras, transcription: String?) {
     assertEquals("transcription extra is correct", transcription, extras.transcription)
 }
 

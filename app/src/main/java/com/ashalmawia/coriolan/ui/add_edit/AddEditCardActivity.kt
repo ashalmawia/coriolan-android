@@ -33,7 +33,7 @@ class AddEditCardActivity : BaseActivity() {
     private val domain: Domain = domainScope().get()
 
     private var card: Card? = null
-    private var extras: TermExtras? = null
+    private var extras: Extras? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +62,7 @@ class AddEditCardActivity : BaseActivity() {
         if (card.translations.isEmpty()) throw IllegalStateException("card with id[$cardId] has no translations")
 
         this.card = card
-        this.extras = repository.allExtrasForTerm(card.original)
+        this.extras = card.original.extras
     }
 
     private fun initialize() {

@@ -122,7 +122,7 @@ abstract class StorageTest {
         val lang = domain.langTranslations()
 
         // when
-        val term = storage.addTerm(value, lang)
+        val term = storage.addTerm(value, lang, null)
 
         // then
         assertTermCorrect(term, value, lang)
@@ -137,7 +137,7 @@ abstract class StorageTest {
         val lang = domain.langTranslations()
 
         // when
-        val term = storage.addTerm(value, lang)
+        val term = storage.addTerm(value, lang, null)
 
         // then
         assertTermCorrect(term, value, lang)
@@ -153,14 +153,14 @@ abstract class StorageTest {
         val value = "exaggeration"
 
         // when
-        val term = storage.addTerm(value, lang)
+        val term = storage.addTerm(value, lang, null)
 
         // then
         assertTermCorrect(term, value, lang)
     }
 
     @Test
-    fun `updateTranscription() was none, new none`() {
+    fun `update transcription - was none, new none`() {
         // given
         val storage = prefilledStorage.value
 
@@ -169,36 +169,32 @@ abstract class StorageTest {
         val value = "exaggeration"
         val transcriptionNew = null
 
-        val term = storage.addTerm(value, lang)
+        val term = storage.addTerm(value, lang, null)
 
         // when
-        storage.setTranscription(term, transcriptionNew)
-        val extras = storage.allExtrasForTerm(term)
+        val updated = storage.updateTerm(term, Extras(transcription = null))
 
         // then
-        assertExtrasCorrect(extras, transcriptionNew)
+        assertExtrasCorrect(updated.extras, transcriptionNew)
     }
 
     @Test
-    fun `updateTranscription() was none, new non-empty`() {
+    fun `update transcription - was none, new non-empty`() {
         // given
         val storage = prefilledStorage.value
 
         val lang = domain.langTranslations()
 
         val value = "exaggeration"
-        val transcriptionOld = null
         val transcriptionNew = "[ɪɡˌzædʒəˈreɪʃən]"
 
-        val term = storage.addTerm(value, lang)
-        storage.setTranscription(term, transcriptionOld)
+        val term = storage.addTerm(value, lang, null)
 
         // when
-        storage.setTranscription(term, transcriptionNew)
-        val extras = storage.allExtrasForTerm(term)
+        val updated = storage.updateTerm(term, Extras(transcription = transcriptionNew))
 
         // then
-        assertExtrasCorrect(extras, transcriptionNew)
+        assertExtrasCorrect(updated.extras, transcriptionNew)
     }
 
     @Test
@@ -212,19 +208,17 @@ abstract class StorageTest {
         val transcriptionOld = "[ɪɡˌzædʒəˈreɪʃən]"
         val transcriptionNew = null
 
-        val term = storage.addTerm(value, lang)
-        storage.setTranscription(term, transcriptionOld)
+        val term = storage.addTerm(value, lang, Extras(transcription = transcriptionOld))
 
         // when
-        storage.setTranscription(term, transcriptionNew)
-        val extras = storage.allExtrasForTerm(term)
+        val updated = storage.updateTerm(term, Extras(transcription = transcriptionNew))
 
         // then
-        assertExtrasCorrect(extras, transcriptionNew)
+        assertExtrasCorrect(updated.extras, transcriptionNew)
     }
 
     @Test
-    fun `updateTranscription() was non-empty, new non-empty`() {
+    fun `update transcription - was non-empty, new non-empty`() {
         // given
         val storage = prefilledStorage.value
 
@@ -234,131 +228,13 @@ abstract class StorageTest {
         val transcriptionOld = "[mɑːtʃ]"
         val transcriptionNew = "[ɪɡˌzædʒəˈreɪʃən]"
 
-        val term = storage.addTerm(value, lang)
-        storage.setTranscription(term, transcriptionOld)
+        val term = storage.addTerm(value, lang, Extras(transcription = transcriptionOld))
 
         // when
-        storage.setTranscription(term, transcriptionNew)
-        val extras = storage.allExtrasForTerm(term)
+        val updated = storage.updateTerm(term, Extras(transcription = transcriptionNew))
 
         // then
-        assertExtrasCorrect(extras, transcriptionNew)
-    }
-
-    @Test
-    fun `setExtra() multiple extra types`() {
-        // given
-        val storage = prefilledStorage.value
-
-        val lang = domain.langTranslations()
-
-        val value = "exaggeration"
-        val transcription = "[mɑːtʃ]"
-        val unknown = "blah blah"
-
-        val term = storage.addTerm(value, lang)
-
-        // when
-        storage.setTranscription(term, transcription)
-        storage.setExtra(term, ExtraType.UNKNOWN, unknown)
-
-        val extras = storage.allExtrasForTerm(term)
-
-        // then
-        extras.also {
-            assertEquals(2, it.map.size)
-            assertEquals(transcription, it.transcription)
-            assertEquals(unknown, it.map[ExtraType.UNKNOWN]?.value)
-        }
-
-        // when
-        storage.setTranscription(term, null)
-
-        val withoutTranscription = storage.allExtrasForTerm(term)
-
-        // then
-        withoutTranscription.also {
-            assertEquals(1, it.map.size)
-            assertEquals(null, it.transcription)
-            assertEquals(unknown, it.map[ExtraType.UNKNOWN]?.value)
-        }
-
-        // when
-        storage.setExtra(term, ExtraType.UNKNOWN, null)
-
-        val empty = storage.allExtrasForTerm(term)
-
-        // then
-        assertTrue(empty.map.isEmpty())
-
-        // when
-        val newUnknown = "lalflalfl"
-        storage.setExtra(term, ExtraType.UNKNOWN, newUnknown)
-        storage.setTranscription(term, null)
-
-        val withUnknown = storage.allExtrasForTerm(term)
-
-        // then
-        withUnknown.also {
-            assertEquals(1, withUnknown.map.size)
-            assertNull(withUnknown.transcription)
-            assertEquals(newUnknown, withUnknown.map[ExtraType.UNKNOWN]?.value)
-        }
-    }
-
-    @Test
-    fun `allExtrasForCard()`() {
-        // given
-        val storage = prefilledStorage.value
-
-        val deck = addMockDeck(storage)
-
-        val term1 = storage.addTerm("ходить", domain.langTranslations())
-        val term2 = storage.addTerm("go", domain.langOriginal())
-        val term3 = storage.addTerm("walk", domain.langOriginal())
-
-        val transcription2 = "[gəu]"
-        val transcription3 = "[wɔːk]"
-
-        storage.setTranscription(term2, transcription2)
-        storage.setTranscription(term3, transcription3)
-
-        // when
-        val card1 = storage.addCard(domain, deck.id, term2, listOf(term1))
-        val card2 = storage.addCard(domain, deck.id, term3, listOf(term1))
-        val card3 = storage.addCard(domain, deck.id, term1, listOf(term2, term3))
-
-        // when
-        val extras1 = storage.allExtrasForCard(card1)
-
-        // then
-        extras1.also {
-            assertEquals(1, it.size)
-            assertExtrasCorrect(it[0], transcription2)
-            assertEquals(it[0], storage.allExtrasForTerm(term2))
-        }
-
-        // when
-        val extras2 = storage.allExtrasForCard(card2)
-
-        // then
-        extras2.also {
-            assertEquals(1, it.size)
-            assertExtrasCorrect(it[0], transcription3)
-            assertEquals(it[0], storage.allExtrasForTerm(term3))
-        }
-
-        // when
-        val extras3 = storage.allExtrasForCard(card3)
-
-        // then
-        extras3.also {
-            assertEquals(2, it.size)
-            assertExtrasCorrect(it[0], transcription2)
-            assertEquals(it[0], storage.allExtrasForTerm(term2))
-            assertExtrasCorrect(it[1], transcription3)
-            assertEquals(it[1], storage.allExtrasForTerm(term3))
-        }
+        assertExtrasCorrect(updated.extras, transcriptionNew)
     }
 
     @Test
@@ -369,7 +245,7 @@ abstract class StorageTest {
         val lang = storage.addLanguage("Russian")
 
         val value = "shrimp"
-        val id = storage.addTerm(value, lang).id
+        val id = storage.addTerm(value, lang, null).id
 
         // when
         val term = storage.termById(id)
@@ -387,7 +263,7 @@ abstract class StorageTest {
 
         val value = "Shrimp is going out on Fridays."
 
-        val id = storage.addTerm(value, lang).id
+        val id = storage.addTerm(value, lang, null).id
 
         // when
         val term = storage.termById(id)
@@ -405,7 +281,7 @@ abstract class StorageTest {
 
         val value = "exaggeration"
 
-        val id = storage.addTerm(value, lang).id
+        val id = storage.addTerm(value, lang, null).id
 
         // when
         val term = storage.termById(id)
@@ -437,8 +313,8 @@ abstract class StorageTest {
 
         val lang = storage.addLanguage("Russian")
 
-        storage.addTerm("aaa", lang)
-        storage.addTerm("bbb", lang)
+        storage.addTerm("aaa", lang, null)
+        storage.addTerm("bbb", lang, null)
 
         // when
         val term = storage.termByValues("shrimp", lang)
@@ -457,7 +333,7 @@ abstract class StorageTest {
         val langRussian = storage.addLanguage("Russian")
         val langFrench = storage.addLanguage("French")
 
-        storage.addTerm(value, langRussian)
+        storage.addTerm(value, langRussian, null)
 
         // when
         val term = storage.termByValues(value, langFrench)
@@ -475,8 +351,8 @@ abstract class StorageTest {
         val langEnglish = storage.addLanguage("English")
         val langFrench = storage.addLanguage("French")
 
-        storage.addTerm("она", langRussian)
-        storage.addTerm("she", langEnglish)
+        storage.addTerm("она", langRussian, null)
+        storage.addTerm("she", langEnglish, null)
 
         // when
         val term = storage.termByValues("elle", langFrench)
@@ -494,7 +370,7 @@ abstract class StorageTest {
 
         val value = "shrimp"
 
-        val id = storage.addTerm(value, lang).id
+        val id = storage.addTerm(value, lang, null).id
 
         // when
         val term = storage.termByValues(value, lang)
@@ -524,9 +400,9 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        storage.addTerm("shrimp", domain.langOriginal())
-        storage.addTerm("креветка", domain.langTranslations())
-        val term = Term(5L, "spring", domain.langOriginal())
+        storage.addTerm("shrimp", domain.langOriginal(), null)
+        storage.addTerm("креветка", domain.langTranslations(), null)
+        val term = Term(5L, "spring", domain.langOriginal(), Extras(null))
 
         // when
         val used = storage.isUsed(term)
@@ -540,8 +416,8 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        storage.addTerm("shrimp", domain.langOriginal())
-        val term = storage.addTerm("креветка", domain.langTranslations())
+        storage.addTerm("shrimp", domain.langOriginal(), null)
+        val term = storage.addTerm("креветка", domain.langTranslations(), null)
 
         // when
         val used = storage.isUsed(term)
@@ -557,9 +433,9 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val term1 = storage.addTerm("shrimp", domain.langOriginal())
-        val term2 = storage.addTerm("креветка", domain.langTranslations())
-        val term3 = storage.addTerm("spring", domain.langOriginal())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal(), null)
+        val term2 = storage.addTerm("креветка", domain.langTranslations(), null)
+        val term3 = storage.addTerm("spring", domain.langOriginal(), null)
 
         // when
         storage.addCard(domain, deck.id, term1, listOf(term2))
@@ -578,8 +454,8 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val term1 = storage.addTerm("shrimp", domain.langOriginal())
-        val term2 = storage.addTerm("креветка", domain.langTranslations())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal(), null)
+        val term2 = storage.addTerm("креветка", domain.langTranslations(), null)
 
         // when
         val card = storage.addCard(domain, deck.id, term1, listOf(term2))
@@ -597,9 +473,9 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val term1 = storage.addTerm("shrimp", domain.langOriginal())
-        val term2 = storage.addTerm("креветка", domain.langTranslations())
-        val term3 = storage.addTerm("spring", domain.langOriginal())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal(), null)
+        val term2 = storage.addTerm("креветка", domain.langTranslations(), null)
+        val term3 = storage.addTerm("spring", domain.langOriginal(), null)
 
         // when
         val card = storage.addCard(domain, deck.id, term1, listOf(term2, term3))
@@ -618,9 +494,9 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val term1 = storage.addTerm("shrimp", domain.langOriginal())
-        val term2 = storage.addTerm("креветка", domain.langTranslations())
-        val term3 = storage.addTerm("spring", domain.langOriginal())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal(), null)
+        val term2 = storage.addTerm("креветка", domain.langTranslations(), null)
+        val term3 = storage.addTerm("spring", domain.langOriginal(), null)
 
         // when
         val card1 = storage.addCard(domain, deck.id, term1, listOf(term2))
@@ -639,8 +515,8 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val term1 = storage.addTerm("shrimp", domain.langOriginal())
-        val term2 = storage.addTerm("креветка", domain.langTranslations())
+        val term1 = storage.addTerm("shrimp", domain.langOriginal(), null)
+        val term2 = storage.addTerm("креветка", domain.langTranslations(), null)
 
         // when
         storage.deleteTerm(term1)

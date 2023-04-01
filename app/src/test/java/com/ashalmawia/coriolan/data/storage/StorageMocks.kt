@@ -12,8 +12,8 @@ fun addMockCard(
     return storage.addCard(
             domain,
             deckId,
-            storage.addTerm(original, domain.langOriginal()),
-            translations.map { storage.addTerm(it, domain.langTranslations()) })
+            storage.addTerm(original, domain.langOriginal(), null),
+            translations.map { storage.addTerm(it, domain.langTranslations(), null) })
 }
 
 fun addMockCard(storage: Repository, cardData: CardData, domain: Domain = mockDomain(), type: CardType = CardType.FORWARD): Card {

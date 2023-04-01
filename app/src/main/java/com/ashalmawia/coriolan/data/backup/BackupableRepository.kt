@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.backup
 
+import com.ashalmawia.coriolan.model.Extras
 import org.joda.time.DateTime
 
 interface BackupableRepository {
@@ -9,8 +10,6 @@ interface BackupableRepository {
     fun allDomains(offset: Int, limit: Int): List<DomainInfo>
 
     fun allTerms(offset: Int, limit: Int): List<TermInfo>
-
-    fun allTermExtras(offset: Int, limit: Int): List<TermExtraInfo>
 
     fun allCards(offset: Int, limit: Int): List<CardInfo>
 
@@ -23,8 +22,6 @@ interface BackupableRepository {
     fun writeDomains(domains: List<DomainInfo>)
 
     fun writeTerms(terms: List<TermInfo>)
-
-    fun writeTermExtras(extras: List<TermExtraInfo>)
 
     fun writeCards(cards: List<CardInfo>)
 
@@ -51,7 +48,8 @@ data class DomainInfo(
 data class TermInfo(
         val id: Long,
         val value: String,
-        val languageId: Long)
+        val languageId: Long,
+        val extras: Extras)
 
 data class TermExtraInfo(
         val id: Long,

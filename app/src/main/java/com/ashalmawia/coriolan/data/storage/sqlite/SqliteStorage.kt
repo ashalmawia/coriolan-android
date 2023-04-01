@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.State
@@ -23,7 +22,7 @@ class SqliteStorage(
 
     override fun addLanguage(value: String): Language {
         val db = helper.writableDatabase
-        val cv = createLanguageContentValues(value)
+        val cv = CreateContentValues.createLanguageContentValues(value)
 
         try {
             val id = db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null, cv)
@@ -68,112 +67,31 @@ class SqliteStorage(
         }
     }
 
-    override fun addTerm(value: String, language: Language): Term {
+    override fun addTerm(value: String, language: Language, extras: Extras?): Term {
         try {
             val id = helper.writableDatabase.insert(SQLITE_TABLE_TERMS,
                     null,
-                    createTermContentValues(value, language))
+                    CreateContentValues.createTermContentValues(value, language, extras))
 
             if (id < 0) {
                 throw DataProcessingException("failed to add term [$value], lang $language: maybe missing lang")
             }
 
-            return Term(id, value, language)
+            return Term(id, value, language, extras ?: Extras.empty())
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to add term [$value], lang $language: constraint violation", e)
         }
     }
 
-    override fun setExtra(term: Term, type: ExtraType, value: String?) {
-        updateOrDeleteTermExtra(term.id, type, value)
-    }
+    override fun updateTerm(term: Term, extras: Extras?): Term {
+        val cv = CreateContentValues.createTermContentValues(
+                term.value, term.language.id, extras, term.id
+        )
 
-    private fun updateOrDeleteTermExtra(
-            termId: Long,
-            type: ExtraType,
-            newValue: String?
-    ) {
-        if (newValue == null) {
-            deleteTermExtra(termId, type)
-        } else {
-            updateTermExtra(termId, type, newValue)
-        }
-    }
-
-    private fun deleteTermExtra(term: Long, type: ExtraType) {
         val db = helper.writableDatabase
+        db.update(SQLITE_TABLE_TERMS, cv, "$SQLITE_COLUMN_ID == ?", arrayOf(term.id.toString()))
 
-        try {
-            db.delete(
-                    SQLITE_TABLE_TERM_EXTRAS,
-                    "$SQLITE_COLUMN_TERM_ID = ? AND $SQLITE_COLUMN_TYPE = ?",
-                    arrayOf(term.toString(), type.value.toString())
-            )
-        } catch (e: SQLiteConstraintException) {
-            throw DataProcessingException("extra with term id $term, type $type")
-        }
-    }
-
-    private fun updateTermExtra(termId: Long, extraType: ExtraType, value: String) {
-        val id = helper.writableDatabase.replace(SQLITE_TABLE_TERM_EXTRAS,
-                null,
-                createTermExtrasContentValues(termId, extraType, value))
-
-        if (id < 0) {
-            throw DataProcessingException("failed to update term extra [$value], " +
-                    "extraType [$extraType], exressionId [$termId]: maybe missing lang")
-        }
-    }
-
-    override fun allExtrasForTerm(term: Term): TermExtras {
-        val db = helper.readableDatabase
-
-        val cursor = db.rawQuery("""
-            |SELECT *
-            |   FROM $SQLITE_TABLE_TERM_EXTRAS
-            |   WHERE $SQLITE_COLUMN_TERM_ID = ?
-        """.trimMargin(), arrayOf(term.id.toString()))
-
-        val map = mutableMapOf<ExtraType, TermExtra>()
-        cursor.use {
-            while (it.moveToNext()) {
-                map[it.getTermType()] = it.getExtra()
-            }
-        }
-
-        return TermExtras(term, map)
-    }
-
-    override fun allExtrasForCard(card: Card): List<TermExtras> {
-        val db = helper.readableDatabase
-
-        val allTerms = card.translations.plus(card.original)
-
-        val alltermIds = allTerms.map { it.id }
-
-        val cursor = db.rawQuery("""
-            |SELECT *
-            |
-            |   FROM
-            |       $SQLITE_TABLE_TERM_EXTRAS
-            |
-            |   WHERE
-            |       $SQLITE_COLUMN_TERM_ID IN (${alltermIds.joinToString()})
-        """.trimMargin(), arrayOf())
-
-        val terms = allTerms.associateBy { it.id }
-        val list = mutableListOf<TermExtras>()
-
-        cursor.use {
-            while (it.moveToNext()) {
-
-                val map = mapOf(it.getTermType() to it.getExtra())
-
-                list.add(TermExtras(terms.getValue(it.getTermId()), map))
-            }
-        }
-
-        return list
+        return term.copy(extras = extras ?: Extras.empty())
     }
 
     override fun termById(id: Long): Term? {
@@ -200,7 +118,7 @@ class SqliteStorage(
 
         cursor.use {
             it.moveToFirst()
-            return it.getTerm(TERMS, LANGUAGES)
+            return it.getTerm(CreateContentValues, TERMS, LANGUAGES)
         }
     }
 
@@ -236,7 +154,7 @@ class SqliteStorage(
             }
 
             it.moveToFirst()
-            return it.getTerm(TERMS, LANGUAGES)
+            return it.getTerm(CreateContentValues, TERMS, LANGUAGES)
         }
     }
 
@@ -282,7 +200,7 @@ class SqliteStorage(
 
     override fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain {
         val db = helper.writableDatabase
-        val cv = createDomainContentValues(name, langOriginal, langTranslations)
+        val cv = CreateContentValues.createDomainContentValues(name, langOriginal, langTranslations)
 
         try {
             val id = db.insertOrThrow(SQLITE_TABLE_DOMAINS, null, cv)
@@ -372,14 +290,14 @@ class SqliteStorage(
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
-                    createCardContentValues(domain.id, deckId, original))
+                    CreateContentValues.createCardContentValues(domain.id, deckId, original))
 
             if (cardId < 0) {
                 throw DataProcessingException("failed to insert card ($original -> $translations)")
             }
 
             // write the card-to-term relation (many-to-many)
-            val cardsReverseCV = generateCardsReverseContentValues(cardId, translations)
+            val cardsReverseCV = CreateContentValues.generateCardsReverseContentValues(cardId, translations)
             cardsReverseCV.forEach {
                 val result = db.insert(SQLITE_TABLE_CARDS_REVERSE, null, it)
 
@@ -430,7 +348,7 @@ class SqliteStorage(
                         id,
                         it.getDeckId(CARDS),
                         domain,
-                        it.getTerm(TERMS, LANGUAGES),
+                        it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         translationsByCardId(id)
                 )
             } else {
@@ -492,7 +410,7 @@ class SqliteStorage(
         db.beginTransaction()
 
         try {
-            val cv = createCardContentValues(card.domain.id, deckId, original, card.id)
+            val cv = CreateContentValues.createCardContentValues(card.domain.id, deckId, original, card.id)
             val updated = db.update(SQLITE_TABLE_CARDS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(card.id.toString()))
 
             if (updated == 0) {
@@ -509,7 +427,7 @@ class SqliteStorage(
             }
 
             // add new translations to the card
-            val reverseCV = generateCardsReverseContentValues(card.id, translations)
+            val reverseCV = CreateContentValues.generateCardsReverseContentValues(card.id, translations)
             reverseCV.forEach {
                 val result = db.insertOrUpdate(SQLITE_TABLE_CARDS_REVERSE, it)
                 if (result < 0) {
@@ -581,7 +499,7 @@ class SqliteStorage(
                         cardId,
                         it.getDeckId(CARDS),
                         domain,
-                        it.getTerm(TERMS, LANGUAGES),
+                        it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse[cardId]!!
                 ))
             }
@@ -626,7 +544,7 @@ class SqliteStorage(
 
     override fun addDeck(domain: Domain, name: String): Deck {
         val db = helper.writableDatabase
-        val cv = createDeckContentValues(domain.id, name)
+        val cv = CreateContentValues.createDeckContentValues(domain.id, name)
 
         try {
             val id = db.insert(SQLITE_TABLE_DECKS, null, cv)
@@ -642,7 +560,7 @@ class SqliteStorage(
 
     override fun updateDeck(deck: Deck, name: String): Deck {
         val db = helper.writableDatabase
-        val cv = createDeckContentValues(deck.domain.id, name)
+        val cv = CreateContentValues.createDeckContentValues(deck.domain.id, name)
 
         try {
             val updated = db.update(SQLITE_TABLE_DECKS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(deck.id.toString()))
@@ -707,7 +625,7 @@ class SqliteStorage(
                         cardId,
                         deck.id,
                         deck.domain,
-                        it.getTerm(TERMS, LANGUAGES),
+                        it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse.getValue(cardId)
                 ))
             }
@@ -744,7 +662,7 @@ class SqliteStorage(
         val translations = mutableListOf<Term>()
         cursor.use {
             while (it.moveToNext()) {
-                translations.add(it.getTerm(TERMS, LANGUAGES))
+                translations.add(it.getTerm(CreateContentValues, TERMS, LANGUAGES))
             }
             return translations
         }
@@ -774,7 +692,7 @@ class SqliteStorage(
             while (it.moveToNext()) {
                 reverse
                         .getOrPut(it.getCardId(REVERSE), { mutableListOf() })
-                        .add(it.getTerm(TERMS, LANGUAGES))
+                        .add(it.getTerm(CreateContentValues, TERMS, LANGUAGES))
             }
             return reverse
         }
@@ -800,7 +718,7 @@ class SqliteStorage(
 
     override fun updateCardState(card: Card, state: State) {
         val table = SQLITE_TABLE_CARD_STATES
-        val cv = createCardStateContentValues(card.id, state)
+        val cv = CreateContentValues.createCardStateContentValues(card.id, state)
         try {
             val result = helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
 
@@ -855,7 +773,7 @@ class SqliteStorage(
                         cardId,
                         deck.id,
                         deck.domain,
-                        it.getTerm(TERMS, LANGUAGES),
+                        it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse.getValue(cardId)
                 )
                 val state = extractState(cursor, STATES)

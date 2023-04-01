@@ -2,56 +2,57 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.model.Extras
 import java.util.*
 
 object JsonBackupTestData {
     val languages = listOf(
             LanguageInfo(1L, "English"),
             LanguageInfo(2L, "Russian"),
-            LanguageInfo(3L, "French")
+            LanguageInfo(3L, "French"),
+            LanguageInfo(4L, "Greek"),
+            LanguageInfo(5L, "Chineese"),
+            LanguageInfo(6L, "Polish"),
+            LanguageInfo(7L, "Finnish")
     )
     val domains = listOf(
             DomainInfo(1L, "English", 1L, 2L),
-            DomainInfo(2L, "French", 3L, 2L)
+            DomainInfo(2L, "French", 3L, 2L),
+            DomainInfo(3L, "Greek", 4L, 2L),
+            DomainInfo(4L, "Chineese", 5L, 2L),
+            DomainInfo(5L, "Polish", 6L, 2L),
+            DomainInfo(6L, "Finnish", 7L, 2L)
     )
 
     val terms = listOf(
             // English
-            TermInfo(1L, "shrimp", 1L),
-            TermInfo(2L, "rocket", 1L),
-            TermInfo(3L, "spring", 1L),
-            TermInfo(4L, "summer", 1L),
-            TermInfo(5L, "victory", 1L),
-            TermInfo(6L, "march", 1L),
+            TermInfo(1L, "shrimp", 1L, Extras.empty()),
+            TermInfo(2L, "rocket", 1L, Extras("/ˈrɒkɪt \$ ˈrɑː-/")),
+            TermInfo(3L, "spring", 1L, Extras("/sprɪŋ/")),
+            TermInfo(4L, "summer", 1L, Extras("/ˈsʌmə \$ -ər/")),
+            TermInfo(5L, "victory", 1L, Extras("/ˈvɪktəri/")),
+            TermInfo(6L, "march", 1L, Extras("/mɑːtʃ \$ mɑːrtʃ/")),
 
             // Russian
-            TermInfo(7L, "креветка", 2L),
-            TermInfo(8L, "ракета", 2L),
-            TermInfo(9L, "источник", 2L),
-            TermInfo(10L, "весна", 2L),
-            TermInfo(11L, "пружина", 2L),
-            TermInfo(12L, "лето", 2L),
-            TermInfo(13L, "победа", 2L),
-            TermInfo(14L, "март", 2L),
-            TermInfo(15L, "марш", 2L),
+            TermInfo(7L, "креветка", 2L, Extras.empty()),
+            TermInfo(8L, "ракета", 2L, Extras.empty()),
+            TermInfo(9L, "источник", 2L, Extras.empty()),
+            TermInfo(10L, "весна", 2L, Extras.empty()),
+            TermInfo(11L, "пружина", 2L, Extras.empty()),
+            TermInfo(12L, "лето", 2L, Extras.empty()),
+            TermInfo(13L, "победа", 2L, Extras.empty()),
+            TermInfo(14L, "март", 2L, Extras.empty()),
+            TermInfo(15L, "марш", 2L, Extras.empty()),
 
             // French
-            TermInfo(16L, "ameloirer", 3L),
-            TermInfo(17L, "chercher", 3L),
-            TermInfo(18L, "voisin", 3L),
+            TermInfo(16L, "ameloirer", 3L, Extras.empty()),
+            TermInfo(17L, "chercher", 3L, Extras.empty()),
+            TermInfo(18L, "voisin", 3L, Extras.empty()),
 
             // Russian
-            TermInfo(19L, "улучшать", 2L),
-            TermInfo(20L, "искать", 2L),
-            TermInfo(21L, "сосед", 2L)
-    )
-
-    val termExtras = listOf(
-            TermExtraInfo(1L, 2L, 1, "/ˈrɒkɪt \$ ˈrɑː-/"),
-            TermExtraInfo(2L, 3L, 1, "/sprɪŋ/"),
-            TermExtraInfo(3L, 4L, 1, "/ˈsʌmə \$ -ər/"),
-            TermExtraInfo(4L, 5L, 1, "/ˈvɪktəri/"),
-            TermExtraInfo(5L, 6L, 1, "/mɑːtʃ \$ mɑːrtʃ/")
+            TermInfo(19L, "улучшать", 2L, Extras.empty()),
+            TermInfo(20L, "искать", 2L, Extras.empty()),
+            TermInfo(21L, "сосед", 2L, Extras.empty())
     )
 
     val cards = listOf(
@@ -84,7 +85,13 @@ object JsonBackupTestData {
     val decks = listOf(
             DeckInfo(1L, 1L, "Basic English"),
             DeckInfo(2L, 1L, "Advanced"),
-            DeckInfo(3L, 2L, "Default")
+            DeckInfo(3L, 2L, "Default"),
+            DeckInfo(4L, 1L, "Some deck"),
+            DeckInfo(5L, 1L, "Advanced deck"),
+            DeckInfo(6L, 2L, "Another deck"),
+            DeckInfo(7L, 1L, "Topic - Travelling"),
+            DeckInfo(8L, 1L, "Topic - Music"),
+            DeckInfo(9L, 2L, "Topic - Sports")
     )
 
     private val random = Random()

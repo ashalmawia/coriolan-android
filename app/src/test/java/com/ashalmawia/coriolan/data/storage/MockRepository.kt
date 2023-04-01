@@ -22,10 +22,20 @@ class MockRepository : Repository {
     }
 
     private val terms = mutableListOf<Term>()
-    override fun addTerm(value: String, language: Language): Term {
-        val exp = Term(terms.size + 1L, value, language)
+    override fun addTerm(value: String, language: Language, extras: Extras?): Term {
+        val exp = Term(terms.size + 1L, value, language, extras ?: Extras.empty())
         terms.add(exp)
         return exp
+    }
+    override fun updateTerm(term: Term, extras: Extras?): Term {
+        if (!terms.contains(term)) {
+            throw DataProcessingException("term is not in the repo: $term")
+        }
+
+        val updated = term.copy(extras = extras ?: Extras.empty())
+        terms.remove(term)
+        terms.add(updated)
+        return updated
     }
     override fun termById(id: Long): Term? {
         return terms.find { it.id == id }
@@ -38,40 +48,6 @@ class MockRepository : Repository {
     }
     override fun deleteTerm(term: Term) {
         terms.remove(term)
-    }
-
-    private val extras = mutableListOf<TermExtras>()
-    override fun setExtra(term: Term, type: ExtraType, value: String?) {
-        val termExtras = extras.find { it.term.id == term.id }
-        if (value == null) {
-            termExtras?.apply {
-                val new = copy(map = termExtras.map.toMutableMap().apply { remove(type) })
-                extras.apply {
-                    remove(termExtras)
-                    add(new)
-                }
-            }
-        } else {
-            if (termExtras == null) {
-                extras.add(TermExtras(term, mapOf(type to mockExtra(value))))
-            } else {
-                val new = termExtras.copy(map = termExtras.map.toMutableMap().apply {
-                    put(type, mockExtra(value))
-                })
-
-                extras.apply {
-                    remove(termExtras)
-                    add(new)
-                }
-            }
-        }
-    }
-    override fun allExtrasForTerm(term: Term): TermExtras {
-        return extras.find { it.term.id == term.id } ?: TermExtras(term, mapOf())
-    }
-    override fun allExtrasForCard(card: Card): List<TermExtras> {
-        return card.translations.plus(card.original)
-                .mapNotNull { term -> extras.find { it.term.id == term.id } }
     }
 
     private val domains = mutableListOf<Domain>()
@@ -189,4 +165,4 @@ class MockRepository : Repository {
 }
 
 fun Repository.justAddTerm(value: String, language: Language) =
-        addTerm(value, language)
+        addTerm(value, language, null)

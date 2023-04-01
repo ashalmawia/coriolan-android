@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.TermExtraInfo
-import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
 
@@ -43,15 +42,4 @@ fun readTermExtraFromJson(json: JsonParser): TermExtraInfo {
     }
 
     return TermExtraInfo(id, termId, type, value)
-}
-
-fun writeTermExtraToJson(extra: TermExtraInfo, json: JsonGenerator) {
-    json.writeStartObject()
-
-    json.writeNumberField(FIELD_ID, extra.id)
-    json.writeNumberField(FIELD_TERM_ID, extra.termId)
-    json.writeNumberField(FIELD_TYPE, extra.type)
-    json.writeStringField(FIELD_VALUE, extra.value)
-
-    json.writeEndObject()
 }

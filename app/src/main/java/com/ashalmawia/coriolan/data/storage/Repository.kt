@@ -15,16 +15,9 @@ interface Repository {
 
     fun languageByName(name: String): Language?
 
-    fun addTerm(value: String, language: Language): Term
+    fun addTerm(value: String, language: Language, extras: Extras?): Term
 
-    fun setTranscription(term: Term, transcription: String?)
-            = setExtra(term, ExtraType.TRANSCRIPTION, transcription)
-
-    fun setExtra(term: Term, type: ExtraType, value: String?)
-
-    fun allExtrasForTerm(term: Term): TermExtras
-
-    fun allExtrasForCard(card: Card): List<TermExtras>
+    fun updateTerm(term: Term, extras: Extras?): Term
 
     fun termById(id: Long): Term?
 

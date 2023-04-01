@@ -8,14 +8,8 @@ private val languages = arrayOf(
 private val terms = arrayOf(
         SQLITE_COLUMN_ID,
         SQLITE_COLUMN_VALUE,
-        SQLITE_COLUMN_LANGUAGE_ID
-)
-
-private val termExtras = arrayOf(
-        SQLITE_COLUMN_ID,
-        SQLITE_COLUMN_TERM_ID,
-        SQLITE_COLUMN_TYPE,
-        SQLITE_COLUMN_VALUE
+        SQLITE_COLUMN_LANGUAGE_ID,
+        SQLITE_COLUMN_EXTRAS
 )
 
 private val domains = arrayOf(
@@ -53,7 +47,6 @@ fun String.from(alias: String?): String = if (alias != null) "${alias}_$this" el
 
 fun allColumnsLanguages(alias: String? = null): String = allColumns(languages, alias)
 fun allColumnsTerms(alias: String? = null): String = allColumns(terms, alias)
-fun allColumnsExtras(alias: String? = null): String = allColumns(termExtras, alias)
 fun allColumnsDomains(alias: String? = null): String = allColumns(domains, alias)
 fun allColumnsDecks(alias: String? = null): String = allColumns(decks, alias)
 fun allColumnsCards(alias: String? = null): String = allColumns(cards, alias)

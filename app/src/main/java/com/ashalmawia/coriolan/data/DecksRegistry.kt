@@ -47,12 +47,10 @@ class DecksRegistry(
 
     fun editCard(card: Card, cardData: CardData): Card {
         val original = findOrAddTerm(
-                cardData.original, domain.langOriginal(card.type)
+                cardData.original, domain.langOriginal(card.type), cardData.transcription
         )
-        repository.setTranscription(original, cardData.transcription)
-
         val translations = cardData.translations.map {
-            findOrAddTerm(it, domain.langTranslations(card.type))
+            findOrAddTerm(it, domain.langTranslations(card.type), null)
         }
 
         val updated = repository.updateCard(card, cardData.deckId, original, translations)
@@ -81,14 +79,10 @@ class DecksRegistry(
      */
     private fun addCard(cardData: CardData): AddCardResult {
         val original = findOrAddTerm(
-                cardData.original, domain.langOriginal()
+                cardData.original, domain.langOriginal(), cardData.transcription
         )
-        // todo: write test that transcription is not overriden by adding a new card with the same term
-        if (cardData.transcription != null)
-            repository.setTranscription(original, cardData.transcription)
-
         val translations = cardData.translations.map {
-            findOrAddTerm(it, domain.langTranslations())
+            findOrAddTerm(it, domain.langTranslations(), null)
         }
 
         val duplicate = repository.cardByValues(domain, original)
@@ -113,9 +107,15 @@ class DecksRegistry(
 
     private fun findOrAddTerm(
             value: String,
-            language: Language
+            language: Language,
+            transcription: String?
     ): Term {
-        return repository.termByValues(value, language) ?: repository.addTerm(value, language)
+        val existingTerm = repository.termByValues(value, language)
+        if (existingTerm == null) {
+            return repository.addTerm(value, language, Extras(transcription))
+        } else {
+            return repository.updateTerm(existingTerm, existingTerm.extras.copy(transcription = transcription))
+        }
     }
 
     private fun addDefaultDeck(context: Context, repository: Repository): Deck {

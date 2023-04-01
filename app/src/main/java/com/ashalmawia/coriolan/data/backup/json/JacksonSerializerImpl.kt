@@ -2,18 +2,18 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 class JacksonSerializerImpl : JacksonSerializer {
+
+    private val objectMapper = jacksonObjectMapper()
 
     override fun writeLanguage(language: LanguageInfo, json: JsonGenerator) = writeLanguageToJson(language, json)
 
     override fun writeDomain(domain: DomainInfo, json: JsonGenerator) = writeDomainToJson(domain, json)
 
     override fun writeTerm(term: TermInfo, json: JsonGenerator)
-            = writeTermToJson(term, json)
-
-    override fun writeTermExtra(extra: TermExtraInfo, json: JsonGenerator)
-            = writeTermExtraToJson(extra, json)
+            = writeTermToJson(term, json, objectMapper)
 
     override fun writeCard(card: CardInfo, json: JsonGenerator) = writeCardToJson(card, json)
 

@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.backup
 
+import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
 import com.ashalmawia.coriolan.learning.*
 import org.junit.Assert.*
 import org.junit.Before
@@ -9,79 +10,14 @@ abstract class BackupableRepositoryTest {
 
     protected abstract fun createRepository(): BackupableRepository
 
-    private val today = mockToday()
-
     private lateinit var repo: BackupableRepository
 
-    private val languages = listOf(
-            LanguageInfo(1L, "English"),
-            LanguageInfo(2L, "Russian"),
-            LanguageInfo(3L, "French"),
-            LanguageInfo(4L, "Greek"),
-            LanguageInfo(5L, "Chineese"),
-            LanguageInfo(6L, "Polish"),
-            LanguageInfo(7L, "Finnish")
-    )
-    private val domains = listOf(
-            DomainInfo(1L, "English", 1L, 2L),
-            DomainInfo(2L, "French", 3L, 2L),
-            DomainInfo(3L, "Greek", 4L, 2L),
-            DomainInfo(4L, "Chineese", 5L, 2L),
-            DomainInfo(5L, "Polish", 6L, 2L),
-            DomainInfo(6L, "Finnish", 7L, 2L)
-    )
-    private val terms = listOf(
-            TermInfo(1L, "shrimp", 1L),
-            TermInfo(2L, "rocket", 1L),
-            TermInfo(3L, "spring", 1L),
-            TermInfo(4L, "summer", 1L),
-            TermInfo(5L, "victory", 1L),
-            TermInfo(6L, "march", 1L),
-            TermInfo(7L, "креветка", 2L),
-            TermInfo(8L, "ракета", 2L),
-            TermInfo(9L, "источник", 2L),
-            TermInfo(10L, "весна", 2L),
-            TermInfo(11L, "пружина", 2L),
-            TermInfo(12L, "лето", 2L),
-            TermInfo(13L, "победа", 2L),
-            TermInfo(14L, "март", 2L),
-            TermInfo(15L, "марш", 2L)
-    )
-    private val decks = listOf(
-            DeckInfo(1L, 1L, "Basic English"),
-            DeckInfo(2L, 1L, "Advanced"),
-            DeckInfo(3L, 2L, "Default"),
-            DeckInfo(4L, 1L, "Some deck"),
-            DeckInfo(5L, 1L, "Advanced deck"),
-            DeckInfo(6L, 2L, "Another deck"),
-            DeckInfo(7L, 1L, "Topic - Travelling"),
-            DeckInfo(8L, 1L, "Topic - Music"),
-            DeckInfo(9L, 2L, "Topic - Sports")
-    )
-    private val cards = listOf(
-            CardInfo(1L, 1L, 1L, 1L, listOf(7L)),
-            CardInfo(2L, 1L, 1L, 2L, listOf(8L)),
-            CardInfo(3L, 2L, 1L, 3L, listOf(9L, 10L, 11L)),
-            CardInfo(4L, 1L, 1L, 4L, listOf(12L)),
-            CardInfo(5L, 2L, 1L, 5L, listOf(13L)),
-            CardInfo(6L, 1L, 1L, 6L, listOf(14L, 15L)),
-            CardInfo(7L, 1L, 1L, 7L, listOf(1L)),
-            CardInfo(8L, 1L, 1L, 8L, listOf(2L)),
-            CardInfo(9L, 2L, 1L, 9L, listOf(3L)),
-            CardInfo(10L, 2L, 1L, 10L, listOf(3L)),
-            CardInfo(11L, 2L, 1L, 11L, listOf(3L)),
-            CardInfo(12L, 1L, 1L, 12L, listOf(4L))
-    )
-
-    private val cardStates = listOf(
-            CardStateInfo(5L, today.minusDays(10), 44),
-            CardStateInfo(3L, today.minusDays(5), 52),
-            CardStateInfo(12L, today.plusDays(11), 22),
-            CardStateInfo(11L, today.minusDays(88), 12),
-            CardStateInfo(9L, today.plusDays(23), 50),
-            CardStateInfo(8L, today.minusDays(1), 1),
-            CardStateInfo(6L, today, 0)
-    )
+    private val languages = JsonBackupTestData.languages
+    private val domains = JsonBackupTestData.domains
+    private val terms = JsonBackupTestData.terms
+    private val decks = JsonBackupTestData.decks
+    private val cards = JsonBackupTestData.cards
+    private val cardStates = JsonBackupTestData.cardStates
 
     @Before
     fun before() {

@@ -90,8 +90,7 @@ class LearningFlow(
     }
 
     private fun renderTask(task: Task) {
-        val extras = repository.allExtrasForCard(task.card)
-        task.executor().renderTask(task, extras)
+        task.executor().renderTask(task)
         listener.onTaskRendered()
     }
 

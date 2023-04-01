@@ -11,8 +11,6 @@ interface JacksonSerializer {
 
     fun writeTerm(term: TermInfo, json: JsonGenerator)
 
-    fun writeTermExtra(extra: TermExtraInfo, json: JsonGenerator)
-
     fun writeCard(card: CardInfo, json: JsonGenerator)
 
     fun writeCardState(state: CardStateInfo, json: JsonGenerator)

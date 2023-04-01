@@ -13,7 +13,6 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.exercise.GenericLogbook
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.TermExtras
 
 class SpacedRepetitionExerciseExecutor(
         context: Context,
@@ -34,9 +33,9 @@ class SpacedRepetitionExerciseExecutor(
 
     private var currentTask: Task? = null
 
-    override fun renderTask(task: Task, extras: List<TermExtras>) {
+    override fun renderTask(task: Task) {
         currentTask = task
-        renderer.renderTask(task, extras)
+        renderer.renderTask(task)
     }
 
     override fun onAnswered(answer: Any) {

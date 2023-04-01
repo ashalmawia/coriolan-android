@@ -7,6 +7,8 @@ class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
 ) : BackupableRepository {
 
+    private val deserializer: ExtrasDeserializer = CreateContentValues
+
     override fun allLanguages(offset: Int, limit: Int): List<LanguageInfo> {
         val db = helper.readableDatabase
 
@@ -58,27 +60,12 @@ class SqliteBackupHelper(
         cursor.use {
             val list = mutableListOf<TermInfo>()
             while (cursor.moveToNext()) {
-                list.add(TermInfo(cursor.getId(), cursor.getValue(), cursor.getLanguageId()))
-            }
-            return list
-        }
-    }
-
-    override fun allTermExtras(offset: Int, limit: Int): List<TermExtraInfo> {
-        val db = helper.readableDatabase
-
-        val cursor = db.rawQuery("""
-            |SELECT *
-            |   FROM $SQLITE_TABLE_TERM_EXTRAS
-            |   ORDER BY $SQLITE_COLUMN_ID ASC
-            |   LIMIT $limit OFFSET $offset
-        """.trimMargin(), arrayOf())
-
-        cursor.use {
-            val list = mutableListOf<TermExtraInfo>()
-            while (cursor.moveToNext()) {
-                list.add(TermExtraInfo(
-                        cursor.getId(), cursor.getTermId(), cursor.getType(), cursor.getValue()))
+                list.add(TermInfo(
+                        cursor.getId(),
+                        cursor.getValue(),
+                        cursor.getLanguageId(),
+                        cursor.getExtras(deserializer)
+                ))
             }
             return list
         }
@@ -211,7 +198,7 @@ class SqliteBackupHelper(
 
         languages.forEach {
             db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null,
-                    createLanguageContentValues(id = it.id, value = it.value)
+                    CreateContentValues.createLanguageContentValues(id = it.id, value = it.value)
             )
         }
     }
@@ -221,7 +208,7 @@ class SqliteBackupHelper(
 
         domains.forEach {
             db.insertOrThrow(SQLITE_TABLE_DOMAINS, null,
-                    createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
+                    CreateContentValues.createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
             )
         }
     }
@@ -231,17 +218,7 @@ class SqliteBackupHelper(
 
         terms.forEach {
             db.insertOrThrow(SQLITE_TABLE_TERMS, null,
-                    createTermContentValues(it.value, it.languageId, it.id)
-            )
-        }
-    }
-
-    override fun writeTermExtras(extras: List<TermExtraInfo>) {
-        val db = helper.writableDatabase
-
-        extras.forEach {
-            db.insertOrThrow(SQLITE_TABLE_TERM_EXTRAS, null,
-                    createTermExtrasContentValues(it.termId, it.type, it.value, it.id)
+                    CreateContentValues.createTermContentValues(it.value, it.languageId, it.extras, it.id)
             )
         }
     }
@@ -251,9 +228,9 @@ class SqliteBackupHelper(
 
         cards.forEach {
             db.insertOrThrow(SQLITE_TABLE_CARDS, null,
-                    createCardContentValues(it.domainId, it.deckId, it.originalId, it.id)
+                    CreateContentValues.createCardContentValues(it.domainId, it.deckId, it.originalId, it.id)
             )
-            generateCardsReverseContentValues(it.id, it.translationIds).forEach {
+            CreateContentValues.generateCardsReverseContentValues(it.id, it.translationIds).forEach {
                 db.insertOrThrow(SQLITE_TABLE_CARDS_REVERSE, null, it)
             }
         }
@@ -264,7 +241,7 @@ class SqliteBackupHelper(
 
         decks.forEach {
             db.insertOrThrow(SQLITE_TABLE_DECKS, null,
-                    createDeckContentValues(it.domainId, it.name, it.id)
+                    CreateContentValues.createDeckContentValues(it.domainId, it.name, it.id)
             )
         }
     }
@@ -273,7 +250,7 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
         states.forEach {
             db.insertOrThrow(SQLITE_TABLE_CARD_STATES, null,
-                    createCardStateContentValues(it.cardId, it.due, it.period)
+                    CreateContentValues.createCardStateContentValues(it.cardId, it.due, it.period)
             )
         }
     }

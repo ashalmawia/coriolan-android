@@ -7,7 +7,6 @@ class MockBackupableRepository(
         langauges: List<LanguageInfo>,
         domains: List<DomainInfo>,
         terms: List<TermInfo>,
-        termExtras: List<TermExtraInfo>,
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
         cardStates: List<CardStateInfo>
@@ -16,7 +15,6 @@ class MockBackupableRepository(
     private val languages = langauges.toMutableList()
     private val domains = domains.toMutableList()
     private val terms = terms.toMutableList()
-    private val termExtras = termExtras.toMutableList()
     private val cards = cards.toMutableList()
     private val decks = decks.toMutableList()
     private val cardStates = cardStates.toMutableList()
@@ -29,9 +27,6 @@ class MockBackupableRepository(
 
     override fun allTerms(offset: Int, limit: Int): List<TermInfo>
             = terms.subList(min(offset, terms.size), min(offset + limit, terms.size))
-
-    override fun allTermExtras(offset: Int, limit: Int): List<TermExtraInfo>
-            = termExtras.subList(min(offset, termExtras.size), min(offset + limit, termExtras.size))
 
     override fun allCards(offset: Int, limit: Int): List<CardInfo>
             = cards.subList(min(offset, cards.size), min(offset + limit, cards.size))
@@ -52,7 +47,6 @@ class MockBackupableRepository(
         languages.clear()
         domains.clear()
         terms.clear()
-        termExtras.clear()
         cards.clear()
         decks.clear()
         cardStates.clear()
@@ -68,10 +62,6 @@ class MockBackupableRepository(
 
     override fun writeTerms(terms: List<TermInfo>) {
         this.terms.addAll(terms)
-    }
-
-    override fun writeTermExtras(extras: List<TermExtraInfo>) {
-        this.termExtras.addAll(extras)
     }
 
     override fun writeCards(cards: List<CardInfo>) {
@@ -98,7 +88,6 @@ class MockBackupableRepository(
                     emptyList(),
                     emptyList(),
                     emptyList(),
-                    emptyList(),
                     emptyList()
             )
         }
@@ -108,7 +97,6 @@ class MockBackupableRepository(
                     JsonBackupTestData.languages,
                     JsonBackupTestData.domains,
                     JsonBackupTestData.terms,
-                    JsonBackupTestData.termExtras,
                     JsonBackupTestData.cards,
                     JsonBackupTestData.decks,
                     JsonBackupTestData.cardStates

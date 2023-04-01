@@ -3,9 +3,8 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Term
-import com.ashalmawia.coriolan.model.TermExtra
-import com.ashalmawia.coriolan.model.ExtraType
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.util.*
 import org.joda.time.DateTime
@@ -37,21 +36,17 @@ fun Cursor.getLanguage(alias: String? = null): Language {
     )
 }
 
-fun Cursor.getTerm(aliasTerms: String, aliasLanguages: String): Term {
+fun Cursor.getExtras(deserializer: ExtrasDeserializer, alias: String? = null): Extras {
+    val serialized = getStringOrNull(SQLITE_COLUMN_EXTRAS, alias)
+    return deserializer.deserialize(serialized)
+}
+
+fun Cursor.getTerm(deserializer: ExtrasDeserializer, aliasTerms: String, aliasLanguages: String): Term {
     return Term(
             getId(aliasTerms),
             getValue(aliasTerms),
-            getLanguage(aliasLanguages)
-    )
-}
-
-fun Cursor.getTermType(alias: String? = null): ExtraType = ExtraType.from(getType(alias))
-
-fun Cursor.getExtra(alias: String? = null): TermExtra {
-    return TermExtra(
-            getId(alias),
-            getTermType(alias),
-            getValue(alias)
+            getLanguage(aliasLanguages),
+            getExtras(deserializer, aliasTerms)
     )
 }
 

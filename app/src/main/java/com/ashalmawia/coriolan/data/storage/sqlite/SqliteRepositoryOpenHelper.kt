@@ -30,21 +30,12 @@ class SqliteRepositoryOpenHelper(
                 |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
                 |$SQLITE_COLUMN_VALUE TEXT NOT NULL,
                 |$SQLITE_COLUMN_LANGUAGE_ID INTEGER NOT NULL,
+                |$SQLITE_COLUMN_EXTRAS TEXT,
                 |FOREIGN KEY ($SQLITE_COLUMN_LANGUAGE_ID) REFERENCES $SQLITE_TABLE_LANGUAGES ($SQLITE_COLUMN_ID)
                 |   ON DELETE RESTRICT
                 |   ON UPDATE CASCADE,
                 |UNIQUE ($SQLITE_COLUMN_VALUE, $SQLITE_COLUMN_LANGUAGE_ID)
                 |   ON CONFLICT ABORT
-                |);""".trimMargin()
-        )
-        db.execSQL("""CREATE TABLE $SQLITE_TABLE_TERM_EXTRAS(
-                |$SQLITE_COLUMN_ID INTEGER PRIMARY KEY,
-                |$SQLITE_COLUMN_TERM_ID INTEGER NOT NULL,
-                |$SQLITE_COLUMN_TYPE INTEGER NOT NULL,
-                |$SQLITE_COLUMN_VALUE TEXT NOT NULL,
-                |FOREIGN KEY ($SQLITE_COLUMN_TERM_ID) REFERENCES $SQLITE_TABLE_TERMS ($SQLITE_COLUMN_ID)
-                |   ON DELETE CASCADE
-                |   ON UPDATE CASCADE
                 |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_DOMAINS(
