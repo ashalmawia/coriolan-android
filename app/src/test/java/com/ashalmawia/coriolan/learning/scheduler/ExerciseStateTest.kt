@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.mockEmptyState
 import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_LEARNT
+import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.mockState
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -10,15 +10,15 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class StateTest {
+class ExerciseStateTest {
 
     @Test
     fun test__stateNew() {
         // when
-        val state = mockEmptyState()
+        val state = emptyState()
 
         // then
-        assertEquals(Status.NEW, state.spacedRepetition.status)
+        assertEquals(Status.NEW, state.status)
     }
 
     @Test
@@ -27,7 +27,7 @@ class StateTest {
         val state = mockState(0)
 
         // then
-        assertEquals(Status.RELEARN, state.spacedRepetition.status)
+        assertEquals(Status.RELEARN, state.status)
     }
 
     @Test
@@ -36,7 +36,7 @@ class StateTest {
         val state = mockState(1)
 
         // then
-        assertEquals(Status.IN_PROGRESS, state.spacedRepetition.status)
+        assertEquals(Status.IN_PROGRESS, state.status)
     }
 
     @Test
@@ -45,7 +45,7 @@ class StateTest {
         val state = mockState(PERIOD_LEARNT - 1)
 
         // then
-        assertEquals(Status.IN_PROGRESS, state.spacedRepetition.status)
+        assertEquals(Status.IN_PROGRESS, state.status)
     }
 
     @Test
@@ -54,6 +54,6 @@ class StateTest {
         val state = mockState(PERIOD_LEARNT)
 
         // then
-        assertEquals(Status.LEARNT, state.spacedRepetition.status)
+        assertEquals(Status.LEARNT, state.status)
     }
 }

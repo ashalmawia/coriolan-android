@@ -1,8 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.exercise.mockEmptyState
-import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -133,29 +132,29 @@ class MockRepository : Repository {
         }
     }
 
-    val states = mutableMapOf<Long, State>()
-    override fun updateCardState(card: Card, state: State) {
+    val states = mutableMapOf<Long, LearningProgress>()
+    override fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress) {
         if (!cards.contains(card)) {
             throw DataProcessingException("card is not in the repo: $card")
         }
 
-        states[card.id] = state
+        states[card.id] = learningProgress
     }
-    override fun getCardState(card: Card): State {
-        return states[card.id] ?: mockEmptyState(mockToday())
+    override fun getCardLearningProgress(card: Card): LearningProgress {
+        return states[card.id] ?: mockLearningProgress()
     }
-    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, State>> {
+    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
         return cardsOfDeck(deck)
-                .map { card -> Pair(card, getCardState(card)) }
+                .map { card -> Pair(card, getCardLearningProgress(card)) }
                 .filter {
                     it.second.spacedRepetition.due <= date
                 }
     }
-    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State> {
+    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
         val cards = originalIds.mapNotNull { cards.find { card -> card.original.id == it } }
         return cards.associateBy(
                 { it.original.id },
-                { states[it.id] ?: mockEmptyState(mockToday()) }
+                { states[it.id] ?: mockLearningProgress() }
         )
     }
 

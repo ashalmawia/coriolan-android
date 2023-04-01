@@ -6,7 +6,7 @@ import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -51,7 +51,7 @@ interface Exercise {
             listener: ExerciseListener
     ): ExerciseExecutor
 
-    fun status(state: State): Status
+    fun status(learningProgress: LearningProgress): Status
 }
 
 enum class ExerciseId(val value: String) {

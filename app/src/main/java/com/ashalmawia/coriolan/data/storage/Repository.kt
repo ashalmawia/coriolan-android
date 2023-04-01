@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
@@ -74,13 +74,13 @@ interface Repository {
         )
     }
 
-    fun updateCardState(card: Card, state: State)
+    fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress)
 
-    fun getCardState(card: Card): State
+    fun getCardLearningProgress(card: Card): LearningProgress
 
-    fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, State>>
+    fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>>
 
-    fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State>
+    fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress>
 
     fun invalidateCache()
 }

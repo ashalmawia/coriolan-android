@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
@@ -113,8 +113,8 @@ object CreateContentValues : ExtrasDeserializer {
 
 // ********** CARD STATE ********************
 
-    fun createCardStateContentValues(cardId: Long, state: State): ContentValues {
-        return createCardStateContentValues(cardId, state.spacedRepetition.due, state.spacedRepetition.period)
+    fun createCardStateContentValues(cardId: Long, learningProgress: LearningProgress): ContentValues {
+        return createCardStateContentValues(cardId, learningProgress.spacedRepetition.due, learningProgress.spacedRepetition.period)
     }
 
     fun createCardStateContentValues(cardId: Long, due: DateTime, period: Int): ContentValues {

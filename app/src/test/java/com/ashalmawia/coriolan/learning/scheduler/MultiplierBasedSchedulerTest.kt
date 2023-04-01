@@ -1,10 +1,10 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.*
-import com.ashalmawia.coriolan.learning.exercise.mockEmptySRState
+import com.ashalmawia.coriolan.model.mockEmptyExerciseState
+import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,12 +15,12 @@ import org.junit.runners.JUnit4
 class MultiplierBasedSchedulerTest {
 
     private val today = TodayManager.today()
-    private fun emptyState() = mockEmptySRState(today)
+    private fun emptyState() = mockEmptyExerciseState(today)
 
     private fun scheduler() = MultiplierBasedScheduler()
 
     @Test
-    fun `test__newCard__wrong__shouldMeetAtLeastTwoMoreTimes`() {
+    fun test__newCard__wrong__shouldMeetAtLeastTwoMoreTimes() {
         // given
         val scheduler = scheduler()
 
@@ -49,7 +49,7 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__newCard__wrongMultipleTimes__shouldMeetAtLeastTwoMoreTimes`() {
+    fun test__newCard__wrongMultipleTimes__shouldMeetAtLeastTwoMoreTimes() {
         // given
         val scheduler = scheduler()
 
@@ -86,7 +86,7 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__newCard__correct__shouldMeetOneMoreTime`() {
+    fun test__newCard__correct__shouldMeetOneMoreTime() {
         // given
         val scheduler = scheduler()
 
@@ -110,7 +110,7 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__newCard__easy`() {
+    fun test__newCard__easy() {
         // given
         val scheduler = scheduler()
 
@@ -127,12 +127,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__wrong__dueDate`() {
+    fun test__inProgressCard__wrong__dueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today, 4)
+        val state = ExerciseState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -144,12 +144,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__hard__dueDate`() {
+    fun test__inProgressCard__hard__dueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today, 4)
+        val state = ExerciseState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -161,12 +161,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__correct__dueDate`() {
+    fun test__inProgressCard__correct__dueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today, 4)
+        val state = ExerciseState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -178,12 +178,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__easy__dueDate`() {
+    fun test__inProgressCard__easy__dueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today, 4)
+        val state = ExerciseState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -195,12 +195,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__wrong__afterDueDate`() {
+    fun test__inProgressCard__wrong__afterDueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(5), 8)
+        val state = ExerciseState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -212,12 +212,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__hard__afterDueDate`() {
+    fun test__inProgressCard__hard__afterDueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(5), 8)
+        val state = ExerciseState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -229,12 +229,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__correct__afterDueDate`() {
+    fun test__inProgressCard__correct__afterDueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(5), 8)
+        val state = ExerciseState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -246,12 +246,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__inProgressCard__easy__afterDueDate`() {
+    fun test__inProgressCard__easy__afterDueDate() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(5), 8)
+        val state = ExerciseState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -263,12 +263,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__learnt__wrong`() {
+    fun test__learnt__wrong() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(217), 200)
+        val state = ExerciseState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -280,12 +280,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__learnt__hard`() {
+    fun test__learnt__hard() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(216), 200)
+        val state = ExerciseState(today.minusDays(216), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -298,12 +298,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__learnt__correct`() {
+    fun test__learnt__correct() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(217), 200)
+        val state = ExerciseState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -316,12 +316,12 @@ class MultiplierBasedSchedulerTest {
     }
 
     @Test
-    fun `test__learnt__easy`() {
+    fun test__learnt__easy() {
         // given
         val scheduler = scheduler()
         val today = today
 
-        val state = SRState(today.minusDays(217), 200)
+        val state = ExerciseState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -334,7 +334,7 @@ class MultiplierBasedSchedulerTest {
     }
 }
 
-private fun SpacedRepetitionScheduler.wrong(srState: SRState) = processAnswer(SRAnswer.WRONG, srState)
-private fun SpacedRepetitionScheduler.correct(srState: SRState) = processAnswer(SRAnswer.CORRECT, srState)
-private fun SpacedRepetitionScheduler.easy(srState: SRState) = processAnswer(SRAnswer.EASY, srState)
-private fun SpacedRepetitionScheduler.hard(srState: SRState) = processAnswer(SRAnswer.HARD, srState)
+private fun SpacedRepetitionScheduler.wrong(ExerciseState: ExerciseState) = processAnswer(SRAnswer.WRONG, ExerciseState)
+private fun SpacedRepetitionScheduler.correct(ExerciseState: ExerciseState) = processAnswer(SRAnswer.CORRECT, ExerciseState)
+private fun SpacedRepetitionScheduler.easy(ExerciseState: ExerciseState) = processAnswer(SRAnswer.EASY, ExerciseState)
+private fun SpacedRepetitionScheduler.hard(ExerciseState: ExerciseState) = processAnswer(SRAnswer.HARD, ExerciseState)

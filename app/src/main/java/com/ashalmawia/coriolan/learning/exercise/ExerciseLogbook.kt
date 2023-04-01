@@ -1,13 +1,13 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.model.Card
 
 interface ExerciseLogbook {
 
-    fun recordCardAction(card: Card, oldState: State, newState: State)
+    fun recordCardAction(card: Card, oldLearningProgress: LearningProgress, newLearningProgress: LearningProgress)
 
-    fun unrecordCardAction(card: Card, state: State, stateThatWasUndone: State)
+    fun unrecordCardAction(card: Card, learningProgress: LearningProgress, learningProgressThatWasUndone: LearningProgress)
 }
 
 enum class CardAction(val value: String) {

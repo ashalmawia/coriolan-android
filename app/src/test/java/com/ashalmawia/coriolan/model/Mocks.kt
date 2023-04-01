@@ -1,13 +1,16 @@
 package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.LearningDay
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
+import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
 import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_NEVER_SCHEDULED
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
 import com.ashalmawia.coriolan.learning.mockToday
+import org.joda.time.DateTime
 
 // TODO: go over it's default usages and consider adding params and checking them
 fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
@@ -61,26 +64,32 @@ fun mockExercise() = MockExercise()
 
 fun mockTask(
         card: Card = mockCard(),
-        state: State = mockState(),
+        learningProgress: LearningProgress = mockLearningProgress(),
         exercise: Exercise = mockExercise()
 ): Task {
-    return Task(card, state, exercise)
+    return Task(card, learningProgress, exercise)
 }
 fun mockTask(
-        state: State = mockState(),
+        learningProgress: LearningProgress = mockLearningProgress(),
         domain: Domain = mockDomain(),
         id: Long = cardId++,
         type: CardType = CardType.FORWARD,
         exercise: Exercise = mockExercise()
 ): Task {
-    return Task(mockCard(domain, id, type), state, exercise)
+    return Task(mockCard(domain, id, type), learningProgress, exercise)
 }
 
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
-fun mockState(period: Int = 0) = State(SRState(mockToday(), period))
-fun mockStateNew() = mockState(PERIOD_NEVER_SCHEDULED)
-fun mockStateRelearn() = mockState(0)
-fun mockStateInProgress() = mockState(5)
-fun mockStateLearnt() = mockState(200)
+fun mockState(period: Int = 0) = ExerciseState(mockToday(), period)
+fun mockLearningProgressNew(): LearningProgress = mockLearningProgress(mockToday(), PERIOD_NEVER_SCHEDULED)
+fun mockLearningProgressRelearn(): LearningProgress = mockLearningProgress(mockToday(), 0)
+fun mockLearningProgressInProgress(): LearningProgress = mockLearningProgress(mockToday(), 5)
+fun mockLearningProgressLearnt(): LearningProgress = mockLearningProgress(mockToday(), 200)
+fun mockLearningProgress(): LearningProgress = LearningProgress(emptyMap())
+fun mockLearningProgress(due: DateTime = mockToday(), period: Int = 0): LearningProgress = LearningProgress(
+        mapOf(ExerciseId.FLASHCARDS to ExerciseState(due, period))
+)
+
+fun mockEmptyExerciseState(today: LearningDay) = ExerciseState(today, PERIOD_NEVER_SCHEDULED)

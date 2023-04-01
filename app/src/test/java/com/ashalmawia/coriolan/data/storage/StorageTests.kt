@@ -1,10 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.mockEmptyState
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert.*
@@ -13,9 +10,7 @@ import org.junit.Test
 abstract class StorageTest {
 
     private val today = mockToday()
-    private fun emptyState() = mockEmptyState(today)
-
-    protected val mockEmptyStateProvider = MockEmptyStateProvider(today)
+    private fun emptyState() = mockLearningProgress()
 
     private lateinit var domain: Domain
 
@@ -1146,7 +1141,7 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
         val card = addMockCard(storage, deck.id)
-        val state = mockState(5)
+        val learningProgress = mockLearningProgress(period = 5)
 
         // when
         val cards = storage.allCards(domain)
@@ -1155,7 +1150,7 @@ abstract class StorageTest {
         assertEquals(listOf(card), cards)
 
         // when
-        storage.updateCardState(card, state)
+        storage.updateCardLearningProgress(card, learningProgress)
         val cards2 = storage.allCards(domain)
 
         // then
@@ -1259,15 +1254,15 @@ abstract class StorageTest {
                 }
         val today = today
 
-        storage.updateCardState(forward[0], State(SRState(today.plusDays(3), 4)))
-        storage.updateCardState(forward[1], State(SRState(today.plusDays(1), 4)))
-        storage.updateCardState(forward[2], State(SRState(today.plusDays(10), 4)))
+        storage.updateCardLearningProgress(forward[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(forward[2], mockLearningProgress(today.plusDays(10), 4))
 
-        storage.updateCardState(reverse[0], State(SRState(today.plusDays(3), 4)))
-        storage.updateCardState(reverse[1], State(SRState(today.plusDays(1), 4)))
-        storage.updateCardState(reverse[2], State(SRState(today.plusDays(10), 4)))
-        storage.updateCardState(reverse[3], State(SRState(today.plusDays(10), 4)))
-        storage.updateCardState(reverse[4], State(SRState(today.plusDays(10), 4)))
+        storage.updateCardLearningProgress(reverse[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(reverse[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse[2], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse[3], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse[4], mockLearningProgress(today.plusDays(10), 4))
 
         // when
         val counts = storage.deckPendingCounts(deck, CardType.FORWARD, today)
@@ -1304,19 +1299,18 @@ abstract class StorageTest {
                 .map {
                     addMockCard(storage, it, domain, CardType.REVERSE)
                 }
-        val today = today
 
-        storage.updateCardState(forward[0], State(SRState(today.plusDays(3), 4)))
-        storage.updateCardState(forward[1], State(SRState(today.minusDays(1), 4)))
-        storage.updateCardState(forward[2], State(SRState(today, -1)))
-        storage.updateCardState(forward[3], State(SRState(today.plusDays(1), 4)))
+        storage.updateCardLearningProgress(forward[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward[1], mockLearningProgress(today.minusDays(1), 4))
+        storage.updateCardLearningProgress(forward[2], mockLearningProgress(today, -1))
+        storage.updateCardLearningProgress(forward[3], mockLearningProgress(today.plusDays(1), 4))
 
-        storage.updateCardState(reverse[0], State(SRState(today, 0)))
-        storage.updateCardState(reverse[1], State(SRState(today.plusDays(1), 4)))
-        storage.updateCardState(reverse[2], State(SRState(today.minusDays(10), 4)))
-        storage.updateCardState(reverse[3], State(SRState(today, 0)))
-        storage.updateCardState(reverse[4], emptyState())
-        storage.updateCardState(reverse[5], emptyState())
+        storage.updateCardLearningProgress(reverse[0], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse[2], mockLearningProgress(today.minusDays(10), 4))
+        storage.updateCardLearningProgress(reverse[3], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse[4], emptyState())
+        storage.updateCardLearningProgress(reverse[5], emptyState())
 
         // when
         val counts = storage.deckPendingCounts(deck, CardType.FORWARD, today)
@@ -1557,7 +1551,7 @@ abstract class StorageTest {
         val card = mockCard(id = 77L)
 
         // when
-        val state = storage.getCardState(card)
+        val state = storage.getCardLearningProgress(card)
 
         // then
         assertEquals(emptyState(), state)
@@ -1572,7 +1566,7 @@ abstract class StorageTest {
         val card = addMockCard(storage, deck.id)
 
         // when
-        val state = storage.getCardState(card)
+        val state = storage.getCardLearningProgress(card)
 
         // then
         assertEquals(emptyState(), state)
@@ -1587,22 +1581,22 @@ abstract class StorageTest {
         val deck = addMockDeck(storage)
         val card = addMockCard(storage, deck.id)
 
-        val state = storage.getCardState(card)
+        val state = storage.getCardLearningProgress(card)
 
         // then
         assertEquals("state is correct", Status.NEW, state.spacedRepetition.status)
         assertEquals("new card is due today", today, state.spacedRepetition.due)
 
         // given
-        val newState = State(SRState(today.plusDays(8), 8))
+        val newLearningProgress = mockLearningProgress(today.plusDays(8), 8)
 
         // when
-        storage.updateCardState(card, newState)
-        val readState = storage.getCardState(card)
+        storage.updateCardLearningProgress(card, newLearningProgress)
+        val readState = storage.getCardLearningProgress(card)
 
         // then
-        assertEquals("state is correct", newState.spacedRepetition.status, readState.spacedRepetition.status)
-        assertEquals("new card is due today", newState.spacedRepetition.due, readState.spacedRepetition.due)
+        assertEquals("state is correct", newLearningProgress.spacedRepetition.status, readState.spacedRepetition.status)
+        assertEquals("new card is due today", newLearningProgress.spacedRepetition.due, readState.spacedRepetition.due)
     }
 
     @Test
@@ -1648,9 +1642,9 @@ abstract class StorageTest {
         }
         val today = today
 
-        storage.updateCardState(cards[0], State(SRState(today, 4)))
-        storage.updateCardState(cards[1], State(SRState(today.plusDays(1), 4)))
-        storage.updateCardState(cards[2], State(SRState(today.minusDays(1), 4)))
+        storage.updateCardLearningProgress(cards[0], mockLearningProgress(today, 4))
+        storage.updateCardLearningProgress(cards[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(cards[2], mockLearningProgress(today.minusDays(1), 4))
 
         // when
         val due = storage.pendingCards(deck, today)
@@ -1673,9 +1667,9 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
         val today = today
 
-        storage.updateCardState(cards[0], State(SRState(today.plusDays(3), 4)))
-        storage.updateCardState(cards[1], State(SRState(today.plusDays(1), 4)))
-        storage.updateCardState(cards[2], State(SRState(today.plusDays(10), 4)))
+        storage.updateCardLearningProgress(cards[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(cards[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(cards[2], mockLearningProgress(today.plusDays(10), 4))
 
         // when
         val due = storage.pendingCards(deck, today)
@@ -1701,14 +1695,14 @@ abstract class StorageTest {
         // then
         assertEquals(0, map.size)
 
-        val state1 = State(SRState(today.plusDays(3), 4))
-        val state2 = State(SRState(today.plusDays(1), 4))
-        val state3 = State(SRState(today.plusDays(10), 4))
+        val learningProgress1 = mockLearningProgress(today.plusDays(3), 4)
+        val learningProgress2 = mockLearningProgress(today.plusDays(1), 4)
+        val learningProgress3 = mockLearningProgress(today.plusDays(10), 4)
 
         // given
-        storage.updateCardState(cards[0], state1)
-        storage.updateCardState(cards[1], state2)
-        storage.updateCardState(cards[2], state3)
+        storage.updateCardLearningProgress(cards[0], learningProgress1)
+        storage.updateCardLearningProgress(cards[1], learningProgress2)
+        storage.updateCardLearningProgress(cards[2], learningProgress3)
 
         // when
         val map2 = storage.getStatesForCardsWithOriginals(emptyList())
@@ -1745,7 +1739,7 @@ abstract class StorageTest {
 
         // then
         assertEquals(3, map.size)
-        map.values.forEach { assertEquals(mockEmptyState(today), it) }
+        map.values.forEach { assertEquals(mockLearningProgress(), it) }
     }
 
     @Test
@@ -1760,21 +1754,21 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
         val today = today
 
-        val state1 = State(SRState(today.plusDays(3), 4))
-        val state2 = State(SRState(today.plusDays(1), 4))
-        val state3 = State(SRState(today.plusDays(10), 4))
+        val learningProgress1 = mockLearningProgress(today.plusDays(3), 4)
+        val learningProgress2 = mockLearningProgress(today.plusDays(1), 4)
+        val learningProgress3 = mockLearningProgress(today.plusDays(10), 4)
 
-        storage.updateCardState(cards[0], state1)
-        storage.updateCardState(cards[1], state2)
-        storage.updateCardState(cards[2], state3)
+        storage.updateCardLearningProgress(cards[0], learningProgress1)
+        storage.updateCardLearningProgress(cards[1], learningProgress2)
+        storage.updateCardLearningProgress(cards[2], learningProgress3)
 
         // when
         val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id })
 
         // then
         assertEquals(3, map.size)
-        assertEquals(state1, map[cards[0].original.id])
-        assertEquals(state2, map[cards[1].original.id])
-        assertEquals(state3, map[cards[2].original.id])
+        assertEquals(learningProgress1, map[cards[0].original.id])
+        assertEquals(learningProgress2, map[cards[1].original.id])
+        assertEquals(learningProgress3, map[cards[2].original.id])
     }
 }

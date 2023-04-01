@@ -23,8 +23,6 @@ import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactoryImpl
 import com.ashalmawia.coriolan.learning.assignment.HistoryFactory
 import com.ashalmawia.coriolan.learning.assignment.HistoryFactoryImpl
-import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.EmptyStateProviderImpl
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistryImpl
 import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
@@ -33,20 +31,19 @@ import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
 import org.koin.dsl.module
 
 val mainModule = module {
-    single<Repository> { SqliteStorage(get(), get()) }
+    single<Repository> { SqliteStorage(get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
     single<Logbook> { SqliteLogbook(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get()) }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
-    single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get()) }
+    single<ExercisesRegistry> { ExercisesRegistryImpl(get()) }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get()) }
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
     single { SqliteRepositoryOpenHelper(get()) }
     single<SpacedRepetitionScheduler> { MultiplierBasedScheduler() }
     single<HistoryFactory> { HistoryFactoryImpl }
-    single<EmptyStateProvider> { EmptyStateProviderImpl() }
     single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get(), get()) }
     single<Backup> { JsonBackup() }
 

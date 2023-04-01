@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.mockTask
@@ -19,7 +19,7 @@ class MockExerciseExecutor(private val exercise: MockExercise) : ExerciseExecuto
     override fun renderTask(task: Task) {
     }
 
-    override fun undoTask(task: Task, undoneState: State): Task {
+    override fun undoTask(task: Task, undoneLearningProgress: LearningProgress): Task {
         return task
     }
 

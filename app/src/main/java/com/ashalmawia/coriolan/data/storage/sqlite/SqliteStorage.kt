@@ -5,9 +5,9 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
@@ -15,10 +15,7 @@ import org.joda.time.DateTime
 
 private val TAG = SqliteStorage::class.java.simpleName
 
-class SqliteStorage(
-        private val helper: SqliteRepositoryOpenHelper,
-        private val emptyStateProvider: EmptyStateProvider
-) : Repository {
+class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository {
 
     override fun addLanguage(value: String): Language {
         val db = helper.writableDatabase
@@ -698,7 +695,7 @@ class SqliteStorage(
         }
     }
 
-    override fun getCardState(card: Card): State {
+    override fun getCardLearningProgress(card: Card): LearningProgress {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -709,16 +706,16 @@ class SqliteStorage(
 
         cursor.use {
             return if (cursor.moveToNext()) {
-                extractState(cursor)
+                extractLearningProgress(cursor)
             } else {
-                emptyStateProvider.emptyState()
+                LearningProgress(emptyMap())
             }
         }
     }
 
-    override fun updateCardState(card: Card, state: State) {
+    override fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress) {
         val table = SQLITE_TABLE_CARD_STATES
-        val cv = CreateContentValues.createCardStateContentValues(card.id, state)
+        val cv = CreateContentValues.createCardStateContentValues(card.id, learningProgress)
         try {
             val result = helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
 
@@ -730,7 +727,7 @@ class SqliteStorage(
         }
     }
 
-    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, State>> {
+    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
         val db = helper.readableDatabase
 
         val reverse = allCardsReverse(db)
@@ -765,8 +762,8 @@ class SqliteStorage(
         """.trimMargin(),
                 arrayOf(deck.id.toString(), date.timespamp.toString()))
 
-        val tasks = mutableListOf<Pair<Card, State>>()
         cursor.use {
+            val tasks = mutableListOf<Pair<Card, LearningProgress>>()
             while (cursor.moveToNext()) {
                 val cardId = cursor.getId(CARDS)
                 val card = Card(
@@ -776,14 +773,14 @@ class SqliteStorage(
                         it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse.getValue(cardId)
                 )
-                val state = extractState(cursor, STATES)
+                val state = extractLearningProgress(cursor, STATES)
                 tasks.add(Pair(card, state))
             }
             return tasks
         }
     }
 
-    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, State> {
+    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
         val db = helper.readableDatabase
 
         val CARDS = "Cards"
@@ -808,11 +805,11 @@ class SqliteStorage(
             |       ${SQLITE_COLUMN_ID.from(TERMS)} IN (${originalIds.joinToString()})
         """.trimMargin(), arrayOf())
 
-        val map = mutableMapOf<Long, State>()
+        val map = mutableMapOf<Long, LearningProgress>()
         cursor.use {
             while (cursor.moveToNext()) {
                 val termId = cursor.getId(TERMS)
-                val state = extractState(cursor, STATES)
+                val state = extractLearningProgress(cursor, STATES)
                 map[termId] = state
             }
             return map
@@ -827,12 +824,13 @@ class SqliteStorage(
         // nothing to do here
     }
 
-    private fun extractState(cursor: Cursor, alias: String? = null): State {
-        val srState = if (cursor.hasSavedSRState(alias)) {
-            SRState(cursor.getDateDue(alias), cursor.getPeriod(alias))
+    private fun extractLearningProgress(cursor: Cursor, alias: String? = null): LearningProgress {
+        if (cursor.hasSavedSRState(alias)) {
+            val state = ExerciseState(cursor.getDateDue(alias), cursor.getPeriod(alias))
+            // TODO: decouple
+            return LearningProgress(mapOf(ExerciseId.FLASHCARDS to state))
         } else {
-            emptyStateProvider.emptySRState()
+            return LearningProgress(emptyMap())
         }
-        return State(spacedRepetition = srState)
     }
 }

@@ -68,7 +68,7 @@ class LearningFlow(
 
     fun undo() {
         val card = assignment.current!!
-        val stateToUndo = card.state
+        val stateToUndo = card.learningProgress
         val undone = assignment.undo()
         undone.executor().undoTask(undone, stateToUndo)
         renderTask(undone)

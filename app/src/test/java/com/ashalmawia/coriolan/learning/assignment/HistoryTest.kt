@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.assignment
 
+import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.mockTask
-import com.ashalmawia.coriolan.model.mockState
-import com.ashalmawia.coriolan.model.mockStateRelearn
+import com.ashalmawia.coriolan.model.mockLearningProgressRelearn
 import junit.framework.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,10 +28,10 @@ class HistoryTest {
     @Test
     fun test__single() {
         // given
-        val card = mockTask(mockStateRelearn())
+        val task = mockTask(mockLearningProgressRelearn())
 
         // when
-        history.record(card)
+        history.record(task)
 
         // then
         assertTrue(history.canGoBack())
@@ -40,14 +40,14 @@ class HistoryTest {
         val read = history.goBack()
 
         // then
-        assertEquals(card, read)
+        assertEquals(task, read)
     }
 
     @Test
     fun test__multiple() {
         // given
         val list = (0 until 10).map {
-            mockTask(mockState(it))
+            mockTask(mockLearningProgress(period = it))
         }
 
         // when

@@ -32,13 +32,13 @@ class FlashcardsExerciseRenderer(
     override fun renderTask(task: Task) {
         uiContainer.removeAllViews()
 
-        val answers = answers(task.state.spacedRepetition).asList()
+        val answers = answers(task.learningProgress.spacedRepetition).asList()
         cardView.bind(task.card, answers)
 
         uiContainer.addView(cardView)
     }
 
-    private fun answers(state: SRState): Array<SRAnswer> {
+    private fun answers(state: ExerciseState): Array<SRAnswer> {
         return when (state.status) {
             Status.NEW -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT, SRAnswer.EASY)
             Status.RELEARN -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT)

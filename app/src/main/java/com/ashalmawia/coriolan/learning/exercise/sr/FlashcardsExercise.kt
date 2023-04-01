@@ -8,9 +8,8 @@ import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -31,8 +30,7 @@ import org.joda.time.DateTime
  * Otherwise, adds it to the end of the queue.
  */
 class FlashcardsExercise(
-        private val repository: Repository,
-        private val emptyStateProvider: EmptyStateProvider
+        private val repository: Repository
 ) : Exercise {
 
     override val id: ExerciseId
@@ -46,7 +44,7 @@ class FlashcardsExercise(
     override val canUndo: Boolean
         get() = true
 
-    private fun getStatesForCardsWithOriginals(originals: List<Long>): Map<Long, State> {
+    private fun getStatesForCardsWithOriginals(originals: List<Long>): Map<Long, LearningProgress> {
         return repository.getStatesForCardsWithOriginals(originals)
     }
 
@@ -69,7 +67,8 @@ class FlashcardsExercise(
     }
 
     override fun onTranslationAdded(card: Card) {
-        repository.updateCardState(card, emptyStateProvider.emptyState())
+        // TODO: decouple
+        repository.updateCardLearningProgress(card, LearningProgress(emptyMap()))
     }
 
     override fun createExecutor(
@@ -95,7 +94,7 @@ class FlashcardsExercise(
         }
     }
 
-    override fun status(state: State): Status = state.spacedRepetition.status
+    override fun status(learningProgress: LearningProgress): Status = learningProgress.spacedRepetition.status
 
     private fun createScheduler() = MultiplierBasedScheduler()
 
@@ -116,11 +115,11 @@ class FlashcardsExercise(
             }
         }
 
-        private fun Term.isReady(states: Map<Long, State>): Boolean {
+        private fun Term.isReady(states: Map<Long, LearningProgress>): Boolean {
             val state = states[id]
             return state != null && state.spacedRepetition.period >= 4
         }
     }
 }
 
-private fun Task.status() = state.spacedRepetition.status
+private fun Task.status() = learningProgress.spacedRepetition.status

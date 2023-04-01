@@ -1,8 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
-import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.mockTerm
 import com.ashalmawia.coriolan.model.mockLanguage
@@ -252,10 +251,10 @@ class CreateContentValuesTest {
         val cardId = 1L
         val due = DateTime(1519529781000)
         val period = 16
-        val state = State(SRState(due, period))
+        val learningProgress = mockLearningProgress(due, period)
 
         // when
-        val cv = CreateContentValues.createCardStateContentValues(cardId, state)
+        val cv = CreateContentValues.createCardStateContentValues(cardId, learningProgress)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
@@ -264,7 +263,7 @@ class CreateContentValuesTest {
         assertEquals("$SQLITE_COLUMN_STATE_SR_PERIOD is correct", period, cv.get(SQLITE_COLUMN_STATE_SR_PERIOD))
 
         // when
-        val cv1 = CreateContentValues.createCardStateContentValues(cardId, state.spacedRepetition.due, state.spacedRepetition.period)
+        val cv1 = CreateContentValues.createCardStateContentValues(cardId, learningProgress.spacedRepetition.due, learningProgress.spacedRepetition.period)
 
         // then
         assertEquals("values count is correct", 3, cv1.size())

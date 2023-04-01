@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
@@ -39,33 +39,33 @@ class FlashcardsExerciseExecutor(
 
     override fun onAnswered(answer: Any) {
         val card = currentTask!!
-        val oldState = card.state
+        val oldState = card.learningProgress
         val updated = processReply(card, answer as SRAnswer)
-        logbook.recordCardAction(card.card, oldState, updated.state)
+        logbook.recordCardAction(card.card, oldState, updated.learningProgress)
         listener.onTaskStudied(updated)
     }
 
     private fun processReply(task: Task, answer: SRAnswer): Task {
-        val newSrState = scheduler.processAnswer(answer, task.state.spacedRepetition)
-        return updateTask(task, task.state.copy(spacedRepetition = newSrState))
+        val newState = scheduler.processAnswer(answer, task.exerciseState)
+        return updateTask(task, task.learningProgressWithUpdatedExerciseState(newState))
     }
 
-    private fun updateTask(task: Task, newState: State): Task {
-        repository.updateCardState(task.card, newState)
-        return Task(task.card, newState, exercise)
+    private fun updateTask(task: Task, newLearningProgress: LearningProgress): Task {
+        repository.updateCardLearningProgress(task.card, newLearningProgress)
+        return Task(task.card, newLearningProgress, exercise)
     }
 
-    override fun undoTask(task: Task, undoneState: State): Task {
-        val updated = updateTask(task, task.state)
-        logbook.unrecordCardAction(updated.card, updated.state, undoneState)
+    override fun undoTask(task: Task, undoneLearningProgress: LearningProgress): Task {
+        val updated = updateTask(task, task.learningProgress)
+        logbook.unrecordCardAction(updated.card, updated.learningProgress, undoneLearningProgress)
         return updated
     }
 
     override fun getTask(card: Card): Task {
-        return Task(card, repository.getCardState(card), exercise)
+        return Task(card, repository.getCardLearningProgress(card), exercise)
     }
 
     override fun isPending(task: Task): Boolean = task.state().due <= TodayManager.today()
 }
 
-private fun Task.state() = state.spacedRepetition
+private fun Task.state() = learningProgress.spacedRepetition

@@ -30,7 +30,7 @@ class LimitCountMutation(preferences: Preferences, logbook: Logbook, date: DateT
         var countNew = 0
         var countReview = 0
         return cards.filter {
-            when (it.state.spacedRepetition.status) {
+            when (it.learningProgress.spacedRepetition.status) {
                 Status.NEW -> countNew++ < limitNew
                 Status.IN_PROGRESS, Status.LEARNT -> countReview++ < limitReview
                 Status.RELEARN -> true

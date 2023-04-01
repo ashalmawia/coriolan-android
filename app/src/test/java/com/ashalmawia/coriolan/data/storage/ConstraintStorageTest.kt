@@ -2,9 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
-import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.exercise.MockEmptyStateProvider
-import com.ashalmawia.coriolan.learning.exercise.sr.SRState
+import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert
@@ -32,7 +30,7 @@ class ConstraintStorageTest {
 
     private fun createStorage(): Repository {
         val helper = SqliteRepositoryOpenHelper(RuntimeEnvironment.application)
-        return SqliteStorage(helper, MockEmptyStateProvider(today))
+        return SqliteStorage(helper)
     }
 
     @Test(expected = DataProcessingException::class)
@@ -436,11 +434,11 @@ class ConstraintStorageTest {
     fun test__updateSRCardState__cardIncorrect() {
         // when
         val storage = prefilledStorage.value
-        val newState = State(SRState(today.plusDays(8), 8))
+        val newLearningProgress = mockLearningProgress(today.plusDays(8), 8)
 
         val dummyCard = mockCard(domain = domain)
 
         // when
-        storage.updateCardState(dummyCard, newState)
+        storage.updateCardLearningProgress(dummyCard, newLearningProgress)
     }
 }

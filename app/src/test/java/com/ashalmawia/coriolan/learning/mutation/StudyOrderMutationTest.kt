@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.model.mockTask
-import com.ashalmawia.coriolan.model.mockStateInProgress
-import com.ashalmawia.coriolan.model.mockStateNew
+import com.ashalmawia.coriolan.model.mockLearningProgressInProgress
+import com.ashalmawia.coriolan.model.mockLearningProgressNew
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
 import org.junit.Test
@@ -14,7 +14,7 @@ class StudyOrderMutationTest {
     
     private fun cards(new: Boolean) = List(50) { i ->
         mockTask(
-                if (new) mockStateNew() else mockStateInProgress(),
+                if (new) mockLearningProgressNew() else mockLearningProgressInProgress(),
                 id = i.toLong())
     }
 

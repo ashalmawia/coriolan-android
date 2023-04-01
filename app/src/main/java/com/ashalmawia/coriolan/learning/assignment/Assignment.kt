@@ -24,7 +24,7 @@ class Assignment(
     fun counts(): Counts {
         val cards = tasks()
         // todo: decouple
-        val counts = cards.groupBy { it.state.spacedRepetition.status }.mapValues { it.value.size }
+        val counts = cards.groupBy { it.learningProgress.spacedRepetition.status }.mapValues { it.value.size }
         return Counts.createFrom(counts, cards.size)
     }
     fun hasNext(): Boolean {

@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.mutation.Mutation
@@ -30,7 +30,7 @@ class MockExercise : Exercise {
         return MockExerciseExecutor(this)
     }
 
-    override fun status(state: State): Status {
+    override fun status(learningProgress: LearningProgress): Status {
         return Status.NEW
     }
 

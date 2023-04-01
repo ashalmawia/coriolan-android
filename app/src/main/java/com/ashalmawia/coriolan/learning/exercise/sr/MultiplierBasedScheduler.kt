@@ -12,7 +12,7 @@ private const val NEW_RESPONDED_EASY_DAYS = 4
 
 class MultiplierBasedScheduler : SpacedRepetitionScheduler {
 
-    override fun processAnswer(answer: SRAnswer, state: SRState): SRState {
+    override fun processAnswer(answer: SRAnswer, state: ExerciseState): ExerciseState {
         return when (answer) {
             SRAnswer.WRONG -> wrong(state)
             SRAnswer.CORRECT -> correct(state)
@@ -21,30 +21,30 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
         }
     }
 
-    private fun wrong(state: SRState): SRState {
+    private fun wrong(state: ExerciseState): ExerciseState {
         return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
-            SRState(today(), PERIOD_FIRST_ASNWER_WRONG)
+            ExerciseState(today(), PERIOD_FIRST_ASNWER_WRONG)
         } else {
             stateForRelearn()
         }
     }
 
-    private fun hard(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_HARD)
+    private fun hard(state: ExerciseState): ExerciseState = stateForCorrect(state, MULTIPLIER_HARD)
 
-    private fun correct(state: SRState): SRState = stateForCorrect(state, MULTIPLIER_CORRECT)
+    private fun correct(state: ExerciseState): ExerciseState = stateForCorrect(state, MULTIPLIER_CORRECT)
 
-    private fun easy(state: SRState): SRState {
+    private fun easy(state: ExerciseState): ExerciseState {
         return if (state.period == PERIOD_NEVER_SCHEDULED) {
             // a special rule for easy for a new card, don't show it in this assignment
-            SRState(today().plusDays(NEW_RESPONDED_EASY_DAYS), NEW_RESPONDED_EASY_DAYS)
+            ExerciseState(today().plusDays(NEW_RESPONDED_EASY_DAYS), NEW_RESPONDED_EASY_DAYS)
         } else {
             stateForCorrect(state, MULTIPLIER_EASY)
         }
     }
 
-    private fun stateForRelearn(): SRState = SRState(today(), 0)
+    private fun stateForRelearn(): ExerciseState = ExerciseState(today(), 0)
 
-    private fun stateForCorrect(state: SRState, multiplier: Float): SRState {
+    private fun stateForCorrect(state: ExerciseState, multiplier: Float): ExerciseState {
         return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
             // the card is completely new
             // the first correct answer actually counts like "wrong"
@@ -54,7 +54,7 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
             val actualPeriod = abs(Days.daysBetween(state.due.minusDays(state.period), today()).days)
             val period = max(floor(max(expectedPeriod, actualPeriod) * multiplier).roundToInt(), 1)
             val due = today().plusDays(period)
-            SRState(due, period)
+            ExerciseState(due, period)
         }
     }
 

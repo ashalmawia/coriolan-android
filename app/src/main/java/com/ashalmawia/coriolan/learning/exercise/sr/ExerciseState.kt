@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning.exercise.sr
 
-import com.ashalmawia.coriolan.learning.ExerciseState
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.TodayManager
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.util.*
@@ -12,12 +12,12 @@ const val PERIOD_LEARNT = 30 * 4               // 4 months
 
 private val format = DateTimeFormat.forPattern("dd MMM hh:mm").withLocale(Locale.ENGLISH)
 
-data class SRState(
+data class ExerciseState(
         val due: DateTime,
         val period: Int
-) : ExerciseState {
+) {
 
-    override val status: Status
+    val status: Status
         get() {
             return when (period) {
                 PERIOD_NEVER_SCHEDULED -> Status.NEW
@@ -32,3 +32,5 @@ data class SRState(
         return "due: ${format.print(due)}, period: $period"
     }
 }
+
+fun emptyState(): ExerciseState = ExerciseState(TodayManager.today(), PERIOD_NEVER_SCHEDULED)

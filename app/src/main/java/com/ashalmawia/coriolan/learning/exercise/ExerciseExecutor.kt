@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning.exercise
 
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.State
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.model.Card
 
 interface ExerciseExecutor : ExerciseRenderer.Listener {
@@ -14,7 +14,7 @@ interface ExerciseExecutor : ExerciseRenderer.Listener {
 
     fun renderTask(task: Task)
 
-    fun undoTask(task: Task, undoneState: State): Task
+    fun undoTask(task: Task, undoneLearningProgress: LearningProgress): Task
 }
 
 interface ExerciseListener {

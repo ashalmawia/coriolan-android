@@ -17,16 +17,16 @@ class LimitCountMutationMutationTest {
     private val preferences = MockPreferences()
     private val journal = MockLogbook()
     private val date = mockToday()
-    private val cards = List(60, { i -> mockTask(procudeMockState(i)) })
+    private val cards = List(60, { i -> mockTask(procudeMockLearningProgress(i)) })
 
     private val mutation = lazy { LimitCountMutation(preferences, journal, date) }
 
-    private fun procudeMockState(i: Int) =
+    private fun procudeMockLearningProgress(i: Int) =
             when (i % 4) {
-                0 -> mockStateNew()
-                1 -> mockStateInProgress()
-                2 -> mockStateRelearn()
-                else -> mockStateLearnt()
+                0 -> mockLearningProgressNew()
+                1 -> mockLearningProgressInProgress()
+                2 -> mockLearningProgressRelearn()
+                else -> mockLearningProgressLearnt()
             }
 
     @Test
@@ -214,9 +214,9 @@ class LimitCountMutationMutationTest {
 }
 
 private fun List<Task>.filter(vararg statuses: Status): List<Task> {
-    return filter { statuses.contains(it.state.spacedRepetition.status) }
+    return filter { statuses.contains(it.learningProgress.spacedRepetition.status) }
 }
 
 private fun List<Task>.count(vararg statuses: Status): Int {
-    return count { statuses.contains(it.state.spacedRepetition.status) }
+    return count { statuses.contains(it.learningProgress.spacedRepetition.status) }
 }

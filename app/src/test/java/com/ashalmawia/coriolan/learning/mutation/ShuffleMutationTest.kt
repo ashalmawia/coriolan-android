@@ -42,13 +42,13 @@ class ShuffleMutationTest {
         // given
         val mutation = ShuffleMutation(true)
         val cards = listOf(
-                mockTask(mockStateNew()),
-                mockTask(mockStateNew()),
-                mockTask(mockStateInProgress()),
-                mockTask(mockStateLearnt()),
-                mockTask(mockStateInProgress()),
-                mockTask(mockStateNew()),
-                mockTask(mockStateNew())
+                mockTask(mockLearningProgressNew()),
+                mockTask(mockLearningProgressNew()),
+                mockTask(mockLearningProgressInProgress()),
+                mockTask(mockLearningProgressLearnt()),
+                mockTask(mockLearningProgressInProgress()),
+                mockTask(mockLearningProgressNew()),
+                mockTask(mockLearningProgressNew())
         )
 
         // when
@@ -58,6 +58,6 @@ class ShuffleMutationTest {
         assertFalse(cards == processed)
         assertEquals(cards.sortedBy { it.card.id }, processed.sortedBy { it.card.id })
         assertFalse(processed.subList(processed.size - processed.size / 3, processed.size)
-                .any { it.state.spacedRepetition.status == Status.NEW })
+                .any { it.learningProgress.spacedRepetition.status == Status.NEW })
     }
 }
