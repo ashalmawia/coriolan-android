@@ -33,7 +33,6 @@ import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
 import org.koin.dsl.module
 
 val mainModule = module {
-    single<TodayProvider> { TodayManager }
     single<Repository> { SqliteStorage(get(), get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
     single<Logbook> { SqliteLogbook(get()) }
@@ -41,13 +40,13 @@ val mainModule = module {
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
-    single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get(), get()) }
-    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get(), get()) }
+    single<ExercisesRegistry> { ExercisesRegistryImpl(get(), get()) }
+    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get()) }
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
     single { SqliteRepositoryOpenHelper(get()) }
-    single<SpacedRepetitionScheduler> { MultiplierBasedScheduler(get()) }
+    single<SpacedRepetitionScheduler> { MultiplierBasedScheduler() }
     single<HistoryFactory> { HistoryFactoryImpl }
-    single<EmptyStateProvider> { EmptyStateProviderImpl(get()) }
+    single<EmptyStateProvider> { EmptyStateProviderImpl() }
     single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get(), get()) }
     single<Backup> { JsonBackup() }
 

@@ -10,7 +10,7 @@ import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.TodayProvider
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.util.orZero
 import kotlinx.android.synthetic.main.increase_limits.view.*
 import org.joda.time.DateTime
@@ -21,8 +21,7 @@ class IncreaseLimitsDialog(
         private val deck: DeckListItem,
         private val date: DateTime,
         private val repository: Repository,
-        private val preferences: Preferences,
-        private val todayProvider: TodayProvider
+        private val preferences: Preferences
 ) {
     private val totalCounts = lazy { repository.deckPendingCounts(deck.deck, deck.cardType, date) }
 
@@ -57,7 +56,7 @@ class IncreaseLimitsDialog(
     private val reviewMax
         get() = max(totalCounts.value.review - preferences.getReviewCardsDailyLimit(today()).orZero(), 0)
 
-    private fun today() = todayProvider.today()
+    private fun today() = TodayManager.today()
 
     private fun checkAndConfirm(view: ViewGroup, dialog: DialogInterface) {
         val new = if (view.countNew.text.isBlank()) 0 else view.countNew.text.toString().toInt()

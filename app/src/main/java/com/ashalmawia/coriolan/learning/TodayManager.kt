@@ -6,20 +6,30 @@ import android.content.Context
 import android.content.Intent
 import com.ashalmawia.coriolan.debug.DEBUG_OVERRIDE_TODAY
 import com.ashalmawia.coriolan.util.timespamp
+import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 private const val REQUEST_CODE = 777
 
-object TodayManager : TodayProvider {
+typealias LearningDay = DateTime
+
+object TodayManager {
 
     private val listeners = mutableListOf<TodayChangeListener>()
 
     // for debug & testing
     private var overridenToday: LearningDay? = null
 
-    override fun today(): LearningDay {
+    /**
+     * Returns the beginning of the Coriolan day in the past which is the closest to the current moment.
+     *
+     * E.g. if Coriolan day starts at 4am, then
+     *      - called on Fri at 6am, will return Fri 4am ('cause it's already Fri for Coriolan)
+     *      - called on Fri at 3am, will return Thu 4am ('cause it's still Thu for Coriolan)
+     */
+    fun today(): LearningDay {
         return if (DEBUG_OVERRIDE_TODAY) todayWithOverride() else realToday()
     }
 
@@ -41,15 +51,15 @@ object TodayManager : TodayProvider {
         dayChanged()
     }
 
-    override fun register(listener: TodayChangeListener) {
+    fun register(listener: TodayChangeListener) {
         listeners.add(listener)
     }
 
-    override fun unregister(listener: TodayChangeListener) {
+    fun unregister(listener: TodayChangeListener) {
         listeners.remove(listener)
     }
 
-    override fun dayChanged() {
+    fun dayChanged() {
         for (listener in listeners) {
             listener.onDayChanged()
         }

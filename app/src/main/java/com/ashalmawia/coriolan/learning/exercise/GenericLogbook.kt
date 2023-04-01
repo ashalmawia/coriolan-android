@@ -3,17 +3,16 @@ package com.ashalmawia.coriolan.learning.exercise
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.TodayProvider
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.model.Card
 
 class GenericLogbook(
         private val logbook: Logbook,
-        private val todayProvider: TodayProvider,
         private val exercise: Exercise
 ) : ExerciseLogbook {
 
     override fun recordCardAction(card: Card, oldState: State, newState: State) {
-        val date = todayProvider.today()
+        val date = TodayManager.today()
         when (exercise.status(oldState)) {
             Status.NEW -> {
                 logbook.incrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
@@ -33,7 +32,7 @@ class GenericLogbook(
     }
 
     override fun unrecordCardAction(card: Card, state: State, stateThatWasUndone: State) {
-        val date = todayProvider.today()
+        val date = TodayManager.today()
         when (exercise.status(state)) {
             Status.NEW -> {
                 logbook.decrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)

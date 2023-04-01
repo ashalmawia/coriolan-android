@@ -6,7 +6,7 @@ import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
-import com.ashalmawia.coriolan.learning.TodayProvider
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -18,7 +18,6 @@ class FlashcardsExerciseExecutor(
         context: Context,
         private val exercise: Exercise,
         private val repository: Repository,
-        private val todayProvider: TodayProvider,
         logbook: Logbook,
         private val scheduler: SpacedRepetitionScheduler,
         uiContainer: ViewGroup,
@@ -26,7 +25,7 @@ class FlashcardsExerciseExecutor(
 ) : ExerciseExecutor {
 
     private val renderer = FlashcardsExerciseRenderer(context, uiContainer, this)
-    private val logbook = GenericLogbook(logbook, todayProvider, exercise)
+    private val logbook = GenericLogbook(logbook, exercise)
 
     override val exerciseId: ExerciseId
         get() = exercise.id
@@ -66,7 +65,7 @@ class FlashcardsExerciseExecutor(
         return Task(card, repository.getCardState(card), exercise)
     }
 
-    override fun isPending(task: Task): Boolean = task.state().due <= todayProvider.today()
+    override fun isPending(task: Task): Boolean = task.state().due <= TodayManager.today()
 }
 
 private fun Task.state() = state.spacedRepetition

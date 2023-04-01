@@ -5,20 +5,16 @@ import android.app.Dialog
 import android.os.Bundle
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.TodayManager
-import com.ashalmawia.coriolan.learning.TodayProvider
 import kotlinx.android.synthetic.main.debug_increase_date.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.util.*
 
-class DebugIncreaseDateDialog(
-        activity: Activity,
-        private val todayProvider: TodayProvider
-) : Dialog(activity) {
+class DebugIncreaseDateDialog(activity: Activity) : Dialog(activity) {
 
     private val format = DateTimeFormat.mediumDate().withLocale(Locale.ENGLISH)
 
-    private var date = todayProvider.today()
+    private var date = TodayManager.today()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +46,7 @@ class DebugIncreaseDateDialog(
     }
 
     private fun apply() {
-        (todayProvider as TodayManager).overrideToday(date)
+        TodayManager.overrideToday(date)
         dismiss()
     }
 }

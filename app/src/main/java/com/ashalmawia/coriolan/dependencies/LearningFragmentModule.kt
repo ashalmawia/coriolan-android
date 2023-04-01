@@ -21,15 +21,14 @@ val decksListFragmentModule = module {
     factory { (exercise: Exercise, dataFetcher: DataFetcher, beginStudyListener: BeginStudyListener) ->
         DecksListAdapter(
                 get(),
-                get(),
                 exercise,
                 dataFetcher,
                 beginStudyListener,
                 { deck: DeckListItem, date: DateTime ->
-                    get(named(DIALOG_DECK_DETAILS)) { parametersOf(deck, date) } },
-                { deck: DeckListItem, date: DateTime ->
-                    get(named(DIALOG_INCREASE_LIMITS)) { parametersOf(deck, date) } }
-        )
+                    get(named(DIALOG_DECK_DETAILS)) { parametersOf(deck, date) } }
+        ) { deck: DeckListItem, date: DateTime ->
+            get(named(DIALOG_INCREASE_LIMITS)) { parametersOf(deck, date) }
+        }
     }
 
     factory<Dialog>(named(DIALOG_DECK_DETAILS)) { (deck: DeckListItem, date: DateTime) ->
@@ -37,7 +36,7 @@ val decksListFragmentModule = module {
     }
 
     factory<Dialog>(named(DIALOG_INCREASE_LIMITS)) { (deck: DeckListItem, date: DateTime) ->
-        IncreaseLimitsDialog(domainActivityScope().get(), deck, date, get(), get(), get()).build()
+        IncreaseLimitsDialog(domainActivityScope().get(), deck, date, get(), get()).build()
     }
 
 }

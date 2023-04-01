@@ -10,7 +10,6 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.State
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.TodayProvider
 import com.ashalmawia.coriolan.learning.exercise.EmptyStateProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
@@ -33,7 +32,6 @@ import org.joda.time.DateTime
  */
 class FlashcardsExercise(
         private val repository: Repository,
-        private val todayProvider: TodayProvider,
         private val emptyStateProvider: EmptyStateProvider
 ) : Exercise {
 
@@ -84,9 +82,8 @@ class FlashcardsExercise(
                 context,
                 this,
                 repository,
-                todayProvider,
                 logbook,
-                createScheduler(todayProvider),
+                createScheduler(),
                 uiContainer,
                 listener
         )
@@ -100,8 +97,7 @@ class FlashcardsExercise(
 
     override fun status(state: State): Status = state.spacedRepetition.status
 
-    private fun createScheduler(todayProvider: TodayProvider) =
-            MultiplierBasedScheduler(todayProvider)
+    private fun createScheduler() = MultiplierBasedScheduler()
 
     class LearningModeMutation(private val exercise: FlashcardsExercise) : Mutation {
 

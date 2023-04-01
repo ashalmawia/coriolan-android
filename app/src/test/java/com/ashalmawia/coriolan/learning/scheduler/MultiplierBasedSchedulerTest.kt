@@ -14,11 +14,10 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class MultiplierBasedSchedulerTest {
 
-    private val mockTodayProvider = MockTodayProvider()
-    private val today = mockTodayProvider.today()
+    private val today = TodayManager.today()
     private fun emptyState() = mockEmptySRState(today)
 
-    private fun scheduler() = MultiplierBasedScheduler(mockTodayProvider)
+    private fun scheduler() = MultiplierBasedScheduler()
 
     @Test
     fun `test__newCard__wrong__shouldMeetAtLeastTwoMoreTimes`() {

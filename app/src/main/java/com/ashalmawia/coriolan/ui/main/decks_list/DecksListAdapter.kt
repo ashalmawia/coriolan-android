@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.DeckCountsProvider
-import com.ashalmawia.coriolan.learning.TodayProvider
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
@@ -24,7 +24,6 @@ private const val TYPE_ITEM = 2
 
 class DecksListAdapter(
         private val deckCountsProvider: DeckCountsProvider,
-        private val todayProvider: TodayProvider,
         private val exercise: Exercise,
         private val dataFetcher: DataFetcher,
         private val beginStudyListener: BeginStudyListener,
@@ -150,7 +149,7 @@ class DecksListAdapter(
         dialog.show()
     }
 
-    private fun today() = todayProvider.today()
+    private fun today() = TodayManager.today()
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
         if (counts.isAnythingPending()) {
