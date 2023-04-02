@@ -32,17 +32,17 @@ class SqliteStorageBenchmarkTest {
     private val results = mutableMapOf<String, Long>()
 
     @Test
-    fun benchmark_100() {
+    fun benchmark_100() {       // takes 2 min to complete
         runBenchmark(100)
     }
 
     @Test
-    fun benchmark_1000() {
+    fun benchmark_1000() {      // takes 15 min to complete
         runBenchmark(1_000)
     }
 
     @Test
-    fun benchmark_10000() {
+    fun benchmark_10000() {     // takes 2 hours to complete
         runBenchmark(10_000)
     }
 
@@ -417,31 +417,57 @@ class SqliteStorageBenchmarkTest {
     }
 
     private fun formatResult(): String {
-        val readableResults = results.mapValues {
-            it.value.toDuration(DurationUnit.MILLISECONDS).toString()
-        }
-        val longestKeyLength = readableResults.maxOf { it.key.length }
-        val longestValueLength = readableResults.maxOf { it.value.length }
-        val leftAlignFormat = "| %-${longestKeyLength}s | %-${longestValueLength}s |%n"
+        val readableResults = results.toList()
+                .sortedByDescending { (_, time) -> time }
+                .map { (description, time) -> Pair(description,
+                        time.toDuration(DurationUnit.MILLISECONDS).toString(DurationUnit.SECONDS, 2)
+                )}
+        val longestKeyLength = readableResults.maxOf { (key, _) -> key.length }
+        val longestValueLength = readableResults.maxOf { (_, value) -> value.length }
+        val rowFormat = "| %-${longestKeyLength}s | %${longestValueLength}s |"
 
-        val sb = StringBuilder()
-        sb.appendLine("BENCHMARK")
-        sb.appendLine("    - sample size: $count cards")
-        sb.appendLine("    - date: ${DateTime().toString("yyyy-MM-dd, HH:mm")}")
-        sb.appendLine("    - ran with Robolectric")     // TODO: run on a real device
-
-        sb.appendLine(String.format("+-----------------+------+%n"))
-        sb.appendLine(String.format("| Task     | Time   |%n"))
-        sb.appendLine(String.format("+-----------------+------+%n"))
-        for ((description, duration) in readableResults) {
-            sb.appendLine(String.format(leftAlignFormat, description, duration))
+        fun StringBuilder.appendTableDivider() {
+            append("+")
+            append("-".repeat(longestKeyLength + 2))
+            append("+")
+            append("-".repeat(longestValueLength + 2))
+            appendLine("+")
         }
-        sb.appendLine(String.format("+-----------------+------+%n"))
-        return sb.toString()
+        fun StringBuilder.appendSection(section: List<Pair<String, String>>) {
+            appendTableDivider()
+            for ((description, duration) in section) {
+                appendLine(String.format(rowFormat, description, duration))
+            }
+        }
+
+        val queryResults = readableResults.filter { (description, _) -> description.startsWith("query") }
+        val addResults = readableResults.filter { (description, _) -> description.startsWith("add") }
+        val updateResults = readableResults.filter { (description, _) -> description.startsWith("update") }
+        val deleteResults = readableResults.filter { (description, _) -> description.startsWith("delete") }
+        if (queryResults.size + addResults.size + updateResults.size + deleteResults.size != readableResults.size) {
+            throw IllegalStateException("use one of the existing description categories or create a new one")
+        }
+
+        return StringBuilder().apply {
+            appendLine("   SQLITE DATABASE PERFORMANCE BENCHMARK")
+            appendLine("    - sample size: $count cards")
+            appendLine("    - date: ${DateTime().toString("yyyy-MM-dd, HH:mm")}")
+            appendLine("    - ran with Robolectric")     // TODO: run on a real device
+
+            appendTableDivider()
+            appendLine(String.format(rowFormat, "Task", "Time"))
+
+            appendSection(queryResults)
+            appendSection(addResults)
+            appendSection(updateResults)
+            appendSection(deleteResults)
+
+            appendTableDivider()
+        }.toString()
     }
 
     private fun printResultsAsFile(result: String) {
-        val fileName = "benchmark_storage_${DateTime.now().toString("yyyy-MM-dd_HH:mm:ss")}"
+        val fileName = "benchmark_storage_${count}cards_${DateTime.now().toString("yyyy-MM-dd_HH:mm:ss")}"
         val file = File(fileName)
         file.createNewFile()
         file.writeText(result)
