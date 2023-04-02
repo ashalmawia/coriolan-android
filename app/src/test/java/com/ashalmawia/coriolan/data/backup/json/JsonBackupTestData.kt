@@ -14,7 +14,8 @@ object JsonBackupTestData {
             LanguageInfo(4L, "Greek"),
             LanguageInfo(5L, "Chineese"),
             LanguageInfo(6L, "Polish"),
-            LanguageInfo(7L, "Finnish")
+            LanguageInfo(7L, "Finnish"),
+            LanguageInfo(8L, "Arabic")
     )
     val domains = listOf(
             DomainInfo(1L, "English", 1L, 2L),
