@@ -14,6 +14,7 @@ import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.mockLearningProgressInProgress
 import org.joda.time.DateTime
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -26,6 +27,7 @@ private const val AVERAGING_ATTEMPTS = 10
 
 @RunWith(RobolectricTestRunner::class)
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
+@Ignore("benchmark tests are intended to be run manually, also they take a lot of time")
 class SqliteStorageBenchmarkTest {
 
     private var count = 0
