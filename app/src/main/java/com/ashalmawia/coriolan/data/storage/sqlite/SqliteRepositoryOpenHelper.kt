@@ -92,12 +92,14 @@ class SqliteRepositoryOpenHelper(
                 |);""".trimMargin()
         )
         db.execSQL("""CREATE TABLE $SQLITE_TABLE_CARD_STATES(
-                |   $SQLITE_COLUMN_CARD_ID INTEGER PRIMARY KEY,
-                |   $SQLITE_COLUMN_STATE_SR_DUE INTEGER NOT NULL,
-                |   $SQLITE_COLUMN_STATE_SR_PERIOD INTEGER NOT NULL,
-                |   FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
-                |      ON DELETE CASCADE
-                |      ON UPDATE CASCADE
+                |$SQLITE_COLUMN_CARD_ID INTEGER,
+                |$SQLITE_COLUMN_EXERCISE TEXT,
+                |$SQLITE_COLUMN_DUE_DATE INTEGER NOT NULL,
+                |$SQLITE_COLUMN_PERIOD INTEGER NOT NULL,
+                |PRIMARY KEY($SQLITE_COLUMN_CARD_ID, $SQLITE_COLUMN_EXERCISE),
+                |FOREIGN KEY ($SQLITE_COLUMN_CARD_ID) REFERENCES $SQLITE_TABLE_CARDS ($SQLITE_COLUMN_ID)
+                |   ON DELETE CASCADE
+                |   ON UPDATE CASCADE
                 |);""".trimMargin())
     }
 

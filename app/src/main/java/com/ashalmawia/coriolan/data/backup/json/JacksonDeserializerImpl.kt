@@ -18,7 +18,7 @@ class JacksonDeserializerImpl : JacksonDeserializer {
 
     override fun readCard(json: JsonParser): CardInfo = readCardFromJson(json)
 
-    override fun readCardStateSR(json: JsonParser): CardStateInfo = readSRStateFromJson(json)
+    override fun readCardStateSR(json: JsonParser): ExerciseStateInfo = readSRStateFromJson(json)
 
     override fun readDeck(json: JsonParser): DeckInfo = readDeckFromJson(json)
 }

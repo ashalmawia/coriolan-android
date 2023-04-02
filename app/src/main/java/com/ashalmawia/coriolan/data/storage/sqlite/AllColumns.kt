@@ -37,10 +37,11 @@ private val translations = arrayOf(
         SQLITE_COLUMN_TERM_ID
 )
 
-private val states = arrayOf(
+private val scheduling = arrayOf(
         SQLITE_COLUMN_CARD_ID,
-        SQLITE_COLUMN_STATE_SR_DUE,
-        SQLITE_COLUMN_STATE_SR_PERIOD
+        SQLITE_COLUMN_EXERCISE,
+        SQLITE_COLUMN_DUE_DATE,
+        SQLITE_COLUMN_PERIOD
 )
 
 fun String.from(alias: String?): String = if (alias != null) "${alias}_$this" else this
@@ -51,7 +52,7 @@ fun allColumnsDomains(alias: String? = null): String = allColumns(domains, alias
 fun allColumnsDecks(alias: String? = null): String = allColumns(decks, alias)
 fun allColumnsCards(alias: String? = null): String = allColumns(cards, alias)
 fun allColumnsReverse(alias: String? = null): String = allColumns(translations, alias)
-fun allColumnsSRStates(alias: String? = null): String = allColumns(states, alias)
+fun allColumnsSRStates(alias: String? = null): String = allColumns(scheduling, alias)
 
 private fun allColumns(columns: Array<String>, alias: String?): String {
     if (alias == null) {

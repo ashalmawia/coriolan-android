@@ -9,7 +9,7 @@ class MockBackupableRepository(
         terms: List<TermInfo>,
         cards: List<CardInfo>,
         decks: List<DeckInfo>,
-        cardStates: List<CardStateInfo>
+        cardStates: List<ExerciseStateInfo>
 ) : BackupableRepository {
 
     private val languages = langauges.toMutableList()
@@ -34,7 +34,7 @@ class MockBackupableRepository(
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo>
             = decks.subList(min(offset, decks.size), min(offset + limit, decks.size))
 
-    override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo> {
+    override fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
         return cardStates.subList(min(offset, cardStates.size), min(offset + limit, cardStates.size))
     }
 
@@ -72,7 +72,7 @@ class MockBackupableRepository(
         this.decks.addAll(decks)
     }
 
-    override fun writeCardStates(states: List<CardStateInfo>) {
+    override fun writeCardStates(states: List<ExerciseStateInfo>) {
         this.cardStates.addAll(states)
     }
 

@@ -714,16 +714,23 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     override fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress) {
-        val table = SQLITE_TABLE_CARD_STATES
-        val cv = CreateContentValues.createCardStateContentValues(card.id, learningProgress)
-        try {
-            val result = helper.writableDatabase.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+        val cvList = CreateContentValues.createAllLearningProgressContentValues(card.id, learningProgress)
 
-            if (result < 0) {
-                throw DataProcessingException("failed to updated card state for card ${card.id}: error occured")
+        val db = helper.writableDatabase
+        db.beginTransaction()
+        try {
+            cvList.forEach {
+                val result = db.insertWithOnConflict(
+                        SQLITE_TABLE_CARD_STATES, null, it, SQLiteDatabase.CONFLICT_REPLACE)
+                if (result < 0) {
+                    throw DataProcessingException("failed to updated card state for card ${card.id}: error occured")
+                }
             }
+            db.setTransactionSuccessful()
         } catch (e: Exception) {
             throw DataProcessingException("failed to updated card state for card $card.id: constraint violation", e)
+        } finally {
+            db.endTransaction()
         }
     }
 
@@ -817,7 +824,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     private fun onlyPending(statesTableAlias: String) =
-            "(${SQLITE_COLUMN_STATE_SR_DUE.from(statesTableAlias)} IS NULL OR ${SQLITE_COLUMN_STATE_SR_DUE.from(statesTableAlias)} <= ?)"
+            "(${SQLITE_COLUMN_DUE_DATE.from(statesTableAlias)} IS NULL OR ${SQLITE_COLUMN_DUE_DATE.from(statesTableAlias)} <= ?)"
 
 
     override fun invalidateCache() {

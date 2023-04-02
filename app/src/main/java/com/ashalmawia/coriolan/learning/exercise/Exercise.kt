@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.learning.exercise
 import android.content.Context
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.Task
@@ -14,6 +15,7 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import org.joda.time.DateTime
+import java.lang.IllegalArgumentException
 
 interface Exercise {
 
@@ -57,5 +59,12 @@ interface Exercise {
 enum class ExerciseId(val value: String) {
     FLASHCARDS("flashcards"),
 
-    TEST("test")    // testing only
+    @VisibleForTesting
+    TEST("test");
+
+    companion object {
+        fun fromValue(value: String): ExerciseId {
+            return values().find { it.value == value } ?: throw IllegalArgumentException("unknown experiment id: $value")
+        }
+    }
 }

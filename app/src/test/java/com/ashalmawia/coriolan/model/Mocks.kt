@@ -83,13 +83,19 @@ private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
 fun mockState(period: Int = 0) = ExerciseState(mockToday(), period)
-fun mockLearningProgressNew(): LearningProgress = mockLearningProgress(mockToday(), PERIOD_NEVER_SCHEDULED)
-fun mockLearningProgressRelearn(): LearningProgress = mockLearningProgress(mockToday(), 0)
-fun mockLearningProgressInProgress(): LearningProgress = mockLearningProgress(mockToday(), 5)
-fun mockLearningProgressLearnt(): LearningProgress = mockLearningProgress(mockToday(), 200)
+fun mockStateNew() = ExerciseState(mockToday(), PERIOD_NEVER_SCHEDULED)
+fun mockStateInProgress() = ExerciseState(mockToday(), 5)
+fun mockStateRelearn() = ExerciseState(mockToday(), 0)
+fun mockStateLearnt() = ExerciseState(mockToday(), 200)
+fun mockLearningProgressNew(): LearningProgress = mockLearningProgress(mockStateNew())
+fun mockLearningProgressRelearn(): LearningProgress = mockLearningProgress(mockStateRelearn())
+fun mockLearningProgressInProgress(): LearningProgress = mockLearningProgress(mockStateInProgress())
+fun mockLearningProgressLearnt(): LearningProgress = mockLearningProgress(mockStateLearnt())
 fun mockLearningProgress(): LearningProgress = LearningProgress(emptyMap())
-fun mockLearningProgress(due: DateTime = mockToday(), period: Int = 0): LearningProgress = LearningProgress(
-        mapOf(ExerciseId.FLASHCARDS to ExerciseState(due, period))
+fun mockLearningProgress(due: DateTime = mockToday(), period: Int = 0): LearningProgress =
+        mockLearningProgress(ExerciseState(due, period))
+fun mockLearningProgress(exerciseState: ExerciseState): LearningProgress = LearningProgress(
+        mapOf(ExerciseId.FLASHCARDS to exerciseState)
 )
 
 fun mockEmptyExerciseState(today: LearningDay) = ExerciseState(today, PERIOD_NEVER_SCHEDULED)

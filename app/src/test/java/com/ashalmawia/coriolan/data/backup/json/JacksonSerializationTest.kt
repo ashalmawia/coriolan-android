@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.Extras
 import com.fasterxml.jackson.core.JsonFactory
@@ -69,7 +70,7 @@ class JacksonSerializationTest {
     @Test
     fun testSRStateInfo() {
         // given
-        val info = CardStateInfo(23L, today.minusDays(5), 7)
+        val info = ExerciseStateInfo(23L, ExerciseId.TEST, today.minusDays(5), 7)
 
         // then
         test(info, serializer::writeCardState, deserializer::readCardStateSR)

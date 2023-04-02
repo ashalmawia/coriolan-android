@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.content.ContentValues
 import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
@@ -111,17 +112,26 @@ object CreateContentValues : ExtrasDeserializer {
         return cv
     }
 
-// ********** CARD STATE ********************
+// ********** LEARNING PROGRESS ********************
 
-    fun createCardStateContentValues(cardId: Long, learningProgress: LearningProgress): ContentValues {
-        return createCardStateContentValues(cardId, learningProgress.spacedRepetition.due, learningProgress.spacedRepetition.period)
+    fun createAllLearningProgressContentValues(
+            cardId: Long, learningProgress: LearningProgress): List<ContentValues> {
+        return learningProgress.states.map {
+            (exerciseId, _) -> createCardStateContentValues(cardId, exerciseId, learningProgress)
+        }
     }
 
-    fun createCardStateContentValues(cardId: Long, due: DateTime, period: Int): ContentValues {
+    fun createCardStateContentValues(cardId: Long, exerciseId: ExerciseId, learningProgress: LearningProgress): ContentValues {
+        val state = learningProgress.stateFor(exerciseId)
+        return createCardStateContentValues(cardId, exerciseId, state.due, state.period)
+    }
+
+    fun createCardStateContentValues(cardId: Long, exerciseId: ExerciseId, due: DateTime, period: Int): ContentValues {
         val cv = ContentValues()
         cv.put(SQLITE_COLUMN_CARD_ID, cardId)
-        cv.put(SQLITE_COLUMN_STATE_SR_DUE, due)
-        cv.put(SQLITE_COLUMN_STATE_SR_PERIOD, period)
+        cv.put(SQLITE_COLUMN_EXERCISE, exerciseId.value)
+        cv.put(SQLITE_COLUMN_DUE_DATE, due)
+        cv.put(SQLITE_COLUMN_PERIOD, period)
         return cv
     }
 

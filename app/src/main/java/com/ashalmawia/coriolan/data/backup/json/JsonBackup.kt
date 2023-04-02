@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.backup.CardStateInfo
+import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.model.Extras
 import com.fasterxml.jackson.core.*
@@ -140,7 +140,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
     private fun writeSRStates(
             repository: BackupableRepository,
             json: JsonGenerator,
-            serializer: (CardStateInfo, JsonGenerator) -> Unit
+            serializer: (ExerciseStateInfo, JsonGenerator) -> Unit
     ) {
         json.writeFieldName(FIELD_CARD_STATES)
         json.writeStartObject()
@@ -152,7 +152,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
     private fun readSRStates(
             json: JsonParser,
-            deserializer: (JsonParser) -> CardStateInfo,
+            deserializer: (JsonParser) -> ExerciseStateInfo,
             repository: BackupableRepository
     ) {
         json.nextToken() // "{"

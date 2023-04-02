@@ -3,13 +3,14 @@ package com.ashalmawia.coriolan.data.backup.json
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.CardInfo
-import com.ashalmawia.coriolan.data.backup.CardStateInfo
+import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
 import com.ashalmawia.coriolan.data.backup.DeckInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.Extras
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.*
 import org.joda.time.DateTime
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -175,9 +176,9 @@ abstract class JsonBackupTest {
                 DeckInfo(1, 1, "Default")
         )
         val states = listOf(
-                CardStateInfo(1, DateTime(1680400800000), 1),
-                CardStateInfo(3, DateTime(1680314400000), -1),
-                CardStateInfo(5, DateTime(1680400800000), 1),
+                ExerciseStateInfo(1, ExerciseId.FLASHCARDS, DateTime(1680400800000), 1),
+                ExerciseStateInfo(3, ExerciseId.FLASHCARDS, DateTime(1680314400000), -1),
+                ExerciseStateInfo(5, ExerciseId.FLASHCARDS, DateTime(1680400800000), 1),
         )
 
         // when
@@ -197,5 +198,170 @@ abstract class JsonBackupTest {
 }
 
 private val legacyBackup = """
-    {"languages":[{"id":1,"value":"Английский"},{"id":2,"value":"Русский"}],"domains":[{"id":1,"name":"","orig_lang_id":1,"trans_lang_id":2}],"expressions":[{"id":1,"value":"get","lang_id":1},{"id":2,"value":"получать","lang_id":2},{"id":3,"value":"зарабатывать","lang_id":2},{"id":4,"value":"добиваться","lang_id":2},{"id":5,"value":"earn","lang_id":1},{"id":6,"value":"climb","lang_id":1},{"id":7,"value":"карабкаться","lang_id":2}],"expression_extras":[{"id":1,"expression_id":1,"type":1,"value":"get"},{"id":2,"expression_id":5,"type":1,"value":"/ɜːn ɜːrn/"}],"decks":[{"id":1,"domain_id":1,"name":"Default"}],"cards":[{"id":1,"deck_id":1,"domain_id":1,"original_id":1,"translations":[2,3,4]},{"id":2,"deck_id":1,"domain_id":1,"original_id":2,"translations":[1]},{"id":3,"deck_id":1,"domain_id":1,"original_id":3,"translations":[1,5]},{"id":4,"deck_id":1,"domain_id":1,"original_id":4,"translations":[1]},{"id":5,"deck_id":1,"domain_id":1,"original_id":5,"translations":[3]},{"id":6,"deck_id":1,"domain_id":1,"original_id":6,"translations":[7]},{"id":7,"deck_id":1,"domain_id":1,"original_id":7,"translations":[6]}],"sr_state":{"simple":[{"id":1,"due":1680400800000,"period":1},{"id":3,"due":1680314400000,"period":-1},{"id":5,"due":1680400800000,"period":1}]}}
+{
+  "cards": [
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 1, 
+      "original_id": 1, 
+      "translations": [
+        2, 
+        3, 
+        4
+      ]
+    }, 
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 2, 
+      "original_id": 2, 
+      "translations": [
+        1
+      ]
+    }, 
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 3, 
+      "original_id": 3, 
+      "translations": [
+        1, 
+        5
+      ]
+    }, 
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 4, 
+      "original_id": 4, 
+      "translations": [
+        1
+      ]
+    }, 
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 5, 
+      "original_id": 5, 
+      "translations": [
+        3
+      ]
+    }, 
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 6, 
+      "original_id": 6, 
+      "translations": [
+        7
+      ]
+    }, 
+    {
+      "deck_id": 1, 
+      "domain_id": 1, 
+      "id": 7, 
+      "original_id": 7, 
+      "translations": [
+        6
+      ]
+    }
+  ], 
+  "decks": [
+    {
+      "domain_id": 1, 
+      "id": 1, 
+      "name": "Default"
+    }
+  ], 
+  "domains": [
+    {
+      "id": 1, 
+      "name": "", 
+      "orig_lang_id": 1, 
+      "trans_lang_id": 2
+    }
+  ], 
+  "expression_extras": [
+    {
+      "expression_id": 1, 
+      "id": 1, 
+      "type": 1, 
+      "value": "get"
+    }, 
+    {
+      "expression_id": 5, 
+      "id": 2, 
+      "type": 1, 
+      "value": "/ɜːn ɜːrn/"
+    }
+  ], 
+  "expressions": [
+    {
+      "id": 1, 
+      "lang_id": 1, 
+      "value": "get"
+    }, 
+    {
+      "id": 2, 
+      "lang_id": 2, 
+      "value": "получать"
+    }, 
+    {
+      "id": 3, 
+      "lang_id": 2, 
+      "value": "зарабатывать"
+    }, 
+    {
+      "id": 4, 
+      "lang_id": 2, 
+      "value": "добиваться"
+    }, 
+    {
+      "id": 5, 
+      "lang_id": 1, 
+      "value": "earn"
+    }, 
+    {
+      "id": 6, 
+      "lang_id": 1, 
+      "value": "climb"
+    }, 
+    {
+      "id": 7, 
+      "lang_id": 2, 
+      "value": "карабкаться"
+    }
+  ], 
+  "languages": [
+    {
+      "id": 1, 
+      "value": "Английский"
+    }, 
+    {
+      "id": 2, 
+      "value": "Русский"
+    }
+  ], 
+  "sr_state": {
+    "simple": [
+      {
+        "due": 1680400800000, 
+        "id": 1, 
+        "period": 1
+      }, 
+      {
+        "due": 1680314400000, 
+        "id": 3, 
+        "period": -1
+      }, 
+      {
+        "due": 1680400800000, 
+        "id": 5, 
+        "period": 1
+      }
+    ]
+  }
+}
+
 """.trimIndent()

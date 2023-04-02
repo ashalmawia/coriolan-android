@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.mockTerm
@@ -249,26 +250,30 @@ class CreateContentValuesTest {
     fun createStateContentValuesTest() {
         // given
         val cardId = 1L
+        val exerciseId = ExerciseId.FLASHCARDS
         val due = DateTime(1519529781000)
         val period = 16
         val learningProgress = mockLearningProgress(due, period)
 
         // when
-        val cv = CreateContentValues.createCardStateContentValues(cardId, learningProgress)
+        val cv = CreateContentValues.createCardStateContentValues(cardId, exerciseId, learningProgress)
 
         // then
-        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("values count is correct", 4, cv.size())
         assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv.get(SQLITE_COLUMN_CARD_ID))
-        assertEquals("$SQLITE_COLUMN_STATE_SR_DUE is correct", due, cv.getAsDate(SQLITE_COLUMN_STATE_SR_DUE))
-        assertEquals("$SQLITE_COLUMN_STATE_SR_PERIOD is correct", period, cv.get(SQLITE_COLUMN_STATE_SR_PERIOD))
+        assertEquals("$SQLITE_COLUMN_EXERCISE is correct", exerciseId.value, cv.get(SQLITE_COLUMN_EXERCISE))
+        assertEquals("$SQLITE_COLUMN_DUE_DATE is correct", due, cv.getAsDate(SQLITE_COLUMN_DUE_DATE))
+        assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv.get(SQLITE_COLUMN_PERIOD))
 
         // when
-        val cv1 = CreateContentValues.createCardStateContentValues(cardId, learningProgress.spacedRepetition.due, learningProgress.spacedRepetition.period)
+        val state = learningProgress.stateFor(exerciseId)
+        val cv1 = CreateContentValues.createCardStateContentValues(cardId, exerciseId, state.due, state.period)
 
         // then
-        assertEquals("values count is correct", 3, cv1.size())
+        assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$SQLITE_COLUMN_CARD_ID is correct", cardId, cv1.get(SQLITE_COLUMN_CARD_ID))
-        assertEquals("$SQLITE_COLUMN_STATE_SR_DUE is correct", due, cv1.getAsDate(SQLITE_COLUMN_STATE_SR_DUE))
-        assertEquals("$SQLITE_COLUMN_STATE_SR_PERIOD is correct", period, cv1.get(SQLITE_COLUMN_STATE_SR_PERIOD))
+        assertEquals("$SQLITE_COLUMN_EXERCISE is correct", exerciseId.value, cv1.get(SQLITE_COLUMN_EXERCISE))
+        assertEquals("$SQLITE_COLUMN_DUE_DATE is correct", due, cv1.getAsDate(SQLITE_COLUMN_DUE_DATE))
+        assertEquals("$SQLITE_COLUMN_PERIOD is correct", period, cv1.get(SQLITE_COLUMN_PERIOD))
     }
 }

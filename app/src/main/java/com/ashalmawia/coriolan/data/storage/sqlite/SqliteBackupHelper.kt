@@ -129,7 +129,7 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo> {
+    override fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -140,9 +140,11 @@ class SqliteBackupHelper(
         """.trimMargin(), arrayOf())
 
         cursor.use {
-            val list = mutableListOf<CardStateInfo>()
+            val list = mutableListOf<ExerciseStateInfo>()
             while (cursor.moveToNext()) {
-                list.add(CardStateInfo(cursor.getCardId(), cursor.getDateDue(), cursor.getPeriod()))
+                list.add(ExerciseStateInfo(
+                        cursor.getCardId(), cursor.getExerciseId(), cursor.getDateDue(), cursor.getPeriod()
+                ))
             }
             return list
         }
@@ -246,12 +248,11 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun writeCardStates(states: List<CardStateInfo>) {
+    override fun writeCardStates(states: List<ExerciseStateInfo>) {
         val db = helper.writableDatabase
         states.forEach {
-            db.insertOrThrow(SQLITE_TABLE_CARD_STATES, null,
-                    CreateContentValues.createCardStateContentValues(it.cardId, it.due, it.period)
-            )
+            val cv = CreateContentValues.createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.period)
+            db.insertOrThrow(SQLITE_TABLE_CARD_STATES, null, cv)
         }
     }
 

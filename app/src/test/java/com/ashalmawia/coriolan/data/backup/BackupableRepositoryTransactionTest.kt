@@ -96,7 +96,7 @@ class BackupableRepositoryTransactionTest {
     fun testSRStates() {
         // given
         val repo = object : OpenBackupableRepostory(realRepo) {
-            override fun writeCardStates(states: List<CardStateInfo>) {
+            override fun writeCardStates(states: List<ExerciseStateInfo>) {
                 super.writeCardStates(states)
                 throw Exception()
             }
@@ -155,7 +155,7 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo> = inner.allDecks(offset, limit)
 
-    override fun allCardStates(offset: Int, limit: Int): List<CardStateInfo>
+    override fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo>
             = inner.allCardStates(offset, limit)
 
     override fun overrideRepositoryData(override: (BackupableRepository) -> Unit) {
@@ -172,7 +172,7 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun writeDecks(decks: List<DeckInfo>) = inner.writeDecks(decks)
 
-    override fun writeCardStates(states: List<CardStateInfo>) = inner.writeCardStates(states)
+    override fun writeCardStates(states: List<ExerciseStateInfo>) = inner.writeCardStates(states)
 
     override fun hasAtLeastOneCard(): Boolean = inner.hasAtLeastOneCard()
 }

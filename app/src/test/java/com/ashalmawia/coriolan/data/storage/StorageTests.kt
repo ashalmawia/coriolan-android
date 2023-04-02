@@ -1581,11 +1581,11 @@ abstract class StorageTest {
         val deck = addMockDeck(storage)
         val card = addMockCard(storage, deck.id)
 
-        val state = storage.getCardLearningProgress(card)
+        val progress = storage.getCardLearningProgress(card)
 
         // then
-        assertEquals("state is correct", Status.NEW, state.spacedRepetition.status)
-        assertEquals("new card is due today", today, state.spacedRepetition.due)
+        assertEquals("state is correct", Status.NEW, progress.mock.status)
+        assertEquals("new card is due today", today, progress.mock.due)
 
         // given
         val newLearningProgress = mockLearningProgress(today.plusDays(8), 8)
@@ -1595,8 +1595,8 @@ abstract class StorageTest {
         val readState = storage.getCardLearningProgress(card)
 
         // then
-        assertEquals("state is correct", newLearningProgress.spacedRepetition.status, readState.spacedRepetition.status)
-        assertEquals("new card is due today", newLearningProgress.spacedRepetition.due, readState.spacedRepetition.due)
+        assertEquals("state is correct", newLearningProgress.mock.status, readState.mock.status)
+        assertEquals("new card is due today", newLearningProgress.mock.due, readState.mock.due)
     }
 
     @Test

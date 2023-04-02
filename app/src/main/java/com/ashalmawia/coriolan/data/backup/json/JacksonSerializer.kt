@@ -13,7 +13,7 @@ interface JacksonSerializer {
 
     fun writeCard(card: CardInfo, json: JsonGenerator)
 
-    fun writeCardState(state: CardStateInfo, json: JsonGenerator)
+    fun writeCardState(state: ExerciseStateInfo, json: JsonGenerator)
 
     fun writeDeck(deck: DeckInfo, json: JsonGenerator)
 

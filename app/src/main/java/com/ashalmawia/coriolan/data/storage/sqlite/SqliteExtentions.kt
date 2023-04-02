@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
@@ -25,9 +26,9 @@ fun Cursor.getLanguageId(alias: String? = null): Long { return getLong(SQLITE_CO
 fun Cursor.getCardId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_CARD_ID, alias) }
 fun Cursor.getType(alias: String? = null): Int { return getInt(SQLITE_COLUMN_TYPE, alias)}
 
-fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_STATE_SR_DUE, alias) }
-fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_STATE_SR_PERIOD, alias) }
-fun Cursor.hasSavedSRState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_STATE_SR_DUE, alias) }
+fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE_DATE, alias) }
+fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }
+fun Cursor.hasSavedSRState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_DUE_DATE, alias) }
 
 fun Cursor.getLanguage(alias: String? = null): Language {
     return Language(
@@ -48,6 +49,11 @@ fun Cursor.getTerm(deserializer: ExtrasDeserializer, aliasTerms: String, aliasLa
             getLanguage(aliasLanguages),
             getExtras(deserializer, aliasTerms)
     )
+}
+
+fun Cursor.getExerciseId(alias: String? = null): ExerciseId {
+    val value = getString(SQLITE_COLUMN_EXERCISE, alias)
+    return ExerciseId.fromValue(value)
 }
 
 fun ContentValues.put(key: String, value: DateTime) {

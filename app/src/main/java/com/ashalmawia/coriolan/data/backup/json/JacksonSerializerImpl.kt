@@ -17,7 +17,7 @@ class JacksonSerializerImpl : JacksonSerializer {
 
     override fun writeCard(card: CardInfo, json: JsonGenerator) = writeCardToJson(card, json)
 
-    override fun writeCardState(state: CardStateInfo, json: JsonGenerator) = writeSRStateToJson(state, json)
+    override fun writeCardState(state: ExerciseStateInfo, json: JsonGenerator) = writeSRStateToJson(state, json)
 
     override fun writeDeck(deck: DeckInfo, json: JsonGenerator) = writeDeckToJson(deck, json)
 }
