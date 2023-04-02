@@ -32,7 +32,7 @@ class FlashcardsExerciseRenderer(
     override fun renderTask(task: Task) {
         uiContainer.removeAllViews()
 
-        val answers = answers(task.learningProgress.spacedRepetition).asList()
+        val answers = answers(task.learningProgress.flashcards).asList()
         cardView.bind(task.card, answers)
 
         uiContainer.addView(cardView)

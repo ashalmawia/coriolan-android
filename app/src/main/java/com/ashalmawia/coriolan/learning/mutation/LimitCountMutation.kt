@@ -26,11 +26,11 @@ class LimitCountMutation(preferences: Preferences, logbook: Logbook, date: DateT
     private fun limitNew() = limitNew?.minus(counts[CardAction.NEW_CARD_FIRST_SEEN].orZero()) ?: Int.MAX_VALUE
     private fun limitReview() = limitReview?.minus(counts[CardAction.CARD_REVIEWED].orZero()) ?: Int.MAX_VALUE
 
-    private fun  transformed(cards: List<Task>, limitNew: Int, limitReview: Int): List<Task> {
+    private fun transformed(cards: List<Task>, limitNew: Int, limitReview: Int): List<Task> {
         var countNew = 0
         var countReview = 0
         return cards.filter {
-            when (it.learningProgress.spacedRepetition.status) {
+            when (it.exerciseState.status) {
                 Status.NEW -> countNew++ < limitNew
                 Status.IN_PROGRESS, Status.LEARNT -> countReview++ < limitReview
                 Status.RELEARN -> true

@@ -22,10 +22,9 @@ class Assignment(
         protected set
 
     fun counts(): Counts {
-        val cards = tasks()
-        // todo: decouple
-        val counts = cards.groupBy { it.learningProgress.spacedRepetition.status }.mapValues { it.value.size }
-        return Counts.createFrom(counts, cards.size)
+        val tasks = tasks()
+        val counts = tasks.groupBy { it.exerciseState.status }.mapValues { it.value.size }
+        return Counts.createFrom(counts, tasks.size)
     }
     fun hasNext(): Boolean {
         return queue.size > 0

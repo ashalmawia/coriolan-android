@@ -20,7 +20,7 @@ class SqliteLogbookTest {
     private val journal = SqliteLogbook(RuntimeEnvironment.application)
 
     private val today = mockToday()
-    private val exerciseId = ExerciseId.FLASHCARDS
+    private val exerciseId = ExerciseId.TEST
 
     @Test
     fun test__cardsStudiedOnDate__noEntry() {
@@ -164,7 +164,7 @@ class SqliteLogbookTest {
     fun test__multipleExercises() {
         // given
         val date = today
-        val anotherExerciseId = ExerciseId.TEST
+        val anotherExerciseId = ExerciseId.FLASHCARDS
 
         // when
         journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)

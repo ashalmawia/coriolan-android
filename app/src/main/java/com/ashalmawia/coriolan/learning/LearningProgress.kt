@@ -15,7 +15,7 @@ data class LearningProgress(
             if (states.all { it.value.status == Status.LEARNT }) return Status.LEARNT
             return Status.IN_PROGRESS
         }
-    val spacedRepetition: ExerciseState
+    val flashcards: ExerciseState
         get() = stateFor(ExerciseId.FLASHCARDS)
 
     fun stateFor(exerciseId: ExerciseId) = states[exerciseId] ?: emptyState()

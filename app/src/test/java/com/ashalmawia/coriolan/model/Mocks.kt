@@ -95,7 +95,7 @@ fun mockLearningProgress(): LearningProgress = LearningProgress(emptyMap())
 fun mockLearningProgress(due: DateTime = mockToday(), period: Int = 0): LearningProgress =
         mockLearningProgress(ExerciseState(due, period))
 fun mockLearningProgress(exerciseState: ExerciseState): LearningProgress = LearningProgress(
-        mapOf(ExerciseId.FLASHCARDS to exerciseState)
+        mapOf(ExerciseId.TEST to exerciseState)
 )
 
 fun mockEmptyExerciseState(today: LearningDay) = ExerciseState(today, PERIOD_NEVER_SCHEDULED)

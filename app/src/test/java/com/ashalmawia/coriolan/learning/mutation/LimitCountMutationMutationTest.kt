@@ -6,7 +6,7 @@ import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -17,7 +17,7 @@ class LimitCountMutationMutationTest {
     private val preferences = MockPreferences()
     private val journal = MockLogbook()
     private val date = mockToday()
-    private val cards = List(60, { i -> mockTask(procudeMockLearningProgress(i)) })
+    private val cards = List(60) { i -> mockTask(procudeMockLearningProgress(i)) }
 
     private val mutation = lazy { LimitCountMutation(preferences, journal, date) }
 
@@ -214,9 +214,9 @@ class LimitCountMutationMutationTest {
 }
 
 private fun List<Task>.filter(vararg statuses: Status): List<Task> {
-    return filter { statuses.contains(it.learningProgress.spacedRepetition.status) }
+    return filter { statuses.contains(it.learningProgress.globalStatus) }
 }
 
 private fun List<Task>.count(vararg statuses: Status): Int {
-    return count { statuses.contains(it.learningProgress.spacedRepetition.status) }
+    return count { statuses.contains(it.learningProgress.globalStatus) }
 }

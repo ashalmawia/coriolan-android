@@ -250,7 +250,7 @@ class CreateContentValuesTest {
     fun createStateContentValuesTest() {
         // given
         val cardId = 1L
-        val exerciseId = ExerciseId.FLASHCARDS
+        val exerciseId = ExerciseId.TEST
         val due = DateTime(1519529781000)
         val period = 16
         val learningProgress = mockLearningProgress(due, period)

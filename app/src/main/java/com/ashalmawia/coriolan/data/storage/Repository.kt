@@ -64,12 +64,11 @@ interface Repository {
 
         val deckDue = due.filter { it.first.type == cardType }
 
-        // todo: decouple
         return Counts(
-                deckDue.count { it.second.spacedRepetition.status == Status.NEW },
-                deckDue.count { it.second.spacedRepetition.status == Status.IN_PROGRESS
-                        || it.second.spacedRepetition.status == Status.LEARNT },
-                deckDue.count { it.second.spacedRepetition.status == Status.RELEARN },
+                deckDue.count { it.second.globalStatus == Status.NEW },
+                deckDue.count { it.second.globalStatus == Status.IN_PROGRESS
+                        || it.second.globalStatus == Status.LEARNT },
+                deckDue.count { it.second.globalStatus == Status.RELEARN },
                 total.filter { it.type == cardType }.size
         )
     }

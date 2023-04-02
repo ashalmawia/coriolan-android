@@ -53,8 +53,8 @@ class SortReviewsByPeriodMutationTest {
     private fun checkAscending(tasks: List<Task>): Boolean {
         var previous = -1000
         tasks.forEach {
-            if (it.learningProgress.spacedRepetition.period < previous) return false
-            previous = it.learningProgress.spacedRepetition.period
+            if (it.learningProgress.mock.period < previous) return false
+            previous = it.learningProgress.mock.period
         }
         return true
     }

@@ -705,11 +705,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         """.trimMargin(), arrayOf(card.id.toString()))
 
         cursor.use {
-            return if (cursor.moveToNext()) {
-                extractLearningProgress(cursor)
-            } else {
-                LearningProgress(emptyMap())
-            }
+            return extractLearningProgress(cursor)
         }
     }
 
@@ -780,8 +776,16 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                         it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse.getValue(cardId)
                 )
-                val state = extractLearningProgress(cursor, STATES)
-                tasks.add(Pair(card, state))
+                // TODO: make this work with multiple exercises by removing join and making 2 queries
+                // TODO: use extractLearningProgress()
+                val progress = if (cursor.hasSavedExerciseState(STATES)) {
+                    LearningProgress(mapOf(
+                            cursor.getExerciseId(STATES) to ExerciseState(cursor.getDateDue(STATES), cursor.getPeriod(STATES))
+                    ))
+                } else {
+                    LearningProgress(emptyMap())
+                }
+                tasks.add(Pair(card, progress))
             }
             return tasks
         }
@@ -790,37 +794,50 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
         val db = helper.readableDatabase
 
-        val CARDS = "Cards"
-        val STATES = "States"
-        val TERMS = "Terms"
+        val cardIdsToFrontIds = cardIdsToFrontIds(db, originalIds)
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsCards(CARDS)},
-            |   ${allColumnsSRStates(STATES)},
-            |   ${allColumnsTerms(TERMS)}
-            |
-            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-            |
-            |       LEFT JOIN $SQLITE_TABLE_CARD_STATES AS $STATES
-            |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
-            |
+            |SELECT *
+            |   FROM $SQLITE_TABLE_CARD_STATES
             |   WHERE
-            |       ${SQLITE_COLUMN_ID.from(TERMS)} IN (${originalIds.joinToString()})
+            |       $SQLITE_COLUMN_CARD_ID IN (${cardIdsToFrontIds.keys.joinToString()})
         """.trimMargin(), arrayOf())
 
-        val map = mutableMapOf<Long, LearningProgress>()
+        val map = mutableMapOf<Long, LearningProgress>()  // front id as key
         cursor.use {
             while (cursor.moveToNext()) {
-                val termId = cursor.getId(TERMS)
-                val state = extractLearningProgress(cursor, STATES)
-                map[termId] = state
+                val cardId = cursor.getCardId()
+                val termId = cardIdsToFrontIds[cardId]!!
+                // TODO: use extractLearningProgress()
+                val progress = if (cursor.hasSavedExerciseState()) {
+                    LearningProgress(mapOf(
+                            cursor.getExerciseId() to ExerciseState(cursor.getDateDue(), cursor.getPeriod())
+                    ))
+                } else {
+                    LearningProgress(emptyMap())
+                }
+                map[termId] = progress
             }
-            return map
         }
+        return cardIdsToFrontIds.values.associateWith { map[it] ?: LearningProgress(emptyMap()) }
+    }
+
+    private fun cardIdsToFrontIds(db: SQLiteDatabase, frontIds: List<Long>): Map<Long, Long> {
+        val cursor = db.rawQuery("""
+            SELECT $SQLITE_COLUMN_ID, $SQLITE_COLUMN_FRONT_ID
+                FROM $SQLITE_TABLE_CARDS
+                WHERE $SQLITE_COLUMN_FRONT_ID IN (${frontIds.joinToString()})
+        """.trimIndent(), arrayOf())
+
+        val map = mutableMapOf<Long, Long>()
+        cursor.use {
+            while (cursor.moveToNext()) {
+                val cardId = cursor.getId()
+                val frontId = cursor.getFrontId()
+                map[cardId] = frontId
+            }
+        }
+        return map
     }
 
     private fun onlyPending(statesTableAlias: String) =
@@ -832,12 +849,12 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     private fun extractLearningProgress(cursor: Cursor, alias: String? = null): LearningProgress {
-        if (cursor.hasSavedSRState(alias)) {
+        val map = mutableMapOf<ExerciseId, ExerciseState>()
+        while (cursor.moveToNext()) {
+            val exerciseId = cursor.getExerciseId(alias)
             val state = ExerciseState(cursor.getDateDue(alias), cursor.getPeriod(alias))
-            // TODO: decouple
-            return LearningProgress(mapOf(ExerciseId.FLASHCARDS to state))
-        } else {
-            return LearningProgress(emptyMap())
+            map[exerciseId] = state
         }
+        return LearningProgress(map)
     }
 }

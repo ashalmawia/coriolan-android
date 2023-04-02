@@ -28,7 +28,7 @@ fun Cursor.getType(alias: String? = null): Int { return getInt(SQLITE_COLUMN_TYP
 
 fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE_DATE, alias) }
 fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }
-fun Cursor.hasSavedSRState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_DUE_DATE, alias) }
+fun Cursor.hasSavedExerciseState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_EXERCISE, alias) }
 
 fun Cursor.getLanguage(alias: String? = null): Language {
     return Language(

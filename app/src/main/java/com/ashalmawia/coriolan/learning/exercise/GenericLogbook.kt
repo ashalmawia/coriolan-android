@@ -13,13 +13,13 @@ class GenericLogbook(
 
     override fun recordCardAction(card: Card, oldLearningProgress: LearningProgress, newLearningProgress: LearningProgress) {
         val date = TodayManager.today()
-        when (exercise.status(oldLearningProgress)) {
+        when (oldLearningProgress.statusFor(exercise.id)) {
             Status.NEW -> {
                 logbook.incrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
-                if (exercise.status(newLearningProgress) == Status.RELEARN) {
+                if (newLearningProgress.statusFor(exercise.id) == Status.RELEARN) {
                     logbook.incrementCardActions(date, exercise.id, CardAction.CARD_RELEARNED)
                 } else {
                     logbook.incrementCardActions(date, exercise.id, CardAction.CARD_REVIEWED)
@@ -33,13 +33,13 @@ class GenericLogbook(
 
     override fun unrecordCardAction(card: Card, learningProgress: LearningProgress, learningProgressThatWasUndone: LearningProgress) {
         val date = TodayManager.today()
-        when (exercise.status(learningProgress)) {
+        when (learningProgress.statusFor(exercise.id)) {
             Status.NEW -> {
                 logbook.decrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
-                if (exercise.status(learningProgressThatWasUndone) == Status.RELEARN) {
+                if (learningProgressThatWasUndone.statusFor(exercise.id) == Status.RELEARN) {
                     logbook.decrementCardActions(date, exercise.id, CardAction.CARD_REVIEWED)
                 } else {
                     logbook.decrementCardActions(date, exercise.id, CardAction.CARD_RELEARNED)

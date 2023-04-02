@@ -94,8 +94,6 @@ class FlashcardsExercise(
         }
     }
 
-    override fun status(learningProgress: LearningProgress): Status = learningProgress.spacedRepetition.status
-
     private fun createScheduler() = MultiplierBasedScheduler()
 
     class LearningModeMutation(private val exercise: FlashcardsExercise) : Mutation {
@@ -117,9 +115,9 @@ class FlashcardsExercise(
 
         private fun Term.isReady(states: Map<Long, LearningProgress>): Boolean {
             val state = states[id]
-            return state != null && state.spacedRepetition.period >= 4
+            return state != null && state.flashcards.period >= 4
         }
     }
 }
 
-private fun Task.status() = learningProgress.spacedRepetition.status
+private fun Task.status() = learningProgress.flashcards.status

@@ -68,4 +68,4 @@ class FlashcardsExerciseExecutor(
     override fun isPending(task: Task): Boolean = task.state().due <= TodayManager.today()
 }
 
-private fun Task.state() = learningProgress.spacedRepetition
+private fun Task.state() = learningProgress.flashcards

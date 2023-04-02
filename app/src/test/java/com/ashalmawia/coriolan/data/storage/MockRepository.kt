@@ -146,8 +146,8 @@ class MockRepository : Repository {
     override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
         return cardsOfDeck(deck)
                 .map { card -> Pair(card, getCardLearningProgress(card)) }
-                .filter {
-                    it.second.spacedRepetition.due <= date
+                .filter { (_, progress) ->
+                    progress.states.isEmpty() || progress.states.any { it.value.due <= date }
                 }
     }
     override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {

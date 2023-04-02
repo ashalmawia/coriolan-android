@@ -1620,8 +1620,8 @@ abstract class StorageTest {
         assertEquals("all new cards are due today", count, due.size)
         for (i in 0 until count) {
             assertCardCorrect(due[i].first, cardData[i], domain)
-            assertEquals("state is correct", today, due[i].second.spacedRepetition.due)
-            assertEquals("state is correct", Status.NEW, due[i].second.spacedRepetition.status)
+            assertEquals("state is correct", today, due[i].second.mock.due)
+            assertEquals("state is correct", Status.NEW, due[i].second.mock.status)
         }
     }
 

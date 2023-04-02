@@ -7,8 +7,6 @@ import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.LearningProgress
-import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
@@ -52,8 +50,6 @@ interface Exercise {
             logbook: Logbook,
             listener: ExerciseListener
     ): ExerciseExecutor
-
-    fun status(learningProgress: LearningProgress): Status
 }
 
 enum class ExerciseId(val value: String) {
