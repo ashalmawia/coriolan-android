@@ -1,11 +1,14 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.database.Cursor
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
+import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
 import com.ashalmawia.coriolan.model.*
@@ -750,7 +753,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
-    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
+    private fun pendingCardIds(deck: Deck, date: DateTime, types: Array<CardType>): Map<Long, LearningProgress> {
         val db = helper.readableDatabase
 
         val CARDS = "Cards"
@@ -758,7 +761,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
         val cursor = db.rawQuery("""
             |SELECT
-            |   ${withAlias(arrayOf(SQLITE_COLUMN_ID, SQLITE_COLUMN_DECK_ID), CARDS)},
+            |   ${withAlias(arrayOf(SQLITE_COLUMN_ID, SQLITE_COLUMN_DECK_ID, SQLITE_COLUMN_TYPE), CARDS)},
             |   ${allColumnsStates(STATES)}
             |
             |   FROM $SQLITE_TABLE_CARDS AS $CARDS
@@ -768,6 +771,8 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             |
             |   WHERE
             |       ${SQLITE_COLUMN_DECK_ID.from(CARDS)} = ?
+            |           AND
+            |       ${SQLITE_COLUMN_TYPE.from(CARDS)} IN (${types.joinToString { "'${it.value}'" }})
             |           AND
             |       ${onlyPending(STATES)}
         """.trimMargin(), arrayOf(deck.id.toString(), date.timespamp.toString()))
@@ -786,16 +791,39 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             }
         }
 
-        val pendingCardsIds = pendingStates.keys.toList()
+        return pendingStates.mapValues { LearningProgress(it.value) }
+    }
+    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
+        val pendingWithProgress = pendingCardIds(deck, date, CardType.values())
+        val pendingCardsIds = pendingWithProgress.keys.toList()
         return if (pendingCardsIds.isEmpty()) {
             emptyList()
         } else {
             val cards = cardsWtihIds(pendingCardsIds, deck.domain)
             cards.map { card ->
-                val progress = LearningProgress(pendingStates[card.id] ?: emptyMap())
-                Pair(card, progress)
+                Pair(card, pendingWithProgress[card.id]!!)
             }
         }
+    }
+
+    override fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
+        val totalCount = countCardsOfDeck(deck, cardType)
+        val deckDue = pendingCardIds(deck, date, arrayOf(cardType))
+        return Counts(
+                deckDue.count { it.value.globalStatus == Status.NEW },
+                deckDue.count { it.value.globalStatus == Status.IN_PROGRESS
+                        || it.value.globalStatus == Status.LEARNT },
+                deckDue.count { it.value.globalStatus == Status.RELEARN },
+                totalCount
+        )
+    }
+
+    private fun countCardsOfDeck(deck: Deck, cardType: CardType): Int {
+        return DatabaseUtils.queryNumEntries(
+                helper.readableDatabase,
+                SQLITE_TABLE_CARDS,
+                "$SQLITE_COLUMN_DECK_ID = ${deck.id} AND $SQLITE_COLUMN_TYPE = '${cardType.value}'"
+        ).toInt()
     }
 
     override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {

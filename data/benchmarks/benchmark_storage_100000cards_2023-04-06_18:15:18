@@ -6,12 +6,12 @@
 +-----------------------------------------+---------+
 | Task                                    |    Time |
 +-----------------------------------------+---------+
-| query deck pending counts               | 47.569s |
 | query deck pending cards                | 26.002s |
 | query cards of deck                     | 28.394s |
 | query all cards                         | 27.214s |
 | query card by values                    | 24.474s |
 | query progress for cards with originals | 11.140s |
+| query deck pending counts               |  3.375s |
 | query term is used                      |  0.200s |
 | query card by id                        |  0.005s |
 | query all domains                       |  0.004s |

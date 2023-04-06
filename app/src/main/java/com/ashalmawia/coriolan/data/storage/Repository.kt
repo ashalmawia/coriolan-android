@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.data.storage
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.LearningProgress
-import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.*
 import org.joda.time.DateTime
 
@@ -58,20 +57,7 @@ interface Repository {
 
     fun deleteDeck(deck: Deck): Boolean
 
-    fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
-        val due = pendingCards(deck, date)
-        val total = cardsOfDeck(deck)
-
-        val deckDue = due.filter { it.first.type == cardType }
-
-        return Counts(
-                deckDue.count { it.second.globalStatus == Status.NEW },
-                deckDue.count { it.second.globalStatus == Status.IN_PROGRESS
-                        || it.second.globalStatus == Status.LEARNT },
-                deckDue.count { it.second.globalStatus == Status.RELEARN },
-                total.filter { it.type == cardType }.size
-        )
-    }
+    fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts
 
     fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress)
 
