@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 import org.junit.Assert.*
 import org.joda.time.DateTime
@@ -164,13 +165,13 @@ abstract class JsonBackupTest {
                 TermInfo(7, "карабкаться", 2, Extras.empty()),
         )
         val cards = listOf(
-                CardInfo(1, 1, 1, 1, listOf(2, 3, 4)),
-                CardInfo(2, 1, 1, 2, listOf(1)),
-                CardInfo(3, 1, 1, 3, listOf(1, 5)),
-                CardInfo(4, 1, 1, 4, listOf(1)),
-                CardInfo(5, 1, 1, 5, listOf(3)),
-                CardInfo(6, 1, 1, 6, listOf(7)),
-                CardInfo(7, 1, 1, 7, listOf(6)),
+                CardInfo(1, 1, 1, 1, listOf(2, 3, 4), CardType.FORWARD),
+                CardInfo(2, 1, 1, 2, listOf(1), CardType.REVERSE),
+                CardInfo(3, 1, 1, 3, listOf(1, 5), CardType.REVERSE),
+                CardInfo(4, 1, 1, 4, listOf(1), CardType.REVERSE),
+                CardInfo(5, 1, 1, 5, listOf(3), CardType.FORWARD),
+                CardInfo(6, 1, 1, 6, listOf(7), CardType.FORWARD),
+                CardInfo(7, 1, 1, 7, listOf(6), CardType.REVERSE),
         )
         val decks = listOf(
                 DeckInfo(1, 1, "Default")

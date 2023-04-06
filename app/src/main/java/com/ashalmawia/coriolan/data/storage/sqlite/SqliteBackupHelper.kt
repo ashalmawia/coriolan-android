@@ -85,7 +85,15 @@ class SqliteBackupHelper(
             val list = mutableListOf<CardInfo>()
             while (cursor.moveToNext()) {
                 val cardId = cursor.getId()
-                list.add(CardInfo(cardId, cursor.getDeckId(), cursor.getDomainId(), cursor.getFrontId(), translationsByCardId(cardId)))
+                list.add(CardInfo(
+                        cardId,
+                        cursor.getDeckId(),
+                        cursor.getDomainId(),
+                        cursor.getFrontId(),
+                        translationsByCardId(cardId),
+                        cursor.getCardType()
+                    )
+                )
             }
             return list
         }
@@ -230,7 +238,7 @@ class SqliteBackupHelper(
 
         cards.forEach {
             db.insertOrThrow(SQLITE_TABLE_CARDS, null,
-                    CreateContentValues.createCardContentValues(it.domainId, it.deckId, it.originalId, it.id)
+                    CreateContentValues.createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, it.id)
             )
             CreateContentValues.generateCardsReverseContentValues(it.id, it.translationIds).forEach {
                 db.insertOrThrow(SQLITE_TABLE_CARDS_REVERSE, null, it)

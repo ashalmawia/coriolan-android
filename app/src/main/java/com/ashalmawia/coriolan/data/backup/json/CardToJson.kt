@@ -53,7 +53,7 @@ fun readCardFromJson(json: JsonParser): CardInfo {
         throw JsonDeserializationException("failed to deserialize card, id $id, deckId $deckId, " +
                 "domainId $domainId, originalId $originalId, translations $translations")
     }
-    return CardInfo(id, deckId, domainId, originalId, translations)
+    return CardInfo(id, deckId, domainId, originalId, translations, null)
 }
 
 fun writeCardToJson(card: CardInfo, json: JsonGenerator) {

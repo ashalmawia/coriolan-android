@@ -11,7 +11,7 @@ import com.ashalmawia.coriolan.learning.MockExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.forward
 import com.ashalmawia.coriolan.util.reverse
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -547,7 +547,7 @@ class DecksRegistryTest {
 
         val mockRegistry = createDeckRegistry()
 
-        val card = Card(77L, deckId, domain, term1, listOf(term2))
+        val card = Card(77L, deckId, domain, CardType.FORWARD, term1, listOf(term2))
 
         // when
         val edited = mockRegistry.editCard(card,

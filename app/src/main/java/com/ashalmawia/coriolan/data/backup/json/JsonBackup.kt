@@ -2,8 +2,11 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.data.backup.CardInfo
+import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 import com.fasterxml.jackson.core.*
 import java.io.InputStream
@@ -39,7 +42,9 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         val json = factory.createParser(stream)
         var isEmpty = true
 
-        val terms = mutableListOf<TermInfo>()
+        val domains = mutableMapOf<Long, DomainInfo>()
+        val terms = mutableMapOf<Long, TermInfo>()
+        val cards = mutableListOf<CardInfo>()
         val legacyExtras = mutableMapOf<Long, Extras>()
 
         while (true) {
@@ -50,16 +55,21 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
             when (json.currentName) {
                 FIELD_LANGUAGES -> read(json, deserializer::readLanguage, repository::writeLanguages)
-                FIELD_DOMAINS -> read(json, deserializer::readDomain, repository::writeDomains)
-                FIELD_TERMS, FIELD_TERMS_LEGACY -> read(json, deserializer::readTerm) {
-                    terms.addAll(it)
+                FIELD_DOMAINS -> read(json, deserializer::readDomain) {
+                    domains.putAll(it.associateBy { it.id })
+                    repository.writeDomains(it)
+                }
+                FIELD_TERMS, FIELD_TERMS_LEGACY -> read(json, deserializer::readTerm) { list ->
+                    terms.putAll(list.associateBy { it.id })
                 }
                 FIELD_TERM_EXTRAS_LEGACY -> read(json, deserializer::readTermExtra) { list ->
                     legacyExtras.putAll(
                             list.associateBy { it.termId }.mapValues { (_, value) -> Extras(value.value) }
                     )
                 }
-                FIELD_CARDS -> read(json, deserializer::readCard, repository::writeCards)
+                FIELD_CARDS -> read(json, deserializer::readCard) { list ->
+                    cards.addAll(list)
+                }
                 FIELD_DECKS -> read(json, deserializer::readDeck, repository::writeDecks)
                 FIELD_CARD_STATES, FIELD_CARD_STATES_LEGACY -> readSRStates(json, deserializer::readCardStateSR, repository)
             }
@@ -69,7 +79,10 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
             throw IllegalArgumentException("backup stream was empty, nothing to restore")
         }
 
-        writeTerms(repository, terms, legacyExtras)
+        writeTerms(repository, terms.values.toList(), legacyExtras)
+
+        cards.forEach { it.cardType = resolveCardType(it, terms, domains) }
+        repository.writeCards(cards)
     }
 
     private fun writeTerms(repository: BackupableRepository, terms: List<TermInfo>, legacyExtras: Map<Long, Extras>) {
@@ -164,3 +177,9 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 }
 
 private operator fun Regex.contains(regex: String): Boolean = matches(regex)
+
+private fun resolveCardType(cardInfo: CardInfo, terms: Map<Long, TermInfo>, domains: Map<Long, DomainInfo>): CardType {
+    val domain = domains[cardInfo.domainId]!!
+    val original = terms[cardInfo.originalId]!!
+    return if (domain.origLangId == original.languageId) CardType.FORWARD else CardType.REVERSE
+}

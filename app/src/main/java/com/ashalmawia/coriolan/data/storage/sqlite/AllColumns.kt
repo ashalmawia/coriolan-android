@@ -29,7 +29,8 @@ private val cards = arrayOf(
         SQLITE_COLUMN_ID,
         SQLITE_COLUMN_FRONT_ID,
         SQLITE_COLUMN_DECK_ID,
-        SQLITE_COLUMN_DOMAIN_ID
+        SQLITE_COLUMN_DOMAIN_ID,
+        SQLITE_COLUMN_TYPE
 )
 
 private val translations = arrayOf(

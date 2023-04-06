@@ -55,6 +55,7 @@ fun mockCard(
             id,
             deckId,
             domain,
+            type,
             mockTerm(front, language = domain.langOriginal(type)),
             listOf(mockTerm(back, language = domain.langTranslations(type)), mockTerm(language = domain.langTranslations(type)))
     )

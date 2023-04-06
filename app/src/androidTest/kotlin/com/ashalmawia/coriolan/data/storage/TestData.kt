@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 
 fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
@@ -68,7 +69,8 @@ fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
                 deckId = deckId,
                 domainId = domainId,
                 originalId = termsOriginal[i / 3].id,
-                translationIds = (0 until 3).map { index -> termsTranslation[i / 3 + index].id }
+                translationIds = (0 until 3).map { index -> termsTranslation[i / 3 + index].id },
+                CardType.FORWARD
         ))
     }
 

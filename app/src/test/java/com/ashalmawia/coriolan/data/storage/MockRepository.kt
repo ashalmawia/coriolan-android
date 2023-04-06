@@ -66,6 +66,7 @@ class MockRepository : Repository {
                 cards.size + 1L,
                 deckId,
                 domain,
+                if (domain.langOriginal() == original.language) CardType.FORWARD else CardType.REVERSE,
                 original,
                 translations
         )
@@ -83,7 +84,7 @@ class MockRepository : Repository {
             throw DataProcessingException("card is not in the repo: $card")
         }
 
-        val updated = Card(card.id, deckId, card.domain, original, translations)
+        val updated = Card(card.id, deckId, card.domain, card.type, original, translations)
         cards.remove(card)
         cards.add(updated)
         return updated

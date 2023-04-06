@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.backup.json
 import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 import java.util.*
 
@@ -58,30 +59,30 @@ object JsonBackupTestData {
     )
 
     val cards = listOf(
-            CardInfo(1L, 1L, 1L, 1L, listOf(7L)),
-            CardInfo(2L, 1L, 1L, 2L, listOf(8L)),
-            CardInfo(3L, 2L, 1L, 3L, listOf(9L, 10L, 11L)),
-            CardInfo(4L, 1L, 1L, 4L, listOf(12L)),
-            CardInfo(5L, 2L, 1L, 5L, listOf(13L)),
-            CardInfo(6L, 1L, 1L, 6L, listOf(14L, 15L)),
+            CardInfo(1L, 1L, 1L, 1L, listOf(7L), CardType.FORWARD),
+            CardInfo(2L, 1L, 1L, 2L, listOf(8L), CardType.FORWARD),
+            CardInfo(3L, 2L, 1L, 3L, listOf(9L, 10L, 11L), CardType.FORWARD),
+            CardInfo(4L, 1L, 1L, 4L, listOf(12L), CardType.FORWARD),
+            CardInfo(5L, 2L, 1L, 5L, listOf(13L), CardType.FORWARD),
+            CardInfo(6L, 1L, 1L, 6L, listOf(14L, 15L), CardType.FORWARD),
 
-            CardInfo(7L, 1L, 1L, 7L, listOf(1L)),
-            CardInfo(8L, 1L, 1L, 8L, listOf(2L)),
-            CardInfo(9L, 2L, 1L, 9L, listOf(3L)),
-            CardInfo(10L, 2L, 1L, 10L, listOf(3L)),
-            CardInfo(11L, 2L, 1L, 11L, listOf(3L)),
-            CardInfo(12L, 1L, 1L, 12L, listOf(4L)),
-            CardInfo(13L, 2L, 1L, 13L, listOf(5L)),
-            CardInfo(14L, 1L, 1L, 14L, listOf(6L)),
-            CardInfo(15L, 1L, 1L, 15L, listOf(6L)),
+            CardInfo(7L, 1L, 1L, 7L, listOf(1L), CardType.REVERSE),
+            CardInfo(8L, 1L, 1L, 8L, listOf(2L), CardType.REVERSE),
+            CardInfo(9L, 2L, 1L, 9L, listOf(3L), CardType.REVERSE),
+            CardInfo(10L, 2L, 1L, 10L, listOf(3L), CardType.REVERSE),
+            CardInfo(11L, 2L, 1L, 11L, listOf(3L), CardType.REVERSE),
+            CardInfo(12L, 1L, 1L, 12L, listOf(4L), CardType.REVERSE),
+            CardInfo(13L, 2L, 1L, 13L, listOf(5L), CardType.REVERSE),
+            CardInfo(14L, 1L, 1L, 14L, listOf(6L), CardType.REVERSE),
+            CardInfo(15L, 1L, 1L, 15L, listOf(6L), CardType.REVERSE),
 
-            CardInfo(16L, 3L, 2L, 16L, listOf(19L)),
-            CardInfo(17L, 3L, 2L, 17L, listOf(20L)),
-            CardInfo(18L, 3L, 2L, 18L, listOf(21L)),
+            CardInfo(16L, 3L, 2L, 16L, listOf(19L), CardType.FORWARD),
+            CardInfo(17L, 3L, 2L, 17L, listOf(20L), CardType.FORWARD),
+            CardInfo(18L, 3L, 2L, 18L, listOf(21L), CardType.FORWARD),
 
-            CardInfo(19L, 3L, 2L, 19L, listOf(16L)),
-            CardInfo(20L, 3L, 2L, 20L, listOf(17L)),
-            CardInfo(21L, 3L, 2L, 21L, listOf(18L))
+            CardInfo(19L, 3L, 2L, 19L, listOf(16L), CardType.REVERSE),
+            CardInfo(20L, 3L, 2L, 20L, listOf(17L), CardType.REVERSE),
+            CardInfo(21L, 3L, 2L, 21L, listOf(18L), CardType.REVERSE)
     )
 
     val decks = listOf(

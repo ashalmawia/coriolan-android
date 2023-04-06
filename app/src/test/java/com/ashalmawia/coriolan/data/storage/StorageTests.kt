@@ -644,7 +644,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun test__addCard__Word__SingleTranslation() {
+    fun test__addCard__Word__SingleTranslation__Forward() {
         // given
         val storage = prefilledStorage.value
         val deck = addMockDeck(storage)
@@ -658,10 +658,32 @@ abstract class StorageTest {
         // then
         assertCardCorrect(card, data, domain)
         assertCardCorrect(read, data, domain)
+        assertEquals(CardType.FORWARD, card.type)
     }
 
     @Test
-    fun test__addCard__Word__MultipleTranslations() {
+    fun test__addCard__Word__SingleTranslation__Reverse() {
+        // given
+        val storage = prefilledStorage.value
+        val deck = addMockDeck(storage)
+
+        val data = mockCardData("shrimp", "креветка", deck.id)
+
+        // when
+        val card = addMockCard(storage, data, domain, CardType.REVERSE)
+        val read = storage.cardById(card.id, domain)
+
+        // then
+        assertEquals(deck.id, card.deckId)
+        assertEquals(domain, card.domain)
+        assertEquals(data.original, card.original.value)
+        assertEquals(data.translations, card.translations.map { it.value} )
+        assertEquals(CardType.REVERSE, card.type)
+        assertEquals(card, read)
+    }
+
+    @Test
+    fun test__addCard__Word__MultipleTranslations__Forward() {
         // given
         val storage = prefilledStorage.value
 
@@ -669,12 +691,34 @@ abstract class StorageTest {
         val data = mockCardData("ракета", listOf("firework", "rocket", "missile"), deck.id)
 
         // when
-        val card = addMockCard(storage, data, domain)
+        val card = addMockCard(storage, data, domain, CardType.FORWARD)
         val read = storage.cardById(card.id, domain)
 
         // then
         assertCardCorrect(card, data, domain)
         assertCardCorrect(read, data, domain)
+        assertEquals(CardType.FORWARD, card.type)
+    }
+
+    @Test
+    fun test__addCard__Word__MultipleTranslations__Reverse() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = addMockDeck(storage)
+        val data = mockCardData("ракета", listOf("firework", "rocket", "missile"), deck.id)
+
+        // when
+        val card = addMockCard(storage, data, domain, CardType.REVERSE)
+        val read = storage.cardById(card.id, domain)
+
+        // then
+        assertEquals(deck.id, card.deckId)
+        assertEquals(domain, card.domain)
+        assertEquals(data.original, card.original.value)
+        assertEquals(data.translations, card.translations.map { it.value} )
+        assertEquals(CardType.REVERSE, card.type)
+        assertEquals(card, read)
     }
 
     @Test
@@ -864,6 +908,7 @@ abstract class StorageTest {
         assertNotNull(updated)
         assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.type, updated.type)
         assertEquals(newOriginal, updated.original)
         assertEquals(card.translations, updated.translations)
 
@@ -902,6 +947,7 @@ abstract class StorageTest {
         assertNotNull(updated)
         assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.type, updated.type)
         assertEquals(card.original, updated.original)
         assertEquals(newTranslations, updated.translations)
 
@@ -927,7 +973,11 @@ abstract class StorageTest {
 
         addMockCard(storage, deck.id)
         addMockCard(storage, deck.id)
-        val card = addMockCard(storage, translations = listOf("some translation", "my translation", "translation"), domain = domain)
+        val card = addMockCard(storage,
+                translations = listOf("some translation", "my translation", "translation"),
+                domain = domain,
+                type = CardType.REVERSE
+        )
         addMockCard(storage, deck.id)
 
         val toBeRemoved = card.translations.find { it.value == "my translation" }!!
@@ -942,6 +992,7 @@ abstract class StorageTest {
         assertNotNull(updated)
         assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.type, updated.type)
         assertEquals(card.original, updated.original)
         assertEquals(newTranslations, updated.translations)
 
@@ -981,6 +1032,7 @@ abstract class StorageTest {
         assertNotNull(updated)
         assertEquals(card.id, updated.id)
         assertEquals(card.deckId, updated.deckId)
+        assertEquals(card.type, updated.type)
         assertEquals(card.original, updated.original)
         assertEquals(newTranslations, updated.translations)
 
@@ -1006,7 +1058,11 @@ abstract class StorageTest {
         
         addMockCard(storage, deck.id)
         addMockCard(storage, deck.id)
-        val card = addMockCard(storage, translations = listOf("some translation", "my translation", "translation"), domain = domain)
+        val card = addMockCard(storage,
+                translations = listOf("some translation", "my translation", "translation"),
+                domain = domain,
+                type = CardType.REVERSE
+        )
         addMockCard(storage, deck.id)
 
         val newDeck = storage.addDeck(domain, "New deck")
@@ -1024,6 +1080,7 @@ abstract class StorageTest {
         assertNotNull(updated)
         assertEquals(card.id, updated.id)
         assertEquals(newDeck.id, updated.deckId)
+        assertEquals(card.type, updated.type)
         assertEquals(newOriginal, updated.original)
         assertEquals(newTranslations, updated.translations)
 

@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.storage.sqlite.*
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.mockTerm
@@ -135,17 +136,19 @@ class CreateContentValuesTest {
         // given
         val deckId = 5L
         val domainId = 2L
+        val type = CardType.FORWARD
         val lang = mockLanguage()
         val original = mockTerm("some original term", lang)
 
         // when
-        val cv = CreateContentValues.createCardContentValues(domainId, deckId, original)
+        val cv = CreateContentValues.createCardContentValues(domainId, deckId, original, type)
 
         // then
-        assertEquals("values count is correct", 3, cv.size())
+        assertEquals("values count is correct", 4, cv.size())
         assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv.get(SQLITE_COLUMN_FRONT_ID))
         assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv.get(SQLITE_COLUMN_DECK_ID))
         assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv.get(SQLITE_COLUMN_DOMAIN_ID))
+        assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, cv.get(SQLITE_COLUMN_TYPE))
     }
 
     @Test
@@ -154,28 +157,35 @@ class CreateContentValuesTest {
         val deckId = 5L
         val domainId = 1L
         val lang = mockLanguage()
+        val type = CardType.FORWARD
         val original = mockTerm("some original term", lang)
         val cardId = 7L
 
         // when
-        val cv = CreateContentValues.createCardContentValues(domainId, deckId, original, cardId)
+        val cv = CreateContentValues.createCardContentValues(domainId, deckId, original, type, cardId)
 
         // then
-        assertEquals("values count is correct", 4, cv.size())
-        assertEquals("$SQLITE_COLUMN_ID is correct", cardId, cv.get(SQLITE_COLUMN_ID))
-        assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv.get(SQLITE_COLUMN_FRONT_ID))
-        assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv.get(SQLITE_COLUMN_DECK_ID))
-        assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv.get(SQLITE_COLUMN_DOMAIN_ID))
+        cv.run {
+            assertEquals("values count is correct", 5, size())
+            assertEquals("$SQLITE_COLUMN_ID is correct", cardId, get(SQLITE_COLUMN_ID))
+            assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, get(SQLITE_COLUMN_FRONT_ID))
+            assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, get(SQLITE_COLUMN_DECK_ID))
+            assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, get(SQLITE_COLUMN_DOMAIN_ID))
+            assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, get(SQLITE_COLUMN_TYPE))
+        }
 
         // when
-        val cv1 = CreateContentValues.createCardContentValues(domainId, deckId, original.id, cardId)
+        val cv1 = CreateContentValues.createCardContentValues(domainId, deckId, original.id, type, cardId)
 
         // then
-        assertEquals("values count is correct", 4, cv1.size())
-        assertEquals("$SQLITE_COLUMN_ID is correct", cardId, cv1.get(SQLITE_COLUMN_ID))
-        assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, cv1.get(SQLITE_COLUMN_FRONT_ID))
-        assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, cv1.get(SQLITE_COLUMN_DECK_ID))
-        assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, cv1.get(SQLITE_COLUMN_DOMAIN_ID))
+        cv1.run {
+            assertEquals("values count is correct", 5, size())
+            assertEquals("$SQLITE_COLUMN_ID is correct", cardId, get(SQLITE_COLUMN_ID))
+            assertEquals("$SQLITE_COLUMN_FRONT_ID is correct", original.id, get(SQLITE_COLUMN_FRONT_ID))
+            assertEquals("$SQLITE_COLUMN_DECK_ID is correct", deckId, get(SQLITE_COLUMN_DECK_ID))
+            assertEquals("$SQLITE_COLUMN_DOMAIN_ID is correct", domainId, get(SQLITE_COLUMN_DOMAIN_ID))
+            assertEquals("$SQLITE_COLUMN_TYPE is correct", type.value, get(SQLITE_COLUMN_TYPE))
+        }
     }
 
     @Test

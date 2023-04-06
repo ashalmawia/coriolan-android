@@ -60,16 +60,4 @@ class CardTypeMutationTest {
         // then
         assertEquals(reverseCards, filteredList)
     }
-
-    @Test
-    fun testUnexpectedSituation() {
-        // given
-        val mutation = CardTypeMutation(CardType.UNKNOWN)
-
-        // when
-        val filteredList = mutation.apply(cards)
-
-        // then
-        assertEquals(0, filteredList.size)
-    }
 }

@@ -52,7 +52,7 @@ class JacksonSerializationTest {
     @Test
     fun testCardInfo() {
         // given
-        val info = CardInfo(8L, 17L, 2L, 888L, listOf(55L, 31L, 3L))
+        val info = CardInfo(8L, 17L, 2L, 888L, listOf(55L, 31L, 3L), null)
 
         // then
         test(info, serializer::writeCard, deserializer::readCard)

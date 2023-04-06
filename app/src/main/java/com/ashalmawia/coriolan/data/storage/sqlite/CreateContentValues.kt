@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
@@ -70,9 +71,10 @@ object CreateContentValues : ExtrasDeserializer {
 
 // ********** CARD ********************
 
-    fun createCardContentValues(domainId: Long, deckId: Long, original: Term, cardId: Long? = null) = createCardContentValues(domainId, deckId, original.id, cardId)
+    fun createCardContentValues(domainId: Long, deckId: Long, original: Term, cardType: CardType, cardId: Long? = null) =
+            createCardContentValues(domainId, deckId, original.id, cardType, cardId)
 
-    fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, cardId: Long? = null): ContentValues {
+    fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, cardType: CardType, cardId: Long? = null): ContentValues {
         val cv = ContentValues()
         if (cardId != null) {
             cv.put(SQLITE_COLUMN_ID, cardId)
@@ -80,6 +82,7 @@ object CreateContentValues : ExtrasDeserializer {
         cv.put(SQLITE_COLUMN_FRONT_ID, originalId)
         cv.put(SQLITE_COLUMN_DECK_ID, deckId)
         cv.put(SQLITE_COLUMN_DOMAIN_ID, domainId)
+        cv.put(SQLITE_COLUMN_TYPE, cardType.value)
         return cv
     }
 

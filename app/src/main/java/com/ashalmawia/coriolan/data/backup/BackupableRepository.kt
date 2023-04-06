@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 import org.joda.time.DateTime
 
@@ -63,7 +64,8 @@ data class CardInfo(
         val deckId: Long,
         val domainId: Long,
         val originalId: Long,
-        val translationIds: List<Long>)
+        val translationIds: List<Long>,
+        var cardType: CardType?)
 
 data class DeckInfo(
         val id: Long,

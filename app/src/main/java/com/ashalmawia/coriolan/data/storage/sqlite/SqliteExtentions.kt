@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
@@ -24,7 +25,10 @@ fun Cursor.getOriginalLangId(alias: String? = null): Long { return getLong(SQLIT
 fun Cursor.getTranslationsLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_TRANSLATIONS, alias) }
 fun Cursor.getLanguageId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANGUAGE_ID, alias) }
 fun Cursor.getCardId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_CARD_ID, alias) }
-fun Cursor.getType(alias: String? = null): Int { return getInt(SQLITE_COLUMN_TYPE, alias)}
+fun Cursor.getCardType(alias: String? = null): CardType {
+    val type = getString(SQLITE_COLUMN_TYPE, alias)
+    return CardType.fromValue(type)
+}
 
 fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE_DATE, alias) }
 fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }

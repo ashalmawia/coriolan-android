@@ -68,6 +68,7 @@ class SqliteRepositoryOpenHelper(
                 |$SQLITE_COLUMN_FRONT_ID INTEGER NOT NULL,
                 |$SQLITE_COLUMN_DECK_ID INTEGER NOT NULL,
                 |$SQLITE_COLUMN_DOMAIN_ID INTEGER NOT NULL,
+                |$SQLITE_COLUMN_TYPE TEXT NOT NULL,
                 |FOREIGN KEY ($SQLITE_COLUMN_FRONT_ID) REFERENCES $SQLITE_TABLE_TERMS ($SQLITE_COLUMN_ID)
                 |   ON DELETE RESTRICT
                 |   ON UPDATE CASCADE,

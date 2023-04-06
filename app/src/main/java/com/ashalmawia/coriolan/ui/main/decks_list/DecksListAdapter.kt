@@ -67,7 +67,7 @@ class DecksListAdapter(
         val context = holder.text.context
 
         holder.text.text = item.deck.name
-        holder.type.text = item.cardType.toTypeStringRes()?.run { context.getString(this) } ?: ""
+        holder.type.text = item.cardType.toTypeStringRes().run { context.getString(this) }
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
         holder.itemView.setOnClickListener { studyDefault(item) }
@@ -170,7 +170,6 @@ class DecksListAdapter(
 }
 
 private fun CardType.toTypeStringRes() = when (this) {
-    CardType.UNKNOWN -> null
     CardType.FORWARD -> R.string.decks__type__passive
     CardType.REVERSE -> R.string.decks__type__active
 }

@@ -284,10 +284,11 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.writableDatabase
         db.beginTransaction()
         try {
+            val type = if (domain.langOriginal().id == original.language.id) CardType.FORWARD else CardType.REVERSE
             val cardId = db.insert(
                     SQLITE_TABLE_CARDS,
                     null,
-                    CreateContentValues.createCardContentValues(domain.id, deckId, original))
+                    CreateContentValues.createCardContentValues(domain.id, deckId, original, type))
 
             if (cardId < 0) {
                 throw DataProcessingException("failed to insert card ($original -> $translations)")
@@ -303,7 +304,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 }
             }
 
-            val card = Card(cardId, deckId, domain, original, translations)
+            val card = Card(cardId, deckId, domain, type, original, translations)
 
             db.setTransactionSuccessful()
 
@@ -361,6 +362,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                         id,
                         it.getDeckId(CARDS),
                         domain,
+                        it.getCardType(CARDS),
                         it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         translations[id]!!
                 )
@@ -407,7 +409,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
                 // we found the card we need
                 // we can assume that there are no other cards like this due to merging
-                return Card(id, cursor.getDeckId(CARDS), domain, original, reverse[id]!!)
+                return Card(id, cursor.getDeckId(CARDS), domain, cursor.getCardType(CARDS), original, reverse[id]!!)
             }
 
             return null
@@ -423,7 +425,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         db.beginTransaction()
 
         try {
-            val cv = CreateContentValues.createCardContentValues(card.domain.id, deckId, original, card.id)
+            val cv = CreateContentValues.createCardContentValues(card.domain.id, deckId, original, card.type, card.id)
             val updated = db.update(SQLITE_TABLE_CARDS, cv, "$SQLITE_COLUMN_ID = ?", arrayOf(card.id.toString()))
 
             if (updated == 0) {
@@ -450,7 +452,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
             db.setTransactionSuccessful()
 
-            return Card(card.id, deckId, card.domain, original, translations)
+            return Card(card.id, deckId, card.domain, card.type, original, translations)
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to update card[$card.id], constraint violation", e)
         } finally {
@@ -512,6 +514,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                         cardId,
                         it.getDeckId(CARDS),
                         domain,
+                        it.getCardType(CARDS),
                         it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse[cardId]!!
                 ))
@@ -638,6 +641,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                         cardId,
                         deck.id,
                         deck.domain,
+                        it.getCardType(CARDS),
                         it.getTerm(CreateContentValues, TERMS, LANGUAGES),
                         reverse.getValue(cardId)
                 ))
