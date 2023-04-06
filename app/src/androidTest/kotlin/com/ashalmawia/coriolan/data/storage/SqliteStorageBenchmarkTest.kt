@@ -5,11 +5,7 @@ import android.os.Environment
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.storage.StorageBenchmarkUtil.benchmark
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
@@ -425,14 +421,9 @@ class SqliteStorageBenchmarkTest {
         }
 
         Log.d(BENCHMARK_TAG, "beginning benchmark [$description]")
-        val result = benchmark(this::createRepo, operation, prepare)
+        val result = benchmark(operation, prepare)
         Log.d(BENCHMARK_TAG, "ending benchmark [$description] with the result $result")
         results[description] = result
-    }
-
-    private fun createRepo(): Pair<BackupableRepository, Repository> {
-        val helper = provideHelper()
-        return Pair(SqliteBackupHelper(helper), SqliteStorage(helper))
     }
 
     private fun formatResult(): String {
@@ -492,9 +483,5 @@ class SqliteStorageBenchmarkTest {
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
         file.createNewFile()
         file.writeText(result)
-    }
-
-    private fun provideHelper(): SqliteRepositoryOpenHelper {
-        return SqliteRepositoryOpenHelper(ApplicationProvider.getApplicationContext(), "test.db")
     }
 }

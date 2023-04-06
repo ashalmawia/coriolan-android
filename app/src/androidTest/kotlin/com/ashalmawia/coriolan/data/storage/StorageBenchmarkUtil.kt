@@ -1,35 +1,41 @@
 package com.ashalmawia.coriolan.data.storage
 
 import android.util.Log
-import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.storage.TestData.cards
-import com.ashalmawia.coriolan.data.storage.TestData.decks
-import com.ashalmawia.coriolan.data.storage.TestData.domains
-import com.ashalmawia.coriolan.data.storage.TestData.languages
-import com.ashalmawia.coriolan.data.storage.TestData.states
-import com.ashalmawia.coriolan.data.storage.TestData.terms
+import androidx.test.core.app.ApplicationProvider
+import com.ashalmawia.coriolan.context
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
+import java.io.File
 
 const val BENCHMARK_TAG = "StorageBenchmark"
 const val RUNS = 5
 
+private const val PREFILLED_DATABASE_NAME = "test_prefilled"
+
 object StorageBenchmarkUtil {
 
+    private val helper by lazy { provideHelper() }
+
     fun prepare(count: Int) {
-        TestData.generateData(count)
+        val helper = provideHelper()
+        val backup = SqliteBackupHelper(helper)
+        fillDatabase(count, backup)
+        helper.close()
+        savePrefilledDatabase()
     }
 
     /**
      * returns: Long - average benchmark time in millis
      */
     fun benchmark(
-            createRepo: () -> Pair<BackupableRepository, Repository>,
             operation: (Repository) -> Unit,
             prepare: (Repository) -> Unit = { }
     ): Long {
         val results = mutableListOf<Long>()
-        val (backup, repo) = createRepo()
+        val repo = createRepo()
         for (i in 1 .. RUNS) {
-            val result = singleBenchmark(backup, repo, prepare, operation)
+            val result = singleBenchmark(repo, prepare, operation)
             Log.d(BENCHMARK_TAG, "-- attempt $i, result: $result ms")
             results.add(result)
         }
@@ -37,12 +43,11 @@ object StorageBenchmarkUtil {
     }
 
     private fun singleBenchmark(
-            backup: BackupableRepository,
             repo: Repository,
             prepare: (Repository) -> Unit,
             operation: (Repository) -> Unit
     ): Long {
-        fillRepository(backup)
+        resetDatabase()
         prepare(repo)
 
         val startTime = System.nanoTime()
@@ -51,15 +56,24 @@ object StorageBenchmarkUtil {
 
         return (endTime - startTime) / 1_000_000
     }
+    private fun createRepo(): Repository = SqliteStorage(helper)
 
-    private fun fillRepository(repository: BackupableRepository) {
-        repository.overrideRepositoryData {
-            it.writeLanguages(languages)
-            it.writeDomains(domains)
-            it.writeDecks(decks)
-            it.writeTerms(terms)
-            it.writeCards(cards)
-            it.writeCardStates(states)
-        }
+    private fun provideHelper(): SqliteRepositoryOpenHelper {
+        return SqliteRepositoryOpenHelper(ApplicationProvider.getApplicationContext(), "test.db")
+    }
+
+    private fun savePrefilledDatabase() {
+        val context = context()
+        val dbFile = context.getDatabasePath(helper.databaseName)
+        val copy = File(dbFile.parent, PREFILLED_DATABASE_NAME)
+        dbFile.copyTo(copy, true)
+    }
+
+    private fun resetDatabase() {
+        helper.close()
+        val context = context()
+        val dbFile = context.getDatabasePath(helper.databaseName)
+        val copy = File(dbFile.parent, PREFILLED_DATABASE_NAME)
+        copy.copyTo(dbFile, true)
     }
 }

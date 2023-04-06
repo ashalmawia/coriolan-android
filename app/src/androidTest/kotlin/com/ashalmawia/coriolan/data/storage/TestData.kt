@@ -5,7 +5,7 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.Extras
 
-object TestData {
+fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
     val languages = listOf(
             LanguageInfo(1L, "English"),
             LanguageInfo(2L, "Russian"),
@@ -37,67 +37,57 @@ object TestData {
             DeckInfo(9L, 2L, "Topic - Sports")
     )
 
-    val terms: List<TermInfo>
-        get() = _terms
-
-    val cards: List<CardInfo>
-        get() = _cards
-
-    val states: List<ExerciseStateInfo>
-        get() = _states
-
-    private lateinit var _terms: List<TermInfo>
-    private lateinit var _cards: List<CardInfo>
-    private lateinit var _states: List<ExerciseStateInfo>
-
-    fun generateData(count: Int) {
-        val terms = mutableListOf<TermInfo>()
-        fun id() = terms.size.toLong()
-        for (i in 1 .. count / 3 + 3) {
-            terms.add(TermInfo(
-                    id(), "term with id: ${id()}", 1L, Extras("transcription with id: ${id()}")
-            ))
-            terms.add(TermInfo(
-                    id(), "term with id: ${id()}", 2L, Extras.empty()
-            ))
-            terms.add(TermInfo(
-                    id(), "term with id: ${id()}", 3L, Extras.empty()
-            ))
-        }
-        _terms = terms
-
-        val termsByLang = terms.groupBy { it.languageId }
-
-        val cards = mutableListOf<CardInfo>()
-        for (i in 1 .. count) {
-            val domainId = (i % 2 + 1).toLong()
-            val deckId = if (domainId == 1L) {
-                if (i % 3 == 0) 1L else 2L
-            } else 3L
-            val originalLangId = if (domainId == 1L) 1L else 3L
-            val translationId = 2L
-            val termsOriginal = termsByLang[originalLangId]!!
-            val termsTranslation = termsByLang[translationId]!!
-            cards.add(CardInfo(
-                    id = i.toLong(),
-                    deckId = deckId,
-                    domainId = domainId,
-                    originalId = termsOriginal[i / 3].id,
-                    translationIds = (0 until 3).map { index -> termsTranslation[i / 3 + index].id }
-            ))
-        }
-        _cards = cards
-
-        val states = mutableListOf<ExerciseStateInfo>()
-        for (i in 0 until count) {
-            states.add(ExerciseStateInfo(
-                    (i + 1).toLong(), ExerciseId.FLASHCARDS, mockToday(), 4
-            ))
-            states.add(ExerciseStateInfo(
-                    (i + 1).toLong(), ExerciseId.TEST, mockToday().minus(5), -1
-            ))
-        }
-        _states = states
+    val terms = mutableListOf<TermInfo>()
+    fun id() = terms.size.toLong()
+    for (i in 1..count / 3 + 3) {
+        terms.add(TermInfo(
+                id(), "term with id: ${id()}", 1L, Extras("transcription with id: ${id()}")
+        ))
+        terms.add(TermInfo(
+                id(), "term with id: ${id()}", 2L, Extras.empty()
+        ))
+        terms.add(TermInfo(
+                id(), "term with id: ${id()}", 3L, Extras.empty()
+        ))
     }
 
+    val termsByLang = terms.groupBy { it.languageId }
+
+    val cards = mutableListOf<CardInfo>()
+    for (i in 1..count) {
+        val domainId = (i % 2 + 1).toLong()
+        val deckId = if (domainId == 1L) {
+            if (i % 3 == 0) 1L else 2L
+        } else 3L
+        val originalLangId = if (domainId == 1L) 1L else 3L
+        val translationId = 2L
+        val termsOriginal = termsByLang[originalLangId]!!
+        val termsTranslation = termsByLang[translationId]!!
+        cards.add(CardInfo(
+                id = i.toLong(),
+                deckId = deckId,
+                domainId = domainId,
+                originalId = termsOriginal[i / 3].id,
+                translationIds = (0 until 3).map { index -> termsTranslation[i / 3 + index].id }
+        ))
+    }
+
+    val states = mutableListOf<ExerciseStateInfo>()
+    for (i in 0 until count) {
+        states.add(ExerciseStateInfo(
+                (i + 1).toLong(), ExerciseId.FLASHCARDS, mockToday(), 4
+        ))
+        states.add(ExerciseStateInfo(
+                (i + 1).toLong(), ExerciseId.TEST, mockToday().minus(5), -1
+        ))
+    }
+
+    backupableRepository.overrideRepositoryData {
+        it.writeLanguages(languages)
+        it.writeDomains(domains)
+        it.writeDecks(decks)
+        it.writeTerms(terms)
+        it.writeCards(cards)
+        it.writeCardStates(states)
+    }
 }
