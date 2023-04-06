@@ -28,8 +28,6 @@ import java.io.File
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-private const val AVERAGING_ATTEMPTS = 10
-
 @RunWith(AndroidJUnit4::class)
 class SqliteStorageBenchmarkTest {
 
@@ -37,23 +35,35 @@ class SqliteStorageBenchmarkTest {
     private val results = mutableMapOf<String, Long>()
 
     @Test
-    fun benchmark_100() {       // takes 2 min to complete
+    fun benchmark_100() {       // lightweight, mostly for checking setup and debugging
         runBenchmark(100)
     }
 
     @Test
-    fun benchmark_1000() {      // takes 15 min to complete
+    fun benchmark_1000() {      // small database, 1 language, not active use
         runBenchmark(1_000)
     }
 
     @Test
-    fun benchmark_10000() {     // takes 2 hours to complete
+    fun benchmark_5000() {      // medium database, 1 language,  active use
+        runBenchmark(5_000)
+    }
+
+    @Test
+    fun benchmark_10000() {     // big database, several languages
         runBenchmark(10_000)
     }
 
+    @Test
+    fun benchmark_100000() {     // huge database, heavy load testing
+        runBenchmark(100_000)
+    }
+
     private fun runBenchmark(count: Int) {
-        results.clear()
+        if (results.isNotEmpty()) throw IllegalStateException("results are not empty")
+
         this.count = count
+        StorageBenchmarkUtil.prepare(count)
 
         add_language()
         add_domain()
@@ -415,7 +425,7 @@ class SqliteStorageBenchmarkTest {
         }
 
         Log.d(BENCHMARK_TAG, "beginning benchmark [$description]")
-        val result = benchmark(count, AVERAGING_ATTEMPTS, this::createRepo, operation, prepare)
+        val result = benchmark(this::createRepo, operation, prepare)
         Log.d(BENCHMARK_TAG, "ending benchmark [$description] with the result $result")
         results[description] = result
     }
@@ -460,6 +470,7 @@ class SqliteStorageBenchmarkTest {
         return StringBuilder().apply {
             appendLine("   SQLITE DATABASE PERFORMANCE BENCHMARK")
             appendLine("    - sample size: $count cards")
+            appendLine("    - averaged over: $RUNS runs")
             appendLine("    - date: ${DateTime().toString("yyyy-MM-dd, HH:mm")}")
             appendLine("    - ran with Google Pixel 3a, API 30, RAM 3.7GB")
 

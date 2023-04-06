@@ -4,7 +4,6 @@ import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.Extras
-import java.util.*
 
 object TestData {
     val languages = listOf(
@@ -26,64 +25,6 @@ object TestData {
             DomainInfo(6L, "Finnish", 7L, 2L)
     )
 
-    val terms = listOf(
-            // English
-            TermInfo(1L, "shrimp", 1L, Extras.empty()),
-            TermInfo(2L, "rocket", 1L, Extras("/ˈrɒkɪt \$ ˈrɑː-/")),
-            TermInfo(3L, "spring", 1L, Extras("/sprɪŋ/")),
-            TermInfo(4L, "summer", 1L, Extras("/ˈsʌmə \$ -ər/")),
-            TermInfo(5L, "victory", 1L, Extras("/ˈvɪktəri/")),
-            TermInfo(6L, "march", 1L, Extras("/mɑːtʃ \$ mɑːrtʃ/")),
-
-            // Russian
-            TermInfo(7L, "креветка", 2L, Extras.empty()),
-            TermInfo(8L, "ракета", 2L, Extras.empty()),
-            TermInfo(9L, "источник", 2L, Extras.empty()),
-            TermInfo(10L, "весна", 2L, Extras.empty()),
-            TermInfo(11L, "пружина", 2L, Extras.empty()),
-            TermInfo(12L, "лето", 2L, Extras.empty()),
-            TermInfo(13L, "победа", 2L, Extras.empty()),
-            TermInfo(14L, "март", 2L, Extras.empty()),
-            TermInfo(15L, "марш", 2L, Extras.empty()),
-
-            // French
-            TermInfo(16L, "ameloirer", 3L, Extras.empty()),
-            TermInfo(17L, "chercher", 3L, Extras.empty()),
-            TermInfo(18L, "voisin", 3L, Extras.empty()),
-
-            // Russian
-            TermInfo(19L, "улучшать", 2L, Extras.empty()),
-            TermInfo(20L, "искать", 2L, Extras.empty()),
-            TermInfo(21L, "сосед", 2L, Extras.empty())
-    )
-
-    val cards = listOf(
-            CardInfo(1L, 1L, 1L, 1L, listOf(7L)),
-            CardInfo(2L, 1L, 1L, 2L, listOf(8L)),
-            CardInfo(3L, 2L, 1L, 3L, listOf(9L, 10L, 11L)),
-            CardInfo(4L, 1L, 1L, 4L, listOf(12L)),
-            CardInfo(5L, 2L, 1L, 5L, listOf(13L)),
-            CardInfo(6L, 1L, 1L, 6L, listOf(14L, 15L)),
-
-            CardInfo(7L, 1L, 1L, 7L, listOf(1L)),
-            CardInfo(8L, 1L, 1L, 8L, listOf(2L)),
-            CardInfo(9L, 2L, 1L, 9L, listOf(3L)),
-            CardInfo(10L, 2L, 1L, 10L, listOf(3L)),
-            CardInfo(11L, 2L, 1L, 11L, listOf(3L)),
-            CardInfo(12L, 1L, 1L, 12L, listOf(4L)),
-            CardInfo(13L, 2L, 1L, 13L, listOf(5L)),
-            CardInfo(14L, 1L, 1L, 14L, listOf(6L)),
-            CardInfo(15L, 1L, 1L, 15L, listOf(6L)),
-
-            CardInfo(16L, 3L, 2L, 16L, listOf(19L)),
-            CardInfo(17L, 3L, 2L, 17L, listOf(20L)),
-            CardInfo(18L, 3L, 2L, 18L, listOf(21L)),
-
-            CardInfo(19L, 3L, 2L, 19L, listOf(16L)),
-            CardInfo(20L, 3L, 2L, 20L, listOf(17L)),
-            CardInfo(21L, 3L, 2L, 21L, listOf(18L))
-    )
-
     val decks = listOf(
             DeckInfo(1L, 1L, "Basic English"),
             DeckInfo(2L, 1L, "Advanced"),
@@ -96,20 +37,67 @@ object TestData {
             DeckInfo(9L, 2L, "Topic - Sports")
     )
 
-    private val random = Random()
-    private val today = mockToday()
-    private val exerciseId = ExerciseId.TEST
+    val terms: List<TermInfo>
+        get() = _terms
 
-    val cardStates = listOf(
-            ExerciseStateInfo(20L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(6L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(11L, exerciseId, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(1L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(9L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(10L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(15L, exerciseId, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(21L, exerciseId, today, random.nextInt(500)),
-            ExerciseStateInfo(2L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(7L, exerciseId, today, random.nextInt(500))
-    )
+    val cards: List<CardInfo>
+        get() = _cards
+
+    val states: List<ExerciseStateInfo>
+        get() = _states
+
+    private lateinit var _terms: List<TermInfo>
+    private lateinit var _cards: List<CardInfo>
+    private lateinit var _states: List<ExerciseStateInfo>
+
+    fun generateData(count: Int) {
+        val terms = mutableListOf<TermInfo>()
+        fun id() = terms.size.toLong()
+        for (i in 1 .. count / 3 + 3) {
+            terms.add(TermInfo(
+                    id(), "term with id: ${id()}", 1L, Extras("transcription with id: ${id()}")
+            ))
+            terms.add(TermInfo(
+                    id(), "term with id: ${id()}", 2L, Extras.empty()
+            ))
+            terms.add(TermInfo(
+                    id(), "term with id: ${id()}", 3L, Extras.empty()
+            ))
+        }
+        _terms = terms
+
+        val termsByLang = terms.groupBy { it.languageId }
+
+        val cards = mutableListOf<CardInfo>()
+        for (i in 1 .. count) {
+            val domainId = (i % 2 + 1).toLong()
+            val deckId = if (domainId == 1L) {
+                if (i % 3 == 0) 1L else 2L
+            } else 3L
+            val originalLangId = if (domainId == 1L) 1L else 3L
+            val translationId = 2L
+            val termsOriginal = termsByLang[originalLangId]!!
+            val termsTranslation = termsByLang[translationId]!!
+            cards.add(CardInfo(
+                    id = i.toLong(),
+                    deckId = deckId,
+                    domainId = domainId,
+                    originalId = termsOriginal[i / 3].id,
+                    translationIds = (0 until 3).map { index -> termsTranslation[i / 3 + index].id }
+            ))
+        }
+        _cards = cards
+
+        val states = mutableListOf<ExerciseStateInfo>()
+        for (i in 0 until count) {
+            states.add(ExerciseStateInfo(
+                    (i + 1).toLong(), ExerciseId.FLASHCARDS, mockToday(), 4
+            ))
+            states.add(ExerciseStateInfo(
+                    (i + 1).toLong(), ExerciseId.TEST, mockToday().minus(5), -1
+            ))
+        }
+        _states = states
+    }
+
 }
