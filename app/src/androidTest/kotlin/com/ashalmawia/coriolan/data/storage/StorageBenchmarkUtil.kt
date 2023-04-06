@@ -47,7 +47,7 @@ object StorageBenchmarkUtil {
         operation(repo)
         val endTime = System.nanoTime()
 
-        return (endTime - startTime) / 1000
+        return (endTime - startTime) / 1_000_000
     }
 
     private fun fillRepository(count: Int, repository: BackupableRepository) {

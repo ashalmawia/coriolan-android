@@ -429,7 +429,7 @@ class SqliteStorageBenchmarkTest {
         val readableResults = results.toList()
                 .sortedByDescending { (_, time) -> time }
                 .map { (description, time) -> Pair(description,
-                        time.toDuration(DurationUnit.MILLISECONDS).toString(DurationUnit.SECONDS, 2)
+                        time.toDuration(DurationUnit.MILLISECONDS).toString(DurationUnit.SECONDS, 3)
                 )}
         val longestKeyLength = readableResults.maxOf { (key, _) -> key.length }
         val longestValueLength = readableResults.maxOf { (_, value) -> value.length }
