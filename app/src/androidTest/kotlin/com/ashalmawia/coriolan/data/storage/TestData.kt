@@ -38,8 +38,8 @@ fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
     )
 
     val terms = mutableListOf<TermInfo>()
-    fun id() = terms.size.toLong()
-    for (i in 1..count / 3 + 3) {
+    fun id() = terms.size.toLong() + 1L
+    for (i in 1..count / 3 + 10) {
         terms.add(TermInfo(
                 id(), "term with id: ${id()}", 1L, Extras("transcription with id: ${id()}")
         ))

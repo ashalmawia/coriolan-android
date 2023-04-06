@@ -237,7 +237,7 @@ class SqliteStorageBenchmarkTest {
     private fun delete_term() {
         var term: Term? = null
         benchmark("delete term", prepare = {
-            term = it.termById((count + 2).toLong())
+            term = it.termById((count + 10).toLong())
         }) {
             it.deleteTerm(term!!)
         }
