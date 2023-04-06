@@ -1,0 +1,44 @@
+   SQLITE DATABASE PERFORMANCE BENCHMARK
+    - sample size: 100000 cards
+    - averaged over: 5 runs
+    - date: 2023-04-06, 18:15
+    - ran with Google Pixel 3a, API 30, RAM 3.7GB
++-----------------------------------------+---------+
+| Task                                    |    Time |
++-----------------------------------------+---------+
+| query deck pending counts               | 65.195s |
+| query deck pending cards                | 34.921s |
+| query cards of deck                     | 28.394s |
+| query all cards                         | 27.214s |
+| query card by values                    | 24.474s |
+| query progress for cards with originals | 11.140s |
+| query term is used                      |  0.200s |
+| query card by id                        |  0.005s |
+| query all domains                       |  0.004s |
+| query term by name                      |  0.004s |
+| query domain by id                      |  0.003s |
+| query language by id                    |  0.002s |
+| query language by name                  |  0.002s |
+| query term by values                    |  0.002s |
+| query deck by id                        |  0.000s |
+| query all decks                         |  0.000s |
+| query card learning progress            |  0.000s |
++-----------------------------------------+---------+
+| add deck                                |  0.137s |
+| add language                            |  0.136s |
+| add domain                              |  0.136s |
+| add term without extras                 |  0.134s |
+| add term with extras                    |  0.133s |
+| add card                                |  0.003s |
++-----------------------------------------+---------+
+| update term with extras                 |  0.478s |
+| update card - move                      |  0.433s |
+| update deck                             |  0.430s |
+| update card learning progress           |  0.428s |
+| update term without extras              |  0.226s |
+| update card - add translation           |  0.006s |
++-----------------------------------------+---------+
+| delete card                             |  0.768s |
+| delete term                             |  0.546s |
+| delete deck                             |  0.464s |
++-----------------------------------------+---------+
