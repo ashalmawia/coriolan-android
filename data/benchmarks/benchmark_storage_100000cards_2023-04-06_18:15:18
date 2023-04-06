@@ -1,13 +1,13 @@
    SQLITE DATABASE PERFORMANCE BENCHMARK
     - sample size: 100000 cards
     - averaged over: 5 runs
-    - date: 2023-04-06, 18:15
+    - date: 2023-04-06, 18:15 - upd 18:54
     - ran with Google Pixel 3a, API 30, RAM 3.7GB
 +-----------------------------------------+---------+
 | Task                                    |    Time |
 +-----------------------------------------+---------+
-| query deck pending counts               | 65.195s |
-| query deck pending cards                | 34.921s |
+| query deck pending counts               | 47.569s |
+| query deck pending cards                | 26.002s |
 | query cards of deck                     | 28.394s |
 | query all cards                         | 27.214s |
 | query card by values                    | 24.474s |

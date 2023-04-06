@@ -316,6 +316,13 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     override fun cardById(id: Long, domain: Domain): Card? {
+        val list = cardsWtihIds(listOf(id), domain)
+        return list.firstOrNull()
+    }
+
+    private fun cardsWtihIds(ids: List<Long>, domain: Domain): List<Card> {
+        if (ids.isEmpty()) throw IllegalArgumentException("ids list must not be empty")
+
         val db = helper.readableDatabase
 
         val CARDS = "Cards"
@@ -336,22 +343,31 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
             |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
             |
-            |   WHERE ${SQLITE_COLUMN_ID.from(CARDS)} = ?
-        """.trimMargin(), arrayOf(id.toString()))
+            |   WHERE ${SQLITE_COLUMN_ID.from(CARDS)} IN (${ids.joinToString()})
+        """.trimMargin(), arrayOf())
 
+        val translations = if (ids.size > 1) {
+             allCardsReverse(db)
+        } else {
+            val id = ids.first()
+            mapOf(id to translationsByCardId(id))
+        }
+
+        val cards = mutableListOf<Card>()
         cursor.use {
-            return if (cursor.moveToNext()) {
-                Card(
+            while (cursor.moveToNext()) {
+                val id = cursor.getId(CARDS)
+                val card = Card(
                         id,
                         it.getDeckId(CARDS),
                         domain,
                         it.getTerm(CreateContentValues, TERMS, LANGUAGES),
-                        translationsByCardId(id)
+                        translations[id]!!
                 )
-            } else {
-                null
+                cards.add(card)
             }
         }
+        return cards
     }
 
     override fun cardByValues(domain: Domain, original: Term): Card? {
@@ -733,27 +749,15 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
         val db = helper.readableDatabase
 
-        val reverse = allCardsReverse(db)
-
         val CARDS = "Cards"
         val STATES = "States"
-        val TERMS = "Terms"
-        val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
             |SELECT
-            |   ${allColumnsCards(CARDS)},
-            |   ${allColumnsSRStates(STATES)},
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
+            |   ${withAlias(arrayOf(SQLITE_COLUMN_ID, SQLITE_COLUMN_DECK_ID), CARDS)},
+            |   ${allColumnsStates(STATES)}
             |
             |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-            |
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
             |
             |       LEFT JOIN $SQLITE_TABLE_CARD_STATES AS $STATES
             |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
@@ -762,32 +766,31 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             |       ${SQLITE_COLUMN_DECK_ID.from(CARDS)} = ?
             |           AND
             |       ${onlyPending(STATES)}
-        """.trimMargin(),
-                arrayOf(deck.id.toString(), date.timespamp.toString()))
+        """.trimMargin(), arrayOf(deck.id.toString(), date.timespamp.toString()))
 
+        val pendingStates = mutableMapOf<Long, MutableMap<ExerciseId, ExerciseState>>()
         cursor.use {
-            val tasks = mutableListOf<Pair<Card, LearningProgress>>()
             while (cursor.moveToNext()) {
                 val cardId = cursor.getId(CARDS)
-                val card = Card(
-                        cardId,
-                        deck.id,
-                        deck.domain,
-                        it.getTerm(CreateContentValues, TERMS, LANGUAGES),
-                        reverse.getValue(cardId)
-                )
-                // TODO: make this work with multiple exercises by removing join and making 2 queries
-                // TODO: use extractLearningProgress()
-                val progress = if (cursor.hasSavedExerciseState(STATES)) {
-                    LearningProgress(mapOf(
-                            cursor.getExerciseId(STATES) to ExerciseState(cursor.getDateDue(STATES), cursor.getPeriod(STATES))
-                    ))
-                } else {
-                    LearningProgress(emptyMap())
+                val map = pendingStates[cardId] ?: mutableMapOf()
+                if (cursor.hasSavedExerciseState(STATES)) {
+                    val exerciseId = cursor.getExerciseId(STATES)
+                    val state = ExerciseState(cursor.getDateDue(STATES), cursor.getPeriod(STATES))
+                    map[exerciseId] = state
                 }
-                tasks.add(Pair(card, progress))
+                pendingStates[cardId] = map
             }
-            return tasks
+        }
+
+        val pendingCardsIds = pendingStates.keys.toList()
+        return if (pendingCardsIds.isEmpty()) {
+            emptyList()
+        } else {
+            val cards = cardsWtihIds(pendingCardsIds, deck.domain)
+            cards.map { card ->
+                val progress = LearningProgress(pendingStates[card.id] ?: emptyMap())
+                Pair(card, progress)
+            }
         }
     }
 
