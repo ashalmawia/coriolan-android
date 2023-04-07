@@ -461,6 +461,7 @@ class SqliteStorageBenchmarkTest {
         return StringBuilder().apply {
             appendLine("   SQLITE DATABASE PERFORMANCE BENCHMARK")
             appendLine("    - sample size: $count cards")
+            appendLine("    - database size: ${StorageBenchmarkUtil.databaseSizeHumanReadable()}")
             appendLine("    - averaged over: $RUNS runs")
             appendLine("    - date: ${DateTime().toString("yyyy-MM-dd, HH:mm")}")
             appendLine("    - ran with Google Pixel 3a, API 30, RAM 3.7GB")

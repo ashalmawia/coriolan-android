@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
+import android.text.format.Formatter
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.ashalmawia.coriolan.context
@@ -7,6 +8,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteRepositoryOpenHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import java.io.File
+import java.nio.file.Files
 
 const val BENCHMARK_TAG = "StorageBenchmark"
 const val RUNS = 5
@@ -23,6 +25,8 @@ object StorageBenchmarkUtil {
         fillDatabase(count, backup)
         helper.close()
         savePrefilledDatabase()
+
+        Log.d(BENCHMARK_TAG, "generated database for count $count, file size: ${databaseSizeHumanReadable()}")
     }
 
     /**
@@ -75,5 +79,16 @@ object StorageBenchmarkUtil {
         val dbFile = context.getDatabasePath(helper.databaseName)
         val copy = File(dbFile.parent, PREFILLED_DATABASE_NAME)
         copy.copyTo(dbFile, true)
+    }
+
+    private fun databaseSize(): Long {
+        val context = context()
+        val dbFile = context.getDatabasePath(helper.databaseName)
+        val copy = File(dbFile.parent, PREFILLED_DATABASE_NAME)
+        return Files.size(copy.toPath())
+    }
+
+    fun databaseSizeHumanReadable(): String {
+        return Formatter.formatShortFileSize(context(), databaseSize())
     }
 }

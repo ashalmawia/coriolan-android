@@ -1,17 +1,18 @@
    SQLITE DATABASE PERFORMANCE BENCHMARK
     - sample size: 100000 cards
+    - database size: 32 MB
     - averaged over: 5 runs
-    - date: 2023-04-06, 18:15 - upd 18:54
+    - date: 2023-04-06, 18:15 - upd 2023-04-07, 16:48
     - ran with Google Pixel 3a, API 30, RAM 3.7GB
 +-----------------------------------------+---------+
 | Task                                    |    Time |
 +-----------------------------------------+---------+
-| query deck pending cards                | 26.002s |
 | query cards of deck                     | 28.394s |
 | query all cards                         | 27.214s |
 | query card by values                    | 24.474s |
+| query deck pending cards                | 22.260s |
 | query progress for cards with originals | 11.140s |
-| query deck pending counts               |  3.375s |
+| query deck pending counts               |  2.809s |
 | query term is used                      |  0.200s |
 | query card by id                        |  0.005s |
 | query all domains                       |  0.004s |
