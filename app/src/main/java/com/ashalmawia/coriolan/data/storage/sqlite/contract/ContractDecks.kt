@@ -14,11 +14,13 @@ object ContractDecks {
     const val DECKS_ID = "Decks_id"
     const val DECKS_NAME = "Decks_Name"
     const val DECKS_DOMAIN_ID = "Decks_Domain"
+    const val DECKS_PAYLOAD = "Decks_Payload"
 
     private val allColumns = arrayOf(
             DECKS_ID,
             DECKS_NAME,
-            DECKS_DOMAIN_ID
+            DECKS_DOMAIN_ID,
+            DECKS_PAYLOAD
     )
     fun allColumnsDecks(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
 
@@ -27,6 +29,7 @@ object ContractDecks {
             $DECKS_ID INTEGER PRIMARY KEY,
             $DECKS_NAME TEXT NOT NULL,
             $DECKS_DOMAIN_ID INTEGER NOT NULL,
+            $DECKS_PAYLOAD TEXT,
             
             FOREIGN KEY ($DECKS_DOMAIN_ID) REFERENCES ${ContractDomains.DOMAINS} (${ContractDomains.DOMAINS_ID})
                ON DELETE CASCADE

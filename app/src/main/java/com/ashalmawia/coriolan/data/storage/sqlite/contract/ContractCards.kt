@@ -19,6 +19,7 @@ object ContractCards {
     const val CARDS_DECK_ID = "Cards_DeckId"
     const val CARDS_DOMAIN_ID = "Cards_DomainId"
     const val CARDS_TYPE = "Cards_Type"
+    const val CARDS_PAYLOAD = "Cards_Payload"
 
 
     private val allColumns = arrayOf(
@@ -26,7 +27,8 @@ object ContractCards {
             CARDS_FRONT_ID,
             CARDS_DECK_ID,
             CARDS_DOMAIN_ID,
-            CARDS_TYPE
+            CARDS_TYPE,
+            CARDS_PAYLOAD
     )
     fun allColumnsCards(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
 
@@ -37,6 +39,7 @@ object ContractCards {
             $CARDS_DECK_ID INTEGER NOT NULL,
             $CARDS_DOMAIN_ID INTEGER NOT NULL,
             $CARDS_TYPE TEXT NOT NULL,
+            $CARDS_PAYLOAD TEXT,
             
             FOREIGN KEY ($CARDS_FRONT_ID) REFERENCES ${ContractTerms.TERMS} (${ContractTerms.TERMS_ID})
                ON DELETE RESTRICT

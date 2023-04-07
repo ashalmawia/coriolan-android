@@ -14,12 +14,14 @@ object ContractDomains {
     const val DOMAINS_NAME = "Domains_Name"
     const val DOMAINS_LANG_ORIGINAL = "Domains_LangOrig"
     const val DOMAINS_LANG_TRANSLATIONS = "Domains_LangTran"
+    const val DOMAINS_PAYLOAD = "Domains_Payload"
 
     private val allColumns = arrayOf(
             DOMAINS_ID,
             DOMAINS_NAME,
             DOMAINS_LANG_ORIGINAL,
-            DOMAINS_LANG_TRANSLATIONS
+            DOMAINS_LANG_TRANSLATIONS,
+            DOMAINS_PAYLOAD
     )
 
     val createQuery = """
@@ -28,6 +30,7 @@ object ContractDomains {
             $DOMAINS_NAME TEXT,
             $DOMAINS_LANG_ORIGINAL INTEGER NOT NULL,
             $DOMAINS_LANG_TRANSLATIONS INTEGER NOT NULL,
+            $DOMAINS_PAYLOAD TEXT,
             
             FOREIGN KEY ($DOMAINS_LANG_ORIGINAL) REFERENCES ${ContractLanguages.LANGUAGES} (${ContractLanguages.LANGUAGES_ID})
                ON DELETE RESTRICT

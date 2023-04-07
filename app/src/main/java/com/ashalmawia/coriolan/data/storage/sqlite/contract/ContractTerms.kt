@@ -21,12 +21,14 @@ object ContractTerms {
     const val TERMS_VALUE = "Terms_Value"
     const val TERMS_LANGUAGE_ID = "Terms_Lang"
     const val TERMS_EXTRAS = "Terms_Extras"
+    const val TERMS_PAYLOAD = "Terms_Payload"
 
     private val allColumns = arrayOf(
             TERMS_ID,
             TERMS_VALUE,
             TERMS_LANGUAGE_ID,
-            TERMS_EXTRAS
+            TERMS_EXTRAS,
+            TERMS_PAYLOAD
     )
     fun allColumnsTerms(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
 
@@ -36,6 +38,7 @@ object ContractTerms {
             $TERMS_VALUE TEXT NOT NULL,
             $TERMS_LANGUAGE_ID INTEGER NOT NULL,
             $TERMS_EXTRAS TEXT,
+            $TERMS_PAYLOAD TEXT,
             
             FOREIGN KEY ($TERMS_LANGUAGE_ID) REFERENCES ${ContractLanguages.LANGUAGES} (${ContractLanguages.LANGUAGES_ID})
                ON DELETE RESTRICT
