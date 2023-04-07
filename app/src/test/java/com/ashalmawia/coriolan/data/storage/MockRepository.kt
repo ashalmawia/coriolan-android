@@ -23,17 +23,17 @@ class MockRepository : Repository {
     }
 
     private val terms = mutableListOf<Term>()
-    override fun addTerm(value: String, language: Language, extras: Extras?): Term {
-        val exp = Term(terms.size + 1L, value, language, extras ?: Extras.empty())
+    override fun addTerm(value: String, language: Language, transcription: String?): Term {
+        val exp = Term(terms.size + 1L, value, language, transcription)
         terms.add(exp)
         return exp
     }
-    override fun updateTerm(term: Term, extras: Extras?): Term {
+    override fun updateTerm(term: Term, transcription: String?): Term {
         if (!terms.contains(term)) {
             throw DataProcessingException("term is not in the repo: $term")
         }
 
-        val updated = term.copy(extras = extras ?: Extras.empty())
+        val updated = term.copy(transcription = transcription)
         terms.remove(term)
         terms.add(updated)
         return updated

@@ -45,7 +45,8 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.state
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsExtras
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermPayload
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsLanguageId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsValue
@@ -114,7 +115,7 @@ class SqliteBackupHelper(
                         cursor.termsId(),
                         cursor.termsValue(),
                         cursor.termsLanguageId(),
-                        cursor.termsExtras()
+                        cursor.termsPayload().transcription
                 ))
             }
             return list
@@ -259,7 +260,7 @@ class SqliteBackupHelper(
 
         terms.forEach {
             db.insertOrThrow(TERMS, null,
-                    createTermContentValues(it.value, it.languageId, it.extras, it.id)
+                    createTermContentValues(it.value, it.languageId, createTermPayload(it.transcription), it.id)
             )
         }
     }

@@ -478,8 +478,8 @@ class DecksRegistryTest {
         // then
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
-        assertEquals("transcription is set", transcription, edited.original.extras.transcription)
-        assertNull("unrelated exprerssions are not affected", edited.translations[0].extras.transcription)
+        assertEquals("transcription is set", transcription, edited.original.transcription)
+        assertNull("unrelated exprerssions are not affected", edited.translations[0].transcription)
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 
@@ -488,7 +488,7 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val term1 = mockRepository.addTerm("spring", domain.langOriginal(), Extras("[spr]"))
+        val term1 = mockRepository.addTerm("spring", domain.langOriginal(), "[spr]")
         val term2 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
         val card = mockRepository.addCard(domain, deckId, term1, listOf(term2))
@@ -505,8 +505,8 @@ class DecksRegistryTest {
         // then
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
-        assertEquals("transcription is updated", transcriptionNew, edited.original.extras.transcription)
-        assertNull("unrelated exprerssions are not affected", edited.translations[0].extras.transcription)
+        assertEquals("transcription is updated", transcriptionNew, edited.original.transcription)
+        assertNull("unrelated exprerssions are not affected", edited.translations[0].transcription)
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 
@@ -515,7 +515,7 @@ class DecksRegistryTest {
         // given
         val deckId = 1L
 
-        val term1 = mockRepository.addTerm("spring", domain.langOriginal(), Extras("[sprɪŋ]"))
+        val term1 = mockRepository.addTerm("spring", domain.langOriginal(), "[sprɪŋ]")
         val term2 = mockRepository.justAddTerm("источник", domain.langTranslations())
 
         val card = mockRepository.addCard(domain, deckId, term1, listOf(term2))
@@ -530,8 +530,8 @@ class DecksRegistryTest {
         // then
         assertNotNull("edit was successful", edited)
         assertEquals("correct card was edited", card.id, edited.id)
-        assertEquals("transcription is deleted", null, edited.original.extras.transcription)
-        assertNull("unrelated exprerssions are not affected", edited.translations[0].extras.transcription)
+        assertEquals("transcription is deleted", null, edited.original.transcription)
+        assertNull("unrelated exprerssions are not affected", edited.translations[0].transcription)
         assertEquals("repository is updated", edited, mockRepository.cardById(edited.id, domain))
     }
 

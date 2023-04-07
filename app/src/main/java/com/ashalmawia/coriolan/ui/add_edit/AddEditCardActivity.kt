@@ -33,7 +33,7 @@ class AddEditCardActivity : BaseActivity() {
     private val domain: Domain = domainScope().get()
 
     private var card: Card? = null
-    private var extras: Extras? = null
+    private var transcriptionValue: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +62,7 @@ class AddEditCardActivity : BaseActivity() {
         if (card.translations.isEmpty()) throw IllegalStateException("card with id[$cardId] has no translations")
 
         this.card = card
-        this.extras = card.original.extras
+        this.transcriptionValue = card.original.transcription
     }
 
     private fun initialize() {
@@ -101,7 +101,7 @@ class AddEditCardActivity : BaseActivity() {
 
         original.input = card.original.value
 
-        transcription.input = extras?.transcription ?: ""
+        transcription.input = transcriptionValue ?: ""
 
         card.translations.forEach {
             val view = addTrasnlationField()
@@ -313,7 +313,7 @@ class AddEditCardActivity : BaseActivity() {
 
     private fun CardData.matches(card: Card): Boolean {
         return original == card.original.value
-                && transcription == extras?.transcription
+                && transcription == this@AddEditCardActivity.transcriptionValue
                 && card.translations.size == translations.size
                 && card.translations.map { it.value }.containsAll(translations)
     }

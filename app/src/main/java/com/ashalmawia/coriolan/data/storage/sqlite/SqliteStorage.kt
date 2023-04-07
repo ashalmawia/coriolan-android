@@ -55,6 +55,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
@@ -67,7 +68,6 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.util.timespamp
@@ -125,31 +125,31 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
-    override fun addTerm(value: String, language: Language, extras: Extras?): Term {
+    override fun addTerm(value: String, language: Language, transcription: String?): Term {
         try {
             val id = helper.writableDatabase.insert(TERMS,
                     null,
-                    createTermContentValues(value, language, extras))
+                    createTermContentValues(value, language, createTermPayload(transcription)))
 
             if (id < 0) {
                 throw DataProcessingException("failed to add term [$value], lang $language: maybe missing lang")
             }
 
-            return Term(id, value, language, extras ?: Extras.empty())
+            return Term(id, value, language, transcription)
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to add term [$value], lang $language: constraint violation", e)
         }
     }
 
-    override fun updateTerm(term: Term, extras: Extras?): Term {
+    override fun updateTerm(term: Term, transcription: String?): Term {
         val cv = createTermContentValues(
-                term.value, term.language.id, extras, term.id
+                term.value, term.language.id, createTermPayload(transcription), term.id
         )
 
         val db = helper.writableDatabase
         db.update(TERMS, cv, "$TERMS_ID == ?", arrayOf(term.id.toString()))
 
-        return term.copy(extras = extras ?: Extras.empty())
+        return term.copy(transcription = transcription)
     }
 
     override fun termById(id: Long): Term? {

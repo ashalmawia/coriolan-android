@@ -14,7 +14,6 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
 import org.joda.time.DateTime
@@ -63,13 +62,11 @@ class SqliteStorageBenchmarkTest {
 
         add_language()
         add_domain()
-        add_term_without_extras()
-        add_term_with_extras()
+        add_term()
         add_deck()
         add_card()
 
-        update_term_without_extras()
-        update_term_with_extras()
+        update_term()
         update_deck()
         update_card_move()
         update_card_add_translation()
@@ -120,21 +117,12 @@ class SqliteStorageBenchmarkTest {
         }
     }
 
-    private fun add_term_without_extras() {
+    private fun add_term() {
         var language: Language? = null
-        benchmark("add term without extras", prepare = {
+        benchmark("add term", prepare = {
             language = it.languageById(1L)
         }) {
-            it.addTerm("new term", language!!, null)
-        }
-    }
-
-    private fun add_term_with_extras() {
-        var language: Language? = null
-        benchmark("add term with extras", prepare = {
-            language = it.languageById(1L)
-        }) {
-            it.addTerm("new term", language!!, Extras("transcription"))
+            it.addTerm("new term", language!!, "transcription")
         }
     }
 
@@ -154,7 +142,7 @@ class SqliteStorageBenchmarkTest {
 
         benchmark("add card", prepare = {
             domain = it.domainById(1L)
-            original = it.addTerm("some new term", domain!!.langOriginal(), Extras("transcription"))
+            original = it.addTerm("some new term", domain!!.langOriginal(), "transcription")
             translations = (1 .. 3).map { i ->
                 it.addTerm("some new term $i", domain!!.langTranslations(), null)
             }
@@ -164,23 +152,12 @@ class SqliteStorageBenchmarkTest {
     }
 
 
-    /************************** UPDATE **************************/
-
-    private fun update_term_without_extras() {
+    private fun update_term() {
         var term: Term? = null
-        benchmark("update term without extras", prepare = {
+        benchmark("update term", prepare = {
             term = it.termById(1L)
         }) {
-            it.updateTerm(term!!, null)
-        }
-    }
-
-    private fun update_term_with_extras() {
-        var term: Term? = null
-        benchmark("update term with extras", prepare = {
-            term = it.termById(1L)
-        }) {
-            it.updateTerm(term!!, Extras("new transcription"))
+            it.updateTerm(term!!, "new transcription")
         }
     }
 

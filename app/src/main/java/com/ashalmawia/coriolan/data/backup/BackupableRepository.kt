@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Extras
 import org.joda.time.DateTime
 
 interface BackupableRepository {
@@ -51,7 +50,7 @@ data class TermInfo(
         val id: Long,
         val value: String,
         val languageId: Long,
-        val extras: Extras)
+        val transcription: String?)
 
 data class TermExtraInfo(
         val id: Long,

@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.data.backup.json.JsonBackupTestData
-import com.ashalmawia.coriolan.learning.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

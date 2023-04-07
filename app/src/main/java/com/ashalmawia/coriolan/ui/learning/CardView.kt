@@ -45,7 +45,7 @@ class CardView : FrameLayout {
 
     fun bind(card: Card, answers: List<SRAnswer>) {
         frontText.text = card.original.value
-        transcriptionText.bindTranscription(card.original.extras.transcription)
+        transcriptionText.bindTranscription(card.original.transcription)
 
         clearTranslationItems()
         card.translations.forEach { addTranslationItem(it) }
@@ -107,7 +107,7 @@ class CardView : FrameLayout {
     private fun addTranslationItem(term: Term) {
         val view = LayoutInflater.from(context).inflate(R.layout.card_translation_item, translations, false)
         view.text.text = term.value
-        view.transcription.bindTranscription(term.extras.transcription)
+        view.transcription.bindTranscription(term.transcription)
         translations.addView(view)
     }
 

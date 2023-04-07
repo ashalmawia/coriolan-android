@@ -112,9 +112,9 @@ class DecksRegistry(
     ): Term {
         val existingTerm = repository.termByValues(value, language)
         if (existingTerm == null) {
-            return repository.addTerm(value, language, Extras(transcription))
+            return repository.addTerm(value, language, transcription)
         } else {
-            return repository.updateTerm(existingTerm, existingTerm.extras.copy(transcription = transcription))
+            return repository.updateTerm(existingTerm, transcription)
         }
     }
 

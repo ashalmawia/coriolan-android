@@ -17,10 +17,6 @@ fun assertTermCorrect(term: Term?, value: String, language: Language) {
     assertLanguageCorrect(term.language, language.value)
 }
 
-fun assertExtrasCorrect(extras: Extras, transcription: String?) {
-    assertEquals("transcription extra is correct", transcription, extras.transcription)
-}
-
 fun assertDomainCorrect(domain: Domain?, name: String, langOriginal: Language, langTranslations: Language) {
     assertNotNull("domain exists", domain)
     assertEquals("domain name is correct", name, domain!!.name)

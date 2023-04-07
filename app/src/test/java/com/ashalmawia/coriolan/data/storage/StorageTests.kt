@@ -162,15 +162,14 @@ abstract class StorageTest {
         val lang = domain.langTranslations()
 
         val value = "exaggeration"
-        val transcriptionNew = null
 
         val term = storage.addTerm(value, lang, null)
 
         // when
-        val updated = storage.updateTerm(term, Extras(transcription = null))
+        val updated = storage.updateTerm(term, null)
 
         // then
-        assertExtrasCorrect(updated.extras, transcriptionNew)
+        assertNull(updated.transcription)
     }
 
     @Test
@@ -186,10 +185,10 @@ abstract class StorageTest {
         val term = storage.addTerm(value, lang, null)
 
         // when
-        val updated = storage.updateTerm(term, Extras(transcription = transcriptionNew))
+        val updated = storage.updateTerm(term, transcriptionNew)
 
         // then
-        assertExtrasCorrect(updated.extras, transcriptionNew)
+        assertEquals(transcriptionNew, updated.transcription)
     }
 
     @Test
@@ -203,13 +202,13 @@ abstract class StorageTest {
         val transcriptionOld = "[ɪɡˌzædʒəˈreɪʃən]"
         val transcriptionNew = null
 
-        val term = storage.addTerm(value, lang, Extras(transcription = transcriptionOld))
+        val term = storage.addTerm(value, lang, transcriptionOld)
 
         // when
-        val updated = storage.updateTerm(term, Extras(transcription = transcriptionNew))
+        val updated = storage.updateTerm(term, transcriptionNew)
 
         // then
-        assertExtrasCorrect(updated.extras, transcriptionNew)
+        assertNull(updated.transcription)
     }
 
     @Test
@@ -223,13 +222,13 @@ abstract class StorageTest {
         val transcriptionOld = "[mɑːtʃ]"
         val transcriptionNew = "[ɪɡˌzædʒəˈreɪʃən]"
 
-        val term = storage.addTerm(value, lang, Extras(transcription = transcriptionOld))
+        val term = storage.addTerm(value, lang, transcriptionOld)
 
         // when
-        val updated = storage.updateTerm(term, Extras(transcription = transcriptionNew))
+        val updated = storage.updateTerm(term, transcriptionNew)
 
         // then
-        assertExtrasCorrect(updated.extras, transcriptionNew)
+        assertEquals(transcriptionNew, updated.transcription)
     }
 
     @Test
@@ -397,7 +396,7 @@ abstract class StorageTest {
 
         storage.addTerm("shrimp", domain.langOriginal(), null)
         storage.addTerm("креветка", domain.langTranslations(), null)
-        val term = Term(5L, "spring", domain.langOriginal(), Extras(null))
+        val term = Term(5L, "spring", domain.langOriginal(), null)
 
         // when
         val used = storage.isUsed(term)

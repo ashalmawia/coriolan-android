@@ -5,9 +5,9 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.CardInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
+import com.ashalmawia.coriolan.data.backup.TermExtraInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Extras
 import com.fasterxml.jackson.core.*
 import java.io.InputStream
 import java.io.OutputStream
@@ -45,7 +45,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         val domains = mutableMapOf<Long, DomainInfo>()
         val terms = mutableMapOf<Long, TermInfo>()
         val cards = mutableListOf<CardInfo>()
-        val legacyExtras = mutableMapOf<Long, Extras>()
+        val legacyExtras = mutableMapOf<Long, TermExtraInfo>()
 
         while (true) {
             val token = json.nextToken()
@@ -63,9 +63,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
                     terms.putAll(list.associateBy { it.id })
                 }
                 FIELD_TERM_EXTRAS_LEGACY -> read(json, deserializer::readTermExtra) { list ->
-                    legacyExtras.putAll(
-                            list.associateBy { it.termId }.mapValues { (_, value) -> Extras(value.value) }
-                    )
+                    legacyExtras.putAll(list.associateBy { it.termId })
                 }
                 FIELD_CARDS -> read(json, deserializer::readCard) { list ->
                     cards.addAll(list)
@@ -85,11 +83,11 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         repository.writeCards(cards)
     }
 
-    private fun writeTerms(repository: BackupableRepository, terms: List<TermInfo>, legacyExtras: Map<Long, Extras>) {
+    private fun writeTerms(repository: BackupableRepository, terms: List<TermInfo>, legacyExtras: Map<Long, TermExtraInfo>) {
         if (legacyExtras.isEmpty()) {
             repository.writeTerms(terms)
         } else {
-            val withExtras = terms.map { it.copy(extras = legacyExtras[it.id] ?: Extras.empty()) }
+            val withExtras = terms.map { it.copy(transcription = legacyExtras[it.id]?.value) }
             repository.writeTerms(withExtras)
         }
     }

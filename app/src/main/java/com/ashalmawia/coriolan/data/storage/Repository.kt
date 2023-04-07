@@ -14,9 +14,9 @@ interface Repository {
 
     fun languageByName(name: String): Language?
 
-    fun addTerm(value: String, language: Language, extras: Extras?): Term
+    fun addTerm(value: String, language: Language, transcription: String?): Term
 
-    fun updateTerm(term: Term, extras: Extras?): Term
+    fun updateTerm(term: Term, transcription: String?): Term
 
     fun termById(id: Long): Term?
 

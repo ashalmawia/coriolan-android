@@ -38,7 +38,7 @@ fun mockCardData(
 
 private var termId = 1L
 fun mockTerm(value: String = "mock value", language: Language = mockLanguage(), transcription: String? = null)
-        = Term(termId++, value, language, Extras(transcription))
+        = Term(termId++, value, language, transcription)
 
 private var domainId = 1L
 fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())

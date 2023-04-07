@@ -26,16 +26,17 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_EXERCISE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_INTERVAL
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createCardStateContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_EXTRAS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_PAYLOAD
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermPayload
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Extras
 import com.ashalmawia.coriolan.model.mockLanguage
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.mockTerm
@@ -78,61 +79,61 @@ class CreateContentValuesTest {
     }
 
     @Test
-    fun createTermContentValuesTest__emptyExtras() {
+    fun createTermContentValuesTest__emptyPayload() {
         // given
         val value = "some value"
         val lang = mockLanguage(777L, "Russian")
+        val payload = createTermPayload(null)
+        val payloadString = jacksonObjectMapper().writeValueAsString(payload)
 
         // when
-        val cv = createTermContentValues(value, lang, null)
+        val cv = createTermContentValues(value, lang, payload)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
         assertEquals("$TERMS_VALUE is correct", value, cv.get(TERMS_VALUE))
         assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv.get(TERMS_LANGUAGE_ID))
-        assertEquals("$TERMS_EXTRAS is correct", null, cv.get(TERMS_EXTRAS))
+        assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
 
         // when
         val id = 7L
-        val cv1 = createTermContentValues(value, lang.id, null, id)
+        val cv1 = createTermContentValues(value, lang.id, payload, id)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$TERMS_ID is correct", id, cv1.get(TERMS_ID))
         assertEquals("$TERMS_VALUE is correct", value, cv1.get(TERMS_VALUE))
         assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv1.get(TERMS_LANGUAGE_ID))
-        assertEquals("$TERMS_EXTRAS is correct", null, cv.get(TERMS_EXTRAS))
+        assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
     }
 
     @Test
-    fun createTermContentValuesTest__nonEmtpyExtras() {
+    fun createTermContentValuesTest__nonEmtpyPayload() {
         // given
         val value = "some value"
         val lang = mockLanguage(777L, "Russian")
-        val extras = Extras("transcription")
-        val objectMapper = jacksonObjectMapper()
+        val payload = TermPayload("transcription")
+        val payloadString = jacksonObjectMapper().writeValueAsString(payload)
 
         // when
-        val cv = createTermContentValues(value, lang, extras)
+        val cv = createTermContentValues(value, lang, payload)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
         assertEquals("$TERMS_VALUE is correct", value, cv.get(TERMS_VALUE))
         assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv.get(TERMS_LANGUAGE_ID))
-        assertEquals("$TERMS_EXTRAS is correct",
-                objectMapper.writeValueAsString(extras), cv.get(TERMS_EXTRAS))
+        assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
 
         // when
         val id = 7L
-        val cv1 = createTermContentValues(value, lang.id, extras, id)
+        val cv1 = createTermContentValues(value, lang.id, payload, id)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$TERMS_ID is correct", id, cv1.get(TERMS_ID))
         assertEquals("$TERMS_VALUE is correct", value, cv1.get(TERMS_VALUE))
         assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv1.get(TERMS_LANGUAGE_ID))
-        assertEquals("$TERMS_EXTRAS is correct",
-                objectMapper.writeValueAsString(extras), cv.get(TERMS_EXTRAS))
+        assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
     }
 
     @Test

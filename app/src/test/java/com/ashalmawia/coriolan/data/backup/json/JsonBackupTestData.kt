@@ -4,7 +4,6 @@ import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Extras
 import java.util.*
 
 object JsonBackupTestData {
@@ -29,33 +28,33 @@ object JsonBackupTestData {
 
     val terms = listOf(
             // English
-            TermInfo(1L, "shrimp", 1L, Extras.empty()),
-            TermInfo(2L, "rocket", 1L, Extras("/ˈrɒkɪt \$ ˈrɑː-/")),
-            TermInfo(3L, "spring", 1L, Extras("/sprɪŋ/")),
-            TermInfo(4L, "summer", 1L, Extras("/ˈsʌmə \$ -ər/")),
-            TermInfo(5L, "victory", 1L, Extras("/ˈvɪktəri/")),
-            TermInfo(6L, "march", 1L, Extras("/mɑːtʃ \$ mɑːrtʃ/")),
+            TermInfo(1L, "shrimp", 1L, null),
+            TermInfo(2L, "rocket", 1L, "/ˈrɒkɪt \$ ˈrɑː-/"),
+            TermInfo(3L, "spring", 1L, "/sprɪŋ/"),
+            TermInfo(4L, "summer", 1L, "/ˈsʌmə \$ -ər/"),
+            TermInfo(5L, "victory", 1L, "/ˈvɪktəri/"),
+            TermInfo(6L, "march", 1L, "/mɑːtʃ \$ mɑːrtʃ/"),
 
             // Russian
-            TermInfo(7L, "креветка", 2L, Extras.empty()),
-            TermInfo(8L, "ракета", 2L, Extras.empty()),
-            TermInfo(9L, "источник", 2L, Extras.empty()),
-            TermInfo(10L, "весна", 2L, Extras.empty()),
-            TermInfo(11L, "пружина", 2L, Extras.empty()),
-            TermInfo(12L, "лето", 2L, Extras.empty()),
-            TermInfo(13L, "победа", 2L, Extras.empty()),
-            TermInfo(14L, "март", 2L, Extras.empty()),
-            TermInfo(15L, "марш", 2L, Extras.empty()),
+            TermInfo(7L, "креветка", 2L, null),
+            TermInfo(8L, "ракета", 2L, null),
+            TermInfo(9L, "источник", 2L, null),
+            TermInfo(10L, "весна", 2L, null),
+            TermInfo(11L, "пружина", 2L, null),
+            TermInfo(12L, "лето", 2L, null),
+            TermInfo(13L, "победа", 2L, null),
+            TermInfo(14L, "март", 2L, null),
+            TermInfo(15L, "марш", 2L, null),
 
             // French
-            TermInfo(16L, "ameloirer", 3L, Extras.empty()),
-            TermInfo(17L, "chercher", 3L, Extras.empty()),
-            TermInfo(18L, "voisin", 3L, Extras.empty()),
+            TermInfo(16L, "ameloirer", 3L, null),
+            TermInfo(17L, "chercher", 3L, null),
+            TermInfo(18L, "voisin", 3L, null),
 
             // Russian
-            TermInfo(19L, "улучшать", 2L, Extras.empty()),
-            TermInfo(20L, "искать", 2L, Extras.empty()),
-            TermInfo(21L, "сосед", 2L, Extras.empty())
+            TermInfo(19L, "улучшать", 2L, null),
+            TermInfo(20L, "искать", 2L, null),
+            TermInfo(21L, "сосед", 2L, null)
     )
 
     val cards = listOf(

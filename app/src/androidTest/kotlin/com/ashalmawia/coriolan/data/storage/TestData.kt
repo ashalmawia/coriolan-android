@@ -4,7 +4,6 @@ import com.ashalmawia.coriolan.data.backup.*
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Extras
 
 fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
     val languages = listOf(
@@ -42,13 +41,13 @@ fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
     fun id() = terms.size.toLong() + 1L
     for (i in 1..count / 3 + 10) {
         terms.add(TermInfo(
-                id(), "term with id: ${id()}", 1L, Extras("transcription with id: ${id()}")
+                id(), "term with id: ${id()}", 1L, "transcription with id: ${id()}"
         ))
         terms.add(TermInfo(
-                id(), "term with id: ${id()}", 2L, Extras.empty()
+                id(), "term with id: ${id()}", 2L, null
         ))
         terms.add(TermInfo(
-                id(), "term with id: ${id()}", 3L, Extras.empty()
+                id(), "term with id: ${id()}", 3L, null
         ))
     }
 
