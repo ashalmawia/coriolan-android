@@ -12,13 +12,14 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_DOMAIN_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_FRONT_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_PAYLOAD
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_TYPE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.card
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsCardType
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsDeckId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardWihoutTranslations
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsFrontId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_DOMAIN_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_ID
@@ -55,12 +56,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_TERM_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateTranslationsContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.translationsCardId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -210,16 +208,12 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
         val cursor = db.rawQuery("""
             SELECT COUNT(*)
-            
             FROM $CARDS
-               LEFT JOIN $TRANSLATIONS
-                  ON $CARDS_ID = $TRANSLATIONS_CARD_ID
-            
             WHERE
-               $CARDS_FRONT_ID = ?
+               $CARDS_FRONT_ID = ${term.id}
                OR
-               $TRANSLATIONS_TERM_ID = ?
-        """.trimMargin(), arrayOf(term.id.toString(), term.id.toString()))
+               $CARDS_PAYLOAD LIKE '%{"id":${term.id}}%'
+        """.trimMargin(), arrayOf())
 
         cursor.use {
             it.moveToFirst()
@@ -320,42 +314,56 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     override fun addCard(domain: Domain, deckId: Long, original: Term, translations: List<Term>): Card {
-        if (translations.isEmpty()) {
-            throw DataProcessingException("failed to add card with original[$original]: translations were empty")
-        }
+        verifyTranslations(original, translations)
 
         val db = helper.writableDatabase
-        db.beginTransaction()
-        try {
-            val type = if (domain.langOriginal().id == original.language.id) CardType.FORWARD else CardType.REVERSE
-            val cardId = db.insert(
+        val type = if (domain.langOriginal().id == original.language.id) CardType.FORWARD else CardType.REVERSE
+        val cardId = try {
+            db.insert(
                     CARDS,
                     null,
-                    createCardContentValues(domain.id, deckId, original, type))
-
-            if (cardId < 0) {
-                throw DataProcessingException("failed to insert card ($original -> $translations)")
-            }
-
-            // write the card-to-term relation (many-to-many)
-            val translationsCV = generateTranslationsContentValues(cardId, translations)
-            translationsCV.forEach {
-                val result = db.insert(TRANSLATIONS, null, it)
-
-                if (result < 0) {
-                    throw DataProcessingException("failed to insert translation entry card ($original -> $translations)")
-                }
-            }
-
-            val card = Card(cardId, deckId, domain, type, original, translations)
-
-            db.setTransactionSuccessful()
-
-            return card
+                    createCardContentValues(domain.id, deckId, original, type, createCardPayload(translations)))
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to add card ($original -> $translations), constraint violation", e)
-        } finally {
-            db.endTransaction()
+        }
+
+        if (cardId < 0) {
+            throw DataProcessingException("failed to insert card ($original -> $translations)")
+        }
+
+        return Card(cardId, deckId, domain, type, original, translations)
+    }
+
+    private fun verifyTranslations(original: Term, translations: List<Term>) {
+        if (translations.isEmpty()) {
+            throw DataProcessingException("failed to process card with original[$original]: translations were empty")
+        }
+        try {
+            verifyTermsExist(translations)
+        } catch (e: DataProcessingException) {
+            throw DataProcessingException("failed to process card with original[$original]: translations were missing", e)
+        }
+    }
+
+    private fun verifyTermsExist(terms: List<Term>) {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            SELECT $TERMS_ID
+            FROM $TERMS
+            WHERE $TERMS_ID IN ( ${terms.map { it.id }.joinToString()} )
+        """.trimIndent(), arrayOf())
+
+        val found = mutableSetOf<Long>()
+        cursor.use {
+            while (it.moveToNext()) {
+                found.add(it.termsId())
+            }
+        }
+
+        if (found.size != terms.size) {
+            val missingTerms = terms - found
+            throw DataProcessingException("could not find terms with ids: $missingTerms")
         }
     }
 
@@ -383,27 +391,31 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             WHERE $CARDS_ID IN (${ids.joinToString()})
         """.trimMargin(), arrayOf())
 
-        val translations = if (ids.size > 1) {
-             allCardsTranslations(db)
-        } else {
-            val id = ids.first()
-            mapOf(id to translationsByCardId(id))
-        }
+        return extractCardsFromCursor(cursor, domain)
+    }
+
+    private fun extractCardsFromCursor(cursor: Cursor, domain: Domain): List<Card> {
+        val payloads = mutableMapOf<Long, CardPayload>()
 
         val cards = mutableListOf<Card>()
         cursor.use {
             while (cursor.moveToNext()) {
-                val card = cursor.card(domain, translations)
+                val card = cursor.cardWihoutTranslations(domain)
                 cards.add(card)
+                payloads[card.id] = cursor.cardsPayload()
             }
         }
-        return cards
+
+        val translations = termsWithIds(
+                payloads.values.flatMap { it.translationIds }.map { it.id }
+        )
+        return cards.map { card ->
+            card.copy(translations = payloads[card.id]!!.translationIds.map { translations[it.id]!! })
+        }
     }
 
     override fun cardByValues(domain: Domain, original: Term): Card? {
         val db = helper.readableDatabase
-
-        val translations = allCardsTranslations(db)
 
         // find all cards with the same original
         val cursor = db.rawQuery("""
@@ -423,60 +435,40 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                    $CARDS_FRONT_ID = ?
         """.trimMargin(), arrayOf(domain.id.toString(), original.id.toString()))
 
-        cursor.use {
+        val (card, payload) = cursor.use {
             // go over these cards
-            while (cursor.moveToNext()) {
+            if (cursor.moveToNext()) {
                 // we found the card we need
                 // we can assume that there are no other cards like this due to merging
-                return cursor.card(domain, translations)
+                Pair(cursor.cardWihoutTranslations(domain), cursor.cardsPayload())
+            } else {
+                null
             }
+        } ?: return null
 
-            return null
-        }
+        return card.copy(
+                translations = termsWithIds(payload.translationIds.map { it.id }).values.toList()
+        )
     }
 
     override fun updateCard(card: Card, deckId: Long, original: Term, translations: List<Term>): Card {
-        if (translations.isEmpty()) {
-            throw DataProcessingException("failed to update card with id[$card.id]: translations were empty")
-        }
+        verifyTranslations(original, translations)
 
         val db = helper.writableDatabase
-        db.beginTransaction()
-
-        try {
-            val cv = createCardContentValues(card.domain.id, deckId, original, card.type, card.id)
-            val updated = db.update(CARDS, cv, "$CARDS_ID = ?", arrayOf(card.id.toString()))
-
-            if (updated == 0) {
-                throw DataProcessingException("failed to update card ${card.id}")
-            }
-
-            // delete all the old translations from the card
-            card.translations.forEach {
-                db.delete(
-                        TRANSLATIONS,
-                        "$TRANSLATIONS_CARD_ID = ? AND $TRANSLATIONS_TERM_ID = ?",
-                        arrayOf(card.id.toString(), it.id.toString())
-                )
-            }
-
-            // add new translations to the card
-            val translationsCV = generateTranslationsContentValues(card.id, translations)
-            translationsCV.forEach {
-                val result = db.insertOrUpdate(TRANSLATIONS, it)
-                if (result < 0) {
-                    throw DataProcessingException("failed to update card ${card.id}: translation not in the database")
-                }
-            }
-
-            db.setTransactionSuccessful()
-
-            return Card(card.id, deckId, card.domain, card.type, original, translations)
+        val cv = createCardContentValues(
+                card.domain.id, deckId, original, card.type, createCardPayload(translations), card.id
+        )
+        val updated = try {
+            db.update(CARDS, cv, "$CARDS_ID = ?", arrayOf(card.id.toString()))
         } catch (e: SQLiteConstraintException) {
-            throw DataProcessingException("failed to update card[$card.id], constraint violation", e)
-        } finally {
-            db.endTransaction()
+            throw DataProcessingException("failed to add card ($original -> $translations), constraint violation", e)
         }
+
+        if (updated == 0) {
+            throw DataProcessingException("failed to update card ${card.id}")
+        }
+
+        return Card(card.id, deckId, card.domain, card.type, original, translations)
     }
 
     override fun deleteCard(card: Card) {
@@ -500,8 +492,6 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun allCards(domain: Domain): List<Card> {
         val db = helper.readableDatabase
 
-        val translations = allCardsTranslations(db)
-
         val CARDS = "Cards"
         val TERMS = "Terms"
         val LANGUAGES = "Languages"
@@ -520,22 +510,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                $CARDS_DOMAIN_ID = ?
         """.trimMargin(), arrayOf(domain.id.toString()))
 
-        val cards = mutableListOf<Card>()
-
-        cursor.use {
-            while (it.moveToNext()) {
-                val cardId = it.cardsId()
-                cards.add(Card(
-                        cardId,
-                        it.cardsDeckId(),
-                        domain,
-                        it.cardsCardType(),
-                        it.term(),
-                        translations[cardId]!!
-                ))
-            }
-            return cards
-        }
+        return extractCardsFromCursor(cursor, domain)
     }
 
     override fun allDecks(domain: Domain): List<Deck> {
@@ -624,8 +599,6 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun cardsOfDeck(deck: Deck): List<Card> {
         val db = helper.readableDatabase
 
-        val translations = allCardsTranslations(db)
-
         val cursor = db.rawQuery("""
             SELECT *
             
@@ -642,65 +615,30 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             
             """.trimMargin(), arrayOf(deck.id.toString()))
 
-        val list = mutableListOf<Card>()
-        cursor.use {
-            while (it.moveToNext()) {
-                list.add(it.card(deck.domain, translations))
-            }
-            return list
-        }
+        return extractCardsFromCursor(cursor, deck.domain)
     }
 
-    private fun translationsByCardId(id: Long): List<Term> {
+    private fun termsWithIds(ids: Collection<Long>): Map<Long, Term> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             SELECT *
-            
-            FROM $TRANSLATIONS
-            
-               LEFT JOIN $TERMS
-                   ON $TRANSLATIONS_TERM_ID = $TERMS_ID
+            FROM $TERMS
             
                LEFT JOIN $LANGUAGES
                    ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
-            
-            WHERE $TRANSLATIONS_CARD_ID = ?
-                
-            """.trimMargin(), arrayOf(id.toString()))
+                   
+            WHERE $TERMS_ID IN ( ${ids.joinToString()} )
+        """.trimIndent(), arrayOf())
 
-        val translations = mutableListOf<Term>()
+        val terms = mutableMapOf<Long, Term>()
         cursor.use {
             while (it.moveToNext()) {
-                translations.add(it.term())
+                val term = it.term()
+                terms[term.id] = term
             }
-            return translations
         }
-    }
-
-    private fun allCardsTranslations(db: SQLiteDatabase): Map<Long, List<Term>> {
-        val cursor = db.rawQuery("""
-            SELECT *
-            
-            FROM 
-                $TRANSLATIONS
-                
-                LEFT JOIN $TERMS
-                    ON $TRANSLATIONS_TERM_ID = $TERMS_ID
-                
-                LEFT JOIN $LANGUAGES
-                    ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
-            """.trimMargin(), null)
-
-        val translations = mutableMapOf<Long, MutableList<Term>>()
-        cursor.use {
-            while (it.moveToNext()) {
-                translations
-                        .getOrPut(it.translationsCardId()) { mutableListOf() }
-                        .add(it.term())
-            }
-            return translations
-        }
+        return terms
     }
 
     override fun getCardLearningProgress(card: Card): LearningProgress {

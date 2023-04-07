@@ -6,6 +6,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_DOMAIN_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_FRONT_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_PAYLOAD
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_TYPE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_DOMAIN_ID
@@ -30,9 +31,8 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_TERM_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateTranslationsContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
@@ -171,16 +171,19 @@ class CreateContentValuesTest {
         val type = CardType.FORWARD
         val lang = mockLanguage()
         val original = mockTerm("some original term", lang)
+        val payload = CardPayload(listOf(TermId(1L), TermId(2L)))
+        val payloadString = jacksonObjectMapper().writeValueAsString(payload)
 
         // when
-        val cv = createCardContentValues(domainId, deckId, original, type)
+        val cv = createCardContentValues(domainId, deckId, original, type, payload)
 
         // then
-        assertEquals("values count is correct", 4, cv.size())
+        assertEquals("values count is correct", 5, cv.size())
         assertEquals("$CARDS_FRONT_ID is correct", original.id, cv.get(CARDS_FRONT_ID))
         assertEquals("$CARDS_DECK_ID is correct", deckId, cv.get(CARDS_DECK_ID))
         assertEquals("$CARDS_DOMAIN_ID is correct", domainId, cv.get(CARDS_DOMAIN_ID))
         assertEquals("$CARDS_TYPE is correct", type.value, cv.get(CARDS_TYPE))
+        assertEquals("$CARDS_PAYLOAD is correct", payloadString, cv.get(CARDS_PAYLOAD))
     }
 
     @Test
@@ -191,32 +194,36 @@ class CreateContentValuesTest {
         val lang = mockLanguage()
         val type = CardType.FORWARD
         val original = mockTerm("some original term", lang)
+        val payload = CardPayload(listOf(TermId(1L), TermId(2L)))
+        val payloadString = jacksonObjectMapper().writeValueAsString(payload)
         val cardId = 7L
 
         // when
-        val cv = createCardContentValues(domainId, deckId, original, type, cardId)
+        val cv = createCardContentValues(domainId, deckId, original, type, payload, cardId)
 
         // then
         cv.run {
-            assertEquals("values count is correct", 5, size())
+            assertEquals("values count is correct", 6, size())
             assertEquals("$CARDS_ID is correct", cardId, get(CARDS_ID))
             assertEquals("$CARDS_FRONT_ID is correct", original.id, get(CARDS_FRONT_ID))
             assertEquals("$CARDS_DECK_ID is correct", deckId, get(CARDS_DECK_ID))
             assertEquals("$CARDS_DOMAIN_ID is correct", domainId, get(CARDS_DOMAIN_ID))
             assertEquals("$CARDS_TYPE is correct", type.value, get(CARDS_TYPE))
+            assertEquals("$CARDS_PAYLOAD is correct", payloadString, get(CARDS_PAYLOAD))
         }
 
         // when
-        val cv1 = createCardContentValues(domainId, deckId, original.id, type, cardId)
+        val cv1 = createCardContentValues(domainId, deckId, original.id, type, payload, cardId)
 
         // then
         cv1.run {
-            assertEquals("values count is correct", 5, size())
+            assertEquals("values count is correct", 6, size())
             assertEquals("$CARDS_ID is correct", cardId, get(CARDS_ID))
             assertEquals("$CARDS_FRONT_ID is correct", original.id, get(CARDS_FRONT_ID))
             assertEquals("$CARDS_DECK_ID is correct", deckId, get(CARDS_DECK_ID))
             assertEquals("$CARDS_DOMAIN_ID is correct", domainId, get(CARDS_DOMAIN_ID))
             assertEquals("$CARDS_TYPE is correct", type.value, get(CARDS_TYPE))
+            assertEquals("$CARDS_PAYLOAD is correct", payloadString, get(CARDS_PAYLOAD))
         }
     }
 
@@ -250,42 +257,6 @@ class CreateContentValuesTest {
         assertEquals("$DECKS_ID is correct", deckId, cv.get(DECKS_ID))
         assertEquals("$DECKS_NAME is correct", name, cv.get(DECKS_NAME))
         assertEquals("$DECKS_DOMAIN_ID is correct", domainId, cv.get(DECKS_DOMAIN_ID))
-    }
-
-    @Test
-    fun generateCardsReverseContentValuesTest() {
-        // given
-        val cardId = 99L
-        val lang = mockLanguage()
-        val translations = listOf(
-                mockTerm("firework", lang),
-                mockTerm("rocket", lang),
-                mockTerm( "missile", lang)
-        )
-
-        // when
-        val cvList = generateTranslationsContentValues(cardId, translations)
-
-        // then
-        assertEquals("entries count is correct", 3, cvList.size)
-        for (i in 0 until 3) {
-            val cv = cvList[i]
-            assertEquals("values count is correct", 2, cv.size())
-            assertEquals("$TRANSLATIONS_CARD_ID is correct", cardId, cv.get(TRANSLATIONS_CARD_ID))
-            assertEquals("$TRANSLATIONS_TERM_ID is correct", translations[i].id, cv.get(TRANSLATIONS_TERM_ID))
-        }
-
-        // when
-        val cvList1 = generateTranslationsContentValues(cardId, translations.map { it.id })
-
-        // then
-        assertEquals("entries count is correct", 3, cvList1.size)
-        for (i in 0 until 3) {
-            val cv = cvList1[i]
-            assertEquals("values count is correct", 2, cv.size())
-            assertEquals("$TRANSLATIONS_CARD_ID is correct", cardId, cv.get(TRANSLATIONS_CARD_ID))
-            assertEquals("$TRANSLATIONS_TERM_ID is correct", translations[i].id, cv.get(TRANSLATIONS_TERM_ID))
-        }
     }
 
     @Test

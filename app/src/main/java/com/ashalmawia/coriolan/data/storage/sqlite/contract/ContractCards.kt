@@ -8,7 +8,10 @@ import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.data.storage.sqlite.long
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 object ContractCards {
 
@@ -58,6 +61,7 @@ object ContractCards {
         """.trimMargin()
 
 
+    private val objectMapper = jacksonObjectMapper()
     fun Cursor.cardsId(): Long { return long(CARDS_ID) }
     fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }
     fun Cursor.cardsDeckId(): Long { return long(CARDS_DECK_ID) }
@@ -66,7 +70,11 @@ object ContractCards {
         val type = string(CARDS_TYPE)
         return CardType.fromValue(type)
     }
-    fun Cursor.card(domain: Domain, translations: Map<Long, List<Term>>): Card {
+    fun Cursor.cardsPayload(): CardPayload {
+        val value = string(CARDS_PAYLOAD)
+        return objectMapper.readValue(value, CardPayload::class.java)
+    }
+    fun Cursor.cardWihoutTranslations(domain: Domain): Card {
         val id = cardsId()
         return Card(
                 id,
@@ -74,15 +82,15 @@ object ContractCards {
                 domain,
                 cardsCardType(),
                 term(),
-                translations[id]!!
+                emptyList()
         )
     }
 
 
-    fun createCardContentValues(domainId: Long, deckId: Long, original: Term, cardType: CardType, cardId: Long? = null) =
-            createCardContentValues(domainId, deckId, original.id, cardType, cardId)
+    fun createCardContentValues(domainId: Long, deckId: Long, original: Term, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null) =
+            createCardContentValues(domainId, deckId, original.id, cardType, cardPayload, cardId)
 
-    fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, cardType: CardType, cardId: Long? = null): ContentValues {
+    fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null): ContentValues {
         val cv = ContentValues()
         if (cardId != null) {
             cv.put(CARDS_ID, cardId)
@@ -91,6 +99,16 @@ object ContractCards {
         cv.put(CARDS_DECK_ID, deckId)
         cv.put(CARDS_DOMAIN_ID, domainId)
         cv.put(CARDS_TYPE, cardType.value)
+        cv.put(CARDS_PAYLOAD, objectMapper.writeValueAsString(cardPayload))
         return cv
+    }
+
+    @JvmName("createCardPayloadTerm")
+    fun createCardPayload(translations: List<Term>): CardPayload {
+        return CardPayload(translations.map { TermId(it.id) })
+    }
+    @JvmName("createCardPayloadLong")
+    fun createCardPayload(translations: List<Long>): CardPayload {
+        return CardPayload(translations.map { TermId(it) })
     }
 }

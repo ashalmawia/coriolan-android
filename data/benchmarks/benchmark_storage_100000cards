@@ -1,45 +1,45 @@
    SQLITE DATABASE PERFORMANCE BENCHMARK
     - sample size: 100000 cards
-    - database size: 32 MB
+    - database size: 28 MB
     - averaged over: 5 runs
-    - date: 2023-04-06, 18:15 - upd 2023-04-07, 16:48
+    - date: 2023-04-07, 18:41
     - ran with Google Pixel 3a, API 30, RAM 3.7GB
 +-----------------------------------------+---------+
 | Task                                    |    Time |
 +-----------------------------------------+---------+
-| query cards of deck                     | 28.394s |
-| query all cards                         | 27.214s |
-| query card by values                    | 24.474s |
-| query deck pending cards                | 22.260s |
-| query progress for cards with originals | 11.140s |
-| query deck pending counts               |  2.809s |
-| query term is used                      |  0.200s |
-| query card by id                        |  0.005s |
-| query all domains                       |  0.004s |
-| query term by name                      |  0.004s |
+| query deck pending cards                | 10.601s |
+| query progress for cards with originals |  9.230s |
+| query all cards                         |  6.876s |
+| query cards of deck                     |  6.837s |
+| query deck pending counts               |  3.172s |
+| query term is used                      |  0.292s |
+| query card by values                    |  0.035s |
+| query all domains                       |  0.006s |
+| query card by id                        |  0.004s |
 | query domain by id                      |  0.003s |
+| query term by name                      |  0.003s |
 | query language by id                    |  0.002s |
 | query language by name                  |  0.002s |
-| query term by values                    |  0.002s |
+| query term by values                    |  0.000s |
 | query deck by id                        |  0.000s |
 | query all decks                         |  0.000s |
 | query card learning progress            |  0.000s |
 +-----------------------------------------+---------+
 | add deck                                |  0.137s |
-| add language                            |  0.136s |
-| add domain                              |  0.136s |
-| add term without extras                 |  0.134s |
-| add term with extras                    |  0.133s |
-| add card                                |  0.003s |
+| add language                            |  0.130s |
+| add domain                              |  0.130s |
+| add term without extras                 |  0.125s |
+| add term with extras                    |  0.124s |
+| add card                                |  0.014s |
 +-----------------------------------------+---------+
-| update term with extras                 |  0.478s |
-| update card - move                      |  0.433s |
-| update deck                             |  0.430s |
-| update card learning progress           |  0.428s |
-| update term without extras              |  0.226s |
-| update card - add translation           |  0.006s |
+| update card learning progress           |  0.400s |
+| update card - move                      |  0.353s |
+| update term with extras                 |  0.171s |
+| update term without extras              |  0.169s |
+| update deck                             |  0.128s |
+| update card - add translation           |  0.007s |
 +-----------------------------------------+---------+
-| delete card                             |  0.768s |
-| delete term                             |  0.546s |
-| delete deck                             |  0.464s |
+| delete term                             |  0.451s |
+| delete deck                             |  0.446s |
+| delete card                             |  0.397s |
 +-----------------------------------------+---------+

@@ -9,7 +9,6 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations
 
 private const val SCHEMA_VERSION = 1
 
@@ -28,7 +27,6 @@ class SqliteRepositoryOpenHelper(
         db.execSQL(ContractDomains.createQuery)
         db.execSQL(ContractDecks.createQuery)
         db.execSQL(ContractCards.createQuery)
-        db.execSQL(ContractTranslations.createQuery)
         db.execSQL(ContractStates.createQuery)
     }
 

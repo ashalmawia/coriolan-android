@@ -14,7 +14,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsD
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsDomainId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsFrontId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.createDeckContentValues
@@ -47,10 +49,6 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsLanguageId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsValue
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateTranslationsContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.translationsTermId
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
@@ -142,32 +140,13 @@ class SqliteBackupHelper(
                         cursor.cardsDeckId(),
                         cursor.cardsDomainId(),
                         cursor.cardsFrontId(),
-                        // TODO: make this a single query
-                        translationsByCardId(cardId),
+                        cursor.cardsPayload().translationIds.map { it.id },
                         cursor.cardsCardType()
                     )
                 )
             }
             return list
         }
-    }
-
-    private fun translationsByCardId(id: Long): List<Long> {
-        val db = helper.readableDatabase
-
-        val cursor = db.rawQuery("""
-                |SELECT * FROM $TRANSLATIONS
-                |WHERE $TRANSLATIONS_CARD_ID = ?
-            """.trimMargin(),
-                arrayOf(id.toString()))
-
-        val translations = mutableListOf<Long>()
-        while (cursor.moveToNext()) {
-            translations.add(cursor.translationsTermId())
-        }
-
-        cursor.close()
-        return translations
     }
 
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo> {
@@ -289,12 +268,10 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
 
         cards.forEach {
+            val payload = createCardPayload(it.translationIds)
             db.insertOrThrow(CARDS, null,
-                    createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, it.id)
+                    createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, payload, it.id)
             )
-            generateTranslationsContentValues(it.id, it.translationIds).forEach { cv ->
-                db.insertOrThrow(TRANSLATIONS, null, cv)
-            }
         }
     }
 
