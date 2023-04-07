@@ -17,8 +17,13 @@ object ContractLanguages {
             LANGUAGES_ID,
             LANGUAGES_VALUE
     )
-
     fun allColumnsLanguages(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
+
+    val createQuery = """
+        CREATE TABLE $LANGUAGES(
+            $LANGUAGES_ID INTEGER PRIMARY KEY,
+            $LANGUAGES_VALUE TEXT UNIQUE NOT NULL
+        );""".trimMargin()
 
     fun createLanguageContentValues(value: String, id: Long? = null): ContentValues {
         val cv = ContentValues()

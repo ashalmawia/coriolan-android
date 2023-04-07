@@ -30,6 +30,25 @@ object ContractCards {
     )
     fun allColumnsCards(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
 
+    val createQuery = """
+        CREATE TABLE $CARDS(
+            $CARDS_ID INTEGER PRIMARY KEY,
+            $CARDS_FRONT_ID INTEGER NOT NULL,
+            $CARDS_DECK_ID INTEGER NOT NULL,
+            $CARDS_DOMAIN_ID INTEGER NOT NULL,
+            $CARDS_TYPE TEXT NOT NULL,
+            
+            FOREIGN KEY ($CARDS_FRONT_ID) REFERENCES ${ContractTerms.TERMS} (${ContractTerms.TERMS_ID})
+               ON DELETE RESTRICT
+               ON UPDATE CASCADE,
+            FOREIGN KEY ($CARDS_DECK_ID) REFERENCES ${ContractDecks.DECKS} (${ContractDecks.DECKS_ID})
+               ON DELETE RESTRICT
+               ON UPDATE CASCADE,
+            FOREIGN KEY ($CARDS_DOMAIN_ID) REFERENCES ${ContractDomains.DOMAINS} (${ContractDomains.DOMAINS_ID})
+               ON DELETE CASCADE
+               ON UPDATE CASCADE
+        );""".trimMargin()
+
 
     fun Cursor.cardsId(): Long { return long(CARDS_ID) }
     fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }

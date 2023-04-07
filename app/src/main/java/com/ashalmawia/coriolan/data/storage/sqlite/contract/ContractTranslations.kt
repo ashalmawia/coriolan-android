@@ -13,6 +13,21 @@ object ContractTranslations {
     const val TRANSLATIONS_TERM_ID = "Transl_TermId"
 
 
+    val createQuery = """
+        CREATE TABLE $TRANSLATIONS(
+            $TRANSLATIONS_CARD_ID INTEGER NOT NULL,
+            $TRANSLATIONS_TERM_ID INTEGER NOT NULL,
+            
+            PRIMARY KEY ($TRANSLATIONS_CARD_ID, $TRANSLATIONS_TERM_ID),
+            FOREIGN KEY ($TRANSLATIONS_CARD_ID) REFERENCES ${ContractCards.CARDS} (${ContractCards.CARDS_ID})
+               ON DELETE CASCADE
+               ON UPDATE CASCADE,
+            FOREIGN KEY ($TRANSLATIONS_TERM_ID) REFERENCES ${ContractTerms.TERMS} (${ContractTerms.TERMS_ID})
+               ON DELETE RESTRICT
+               ON UPDATE CASCADE
+        );""".trimMargin()
+
+
     fun Cursor.translationsCardId(): Long { return long(TRANSLATIONS_CARD_ID) }
     fun Cursor.translationsTermId(): Long { return long(TRANSLATIONS_TERM_ID) }
 

@@ -30,6 +30,19 @@ object ContractStates {
     )
     fun allColumnsStates(alias: String? = null): String = SqliteUtils.allColumns(allColumns, alias)
 
+    val createQuery = """
+        CREATE TABLE $STATES(
+            $STATES_CARD_ID INTEGER,
+            $STATES_EXERCISE TEXT,
+            $STATES_DUE_DATE INTEGER NOT NULL,
+            $STATES_INTERVAL INTEGER NOT NULL,
+            
+            PRIMARY KEY($STATES_CARD_ID, $STATES_EXERCISE),
+            FOREIGN KEY ($STATES_CARD_ID) REFERENCES ${ContractCards.CARDS} (${ContractCards.CARDS_ID})
+               ON DELETE CASCADE
+               ON UPDATE CASCADE
+        );""".trimMargin()
+
 
     fun Cursor.statesCardId(): Long { return long(STATES_CARD_ID) }
 

@@ -22,6 +22,20 @@ object ContractDecks {
     )
     fun allColumnsDecks(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
 
+    val createQuery = """
+        CREATE TABLE $DECKS(
+            $DECKS_ID INTEGER PRIMARY KEY,
+            $DECKS_NAME TEXT NOT NULL,
+            $DECKS_DOMAIN_ID INTEGER NOT NULL,
+            
+            FOREIGN KEY ($DECKS_DOMAIN_ID) REFERENCES ${ContractDomains.DOMAINS} (${ContractDomains.DOMAINS_ID})
+               ON DELETE CASCADE
+               ON UPDATE CASCADE,
+               
+            UNIQUE ($DECKS_NAME, $DECKS_DOMAIN_ID)
+               ON CONFLICT ABORT
+        );""".trimMargin()
+
     fun Cursor.decksId(): Long { return long(DECKS_ID) }
     fun Cursor.decksName(): String { return string(DECKS_NAME) }
     fun Cursor.decksDomainId(): Long { return long(DECKS_DOMAIN_ID) }

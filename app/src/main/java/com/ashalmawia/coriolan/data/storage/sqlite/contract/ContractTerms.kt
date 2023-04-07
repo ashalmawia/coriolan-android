@@ -28,8 +28,22 @@ object ContractTerms {
             TERMS_LANGUAGE_ID,
             TERMS_EXTRAS
     )
-
     fun allColumnsTerms(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
+
+    val createQuery = """
+        CREATE TABLE $TERMS(
+            $TERMS_ID INTEGER PRIMARY KEY,
+            $TERMS_VALUE TEXT NOT NULL,
+            $TERMS_LANGUAGE_ID INTEGER NOT NULL,
+            $TERMS_EXTRAS TEXT,
+            
+            FOREIGN KEY ($TERMS_LANGUAGE_ID) REFERENCES ${ContractLanguages.LANGUAGES} (${ContractLanguages.LANGUAGES_ID})
+               ON DELETE RESTRICT
+               ON UPDATE CASCADE,
+               
+            UNIQUE ($TERMS_VALUE, $TERMS_LANGUAGE_ID)
+               ON CONFLICT ABORT
+        );""".trimMargin()
 
 
     fun Cursor.termsId(): Long { return long(TERMS_ID) }

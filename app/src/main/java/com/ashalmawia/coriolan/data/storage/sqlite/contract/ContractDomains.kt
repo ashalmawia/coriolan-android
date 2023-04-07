@@ -22,6 +22,23 @@ object ContractDomains {
             DOMAINS_LANG_TRANSLATIONS
     )
 
+    val createQuery = """
+        CREATE TABLE $DOMAINS(
+            $DOMAINS_ID INTEGER PRIMARY KEY,
+            $DOMAINS_NAME TEXT,
+            $DOMAINS_LANG_ORIGINAL INTEGER NOT NULL,
+            $DOMAINS_LANG_TRANSLATIONS INTEGER NOT NULL,
+            
+            FOREIGN KEY ($DOMAINS_LANG_ORIGINAL) REFERENCES ${ContractLanguages.LANGUAGES} (${ContractLanguages.LANGUAGES_ID})
+               ON DELETE RESTRICT
+               ON UPDATE CASCADE,
+            FOREIGN KEY ($DOMAINS_LANG_TRANSLATIONS) REFERENCES ${ContractLanguages.LANGUAGES} (${ContractLanguages.LANGUAGES_ID})
+               ON DELETE RESTRICT
+               ON UPDATE CASCADE,
+               
+            UNIQUE ($DOMAINS_LANG_ORIGINAL, $DOMAINS_LANG_TRANSLATIONS)
+        );""".trimMargin()
+
     fun allColumnsDomains(alias: String? = null): String = SqliteUtils.allColumns(allColumns, alias)
 
     fun Cursor.domainsId(): Long { return long(DOMAINS_ID) }
