@@ -36,8 +36,8 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
-            |SELECT * FROM $SQLITE_TABLE_LANGUAGES
-            |WHERE $SQLITE_COLUMN_ID = ?
+            SELECT * FROM $SQLITE_TABLE_LANGUAGES
+            WHERE $SQLITE_COLUMN_ID = ?
         """.trimMargin(), arrayOf(id.toString()))
 
         cursor.use {
@@ -53,9 +53,9 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
-            |SELECT *
-            |   FROM $SQLITE_TABLE_LANGUAGES
-            |   WHERE $SQLITE_COLUMN_LANG_VALUE = ?
+            SELECT *
+               FROM $SQLITE_TABLE_LANGUAGES
+               WHERE $SQLITE_COLUMN_LANG_VALUE = ?
         """.trimMargin(), arrayOf(name))
 
         cursor.use {
@@ -101,17 +101,17 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
-            |
-            |   FROM $SQLITE_TABLE_TERMS AS $TERMS
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-            |
-            |   WHERE ${SQLITE_COLUMN_ID.from(TERMS)} = ?
-            |
-            |""".trimMargin(), arrayOf(id.toString()))
+            SELECT
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_TERMS AS $TERMS
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE ${SQLITE_COLUMN_ID.from(TERMS)} = ?
+            
+            """.trimMargin(), arrayOf(id.toString()))
 
         if (cursor.count == 0) return null
         if (cursor.count > 1) throw IllegalStateException("more that one term for id $id")
@@ -129,17 +129,17 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Langs"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
-            |
-            |   FROM $SQLITE_TABLE_TERMS AS $TERMS
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-            |
-            |   WHERE ${SQLITE_COLUMN_VALUE.from(TERMS)} = ?
-            |       AND ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ?
-            |
+            SELECT
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_TERMS AS $TERMS
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE ${SQLITE_COLUMN_VALUE.from(TERMS)} = ?
+                   AND ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ?
+            
         """.trimMargin(), arrayOf(value, language.id.toString()))
 
         cursor.use {
@@ -166,17 +166,17 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val COUNT = "count"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   COUNT(*) AS $COUNT
-            |
-            |FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |   LEFT JOIN $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
-            |      ON $CARDS.$SQLITE_COLUMN_ID = $REVERSE.$SQLITE_COLUMN_CARD_ID
-            |
-            |WHERE
-            |   $CARDS.$SQLITE_COLUMN_FRONT_ID = ?
-            |   OR
-            |   $REVERSE.$SQLITE_COLUMN_TERM_ID = ?
+            SELECT
+               COUNT(*) AS $COUNT
+            
+            FROM $SQLITE_TABLE_CARDS AS $CARDS
+               LEFT JOIN $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
+                  ON $CARDS.$SQLITE_COLUMN_ID = $REVERSE.$SQLITE_COLUMN_CARD_ID
+            
+            WHERE
+               $CARDS.$SQLITE_COLUMN_FRONT_ID = ?
+               OR
+               $REVERSE.$SQLITE_COLUMN_TERM_ID = ?
         """.trimMargin(), arrayOf(term.id.toString(), term.id.toString()))
 
         cursor.use {
@@ -218,19 +218,19 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGS2 = "L2"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsDomains(DOMAINS)},
-            |   ${allColumnsLanguages(LANGS1)},
-            |   ${allColumnsLanguages(LANGS2)}
-            |
-            |   FROM $SQLITE_TABLE_DOMAINS AS $DOMAINS
-            |      LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS1
-            |          ON ${SQLITE_COLUMN_LANG_ORIGINAL.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS1)}
-            |      LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS2
-            |          ON ${SQLITE_COLUMN_LANG_TRANSLATIONS.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS2)}
-            |
-            |   WHERE
-            |      ${SQLITE_COLUMN_ID.from(DOMAINS)} = ?
+            SELECT
+               ${allColumnsDomains(DOMAINS)},
+               ${allColumnsLanguages(LANGS1)},
+               ${allColumnsLanguages(LANGS2)}
+            
+               FROM $SQLITE_TABLE_DOMAINS AS $DOMAINS
+                  LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS1
+                      ON ${SQLITE_COLUMN_LANG_ORIGINAL.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS1)}
+                  LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS2
+                      ON ${SQLITE_COLUMN_LANG_TRANSLATIONS.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS2)}
+            
+               WHERE
+                  ${SQLITE_COLUMN_ID.from(DOMAINS)} = ?
         """.trimMargin(), arrayOf(id.toString()))
 
         cursor.use {
@@ -252,16 +252,16 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGS2 = "L2"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsDomains(DOMAINS)},
-            |   ${allColumnsLanguages(LANGS1)},
-            |   ${allColumnsLanguages(LANGS2)}
-            |
-            |FROM $SQLITE_TABLE_DOMAINS AS $DOMAINS
-            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS1
-            |       ON ${SQLITE_COLUMN_LANG_ORIGINAL.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS1)}
-            |   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS2
-            |       ON ${SQLITE_COLUMN_LANG_TRANSLATIONS.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS2)}
+            SELECT
+               ${allColumnsDomains(DOMAINS)},
+               ${allColumnsLanguages(LANGS1)},
+               ${allColumnsLanguages(LANGS2)}
+            
+            FROM $SQLITE_TABLE_DOMAINS AS $DOMAINS
+               LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS1
+                   ON ${SQLITE_COLUMN_LANG_ORIGINAL.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS1)}
+               LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGS2
+                   ON ${SQLITE_COLUMN_LANG_TRANSLATIONS.from(DOMAINS)} = ${SQLITE_COLUMN_ID.from(LANGS2)}
         """.trimMargin(), arrayOf())
 
         val list = mutableListOf<Domain>()
@@ -334,20 +334,20 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsCards(CARDS)},
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
-            |
-            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-            |
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-            |
-            |   WHERE ${SQLITE_COLUMN_ID.from(CARDS)} IN (${ids.joinToString()})
+            SELECT
+               ${allColumnsCards(CARDS)},
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_CARDS AS $CARDS
+            
+                   LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
+                       ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
+            
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE ${SQLITE_COLUMN_ID.from(CARDS)} IN (${ids.joinToString()})
         """.trimMargin(), arrayOf())
 
         val translations = if (ids.size > 1) {
@@ -386,23 +386,23 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
         // find all cards with the same original
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsCards(CARDS)},
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
-            |
-            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-            |
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-            |
-            |   WHERE
-            |       ${SQLITE_COLUMN_DOMAIN_ID.from(CARDS)} = ?
-            |           AND
-            |       ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ?
+            SELECT
+               ${allColumnsCards(CARDS)},
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_CARDS AS $CARDS
+            
+                   LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
+                       ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
+            
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE
+                   ${SQLITE_COLUMN_DOMAIN_ID.from(CARDS)} = ?
+                       AND
+                   ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ?
         """.trimMargin(), arrayOf(domain.id.toString(), original.id.toString()))
 
         cursor.use {
@@ -491,21 +491,21 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsCards(CARDS)},
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
-            |
-            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-            |
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-            |
-            |   WHERE
-            |       ${SQLITE_COLUMN_DOMAIN_ID.from(CARDS)} = ?
+            SELECT
+               ${allColumnsCards(CARDS)},
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_CARDS AS $CARDS
+            
+                   LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
+                       ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
+            
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE
+                   ${SQLITE_COLUMN_DOMAIN_ID.from(CARDS)} = ?
         """.trimMargin(), arrayOf(domain.id.toString()))
 
         val cards = mutableListOf<Card>()
@@ -530,9 +530,9 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
-            |SELECT *
-            |   FROM $SQLITE_TABLE_DECKS
-            |   WHERE $SQLITE_COLUMN_DOMAIN_ID = ?
+            SELECT *
+               FROM $SQLITE_TABLE_DECKS
+               WHERE $SQLITE_COLUMN_DOMAIN_ID = ?
         """.trimMargin(), arrayOf(domain.id.toString()))
 
         val list = mutableListOf<Deck>()
@@ -549,7 +549,8 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun deckById(id: Long, domain: Domain): Deck? {
         val db = helper.readableDatabase
 
-        val cursor = db.rawQuery("SELECT * FROM $SQLITE_TABLE_DECKS WHERE $SQLITE_COLUMN_ID = ?",
+        val cursor = db.rawQuery(
+                "SELECT * FROM $SQLITE_TABLE_DECKS WHERE $SQLITE_COLUMN_ID = ?",
                 arrayOf(id.toString()))
 
         cursor.use { it ->
@@ -619,22 +620,22 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${allColumnsCards(CARDS)},
-            |   ${allColumnsTerms(TERMS)},
-            |   ${allColumnsLanguages(LANGUAGES)}
-            |
-            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-            |           ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-            |
-            |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-            |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-            |
-            |   WHERE $SQLITE_COLUMN_DECK_ID = ?
-            |
-            |""".trimMargin(), arrayOf(deck.id.toString()))
+            SELECT
+               ${allColumnsCards(CARDS)},
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_CARDS AS $CARDS
+            
+                   LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
+                       ON ${SQLITE_COLUMN_FRONT_ID.from(CARDS)} = ${SQLITE_COLUMN_ID.from(TERMS)}
+            
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE $SQLITE_COLUMN_DECK_ID = ?
+            
+            """.trimMargin(), arrayOf(deck.id.toString()))
 
         val list = mutableListOf<Card>()
         cursor.use {
@@ -662,21 +663,21 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
-                |SELECT
-                |   ${allColumnsReverse(REVERSE)},
-                |   ${allColumnsTerms(TERMS)},
-                |   ${allColumnsLanguages(LANGUAGES)}
-                |
-                |   FROM $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
-                |
-                |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-                |           ON ${SQLITE_COLUMN_TERM_ID.from(REVERSE)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-                |
-                |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-                |           ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
-                |
-                |   WHERE ${SQLITE_COLUMN_CARD_ID.from(REVERSE)} = ?
-                |
+            SELECT
+               ${allColumnsReverse(REVERSE)},
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
+            
+                   LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
+                       ON ${SQLITE_COLUMN_TERM_ID.from(REVERSE)} = ${SQLITE_COLUMN_ID.from(TERMS)}
+            
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            
+               WHERE ${SQLITE_COLUMN_CARD_ID.from(REVERSE)} = ?
+                
             """.trimMargin(), arrayOf(id.toString()))
 
         val translations = mutableListOf<Term>()
@@ -694,17 +695,17 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val LANGUAGES = "Languages"
 
         val cursor = db.rawQuery("""
-                |SELECT
-                |   ${allColumnsReverse(REVERSE)},
-                |   ${allColumnsTerms(TERMS)},
-                |   ${allColumnsLanguages(LANGUAGES)}
-                |
-                |   FROM $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
-                |       LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
-                |       ON ${SQLITE_COLUMN_TERM_ID.from(REVERSE)} = ${SQLITE_COLUMN_ID.from(TERMS)}
-                |
-                |       LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
-                |       ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
+            SELECT
+               ${allColumnsReverse(REVERSE)},
+               ${allColumnsTerms(TERMS)},
+               ${allColumnsLanguages(LANGUAGES)}
+            
+               FROM $SQLITE_TABLE_CARDS_REVERSE AS $REVERSE
+                   LEFT JOIN $SQLITE_TABLE_TERMS AS $TERMS
+                   ON ${SQLITE_COLUMN_TERM_ID.from(REVERSE)} = ${SQLITE_COLUMN_ID.from(TERMS)}
+            
+                   LEFT JOIN $SQLITE_TABLE_LANGUAGES AS $LANGUAGES
+                   ON ${SQLITE_COLUMN_LANGUAGE_ID.from(TERMS)} = ${SQLITE_COLUMN_ID.from(LANGUAGES)}
             """.trimMargin(), null)
 
         val reverse = mutableMapOf<Long, MutableList<Term>>()
@@ -722,9 +723,9 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
-            |SELECT *
-            |   FROM $SQLITE_TABLE_CARD_STATES
-            |   WHERE $SQLITE_COLUMN_CARD_ID = ?
+            SELECT *
+               FROM $SQLITE_TABLE_CARD_STATES
+               WHERE $SQLITE_COLUMN_CARD_ID = ?
         """.trimMargin(), arrayOf(card.id.toString()))
 
         cursor.use {
@@ -760,21 +761,21 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val STATES = "States"
 
         val cursor = db.rawQuery("""
-            |SELECT
-            |   ${withAlias(arrayOf(SQLITE_COLUMN_ID, SQLITE_COLUMN_DECK_ID, SQLITE_COLUMN_TYPE), CARDS)},
-            |   ${allColumnsStates(STATES)}
-            |
-            |   FROM $SQLITE_TABLE_CARDS AS $CARDS
-            |
-            |       LEFT JOIN $SQLITE_TABLE_CARD_STATES AS $STATES
-            |           ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
-            |
-            |   WHERE
-            |       ${SQLITE_COLUMN_DECK_ID.from(CARDS)} = ?
-            |           AND
-            |       ${SQLITE_COLUMN_TYPE.from(CARDS)} IN (${types.joinToString { "'${it.value}'" }})
-            |           AND
-            |       ${onlyPending(STATES)}
+            SELECT
+               ${withAlias(arrayOf(SQLITE_COLUMN_ID, SQLITE_COLUMN_DECK_ID, SQLITE_COLUMN_TYPE), CARDS)},
+               ${allColumnsStates(STATES)}
+            
+               FROM $SQLITE_TABLE_CARDS AS $CARDS
+            
+                   LEFT JOIN $SQLITE_TABLE_CARD_STATES AS $STATES
+                       ON ${SQLITE_COLUMN_ID.from(CARDS)} = ${SQLITE_COLUMN_CARD_ID.from(STATES)}
+            
+               WHERE
+                   ${SQLITE_COLUMN_DECK_ID.from(CARDS)} = ?
+                       AND
+                   ${SQLITE_COLUMN_TYPE.from(CARDS)} IN (${types.joinToString { "'${it.value}'" }})
+                       AND
+                   ${onlyPending(STATES)}
         """.trimMargin(), arrayOf(deck.id.toString(), date.timespamp.toString()))
 
         val pendingStates = mutableMapOf<Long, MutableMap<ExerciseId, ExerciseState>>()
@@ -832,10 +833,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val cardIdsToFrontIds = cardIdsToFrontIds(db, originalIds)
 
         val cursor = db.rawQuery("""
-            |SELECT *
-            |   FROM $SQLITE_TABLE_CARD_STATES
-            |   WHERE
-            |       $SQLITE_COLUMN_CARD_ID IN (${cardIdsToFrontIds.keys.joinToString()})
+            SELECT *
+               FROM $SQLITE_TABLE_CARD_STATES
+               WHERE
+                   $SQLITE_COLUMN_CARD_ID IN (${cardIdsToFrontIds.keys.joinToString()})
         """.trimMargin(), arrayOf())
 
         val map = mutableMapOf<Long, LearningProgress>()  // front id as key
