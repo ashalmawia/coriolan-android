@@ -368,11 +368,11 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     override fun cardById(id: Long, domain: Domain): Card? {
-        val list = cardsWtihIds(listOf(id), domain)
+        val list = cardsWithIds(listOf(id), domain)
         return list.firstOrNull()
     }
 
-    private fun cardsWtihIds(ids: List<Long>, domain: Domain): List<Card> {
+    private fun cardsWithIds(ids: List<Long>, domain: Domain): List<Card> {
         if (ids.isEmpty()) throw IllegalArgumentException("ids list must not be empty")
 
         val db = helper.readableDatabase
@@ -718,7 +718,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return if (pendingCardsIds.isEmpty()) {
             emptyList()
         } else {
-            val cards = cardsWtihIds(pendingCardsIds, deck.domain)
+            val cards = cardsWithIds(pendingCardsIds, deck.domain)
             cards.map { card ->
                 Pair(card, pendingWithProgress[card.id]!!)
             }
