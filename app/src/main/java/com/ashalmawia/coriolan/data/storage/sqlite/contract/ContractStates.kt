@@ -20,7 +20,7 @@ object ContractStates {
     const val STATES_CARD_ID = "States_CardId"
     const val STATES_EXERCISE = "States_Exercise"
     const val STATES_DUE_DATE = "States_DueDate"
-    const val STATES_INTERVAL = "States_Internal"
+    const val STATES_INTERVAL = "States_Interval"
     const val STATES_PAYLOAD = "States_Payload"
 
     private val allColumns = arrayOf(
