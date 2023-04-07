@@ -6,31 +6,31 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.util.*
 
-const val PERIOD_NEVER_SCHEDULED = -1
-const val PERIOD_FIRST_ASNWER_WRONG = -2
-const val PERIOD_LEARNT = 30 * 4               // 4 months
+const val INTERVAL_NEVER_SCHEDULED = -1
+const val INTERVAL_FIRST_ASNWER_WRONG = -2
+const val INTERVAL_LEARNT = 30 * 4               // 4 months
 
 private val format = DateTimeFormat.forPattern("dd MMM hh:mm").withLocale(Locale.ENGLISH)
 
 data class ExerciseState(
         val due: DateTime,
-        val period: Int
+        val interval: Int
 ) {
 
     val status: Status
         get() {
-            return when (period) {
-                PERIOD_NEVER_SCHEDULED -> Status.NEW
-                0, PERIOD_FIRST_ASNWER_WRONG -> Status.RELEARN
-                in 1 until PERIOD_LEARNT -> Status.IN_PROGRESS
-                else /* >= PERIOD_LEARNT */ -> Status.LEARNT
+            return when (interval) {
+                INTERVAL_NEVER_SCHEDULED -> Status.NEW
+                0, INTERVAL_FIRST_ASNWER_WRONG -> Status.RELEARN
+                in 1 until INTERVAL_LEARNT -> Status.IN_PROGRESS
+                else /* >= INTERVAL_LEARNT */ -> Status.LEARNT
             }
         }
 
 
     override fun toString(): String {
-        return "due: ${format.print(due)}, period: $period"
+        return "due: ${format.print(due)}, interval: $interval"
     }
 }
 
-fun emptyState(): ExerciseState = ExerciseState(TodayManager.today(), PERIOD_NEVER_SCHEDULED)
+fun emptyState(): ExerciseState = ExerciseState(TodayManager.today(), INTERVAL_NEVER_SCHEDULED)

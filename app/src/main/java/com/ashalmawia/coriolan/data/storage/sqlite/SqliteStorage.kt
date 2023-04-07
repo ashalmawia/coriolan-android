@@ -48,7 +48,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.state
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesDateDue
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesHasSavedExerciseState
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesPeriod
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesInterval
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
@@ -765,7 +765,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 val map = pendingStates[cardId] ?: mutableMapOf()
                 if (cursor.statesHasSavedExerciseState()) {
                     val exerciseId = cursor.statesExerciseId()
-                    val state = ExerciseState(cursor.statesDateDue(), cursor.statesPeriod())
+                    val state = ExerciseState(cursor.statesDateDue(), cursor.statesInterval())
                     map[exerciseId] = state
                 }
                 pendingStates[cardId] = map

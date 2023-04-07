@@ -11,13 +11,14 @@ import org.joda.time.DateTime
 private const val FIELD_CARD_ID = "id"
 private const val FIELD_EXERICSE_ID = "exercise"
 private const val FIELD_DUE = "due"
-private const val FIELD_PERIOD = "period"
+private const val FIELD_INTERVAL = "interval"
+private const val FIELD_INTERVAL_LEGACY = "period"
 
 fun readSRStateFromJson(json: JsonParser): ExerciseStateInfo {
     var cardId: Long? = null
     var exercise: String? = ExerciseId.FLASHCARDS.value    // for compatibility with legacy backups
     var due: Long? = null
-    var period: Int? = null
+    var interval: Int? = null
 
     while (json.nextToken() != JsonToken.END_OBJECT) {
         when (json.currentName) {
@@ -33,19 +34,19 @@ fun readSRStateFromJson(json: JsonParser): ExerciseStateInfo {
                 json.nextToken()
                 due = json.longValue
             }
-            FIELD_PERIOD -> {
+            FIELD_INTERVAL, FIELD_INTERVAL_LEGACY -> {
                 json.nextToken()
-                period = json.intValue
+                interval = json.intValue
             }
         }
     }
 
-    if (cardId == null || exercise == null || due == null || period == null) {
+    if (cardId == null || exercise == null || due == null || interval == null) {
         throw JsonDeserializationException("failed to read SR state: " +
-                "cardId $cardId, exercise $exercise, due $due, period $period")
+                "cardId $cardId, exercise $exercise, due $due, interval $interval")
     }
 
-    return ExerciseStateInfo(cardId, ExerciseId.fromValue(exercise), DateTime(due), period)
+    return ExerciseStateInfo(cardId, ExerciseId.fromValue(exercise), DateTime(due), interval)
 }
 
 fun writeSRStateToJson(state: ExerciseStateInfo, json: JsonGenerator) {
@@ -54,7 +55,7 @@ fun writeSRStateToJson(state: ExerciseStateInfo, json: JsonGenerator) {
     json.writeNumberField(FIELD_CARD_ID, state.cardId)
     json.writeStringField(FIELD_EXERICSE_ID, state.exerciseId.value)
     json.writeNumberField(FIELD_DUE, state.due.timespamp)
-    json.writeNumberField(FIELD_PERIOD, state.period)
+    json.writeNumberField(FIELD_INTERVAL, state.interval)
 
     json.writeEndObject()
 }

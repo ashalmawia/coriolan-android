@@ -44,7 +44,7 @@ class MultiplierBasedSchedulerTest {
         state = scheduler.correct(state)
 
         // then
-        assertEquals(1, state.period)
+        assertEquals(1, state.interval)
         assertEquals(today.plusDays(1), state.due)
     }
 
@@ -81,7 +81,7 @@ class MultiplierBasedSchedulerTest {
         state = scheduler.correct(state)
 
         // then
-        assertEquals(1, state.period)
+        assertEquals(1, state.interval)
         assertEquals(today.plusDays(1), state.due)
     }
 
@@ -98,14 +98,14 @@ class MultiplierBasedSchedulerTest {
 
         // then
         val today = today
-        assertEquals(0, state.period)
+        assertEquals(0, state.interval)
         assertEquals(today, state.due)
 
         // when
         state = scheduler.correct(state)
 
         // then
-        assertEquals(1, state.period)
+        assertEquals(1, state.interval)
         assertEquals(today.plusDays(1), state.due)
     }
 
@@ -122,7 +122,7 @@ class MultiplierBasedSchedulerTest {
 
         // then
         val today = today
-        assertEquals(4, updated.period)
+        assertEquals(4, updated.interval)
         assertEquals(today.plusDays(4), updated.due)
     }
 
@@ -139,7 +139,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.wrong(state)
 
         // then
-        assertEquals(0, updated.period)
+        assertEquals(0, updated.interval)
         assertEquals(today, updated.due)
     }
 
@@ -156,7 +156,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.hard(state)
 
         // then
-        assertEquals(2, updated.period)
+        assertEquals(2, updated.interval)
         assertEquals(today.plusDays(2), updated.due)
     }
 
@@ -173,7 +173,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.correct(state)
 
         // then
-        assertEquals(8, updated.period)
+        assertEquals(8, updated.interval)
         assertEquals(today.plusDays(8), updated.due)
     }
 
@@ -190,7 +190,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.easy(state)
 
         // then
-        assertEquals(16, updated.period)
+        assertEquals(16, updated.interval)
         assertEquals(today.plusDays(16), updated.due)
     }
 
@@ -207,7 +207,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.wrong(state)
 
         // then
-        assertEquals(0, updated.period)
+        assertEquals(0, updated.interval)
         assertEquals(today, updated.due)
     }
 
@@ -224,7 +224,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.hard(state)
 
         // then
-        assertEquals(13 / 2, updated.period)
+        assertEquals(13 / 2, updated.interval)
         assertEquals(today.plusDays(13 / 2), updated.due)
     }
 
@@ -241,7 +241,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.correct(state)
 
         // then
-        assertEquals(13 * 2, updated.period)
+        assertEquals(13 * 2, updated.interval)
         assertEquals(today.plusDays(13 * 2), updated.due)
     }
 
@@ -258,7 +258,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.easy(state)
 
         // then
-        assertEquals(13 * 4, updated.period)
+        assertEquals(13 * 4, updated.interval)
         assertEquals(today.plusDays(13 * 4), updated.due)
     }
 
@@ -275,7 +275,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.wrong(state)
 
         // then
-        assertEquals(0, updated.period)
+        assertEquals(0, updated.interval)
         assertEquals(today, updated.due)
     }
 
@@ -292,7 +292,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.hard(state)
 
         // then
-        assertEquals(416  / 2, updated.period)
+        assertEquals(416  / 2, updated.interval)
         assertEquals(today.plusDays(416  / 2), updated.due)
         assertEquals(Status.LEARNT, state.status)
     }
@@ -310,7 +310,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.correct(state)
 
         // then
-        assertEquals(417 * 2, updated.period)
+        assertEquals(417 * 2, updated.interval)
         assertEquals(today.plusDays(417 * 2), updated.due)
         assertEquals(Status.LEARNT, state.status)
     }
@@ -328,7 +328,7 @@ class MultiplierBasedSchedulerTest {
         val updated = scheduler.easy(state)
 
         // then
-        assertEquals(417 * 4, updated.period)
+        assertEquals(417 * 4, updated.interval)
         assertEquals(today.plusDays(417 * 4), updated.due)
         assertEquals(Status.LEARNT, state.status)
     }

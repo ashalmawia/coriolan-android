@@ -47,7 +47,7 @@ class HistoryTest {
     fun test__multiple() {
         // given
         val list = (0 until 10).map {
-            mockTask(mockLearningProgress(period = it))
+            mockTask(mockLearningProgress(interval = it))
         }
 
         // when

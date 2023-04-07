@@ -28,7 +28,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_CARD_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_DUE_DATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_EXERCISE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_PERIOD
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_INTERVAL
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_EXTRAS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
@@ -122,7 +122,7 @@ class SqliteRepositoryOpenHelper(
                 |$STATES_CARD_ID INTEGER,
                 |$STATES_EXERCISE TEXT,
                 |$STATES_DUE_DATE INTEGER NOT NULL,
-                |$STATES_PERIOD INTEGER NOT NULL,
+                |$STATES_INTERVAL INTEGER NOT NULL,
                 |PRIMARY KEY($STATES_CARD_ID, $STATES_EXERCISE),
                 |FOREIGN KEY ($STATES_CARD_ID) REFERENCES $CARDS ($CARDS_ID)
                 |   ON DELETE CASCADE

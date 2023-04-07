@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
-import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_NEVER_SCHEDULED
+import com.ashalmawia.coriolan.learning.exercise.sr.INTERVAL_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.mockToday
 import org.joda.time.DateTime
 
@@ -83,8 +83,8 @@ fun mockTask(
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
-fun mockState(period: Int = 0) = ExerciseState(mockToday(), period)
-fun mockStateNew() = ExerciseState(mockToday(), PERIOD_NEVER_SCHEDULED)
+fun mockState(interval: Int = 0) = ExerciseState(mockToday(), interval)
+fun mockStateNew() = ExerciseState(mockToday(), INTERVAL_NEVER_SCHEDULED)
 fun mockStateInProgress() = ExerciseState(mockToday(), 5)
 fun mockStateRelearn() = ExerciseState(mockToday(), 0)
 fun mockStateLearnt() = ExerciseState(mockToday(), 200)
@@ -93,10 +93,10 @@ fun mockLearningProgressRelearn(): LearningProgress = mockLearningProgress(mockS
 fun mockLearningProgressInProgress(): LearningProgress = mockLearningProgress(mockStateInProgress())
 fun mockLearningProgressLearnt(): LearningProgress = mockLearningProgress(mockStateLearnt())
 fun mockLearningProgress(): LearningProgress = LearningProgress(emptyMap())
-fun mockLearningProgress(due: DateTime = mockToday(), period: Int = 0): LearningProgress =
-        mockLearningProgress(ExerciseState(due, period))
+fun mockLearningProgress(due: DateTime = mockToday(), interval: Int = 0): LearningProgress =
+        mockLearningProgress(ExerciseState(due, interval))
 fun mockLearningProgress(exerciseState: ExerciseState): LearningProgress = LearningProgress(
         mapOf(ExerciseId.TEST to exerciseState)
 )
 
-fun mockEmptyExerciseState(today: LearningDay) = ExerciseState(today, PERIOD_NEVER_SCHEDULED)
+fun mockEmptyExerciseState(today: LearningDay) = ExerciseState(today, INTERVAL_NEVER_SCHEDULED)

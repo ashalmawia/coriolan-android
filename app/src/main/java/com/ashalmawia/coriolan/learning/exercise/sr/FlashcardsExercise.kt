@@ -59,7 +59,7 @@ class FlashcardsExercise(
         return listOf(
                 LearningModeMutation(this),
                 CardTypeMutation(cardType),
-                SortReviewsByPeriodMutation,
+                SortReviewsByIntervalMutation,
                 NewCardsOrderMutation.from(order),
                 LimitCountMutation(preferences, logbook, date),
                 ShuffleMutation(order == StudyOrder.RANDOM)
@@ -115,7 +115,7 @@ class FlashcardsExercise(
 
         private fun Term.isReady(states: Map<Long, LearningProgress>): Boolean {
             val state = states[id]
-            return state != null && state.flashcards.period >= 4
+            return state != null && state.flashcards.interval >= 4
         }
     }
 }

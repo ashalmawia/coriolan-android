@@ -1,7 +1,7 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.sr.PERIOD_LEARNT
+import com.ashalmawia.coriolan.learning.exercise.sr.INTERVAL_LEARNT
 import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
 import com.ashalmawia.coriolan.model.mockState
 import org.junit.Assert.assertEquals
@@ -22,7 +22,7 @@ class ExerciseStateTest {
     }
 
     @Test
-    fun test__state__period__0() {
+    fun test__state__interval__0() {
         // when
         val state = mockState(0)
 
@@ -31,7 +31,7 @@ class ExerciseStateTest {
     }
 
     @Test
-    fun test__state__period__1() {
+    fun test__state__interval__1() {
         // when
         val state = mockState(1)
 
@@ -40,18 +40,18 @@ class ExerciseStateTest {
     }
 
     @Test
-    fun test__state__period__almost_learnt() {
+    fun test__state__interval__almost_learnt() {
         // when
-        val state = mockState(PERIOD_LEARNT - 1)
+        val state = mockState(INTERVAL_LEARNT - 1)
 
         // then
         assertEquals(Status.IN_PROGRESS, state.status)
     }
 
     @Test
-    fun test__state__period__learnt() {
+    fun test__state__interval__learnt() {
         // when
-        val state = mockState(PERIOD_LEARNT)
+        val state = mockState(INTERVAL_LEARNT)
 
         // then
         assertEquals(Status.LEARNT, state.status)

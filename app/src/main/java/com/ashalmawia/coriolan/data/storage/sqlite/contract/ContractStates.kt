@@ -20,13 +20,13 @@ object ContractStates {
     const val STATES_CARD_ID = "States_CardId"
     const val STATES_EXERCISE = "States_Exercise"
     const val STATES_DUE_DATE = "States_DueDate"
-    const val STATES_PERIOD = "States_Period"
+    const val STATES_INTERVAL = "States_Internal"
 
     private val allColumns = arrayOf(
             STATES_CARD_ID,
             STATES_EXERCISE,
             STATES_DUE_DATE,
-            STATES_PERIOD
+            STATES_INTERVAL
     )
     fun allColumnsStates(alias: String? = null): String = SqliteUtils.allColumns(allColumns, alias)
 
@@ -38,10 +38,10 @@ object ContractStates {
         return ExerciseId.fromValue(value)
     }
     fun Cursor.statesDateDue(): DateTime { return date(STATES_DUE_DATE) }
-    fun Cursor.statesPeriod(): Int { return int(STATES_PERIOD) }
+    fun Cursor.statesInterval(): Int { return int(STATES_INTERVAL) }
     fun Cursor.statesHasSavedExerciseState(): Boolean { return !isNull(STATES_EXERCISE) }
     fun Cursor.exerciseState(): ExerciseState {
-        return ExerciseState(statesDateDue(), statesPeriod())
+        return ExerciseState(statesDateDue(), statesInterval())
     }
 
     fun createAllLearningProgressContentValues(
@@ -53,15 +53,15 @@ object ContractStates {
 
     fun createCardStateContentValues(cardId: Long, exerciseId: ExerciseId, learningProgress: LearningProgress): ContentValues {
         val state = learningProgress.stateFor(exerciseId)
-        return createCardStateContentValues(cardId, exerciseId, state.due, state.period)
+        return createCardStateContentValues(cardId, exerciseId, state.due, state.interval)
     }
 
-    fun createCardStateContentValues(cardId: Long, exerciseId: ExerciseId, due: DateTime, period: Int): ContentValues {
+    fun createCardStateContentValues(cardId: Long, exerciseId: ExerciseId, due: DateTime, interval: Int): ContentValues {
         val cv = ContentValues()
         cv.put(STATES_CARD_ID, cardId)
         cv.put(STATES_EXERCISE, exerciseId.value)
         cv.put(STATES_DUE_DATE, due)
-        cv.put(STATES_PERIOD, period)
+        cv.put(STATES_INTERVAL, interval)
         return cv
     }
 }

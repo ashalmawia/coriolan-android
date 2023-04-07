@@ -76,4 +76,4 @@ data class ExerciseStateInfo(
         val cardId: Long,
         val exerciseId: ExerciseId,
         val due: DateTime,
-        val period: Int)
+        val interval: Int)

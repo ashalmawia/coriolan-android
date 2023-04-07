@@ -22,8 +22,8 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
     }
 
     private fun wrong(state: ExerciseState): ExerciseState {
-        return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
-            ExerciseState(today(), PERIOD_FIRST_ASNWER_WRONG)
+        return if (state.interval == INTERVAL_NEVER_SCHEDULED || state.interval == INTERVAL_FIRST_ASNWER_WRONG) {
+            ExerciseState(today(), INTERVAL_FIRST_ASNWER_WRONG)
         } else {
             stateForRelearn()
         }
@@ -34,7 +34,7 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
     private fun correct(state: ExerciseState): ExerciseState = stateForCorrect(state, MULTIPLIER_CORRECT)
 
     private fun easy(state: ExerciseState): ExerciseState {
-        return if (state.period == PERIOD_NEVER_SCHEDULED) {
+        return if (state.interval == INTERVAL_NEVER_SCHEDULED) {
             // a special rule for easy for a new card, don't show it in this assignment
             ExerciseState(today().plusDays(NEW_RESPONDED_EASY_DAYS), NEW_RESPONDED_EASY_DAYS)
         } else {
@@ -45,16 +45,16 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
     private fun stateForRelearn(): ExerciseState = ExerciseState(today(), 0)
 
     private fun stateForCorrect(state: ExerciseState, multiplier: Float): ExerciseState {
-        return if (state.period == PERIOD_NEVER_SCHEDULED || state.period == PERIOD_FIRST_ASNWER_WRONG) {
+        return if (state.interval == INTERVAL_NEVER_SCHEDULED || state.interval == INTERVAL_FIRST_ASNWER_WRONG) {
             // the card is completely new
             // the first correct answer actually counts like "wrong"
             stateForRelearn()
         } else {
-            val expectedPeriod = state.period
-            val actualPeriod = abs(Days.daysBetween(state.due.minusDays(state.period), today()).days)
-            val period = max(floor(max(expectedPeriod, actualPeriod) * multiplier).roundToInt(), 1)
-            val due = today().plusDays(period)
-            ExerciseState(due, period)
+            val expectedInterval = state.interval
+            val actualInterval = abs(Days.daysBetween(state.due.minusDays(state.interval), today()).days)
+            val interval = max(floor(max(expectedInterval, actualInterval) * multiplier).roundToInt(), 1)
+            val due = today().plusDays(interval)
+            ExerciseState(due, interval)
         }
     }
 

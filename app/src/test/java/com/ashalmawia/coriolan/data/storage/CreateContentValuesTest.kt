@@ -23,7 +23,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.cr
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_CARD_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_DUE_DATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_EXERCISE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_PERIOD
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_INTERVAL
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createCardStateContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_EXTRAS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
@@ -294,8 +294,8 @@ class CreateContentValuesTest {
         val cardId = 1L
         val exerciseId = ExerciseId.TEST
         val due = DateTime(1519529781000)
-        val period = 16
-        val learningProgress = mockLearningProgress(due, period)
+        val interval = 16
+        val learningProgress = mockLearningProgress(due, interval)
 
         // when
         val cv = createCardStateContentValues(cardId, exerciseId, learningProgress)
@@ -305,18 +305,18 @@ class CreateContentValuesTest {
         assertEquals("$STATES_CARD_ID is correct", cardId, cv.get(STATES_CARD_ID))
         assertEquals("$STATES_EXERCISE is correct", exerciseId.value, cv.get(STATES_EXERCISE))
         assertEquals("$STATES_DUE_DATE is correct", due, cv.getAsDate(STATES_DUE_DATE))
-        assertEquals("$STATES_PERIOD is correct", period, cv.get(STATES_PERIOD))
+        assertEquals("$STATES_INTERVAL is correct", interval, cv.get(STATES_INTERVAL))
 
         // when
         val state = learningProgress.stateFor(exerciseId)
-        val cv1 = createCardStateContentValues(cardId, exerciseId, state.due, state.period)
+        val cv1 = createCardStateContentValues(cardId, exerciseId, state.due, state.interval)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$STATES_CARD_ID is correct", cardId, cv1.get(STATES_CARD_ID))
         assertEquals("$STATES_EXERCISE is correct", exerciseId.value, cv1.get(STATES_EXERCISE))
         assertEquals("$STATES_DUE_DATE is correct", due, cv1.getAsDate(STATES_DUE_DATE))
-        assertEquals("$STATES_PERIOD is correct", period, cv1.get(STATES_PERIOD))
+        assertEquals("$STATES_INTERVAL is correct", interval, cv1.get(STATES_INTERVAL))
     }
 }
 

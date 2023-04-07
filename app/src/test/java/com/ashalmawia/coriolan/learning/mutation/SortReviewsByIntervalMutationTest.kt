@@ -8,14 +8,14 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class SortReviewsByPeriodMutationTest {
+class SortReviewsByIntervalMutationTest {
 
-    private val mutation = lazy { SortReviewsByPeriodMutation }
+    private val mutation = lazy { SortReviewsByIntervalMutation }
 
     @Test
     fun test__sortedAscending() {
         // when
-        val cards = List(5) { i -> mockTask(mockLearningProgress(period = i - 1)) }
+        val cards = List(5) { i -> mockTask(mockLearningProgress(interval = i - 1)) }
         val processed = mutation.value.apply(cards)
 
         // then
@@ -25,7 +25,7 @@ class SortReviewsByPeriodMutationTest {
     @Test
     fun test__sortedDescending() {
         // when
-        val cards = List(5) { i -> mockTask(mockLearningProgress(period = 5 - i)) }
+        val cards = List(5) { i -> mockTask(mockLearningProgress(interval = 5 - i)) }
         val processed = mutation.value.apply(cards)
 
         // then
@@ -36,12 +36,12 @@ class SortReviewsByPeriodMutationTest {
     fun test__mixed() {
         // when
         val cards = listOf(
-                mockTask(mockLearningProgress(period = 5)),
-                mockTask(mockLearningProgress(period = -1)),
-                mockTask(mockLearningProgress(period = 10)),
-                mockTask(mockLearningProgress(period = 2)),
-                mockTask(mockLearningProgress(period = 0)),
-                mockTask(mockLearningProgress(period = -1))
+                mockTask(mockLearningProgress(interval = 5)),
+                mockTask(mockLearningProgress(interval = -1)),
+                mockTask(mockLearningProgress(interval = 10)),
+                mockTask(mockLearningProgress(interval = 2)),
+                mockTask(mockLearningProgress(interval = 0)),
+                mockTask(mockLearningProgress(interval = -1))
         )
         val processed = mutation.value.apply(cards)
 
@@ -53,8 +53,8 @@ class SortReviewsByPeriodMutationTest {
     private fun checkAscending(tasks: List<Task>): Boolean {
         var previous = -1000
         tasks.forEach {
-            if (it.learningProgress.mock.period < previous) return false
-            previous = it.learningProgress.mock.period
+            if (it.learningProgress.mock.interval < previous) return false
+            previous = it.learningProgress.mock.interval
         }
         return true
     }

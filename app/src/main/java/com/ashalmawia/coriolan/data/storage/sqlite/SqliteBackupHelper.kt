@@ -39,7 +39,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.creat
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesCardId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesDateDue
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesExerciseId
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesPeriod
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesInterval
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
@@ -203,7 +203,7 @@ class SqliteBackupHelper(
             val list = mutableListOf<ExerciseStateInfo>()
             while (cursor.moveToNext()) {
                 list.add(ExerciseStateInfo(
-                        cursor.statesCardId(), cursor.statesExerciseId(), cursor.statesDateDue(), cursor.statesPeriod()
+                        cursor.statesCardId(), cursor.statesExerciseId(), cursor.statesDateDue(), cursor.statesInterval()
                 ))
             }
             return list
@@ -311,7 +311,7 @@ class SqliteBackupHelper(
     override fun writeCardStates(states: List<ExerciseStateInfo>) {
         val db = helper.writableDatabase
         states.forEach {
-            val cv = createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.period)
+            val cv = createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.interval)
             db.insertOrThrow(STATES, null, cv)
         }
     }

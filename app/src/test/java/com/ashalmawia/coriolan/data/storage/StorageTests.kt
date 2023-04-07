@@ -1198,7 +1198,7 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
         val card = addMockCard(storage, deck.id)
-        val learningProgress = mockLearningProgress(period = 5)
+        val learningProgress = mockLearningProgress(interval = 5)
 
         // when
         val cards = storage.allCards(domain)
