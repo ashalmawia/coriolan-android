@@ -39,7 +39,7 @@ object ContractCards {
         val type = string(CARDS_TYPE)
         return CardType.fromValue(type)
     }
-    fun Cursor.card(domain: Domain, reverse: Map<Long, List<Term>>): Card {
+    fun Cursor.card(domain: Domain, translations: Map<Long, List<Term>>): Card {
         val id = cardsId()
         return Card(
                 id,
@@ -47,7 +47,7 @@ object ContractCards {
                 domain,
                 cardsCardType(),
                 term(),
-                reverse[id]!!
+                translations[id]!!
         )
     }
 

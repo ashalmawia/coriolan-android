@@ -55,11 +55,11 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_TERM_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateCardsReverseContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.reverseCardId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_TERM_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateTranslationsContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.translationsCardId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
@@ -212,13 +212,13 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             SELECT COUNT(*)
             
             FROM $CARDS
-               LEFT JOIN $CARDS_REVERSE
-                  ON $CARDS_ID = $CARDS_REVERSE_CARD_ID
+               LEFT JOIN $TRANSLATIONS
+                  ON $CARDS_ID = $TRANSLATIONS_CARD_ID
             
             WHERE
                $CARDS_FRONT_ID = ?
                OR
-               $CARDS_REVERSE_TERM_ID = ?
+               $TRANSLATIONS_TERM_ID = ?
         """.trimMargin(), arrayOf(term.id.toString(), term.id.toString()))
 
         cursor.use {
@@ -338,9 +338,9 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             }
 
             // write the card-to-term relation (many-to-many)
-            val cardsReverseCV = generateCardsReverseContentValues(cardId, translations)
-            cardsReverseCV.forEach {
-                val result = db.insert(CARDS_REVERSE, null, it)
+            val translationsCV = generateTranslationsContentValues(cardId, translations)
+            translationsCV.forEach {
+                val result = db.insert(TRANSLATIONS, null, it)
 
                 if (result < 0) {
                     throw DataProcessingException("failed to insert translation entry card ($original -> $translations)")
@@ -384,7 +384,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         """.trimMargin(), arrayOf())
 
         val translations = if (ids.size > 1) {
-             allCardsReverse(db)
+             allCardsTranslations(db)
         } else {
             val id = ids.first()
             mapOf(id to translationsByCardId(id))
@@ -403,7 +403,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun cardByValues(domain: Domain, original: Term): Card? {
         val db = helper.readableDatabase
 
-        val reverse = allCardsReverse(db)
+        val translations = allCardsTranslations(db)
 
         // find all cards with the same original
         val cursor = db.rawQuery("""
@@ -428,7 +428,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             while (cursor.moveToNext()) {
                 // we found the card we need
                 // we can assume that there are no other cards like this due to merging
-                return cursor.card(domain, reverse)
+                return cursor.card(domain, translations)
             }
 
             return null
@@ -454,16 +454,16 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             // delete all the old translations from the card
             card.translations.forEach {
                 db.delete(
-                        CARDS_REVERSE,
-                        "$CARDS_REVERSE_CARD_ID = ? AND $CARDS_REVERSE_TERM_ID = ?",
+                        TRANSLATIONS,
+                        "$TRANSLATIONS_CARD_ID = ? AND $TRANSLATIONS_TERM_ID = ?",
                         arrayOf(card.id.toString(), it.id.toString())
                 )
             }
 
             // add new translations to the card
-            val reverseCV = generateCardsReverseContentValues(card.id, translations)
-            reverseCV.forEach {
-                val result = db.insertOrUpdate(CARDS_REVERSE, it)
+            val translationsCV = generateTranslationsContentValues(card.id, translations)
+            translationsCV.forEach {
+                val result = db.insertOrUpdate(TRANSLATIONS, it)
                 if (result < 0) {
                     throw DataProcessingException("failed to update card ${card.id}: translation not in the database")
                 }
@@ -500,7 +500,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun allCards(domain: Domain): List<Card> {
         val db = helper.readableDatabase
 
-        val reverse = allCardsReverse(db)
+        val translations = allCardsTranslations(db)
 
         val CARDS = "Cards"
         val TERMS = "Terms"
@@ -531,7 +531,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                         domain,
                         it.cardsCardType(),
                         it.term(),
-                        reverse[cardId]!!
+                        translations[cardId]!!
                 ))
             }
             return cards
@@ -624,7 +624,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun cardsOfDeck(deck: Deck): List<Card> {
         val db = helper.readableDatabase
 
-        val reverse = allCardsReverse(db)
+        val translations = allCardsTranslations(db)
 
         val cursor = db.rawQuery("""
             SELECT *
@@ -645,7 +645,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val list = mutableListOf<Card>()
         cursor.use {
             while (it.moveToNext()) {
-                list.add(it.card(deck.domain, reverse))
+                list.add(it.card(deck.domain, translations))
             }
             return list
         }
@@ -657,15 +657,15 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val cursor = db.rawQuery("""
             SELECT *
             
-            FROM $CARDS_REVERSE
+            FROM $TRANSLATIONS
             
                LEFT JOIN $TERMS
-                   ON $CARDS_REVERSE_TERM_ID = $TERMS_ID
+                   ON $TRANSLATIONS_TERM_ID = $TERMS_ID
             
                LEFT JOIN $LANGUAGES
                    ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
             
-            WHERE $CARDS_REVERSE_CARD_ID = ?
+            WHERE $TRANSLATIONS_CARD_ID = ?
                 
             """.trimMargin(), arrayOf(id.toString()))
 
@@ -678,28 +678,28 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
-    private fun allCardsReverse(db: SQLiteDatabase): Map<Long, List<Term>> {
+    private fun allCardsTranslations(db: SQLiteDatabase): Map<Long, List<Term>> {
         val cursor = db.rawQuery("""
             SELECT *
             
             FROM 
-                $CARDS_REVERSE
+                $TRANSLATIONS
                 
                 LEFT JOIN $TERMS
-                    ON $CARDS_REVERSE_TERM_ID = $TERMS_ID
+                    ON $TRANSLATIONS_TERM_ID = $TERMS_ID
                 
                 LEFT JOIN $LANGUAGES
                     ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
             """.trimMargin(), null)
 
-        val reverse = mutableMapOf<Long, MutableList<Term>>()
+        val translations = mutableMapOf<Long, MutableList<Term>>()
         cursor.use {
             while (it.moveToNext()) {
-                reverse
-                        .getOrPut(it.reverseCardId()) { mutableListOf() }
+                translations
+                        .getOrPut(it.translationsCardId()) { mutableListOf() }
                         .add(it.term())
             }
-            return reverse
+            return translations
         }
     }
 

@@ -30,9 +30,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_TERM_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateCardsReverseContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_TERM_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateTranslationsContentValues
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
@@ -264,27 +264,27 @@ class CreateContentValuesTest {
         )
 
         // when
-        val cvList = generateCardsReverseContentValues(cardId, translations)
+        val cvList = generateTranslationsContentValues(cardId, translations)
 
         // then
         assertEquals("entries count is correct", 3, cvList.size)
         for (i in 0 until 3) {
             val cv = cvList[i]
             assertEquals("values count is correct", 2, cv.size())
-            assertEquals("$CARDS_REVERSE_CARD_ID is correct", cardId, cv.get(CARDS_REVERSE_CARD_ID))
-            assertEquals("$CARDS_REVERSE_TERM_ID is correct", translations[i].id, cv.get(CARDS_REVERSE_TERM_ID))
+            assertEquals("$TRANSLATIONS_CARD_ID is correct", cardId, cv.get(TRANSLATIONS_CARD_ID))
+            assertEquals("$TRANSLATIONS_TERM_ID is correct", translations[i].id, cv.get(TRANSLATIONS_TERM_ID))
         }
 
         // when
-        val cvList1 = generateCardsReverseContentValues(cardId, translations.map { it.id })
+        val cvList1 = generateTranslationsContentValues(cardId, translations.map { it.id })
 
         // then
         assertEquals("entries count is correct", 3, cvList1.size)
         for (i in 0 until 3) {
             val cv = cvList1[i]
             assertEquals("values count is correct", 2, cv.size())
-            assertEquals("$CARDS_REVERSE_CARD_ID is correct", cardId, cv.get(CARDS_REVERSE_CARD_ID))
-            assertEquals("$CARDS_REVERSE_TERM_ID is correct", translations[i].id, cv.get(CARDS_REVERSE_TERM_ID))
+            assertEquals("$TRANSLATIONS_CARD_ID is correct", cardId, cv.get(TRANSLATIONS_CARD_ID))
+            assertEquals("$TRANSLATIONS_TERM_ID is correct", translations[i].id, cv.get(TRANSLATIONS_TERM_ID))
         }
     }
 

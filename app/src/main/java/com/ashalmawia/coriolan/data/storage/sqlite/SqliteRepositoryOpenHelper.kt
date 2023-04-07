@@ -9,9 +9,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_FRONT_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_TYPE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_TERM_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_TERM_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_DOMAIN_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_ID
@@ -106,14 +106,14 @@ class SqliteRepositoryOpenHelper(
                 |   ON UPDATE CASCADE
                 |);""".trimMargin()
         )
-        db.execSQL("""CREATE TABLE $CARDS_REVERSE(
-                |$CARDS_REVERSE_CARD_ID INTEGER NOT NULL,
-                |$CARDS_REVERSE_TERM_ID INTEGER NOT NULL,
-                |PRIMARY KEY ($CARDS_REVERSE_CARD_ID, $CARDS_REVERSE_TERM_ID),
-                |FOREIGN KEY ($CARDS_REVERSE_CARD_ID) REFERENCES $CARDS ($CARDS_ID)
+        db.execSQL("""CREATE TABLE $TRANSLATIONS(
+                |$TRANSLATIONS_CARD_ID INTEGER NOT NULL,
+                |$TRANSLATIONS_TERM_ID INTEGER NOT NULL,
+                |PRIMARY KEY ($TRANSLATIONS_CARD_ID, $TRANSLATIONS_TERM_ID),
+                |FOREIGN KEY ($TRANSLATIONS_CARD_ID) REFERENCES $CARDS ($CARDS_ID)
                 |   ON DELETE CASCADE
                 |   ON UPDATE CASCADE,
-                |FOREIGN KEY ($CARDS_REVERSE_TERM_ID) REFERENCES $TERMS ($TERMS_ID)
+                |FOREIGN KEY ($TRANSLATIONS_TERM_ID) REFERENCES $TERMS ($TERMS_ID)
                 |   ON DELETE RESTRICT
                 |   ON UPDATE CASCADE
                 |);""".trimMargin()

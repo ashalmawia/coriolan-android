@@ -47,10 +47,10 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsLanguageId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsValue
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateCardsReverseContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.reverseTermId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.TRANSLATIONS_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateTranslationsContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.translationsTermId
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
@@ -156,14 +156,14 @@ class SqliteBackupHelper(
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
-                |SELECT * FROM $CARDS_REVERSE
-                |WHERE $CARDS_REVERSE_CARD_ID = ?
+                |SELECT * FROM $TRANSLATIONS
+                |WHERE $TRANSLATIONS_CARD_ID = ?
             """.trimMargin(),
                 arrayOf(id.toString()))
 
         val translations = mutableListOf<Long>()
         while (cursor.moveToNext()) {
-            translations.add(cursor.reverseTermId())
+            translations.add(cursor.translationsTermId())
         }
 
         cursor.close()
@@ -292,8 +292,8 @@ class SqliteBackupHelper(
             db.insertOrThrow(CARDS, null,
                     createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, it.id)
             )
-            generateCardsReverseContentValues(it.id, it.translationIds).forEach { cv ->
-                db.insertOrThrow(CARDS_REVERSE, null, cv)
+            generateTranslationsContentValues(it.id, it.translationIds).forEach { cv ->
+                db.insertOrThrow(TRANSLATIONS, null, cv)
             }
         }
     }

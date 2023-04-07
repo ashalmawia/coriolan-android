@@ -7,30 +7,30 @@ import com.ashalmawia.coriolan.data.storage.sqlite.long
 
 object ContractTranslations {
 
-    const val CARDS_REVERSE = "Reverse"
+    const val TRANSLATIONS = "Translations"
 
-    const val CARDS_REVERSE_CARD_ID = "Reverse_CardId"
-    const val CARDS_REVERSE_TERM_ID = "Reverse_TermId"
-
-
-    fun Cursor.reverseCardId(): Long { return long(CARDS_REVERSE_CARD_ID) }
-    fun Cursor.reverseTermId(): Long { return long(CARDS_REVERSE_TERM_ID) }
+    const val TRANSLATIONS_CARD_ID = "Transl_CardId"
+    const val TRANSLATIONS_TERM_ID = "Transl_TermId"
 
 
-    @JvmName("generateCardsReverseContentValuesTerms")
-    fun generateCardsReverseContentValues(cardId: Long, translations: List<Term>): List<ContentValues> {
-        return translations.map { toCardsReverseContentValues(cardId, it.id) }
+    fun Cursor.translationsCardId(): Long { return long(TRANSLATIONS_CARD_ID) }
+    fun Cursor.translationsTermId(): Long { return long(TRANSLATIONS_TERM_ID) }
+
+
+    @JvmName("generateTranslatinosContentValuesTerms")
+    fun generateTranslationsContentValues(cardId: Long, translations: List<Term>): List<ContentValues> {
+        return translations.map { toTranslationsContentValues(cardId, it.id) }
     }
 
-    @JvmName("generateCardsReverseContentValuesIds")
-    fun generateCardsReverseContentValues(cardId: Long, translationsIds: List<Long>): List<ContentValues> {
-        return translationsIds.map { toCardsReverseContentValues(cardId, it) }
+    @JvmName("generateTranslatinosContentValuesIds")
+    fun generateTranslationsContentValues(cardId: Long, translationsIds: List<Long>): List<ContentValues> {
+        return translationsIds.map { toTranslationsContentValues(cardId, it) }
     }
 
-    private fun toCardsReverseContentValues(cardId: Long, termId: Long): ContentValues {
+    private fun toTranslationsContentValues(cardId: Long, termId: Long): ContentValues {
         val cv = ContentValues()
-        cv.put(CARDS_REVERSE_CARD_ID, cardId)
-        cv.put(CARDS_REVERSE_TERM_ID, termId)
+        cv.put(TRANSLATIONS_CARD_ID, cardId)
+        cv.put(TRANSLATIONS_TERM_ID, termId)
         return cv
     }
 
