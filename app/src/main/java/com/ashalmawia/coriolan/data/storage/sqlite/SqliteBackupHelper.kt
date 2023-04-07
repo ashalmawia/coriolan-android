@@ -1,7 +1,27 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.util.getString
+import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.data.backup.CardInfo
+import com.ashalmawia.coriolan.data.backup.DeckInfo
+import com.ashalmawia.coriolan.data.backup.DomainInfo
+import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
+import com.ashalmawia.coriolan.data.backup.LanguageInfo
+import com.ashalmawia.coriolan.data.backup.TermInfo
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_ID
+import com.ashalmawia.coriolan.util.string
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
@@ -14,15 +34,15 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_LANGUAGES
-            |   ORDER BY $SQLITE_COLUMN_ID ASC
+            |   FROM $LANGUAGES
+            |   ORDER BY $LANGUAGES_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
             val list = mutableListOf<LanguageInfo>()
             while (cursor.moveToNext()) {
-                list.add(LanguageInfo(cursor.getId(), cursor.getLangValue()))
+                list.add(LanguageInfo(cursor.languagesId(), cursor.languagesValue()))
             }
             return list
         }
@@ -33,15 +53,20 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_DOMAINS
-            |   ORDER BY $SQLITE_COLUMN_ID ASC
+            |   FROM $DOMAINS
+            |   ORDER BY $DOMAINS_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
             val list = mutableListOf<DomainInfo>()
             while (cursor.moveToNext()) {
-                list.add(DomainInfo(cursor.getId(), cursor.getName(), cursor.getOriginalLangId(), cursor.getTranslationsLangId()))
+                list.add(DomainInfo(
+                        cursor.domainsId(),
+                        cursor.domainsName() ?: "",
+                        cursor.domainsOriginalLangId(),
+                        cursor.domainsTranslationsLangId()
+                ))
             }
             return list
         }
@@ -52,8 +77,8 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_TERMS
-            |   ORDER BY $SQLITE_COLUMN_ID ASC
+            |   FROM $TERMS
+            |   ORDER BY $TERMS_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -61,10 +86,10 @@ class SqliteBackupHelper(
             val list = mutableListOf<TermInfo>()
             while (cursor.moveToNext()) {
                 list.add(TermInfo(
-                        cursor.getId(),
-                        cursor.getValue(),
-                        cursor.getLanguageId(),
-                        cursor.getExtras(deserializer)
+                        cursor.termsId(),
+                        cursor.termsValue(),
+                        cursor.termsLanguageId(),
+                        cursor.termsExtras(deserializer)
                 ))
             }
             return list
@@ -76,22 +101,23 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_CARDS
-            |   ORDER BY $SQLITE_COLUMN_ID ASC
+            |   FROM $CARDS
+            |   ORDER BY $CARDS_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
             val list = mutableListOf<CardInfo>()
             while (cursor.moveToNext()) {
-                val cardId = cursor.getId()
+                val cardId = cursor.cardsId()
                 list.add(CardInfo(
                         cardId,
-                        cursor.getDeckId(),
-                        cursor.getDomainId(),
-                        cursor.getFrontId(),
+                        cursor.cardsDeckId(),
+                        cursor.cardsDomainId(),
+                        cursor.cardsFrontId(),
+                        // TODO: make this a single query
                         translationsByCardId(cardId),
-                        cursor.getCardType()
+                        cursor.cardsCardType()
                     )
                 )
             }
@@ -103,15 +129,14 @@ class SqliteBackupHelper(
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
-                |SELECT * FROM $SQLITE_TABLE_CARDS_REVERSE
-                |WHERE $SQLITE_COLUMN_CARD_ID = ?
+                |SELECT * FROM $CARDS_REVERSE
+                |WHERE $CARDS_REVERSE_CARD_ID = ?
             """.trimMargin(),
                 arrayOf(id.toString()))
 
-        // TODO: this is disastrously inoptimal, but who cares? https://trello.com/c/fkgQn5KD
         val translations = mutableListOf<Long>()
         while (cursor.moveToNext()) {
-            translations.add(cursor.getTermId())
+            translations.add(cursor.reverseTermId())
         }
 
         cursor.close()
@@ -123,15 +148,15 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_DECKS
-            |   ORDER BY $SQLITE_COLUMN_ID ASC
+            |   FROM $DECKS
+            |   ORDER BY $DECKS_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
         cursor.use {
             val list = mutableListOf<DeckInfo>()
             while (cursor.moveToNext()) {
-                list.add(DeckInfo(cursor.getId(), cursor.getDomainId(), cursor.getName()))
+                list.add(DeckInfo(cursor.decksId(), cursor.decksDomainId(), cursor.decksName()))
             }
             return list
         }
@@ -142,8 +167,8 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT *
-            |   FROM $SQLITE_TABLE_CARD_STATES
-            |   ORDER BY $SQLITE_COLUMN_CARD_ID ASC
+            |   FROM $STATES
+            |   ORDER BY $STATES_CARD_ID ASC
             |   LIMIT $limit OFFSET $offset
         """.trimMargin(), arrayOf())
 
@@ -151,7 +176,7 @@ class SqliteBackupHelper(
             val list = mutableListOf<ExerciseStateInfo>()
             while (cursor.moveToNext()) {
                 list.add(ExerciseStateInfo(
-                        cursor.getCardId(), cursor.getExerciseId(), cursor.getDateDue(), cursor.getPeriod()
+                        cursor.statesCardId(), cursor.statesExerciseId(), cursor.statesDateDue(), cursor.statesPeriod()
                 ))
             }
             return list
@@ -189,7 +214,7 @@ class SqliteBackupHelper(
         val tables = cursor.use {
             val result = mutableListOf<String>()
             while (it.moveToNext()) {
-                val name = it.getString("name", null)
+                val name = it.string("name", null)
                 if (name == "android_metadata" || name == "sqlite_sequence") {
                     continue
                 }
@@ -207,7 +232,7 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
 
         languages.forEach {
-            db.insertOrThrow(SQLITE_TABLE_LANGUAGES, null,
+            db.insertOrThrow(LANGUAGES, null,
                     CreateContentValues.createLanguageContentValues(id = it.id, value = it.value)
             )
         }
@@ -217,7 +242,7 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
 
         domains.forEach {
-            db.insertOrThrow(SQLITE_TABLE_DOMAINS, null,
+            db.insertOrThrow(DOMAINS, null,
                     CreateContentValues.createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
             )
         }
@@ -227,7 +252,7 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
 
         terms.forEach {
-            db.insertOrThrow(SQLITE_TABLE_TERMS, null,
+            db.insertOrThrow(TERMS, null,
                     CreateContentValues.createTermContentValues(it.value, it.languageId, it.extras, it.id)
             )
         }
@@ -237,11 +262,11 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
 
         cards.forEach {
-            db.insertOrThrow(SQLITE_TABLE_CARDS, null,
+            db.insertOrThrow(CARDS, null,
                     CreateContentValues.createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, it.id)
             )
-            CreateContentValues.generateCardsReverseContentValues(it.id, it.translationIds).forEach {
-                db.insertOrThrow(SQLITE_TABLE_CARDS_REVERSE, null, it)
+            CreateContentValues.generateCardsReverseContentValues(it.id, it.translationIds).forEach { cv ->
+                db.insertOrThrow(CARDS_REVERSE, null, cv)
             }
         }
     }
@@ -250,7 +275,7 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
 
         decks.forEach {
-            db.insertOrThrow(SQLITE_TABLE_DECKS, null,
+            db.insertOrThrow(DECKS, null,
                     CreateContentValues.createDeckContentValues(it.domainId, it.name, it.id)
             )
         }
@@ -260,7 +285,7 @@ class SqliteBackupHelper(
         val db = helper.writableDatabase
         states.forEach {
             val cv = CreateContentValues.createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.period)
-            db.insertOrThrow(SQLITE_TABLE_CARD_STATES, null, cv)
+            db.insertOrThrow(STATES, null, cv)
         }
     }
 
@@ -269,7 +294,7 @@ class SqliteBackupHelper(
 
         val cursor = db.rawQuery("""
             |SELECT count(*)
-            |   FROM $SQLITE_TABLE_CARDS
+            |   FROM $CARDS
         """.trimMargin(), arrayOf())
 
         cursor.use {

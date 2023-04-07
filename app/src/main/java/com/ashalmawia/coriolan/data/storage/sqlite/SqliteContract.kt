@@ -1,27 +1,61 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
-const val SQLITE_TABLE_LANGUAGES = "Languages"
-const val SQLITE_TABLE_TERMS = "Terms"
-const val SQLITE_TABLE_DOMAINS = "Domains"
-const val SQLITE_TABLE_CARDS = "Cards"
-const val SQLITE_TABLE_CARDS_REVERSE = "CardsReverse"
-const val SQLITE_TABLE_DECKS = "Decks"
-const val SQLITE_TABLE_CARD_STATES = "CardStates"
+object SqliteContract {
 
-const val SQLITE_COLUMN_ID = "_id"
-const val SQLITE_COLUMN_VALUE = "Value"
-const val SQLITE_COLUMN_LANG_VALUE = "LangValue"
-const val SQLITE_COLUMN_LANGUAGE_ID = "LangId"
-const val SQLITE_COLUMN_EXTRAS = "Extras"
-const val SQLITE_COLUMN_FRONT_ID = "FrontId"
-const val SQLITE_COLUMN_DECK_ID = "DeckId"
-const val SQLITE_COLUMN_CARD_ID = "CardId"
-const val SQLITE_COLUMN_TERM_ID = "TermId"
-const val SQLITE_COLUMN_NAME = "Name"
-const val SQLITE_COLUMN_DUE_DATE = "DueDate"
-const val SQLITE_COLUMN_PERIOD = "Period"
-const val SQLITE_COLUMN_EXERCISE = "Exercise"
-const val SQLITE_COLUMN_LANG_ORIGINAL = "LangOriginal"
-const val SQLITE_COLUMN_LANG_TRANSLATIONS = "LangTranslations"
-const val SQLITE_COLUMN_DOMAIN_ID = "DomainId"
-const val SQLITE_COLUMN_TYPE = "Type"
+    const val LANGUAGES = "Languages"
+
+    const val LANGUAGES_ID = "Lang_id"
+    const val LANGUAGES_VALUE = "Lang_Value"
+
+// -----------------------------------------------
+
+    const val DOMAINS = "Domains"
+
+    const val DOMAINS_ID = "Domains_id"
+    const val DOMAINS_NAME = "Domains_Name"
+    const val DOMAINS_LANG_ORIGINAL = "Domains_LangOrig"
+    const val DOMAINS_LANG_TRANSLATIONS = "Domains_LangTran"
+
+// -----------------------------------------------
+
+    const val TERMS = "Terms"
+
+    const val TERMS_ID = "Terms_id"
+    const val TERMS_VALUE = "Terms_Value"
+    const val TERMS_LANGUAGE_ID = "Terms_Lang"
+    const val TERMS_EXTRAS = "Terms_Extras"
+
+// -----------------------------------------------
+
+    const val DECKS = "Decks"
+
+    const val DECKS_ID = "Decks_id"
+    const val DECKS_NAME = "Decks_Name"
+    const val DECKS_DOMAIN_ID = "Decks_Domain"
+
+// -----------------------------------------------
+
+    const val CARDS = "Cards"
+
+    const val CARDS_ID = "Cards_id"
+    const val CARDS_FRONT_ID = "Cards_FrontId"
+    const val CARDS_DECK_ID = "Cards_DeckId"
+    const val CARDS_DOMAIN_ID = "Cards_DomainId"
+    const val CARDS_TYPE = "Cards_Type"
+
+// -----------------------------------------------
+
+    const val CARDS_REVERSE = "Reverse"
+
+    const val CARDS_REVERSE_CARD_ID = "Reverse_CardId"
+    const val CARDS_REVERSE_TERM_ID = "Reverse_TermId"
+
+// -----------------------------------------------
+
+    const val STATES = "States"
+
+    const val STATES_CARD_ID = "States_CardId"
+    const val STATES_EXERCISE = "States_Exercise"
+    const val STATES_DUE_DATE = "States_DueDate"
+    const val STATES_PERIOD = "States_Period"
+}

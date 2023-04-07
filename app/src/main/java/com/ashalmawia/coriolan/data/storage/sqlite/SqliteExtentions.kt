@@ -3,6 +3,16 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_DECK_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_DOMAIN_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_FRONT_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE_TERM_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_TYPE
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_DOMAIN_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_NAME
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
@@ -10,55 +20,106 @@ import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.util.*
 import org.joda.time.DateTime
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_LANG_ORIGINAL
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_LANG_TRANSLATIONS
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_NAME
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES_VALUE
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_DUE_DATE
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_EXERCISE
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_PERIOD
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_EXTRAS
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_LANGUAGE_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_VALUE
+import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
+import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Domain
 
-fun Cursor.getValue(alias: String? = null): String { return getString(SQLITE_COLUMN_VALUE, alias) }
-fun Cursor.getLangValue(alias: String? = null): String { return getString(SQLITE_COLUMN_LANG_VALUE, alias) }
-fun Cursor.getName(alias: String? = null): String { return getString(SQLITE_COLUMN_NAME, alias) }
-fun Cursor.getNameIfAny(alias: String? = null): String? { return getStringOrNull(SQLITE_COLUMN_NAME, alias) }
-
-fun Cursor.getId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_ID, alias) }
-fun Cursor.getDeckId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DECK_ID, alias) }
-fun Cursor.getDomainId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_DOMAIN_ID, alias) }
-fun Cursor.getFrontId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_FRONT_ID, alias) }
-fun Cursor.getTermId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_TERM_ID, alias) }
-fun Cursor.getOriginalLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_ORIGINAL, alias) }
-fun Cursor.getTranslationsLangId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANG_TRANSLATIONS, alias) }
-fun Cursor.getLanguageId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_LANGUAGE_ID, alias) }
-fun Cursor.getCardId(alias: String? = null): Long { return getLong(SQLITE_COLUMN_CARD_ID, alias) }
-fun Cursor.getCardType(alias: String? = null): CardType {
-    val type = getString(SQLITE_COLUMN_TYPE, alias)
-    return CardType.fromValue(type)
-}
-
-fun Cursor.getDateDue(alias: String? = null): DateTime { return getDate(SQLITE_COLUMN_DUE_DATE, alias) }
-fun Cursor.getPeriod(alias: String? = null): Int { return getInt(SQLITE_COLUMN_PERIOD, alias) }
-fun Cursor.hasSavedExerciseState(alias: String? = null): Boolean { return !isNull(SQLITE_COLUMN_EXERCISE, alias) }
-
-fun Cursor.getLanguage(alias: String? = null): Language {
+// ---------------- LANGUAGES --------------
+fun Cursor.languagesId(alias: String? = null): Long { return long(LANGUAGES_ID, alias) }
+fun Cursor.languagesValue(alias: String? = null): String { return string(LANGUAGES_VALUE, alias) }
+fun Cursor.language(alias: String? = null): Language {
     return Language(
-            getLong(SQLITE_COLUMN_ID, alias),
-            getString(SQLITE_COLUMN_LANG_VALUE, alias)
+            languagesId(alias),
+            languagesValue(alias)
     )
 }
 
-fun Cursor.getExtras(deserializer: ExtrasDeserializer, alias: String? = null): Extras {
-    val serialized = getStringOrNull(SQLITE_COLUMN_EXTRAS, alias)
+// ---------------- DOMAINS --------------
+fun Cursor.domainsId(): Long { return long(DOMAINS_ID) }
+fun Cursor.domainsName(): String? { return stringOrNull(DOMAINS_NAME) }
+fun Cursor.domainsOriginalLangId(): Long { return long(DOMAINS_LANG_ORIGINAL) }
+fun Cursor.domainsTranslationsLangId(): Long { return long(DOMAINS_LANG_TRANSLATIONS) }
+
+// ---------------- TERMS --------------
+fun Cursor.termsId(): Long { return long(TERMS_ID) }
+fun Cursor.termsValue(): String { return string(TERMS_VALUE) }
+fun Cursor.termsLanguageId(): Long { return long(TERMS_LANGUAGE_ID) }
+fun Cursor.termsExtras(deserializer: ExtrasDeserializer): Extras {
+    val serialized = stringOrNull(TERMS_EXTRAS)
     return deserializer.deserialize(serialized)
 }
-
-fun Cursor.getTerm(deserializer: ExtrasDeserializer, aliasTerms: String, aliasLanguages: String): Term {
+fun Cursor.term(deserializer: ExtrasDeserializer): Term {
     return Term(
-            getId(aliasTerms),
-            getValue(aliasTerms),
-            getLanguage(aliasLanguages),
-            getExtras(deserializer, aliasTerms)
+            termsId(),
+            termsValue(),
+            language(),
+            termsExtras(deserializer)
     )
 }
 
-fun Cursor.getExerciseId(alias: String? = null): ExerciseId {
-    val value = getString(SQLITE_COLUMN_EXERCISE, alias)
+// ---------------- DECKS --------------
+fun Cursor.decksId(): Long { return long(DECKS_ID) }
+fun Cursor.decksName(): String { return string(DECKS_NAME) }
+fun Cursor.decksDomainId(): Long { return long(DECKS_DOMAIN_ID) }
+fun Cursor.deck(domain: Domain): Deck {
+    return Deck(decksId(), domain, decksName())
+}
+
+// ---------------- CARDS --------------
+fun Cursor.cardsId(): Long { return long(CARDS_ID) }
+fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }
+fun Cursor.cardsDeckId(): Long { return long(CARDS_DECK_ID) }
+fun Cursor.cardsDomainId(): Long { return long(CARDS_DOMAIN_ID) }
+fun Cursor.cardsCardType(): CardType {
+    val type = string(CARDS_TYPE)
+    return CardType.fromValue(type)
+}
+fun Cursor.card(domain: Domain, reverse: Map<Long, List<Term>>): Card {
+    val id = cardsId()
+    return Card(
+            id,
+            cardsDeckId(),
+            domain,
+            cardsCardType(),
+            term(CreateContentValues),
+            reverse[id]!!
+    )
+}
+
+// ---------------- CARDS REVERSE --------------
+fun Cursor.reverseCardId(): Long { return long(CARDS_REVERSE_CARD_ID) }
+fun Cursor.reverseTermId(): Long { return long(CARDS_REVERSE_TERM_ID) }
+
+// ---------------- STATES --------------
+fun Cursor.statesCardId(): Long { return long(STATES_CARD_ID) }
+
+fun Cursor.statesExerciseId(): ExerciseId {
+    val value = string(STATES_EXERCISE)
     return ExerciseId.fromValue(value)
 }
+fun Cursor.statesDateDue(): DateTime { return date(STATES_DUE_DATE) }
+fun Cursor.statesPeriod(): Int { return int(STATES_PERIOD) }
+fun Cursor.statesHasSavedExerciseState(): Boolean { return !isNull(STATES_EXERCISE) }
+fun Cursor.exerciseState(): ExerciseState {
+    return ExerciseState(statesDateDue(), statesPeriod())
+}
+
+// ----------------------------------------------
 
 fun ContentValues.put(key: String, value: DateTime) {
     put(key, value.toDate().time)

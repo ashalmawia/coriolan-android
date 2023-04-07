@@ -8,7 +8,7 @@ import com.ashalmawia.coriolan.data.logbook.LogbookPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.insertOrUpdate
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.util.getString
+import com.ashalmawia.coriolan.util.string
 import com.ashalmawia.coriolan.util.orZero
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
@@ -98,4 +98,4 @@ class SqliteLogbook(context: Context) : Logbook {
     }
 }
 
-private fun Cursor.getPayload(): String { return getString(SQLITE_COLUMN_PAYLOAD, null) }
+private fun Cursor.getPayload(): String { return string(SQLITE_COLUMN_PAYLOAD, null) }
