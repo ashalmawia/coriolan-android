@@ -1052,6 +1052,7 @@ abstract class StorageTest {
     fun test__updateCard__updateAllInfo() {
         // given
         val storage = prefilledStorage.value
+        val cardType = CardType.REVERSE
 
         val deck = addMockDeck(storage)
         
@@ -1060,16 +1061,16 @@ abstract class StorageTest {
         val card = addMockCard(storage,
                 translations = listOf("some translation", "my translation", "translation"),
                 domain = domain,
-                type = CardType.REVERSE
+                type = cardType
         )
         addMockCard(storage, deck.id)
 
         val newDeck = storage.addDeck(domain, "New deck")
 
-        val newOriginal = addMockTermOriginal(storage, "new original", domain = domain)
+        val newOriginal = storage.justAddTerm("new original", domain.langOriginal(cardType))
 
         val toBeRemoved = card.translations.find { it.value == "my translation" }!!
-        val newTranslation = addMockTermTranslation(storage, "new translation", domain = domain)
+        val newTranslation = storage.justAddTerm("new translation", domain.langTranslations(cardType))
         val newTranslations = card.translations.minus(toBeRemoved).plus(newTranslation)
 
         // when
