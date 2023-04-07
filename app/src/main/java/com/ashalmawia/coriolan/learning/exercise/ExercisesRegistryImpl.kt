@@ -1,14 +1,11 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.exercise.sr.FlashcardsExercise
 
-class ExercisesRegistryImpl(
-        repository: Repository
-) : ExercisesRegistry {
+class ExercisesRegistryImpl : ExercisesRegistry {
 
     private val exercises = listOf(
-            FlashcardsExercise(repository)
+            FlashcardsExercise()
     )
 
     override fun allExercises(): List<Exercise> {

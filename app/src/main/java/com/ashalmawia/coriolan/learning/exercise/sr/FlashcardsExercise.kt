@@ -29,9 +29,7 @@ import org.joda.time.DateTime
  * If the card is answered correctly, it removes it from the queue.
  * Otherwise, adds it to the end of the queue.
  */
-class FlashcardsExercise(
-        private val repository: Repository
-) : Exercise {
+class FlashcardsExercise : Exercise {
 
     override val id: ExerciseId
         get() = ExerciseId.FLASHCARDS
@@ -44,11 +42,8 @@ class FlashcardsExercise(
     override val canUndo: Boolean
         get() = true
 
-    private fun getStatesForCardsWithOriginals(originals: List<Long>): Map<Long, LearningProgress> {
-        return repository.getStatesForCardsWithOriginals(originals)
-    }
-
     override fun mutations(
+            repository: Repository,
             preferences: Preferences,
             logbook: Logbook,
             date: DateTime,
@@ -57,7 +52,7 @@ class FlashcardsExercise(
             cardType: CardType
     ): List<Mutation> {
         return listOf(
-                LearningModeMutation(this),
+                LearningModeMutation(repository),
                 CardTypeMutation(cardType),
                 SortReviewsByIntervalMutation,
                 NewCardsOrderMutation.from(order),
@@ -66,13 +61,14 @@ class FlashcardsExercise(
         )
     }
 
-    override fun onTranslationAdded(card: Card) {
+    override fun onTranslationAdded(repository: Repository, card: Card) {
         // TODO: decouple
         repository.updateCardLearningProgress(card, LearningProgress(emptyMap()))
     }
 
     override fun createExecutor(
             context: Context,
+            repository: Repository,
             uiContainer: ViewGroup,
             logbook: Logbook,
             listener: ExerciseListener
@@ -88,7 +84,7 @@ class FlashcardsExercise(
         )
     }
 
-    override fun pendingCards(deck: Deck, date: DateTime): List<Task> {
+    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<Task> {
         return repository.pendingCards(deck, date).map {
             Task(it.first, it.second, this)
         }
@@ -96,7 +92,7 @@ class FlashcardsExercise(
 
     private fun createScheduler() = MultiplierBasedScheduler()
 
-    class LearningModeMutation(private val exercise: FlashcardsExercise) : Mutation {
+    class LearningModeMutation(private val repository: Repository) : Mutation {
 
         override fun apply(tasks: List<Task>): List<Task> {
             val (forward, reverse) = tasks.forwardAndReverseWithState()
@@ -106,7 +102,7 @@ class FlashcardsExercise(
         private fun List<Task>.filterReady() : List<Task> {
             val translationIds = flatMap { it.card.translations }.map { it.id }
 
-            val states = exercise.getStatesForCardsWithOriginals(translationIds)
+            val states = repository.getStatesForCardsWithOriginals(translationIds)
 
             return filter {
                 it.status() != Status.NEW || it.card.translations.all { exp -> exp.isReady(states) }

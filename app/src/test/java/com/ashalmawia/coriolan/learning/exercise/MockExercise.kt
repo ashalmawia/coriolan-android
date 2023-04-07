@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -20,21 +21,21 @@ class MockExercise : Exercise {
     override val canUndo: Boolean
         get() = true
 
-    override fun mutations(preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): List<Mutation> {
+    override fun mutations(repository: Repository, preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): List<Mutation> {
         return emptyList()
     }
 
-    override fun createExecutor(context: Context, uiContainer: ViewGroup, logbook: Logbook, listener: ExerciseListener): ExerciseExecutor {
+    override fun createExecutor(context: Context, repository: Repository, uiContainer: ViewGroup, logbook: Logbook, listener: ExerciseListener): ExerciseExecutor {
         return MockExerciseExecutor(this)
     }
 
     override fun name(): Int = 0
 
-    override fun pendingCards(deck: Deck, date: DateTime): List<Task> {
+    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<Task> {
         return emptyList()
     }
 
-    override fun onTranslationAdded(card: Card) {
+    override fun onTranslationAdded(repository: Repository, card: Card) {
     }
 
     override fun equals(other: Any?): Boolean {

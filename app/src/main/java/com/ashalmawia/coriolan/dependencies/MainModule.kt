@@ -38,8 +38,8 @@ val mainModule = module {
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
-    single<ExercisesRegistry> { ExercisesRegistryImpl(get()) }
-    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get()) }
+    single<ExercisesRegistry> { ExercisesRegistryImpl() }
+    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get(), get()) }
     single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
     single { SqliteRepositoryOpenHelper(get()) }
     single<SpacedRepetitionScheduler> { MultiplierBasedScheduler() }

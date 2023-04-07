@@ -26,7 +26,7 @@ class LearningFlow(
 ) : ExerciseListener {
 
     private val executors = exercisesRegistry.enabledExercises()
-            .map { it.createExecutor(context, uiContainer, logbook, this) }
+            .map { it.createExecutor(context, repository, uiContainer, logbook, this) }
 
     val card
         get() = assignment.current!!

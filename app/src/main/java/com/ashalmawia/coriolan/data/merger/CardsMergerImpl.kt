@@ -38,6 +38,6 @@ class CardsMergerImpl(
     }
 
     private fun notifyExercises(card: Card) {
-        exercisesRegistry.allExercises().forEach { it.onTranslationAdded(card) }
+        exercisesRegistry.allExercises().forEach { it.onTranslationAdded(repository, card) }
     }
 }
