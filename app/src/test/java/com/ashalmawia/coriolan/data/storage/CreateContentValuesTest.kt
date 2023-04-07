@@ -1,30 +1,38 @@
 package com.ashalmawia.coriolan.data.storage
 
+import android.content.ContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.*
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_DECK_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_DOMAIN_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_FRONT_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE_TERM_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_TYPE
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_DOMAIN_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_NAME
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_LANG_ORIGINAL
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_LANG_TRANSLATIONS
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_NAME
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES_VALUE
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_DUE_DATE
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_EXERCISE
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_PERIOD
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_EXTRAS
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_LANGUAGE_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_VALUE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_DECK_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_DOMAIN_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_FRONT_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_TYPE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_DOMAIN_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_NAME
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.createDeckContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_LANG_ORIGINAL
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_LANG_TRANSLATIONS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_NAME
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.createDomainContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.LANGUAGES_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.LANGUAGES_VALUE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.createLanguageContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_DUE_DATE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_EXERCISE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_PERIOD
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createCardStateContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_EXTRAS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_VALUE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_TERM_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateCardsReverseContentValues
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Extras
@@ -47,7 +55,7 @@ class CreateContentValuesTest {
         val value = "Russian"
 
         // when
-        val cv = CreateContentValues.createLanguageContentValues(value)
+        val cv = createLanguageContentValues(value)
 
         // then
         assertEquals("values count is correct", 1, cv.size())
@@ -61,7 +69,7 @@ class CreateContentValuesTest {
         val id = 5L
 
         // when
-        val cv = CreateContentValues.createLanguageContentValues(value, id)
+        val cv = createLanguageContentValues(value, id)
 
         // then
         assertEquals("values count is correct", 2, cv.size())
@@ -76,7 +84,7 @@ class CreateContentValuesTest {
         val lang = mockLanguage(777L, "Russian")
 
         // when
-        val cv = CreateContentValues.createTermContentValues(value, lang, null)
+        val cv = createTermContentValues(value, lang, null)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
@@ -86,7 +94,7 @@ class CreateContentValuesTest {
 
         // when
         val id = 7L
-        val cv1 = CreateContentValues.createTermContentValues(value, lang.id, null, id)
+        val cv1 = createTermContentValues(value, lang.id, null, id)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -105,7 +113,7 @@ class CreateContentValuesTest {
         val objectMapper = jacksonObjectMapper()
 
         // when
-        val cv = CreateContentValues.createTermContentValues(value, lang, extras)
+        val cv = createTermContentValues(value, lang, extras)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
@@ -116,7 +124,7 @@ class CreateContentValuesTest {
 
         // when
         val id = 7L
-        val cv1 = CreateContentValues.createTermContentValues(value, lang.id, extras, id)
+        val cv1 = createTermContentValues(value, lang.id, extras, id)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -135,7 +143,7 @@ class CreateContentValuesTest {
         val langTranslations = mockLanguage(12L, "French")
 
         // when
-        val cv = CreateContentValues.createDomainContentValues(name, langOriginal, langTranslations)
+        val cv = createDomainContentValues(name, langOriginal, langTranslations)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
@@ -145,7 +153,7 @@ class CreateContentValuesTest {
 
         // when
         val id = 5L
-        val cv1 = CreateContentValues.createDomainContentValues(name, langOriginal.id, langTranslations.id, id)
+        val cv1 = createDomainContentValues(name, langOriginal.id, langTranslations.id, id)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -165,7 +173,7 @@ class CreateContentValuesTest {
         val original = mockTerm("some original term", lang)
 
         // when
-        val cv = CreateContentValues.createCardContentValues(domainId, deckId, original, type)
+        val cv = createCardContentValues(domainId, deckId, original, type)
 
         // then
         assertEquals("values count is correct", 4, cv.size())
@@ -186,7 +194,7 @@ class CreateContentValuesTest {
         val cardId = 7L
 
         // when
-        val cv = CreateContentValues.createCardContentValues(domainId, deckId, original, type, cardId)
+        val cv = createCardContentValues(domainId, deckId, original, type, cardId)
 
         // then
         cv.run {
@@ -199,7 +207,7 @@ class CreateContentValuesTest {
         }
 
         // when
-        val cv1 = CreateContentValues.createCardContentValues(domainId, deckId, original.id, type, cardId)
+        val cv1 = createCardContentValues(domainId, deckId, original.id, type, cardId)
 
         // then
         cv1.run {
@@ -219,7 +227,7 @@ class CreateContentValuesTest {
         val domainId = 3L
 
         // when
-        val cv = CreateContentValues.createDeckContentValues(domainId, name)
+        val cv = createDeckContentValues(domainId, name)
 
         // then
         assertEquals("values count is correct", 2, cv.size())
@@ -235,7 +243,7 @@ class CreateContentValuesTest {
         val deckId = 5L
 
         // when
-        val cv = CreateContentValues.createDeckContentValues(domainId, name, deckId)
+        val cv = createDeckContentValues(domainId, name, deckId)
 
         // then
         assertEquals("values count is correct", 3, cv.size())
@@ -256,7 +264,7 @@ class CreateContentValuesTest {
         )
 
         // when
-        val cvList = CreateContentValues.generateCardsReverseContentValues(cardId, translations)
+        val cvList = generateCardsReverseContentValues(cardId, translations)
 
         // then
         assertEquals("entries count is correct", 3, cvList.size)
@@ -268,7 +276,7 @@ class CreateContentValuesTest {
         }
 
         // when
-        val cvList1 = CreateContentValues.generateCardsReverseContentValues(cardId, translations.map { it.id })
+        val cvList1 = generateCardsReverseContentValues(cardId, translations.map { it.id })
 
         // then
         assertEquals("entries count is correct", 3, cvList1.size)
@@ -290,7 +298,7 @@ class CreateContentValuesTest {
         val learningProgress = mockLearningProgress(due, period)
 
         // when
-        val cv = CreateContentValues.createCardStateContentValues(cardId, exerciseId, learningProgress)
+        val cv = createCardStateContentValues(cardId, exerciseId, learningProgress)
 
         // then
         assertEquals("values count is correct", 4, cv.size())
@@ -301,7 +309,7 @@ class CreateContentValuesTest {
 
         // when
         val state = learningProgress.stateFor(exerciseId)
-        val cv1 = CreateContentValues.createCardStateContentValues(cardId, exerciseId, state.due, state.period)
+        val cv1 = createCardStateContentValues(cardId, exerciseId, state.due, state.period)
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -310,4 +318,9 @@ class CreateContentValuesTest {
         assertEquals("$STATES_DUE_DATE is correct", due, cv1.getAsDate(STATES_DUE_DATE))
         assertEquals("$STATES_PERIOD is correct", period, cv1.get(STATES_PERIOD))
     }
+}
+
+private fun ContentValues.getAsDate(key: String): DateTime? {
+    val timestamp = getAsLong(key)
+    return if (timestamp == null) null else DateTime(timestamp)
 }

@@ -7,27 +7,54 @@ import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.CARDS_REVERSE_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DECKS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.DOMAINS_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.LANGUAGES_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.STATES_CARD_ID
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS
-import com.ashalmawia.coriolan.data.storage.sqlite.SqliteContract.TERMS_ID
-import com.ashalmawia.coriolan.util.string
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsCardType
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsDeckId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsDomainId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsFrontId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.createCardContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.createDeckContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.decksDomainId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.decksId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.decksName
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.createDomainContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.domainsId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.domainsName
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.domainsOriginalLangId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.domainsTranslationsLangId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.LANGUAGES
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.LANGUAGES_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.createLanguageContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.languagesId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.languagesValue
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createCardStateContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesCardId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesDateDue
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesExerciseId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesPeriod
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.createTermContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsExtras
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsLanguageId
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsValue
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.CARDS_REVERSE_CARD_ID
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.generateCardsReverseContentValues
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTranslations.reverseTermId
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
 ) : BackupableRepository {
-
-    private val deserializer: ExtrasDeserializer = CreateContentValues
 
     override fun allLanguages(offset: Int, limit: Int): List<LanguageInfo> {
         val db = helper.readableDatabase
@@ -89,7 +116,7 @@ class SqliteBackupHelper(
                         cursor.termsId(),
                         cursor.termsValue(),
                         cursor.termsLanguageId(),
-                        cursor.termsExtras(deserializer)
+                        cursor.termsExtras()
                 ))
             }
             return list
@@ -233,7 +260,7 @@ class SqliteBackupHelper(
 
         languages.forEach {
             db.insertOrThrow(LANGUAGES, null,
-                    CreateContentValues.createLanguageContentValues(id = it.id, value = it.value)
+                    createLanguageContentValues(id = it.id, value = it.value)
             )
         }
     }
@@ -243,7 +270,7 @@ class SqliteBackupHelper(
 
         domains.forEach {
             db.insertOrThrow(DOMAINS, null,
-                    CreateContentValues.createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
+                    createDomainContentValues(it.name, it.origLangId, it.transLangId, it.id)
             )
         }
     }
@@ -253,7 +280,7 @@ class SqliteBackupHelper(
 
         terms.forEach {
             db.insertOrThrow(TERMS, null,
-                    CreateContentValues.createTermContentValues(it.value, it.languageId, it.extras, it.id)
+                    createTermContentValues(it.value, it.languageId, it.extras, it.id)
             )
         }
     }
@@ -263,9 +290,9 @@ class SqliteBackupHelper(
 
         cards.forEach {
             db.insertOrThrow(CARDS, null,
-                    CreateContentValues.createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, it.id)
+                    createCardContentValues(it.domainId, it.deckId, it.originalId, it.cardType!!, it.id)
             )
-            CreateContentValues.generateCardsReverseContentValues(it.id, it.translationIds).forEach { cv ->
+            generateCardsReverseContentValues(it.id, it.translationIds).forEach { cv ->
                 db.insertOrThrow(CARDS_REVERSE, null, cv)
             }
         }
@@ -276,7 +303,7 @@ class SqliteBackupHelper(
 
         decks.forEach {
             db.insertOrThrow(DECKS, null,
-                    CreateContentValues.createDeckContentValues(it.domainId, it.name, it.id)
+                    createDeckContentValues(it.domainId, it.name, it.id)
             )
         }
     }
@@ -284,7 +311,7 @@ class SqliteBackupHelper(
     override fun writeCardStates(states: List<ExerciseStateInfo>) {
         val db = helper.writableDatabase
         states.forEach {
-            val cv = CreateContentValues.createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.period)
+            val cv = createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.period)
             db.insertOrThrow(STATES, null, cv)
         }
     }

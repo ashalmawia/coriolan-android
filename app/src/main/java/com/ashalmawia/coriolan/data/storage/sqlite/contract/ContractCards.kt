@@ -1,0 +1,69 @@
+package com.ashalmawia.coriolan.data.storage.sqlite.contract
+
+import android.content.ContentValues
+import android.database.Cursor
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
+import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.data.storage.sqlite.long
+import com.ashalmawia.coriolan.data.storage.sqlite.string
+
+object ContractCards {
+
+    const val CARDS = "Cards"
+
+    const val CARDS_ID = "Cards_id"
+    const val CARDS_FRONT_ID = "Cards_FrontId"
+    const val CARDS_DECK_ID = "Cards_DeckId"
+    const val CARDS_DOMAIN_ID = "Cards_DomainId"
+    const val CARDS_TYPE = "Cards_Type"
+
+
+    private val allColumns = arrayOf(
+            CARDS_ID,
+            CARDS_FRONT_ID,
+            CARDS_DECK_ID,
+            CARDS_DOMAIN_ID,
+            CARDS_TYPE
+    )
+    fun allColumnsCards(alias: String? = null) = SqliteUtils.allColumns(allColumns, alias)
+
+
+    fun Cursor.cardsId(): Long { return long(CARDS_ID) }
+    fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }
+    fun Cursor.cardsDeckId(): Long { return long(CARDS_DECK_ID) }
+    fun Cursor.cardsDomainId(): Long { return long(CARDS_DOMAIN_ID) }
+    fun Cursor.cardsCardType(): CardType {
+        val type = string(CARDS_TYPE)
+        return CardType.fromValue(type)
+    }
+    fun Cursor.card(domain: Domain, reverse: Map<Long, List<Term>>): Card {
+        val id = cardsId()
+        return Card(
+                id,
+                cardsDeckId(),
+                domain,
+                cardsCardType(),
+                term(),
+                reverse[id]!!
+        )
+    }
+
+
+    fun createCardContentValues(domainId: Long, deckId: Long, original: Term, cardType: CardType, cardId: Long? = null) =
+            createCardContentValues(domainId, deckId, original.id, cardType, cardId)
+
+    fun createCardContentValues(domainId: Long, deckId: Long, originalId: Long, cardType: CardType, cardId: Long? = null): ContentValues {
+        val cv = ContentValues()
+        if (cardId != null) {
+            cv.put(CARDS_ID, cardId)
+        }
+        cv.put(CARDS_FRONT_ID, originalId)
+        cv.put(CARDS_DECK_ID, deckId)
+        cv.put(CARDS_DOMAIN_ID, domainId)
+        cv.put(CARDS_TYPE, cardType.value)
+        return cv
+    }
+}
