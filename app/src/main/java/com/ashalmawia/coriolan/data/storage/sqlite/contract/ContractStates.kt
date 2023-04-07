@@ -44,7 +44,12 @@ object ContractStates {
             FOREIGN KEY ($STATES_CARD_ID) REFERENCES ${ContractCards.CARDS} (${ContractCards.CARDS_ID})
                ON DELETE CASCADE
                ON UPDATE CASCADE
-        );""".trimMargin()
+        );
+        
+        CREATE INDEX idx_$STATES_DUE_DATE
+        ON $STATES ($STATES_DUE_DATE);
+        
+        """.trimMargin()
 
 
     fun Cursor.statesCardId(): Long { return long(STATES_CARD_ID) }

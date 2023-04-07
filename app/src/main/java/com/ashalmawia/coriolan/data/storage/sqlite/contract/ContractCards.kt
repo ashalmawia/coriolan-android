@@ -50,7 +50,12 @@ object ContractCards {
             FOREIGN KEY ($CARDS_DOMAIN_ID) REFERENCES ${ContractDomains.DOMAINS} (${ContractDomains.DOMAINS_ID})
                ON DELETE CASCADE
                ON UPDATE CASCADE
-        );""".trimMargin()
+        );
+        
+        CREATE INDEX idx_$CARDS_TYPE
+        ON $CARDS ($CARDS_TYPE);
+        
+        """.trimMargin()
 
 
     fun Cursor.cardsId(): Long { return long(CARDS_ID) }
