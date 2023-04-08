@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.exercise.sr
+package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -38,27 +38,27 @@ class FlashcardsExerciseRenderer(
         uiContainer.addView(cardView)
     }
 
-    private fun answers(state: ExerciseState): Array<SRAnswer> {
+    private fun answers(state: ExerciseState): Array<FlashcardsAnswer> {
         return when (state.status) {
-            Status.NEW -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT, SRAnswer.EASY)
-            Status.RELEARN -> arrayOf(SRAnswer.WRONG, SRAnswer.CORRECT)
-            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(SRAnswer.WRONG, SRAnswer.HARD, SRAnswer.CORRECT, SRAnswer.EASY)
+            Status.NEW -> arrayOf(FlashcardsAnswer.WRONG, FlashcardsAnswer.CORRECT, FlashcardsAnswer.EASY)
+            Status.RELEARN -> arrayOf(FlashcardsAnswer.WRONG, FlashcardsAnswer.CORRECT)
+            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(FlashcardsAnswer.WRONG, FlashcardsAnswer.HARD, FlashcardsAnswer.CORRECT, FlashcardsAnswer.EASY)
         }
     }
 
     override fun onEasy() {
-        listener.onAnswered(SRAnswer.EASY)
+        listener.onAnswered(FlashcardsAnswer.EASY)
     }
 
     override fun onCorrect() {
-        listener.onAnswered(SRAnswer.CORRECT)
+        listener.onAnswered(FlashcardsAnswer.CORRECT)
     }
 
     override fun onHard() {
-        listener.onAnswered(SRAnswer.HARD)
+        listener.onAnswered(FlashcardsAnswer.HARD)
     }
 
     override fun onWrong() {
-        listener.onAnswered(SRAnswer.WRONG)
+        listener.onAnswered(FlashcardsAnswer.WRONG)
     }
 }

@@ -34,7 +34,7 @@ class MockBackupableRepository(
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo>
             = decks.subList(min(offset, decks.size), min(offset + limit, decks.size))
 
-    override fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
+    override fun allExerciseStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
         return cardStates.subList(min(offset, cardStates.size), min(offset + limit, cardStates.size))
     }
 
@@ -72,7 +72,7 @@ class MockBackupableRepository(
         this.decks.addAll(decks)
     }
 
-    override fun writeCardStates(states: List<ExerciseStateInfo>) {
+    override fun writeExerciseStates(states: List<ExerciseStateInfo>) {
         this.cardStates.addAll(states)
     }
 

@@ -5,7 +5,7 @@ import android.database.Cursor
 import com.ashalmawia.coriolan.data.storage.sqlite.put
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
 import com.ashalmawia.coriolan.data.storage.sqlite.date
 import com.ashalmawia.coriolan.data.storage.sqlite.int
 import com.ashalmawia.coriolan.data.storage.sqlite.isNull

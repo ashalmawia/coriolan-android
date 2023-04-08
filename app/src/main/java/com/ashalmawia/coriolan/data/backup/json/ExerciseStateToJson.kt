@@ -14,7 +14,7 @@ private const val FIELD_DUE = "due"
 private const val FIELD_INTERVAL = "interval"
 private const val FIELD_INTERVAL_LEGACY = "period"
 
-fun readSRStateFromJson(json: JsonParser): ExerciseStateInfo {
+fun readExerciseStateFromJson(json: JsonParser): ExerciseStateInfo {
     var cardId: Long? = null
     var exercise: String? = ExerciseId.FLASHCARDS.value    // for compatibility with legacy backups
     var due: Long? = null
@@ -42,14 +42,14 @@ fun readSRStateFromJson(json: JsonParser): ExerciseStateInfo {
     }
 
     if (cardId == null || exercise == null || due == null || interval == null) {
-        throw JsonDeserializationException("failed to read SR state: " +
+        throw JsonDeserializationException("failed to read exercise state: " +
                 "cardId $cardId, exercise $exercise, due $due, interval $interval")
     }
 
     return ExerciseStateInfo(cardId, ExerciseId.fromValue(exercise), DateTime(due), interval)
 }
 
-fun writeSRStateToJson(state: ExerciseStateInfo, json: JsonGenerator) {
+fun writeExerciseStateToJson(state: ExerciseStateInfo, json: JsonGenerator) {
     json.writeStartObject()
 
     json.writeNumberField(FIELD_CARD_ID, state.cardId)

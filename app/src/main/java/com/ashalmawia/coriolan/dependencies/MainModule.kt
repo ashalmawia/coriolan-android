@@ -25,8 +25,8 @@ import com.ashalmawia.coriolan.learning.assignment.HistoryFactory
 import com.ashalmawia.coriolan.learning.assignment.HistoryFactoryImpl
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistryImpl
-import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
+import com.ashalmawia.coriolan.learning.exercise.flashcards.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
 import org.koin.dsl.module
 

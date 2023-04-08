@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.exercise
 
-import com.ashalmawia.coriolan.learning.exercise.sr.FlashcardsExercise
+import com.ashalmawia.coriolan.learning.exercise.flashcards.FlashcardsExercise
 
 class ExercisesRegistryImpl : ExercisesRegistry {
 

@@ -16,7 +16,7 @@ interface BackupableRepository {
 
     fun allDecks(offset: Int, limit: Int): List<DeckInfo>
 
-    fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo>
+    fun allExerciseStates(offset: Int, limit: Int): List<ExerciseStateInfo>
 
     fun writeLanguages(languages: List<LanguageInfo>)
 
@@ -28,7 +28,7 @@ interface BackupableRepository {
 
     fun writeDecks(decks: List<DeckInfo>)
 
-    fun writeCardStates(states: List<ExerciseStateInfo>)
+    fun writeExerciseStates(states: List<ExerciseStateInfo>)
 
     fun overrideRepositoryData(override: (BackupableRepository) -> Unit)
 

@@ -2,10 +2,10 @@ package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.model.mockEmptyExerciseState
-import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
-import com.ashalmawia.coriolan.learning.exercise.sr.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
-import com.ashalmawia.coriolan.learning.exercise.sr.SpacedRepetitionScheduler
+import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.MultiplierBasedScheduler
+import com.ashalmawia.coriolan.learning.exercise.flashcards.FlashcardsAnswer
+import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +28,7 @@ class MultiplierBasedSchedulerTest {
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
         // when
-        state = scheduler.processAnswer(SRAnswer.WRONG, state)
+        state = scheduler.processAnswer(FlashcardsAnswer.WRONG, state)
 
         // then
         val today = today
@@ -334,7 +334,7 @@ class MultiplierBasedSchedulerTest {
     }
 }
 
-private fun SpacedRepetitionScheduler.wrong(ExerciseState: ExerciseState) = processAnswer(SRAnswer.WRONG, ExerciseState)
-private fun SpacedRepetitionScheduler.correct(ExerciseState: ExerciseState) = processAnswer(SRAnswer.CORRECT, ExerciseState)
-private fun SpacedRepetitionScheduler.easy(ExerciseState: ExerciseState) = processAnswer(SRAnswer.EASY, ExerciseState)
-private fun SpacedRepetitionScheduler.hard(ExerciseState: ExerciseState) = processAnswer(SRAnswer.HARD, ExerciseState)
+private fun SpacedRepetitionScheduler.wrong(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.WRONG, ExerciseState)
+private fun SpacedRepetitionScheduler.correct(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.CORRECT, ExerciseState)
+private fun SpacedRepetitionScheduler.easy(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.EASY, ExerciseState)
+private fun SpacedRepetitionScheduler.hard(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.HARD, ExerciseState)

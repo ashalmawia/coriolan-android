@@ -89,6 +89,6 @@ fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
         it.writeDecks(decks)
         it.writeTerms(terms)
         it.writeCards(cards)
-        it.writeCardStates(states)
+        it.writeExerciseStates(states)
     }
 }

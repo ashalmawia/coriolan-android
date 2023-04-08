@@ -93,11 +93,11 @@ class BackupableRepositoryTransactionTest {
     }
 
     @Test
-    fun testSRStates() {
+    fun testExerciseStates() {
         // given
         val repo = object : OpenBackupableRepostory(realRepo) {
-            override fun writeCardStates(states: List<ExerciseStateInfo>) {
-                super.writeCardStates(states)
+            override fun writeExerciseStates(states: List<ExerciseStateInfo>) {
+                super.writeExerciseStates(states)
                 throw Exception()
             }
         }
@@ -124,7 +124,7 @@ private fun assertEmpty(repository: BackupableRepository) {
     assertTrue(repository.allDecks(0, 500).isEmpty())
     assertTrue(repository.allCards(0, 500).isEmpty())
     assertTrue(repository.allTerms(0, 500).isEmpty())
-    assertTrue(repository.allCardStates( 0, 500).isEmpty())
+    assertTrue(repository.allExerciseStates( 0, 500).isEmpty())
 }
 
 private fun provideBackupInputStream(): InputStream {
@@ -134,7 +134,7 @@ private fun provideBackupInputStream(): InputStream {
     tempRepo.writeTerms(JsonBackupTestData.terms)
     tempRepo.writeDecks(JsonBackupTestData.decks)
     tempRepo.writeCards(JsonBackupTestData.cards)
-    tempRepo.writeCardStates(JsonBackupTestData.cardStates)
+    tempRepo.writeExerciseStates(JsonBackupTestData.cardStates)
 
     val output = ByteArrayOutputStream()
     JsonBackup().create(tempRepo, output)
@@ -155,8 +155,8 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun allDecks(offset: Int, limit: Int): List<DeckInfo> = inner.allDecks(offset, limit)
 
-    override fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo>
-            = inner.allCardStates(offset, limit)
+    override fun allExerciseStates(offset: Int, limit: Int): List<ExerciseStateInfo>
+            = inner.allExerciseStates(offset, limit)
 
     override fun overrideRepositoryData(override: (BackupableRepository) -> Unit) {
         inner.overrideRepositoryData(override)
@@ -172,7 +172,7 @@ class OpenBackupableRepostory(private val inner: BackupableRepository) : Backupa
 
     override fun writeDecks(decks: List<DeckInfo>) = inner.writeDecks(decks)
 
-    override fun writeCardStates(states: List<ExerciseStateInfo>) = inner.writeCardStates(states)
+    override fun writeExerciseStates(states: List<ExerciseStateInfo>) = inner.writeExerciseStates(states)
 
     override fun hasAtLeastOneCard(): Boolean = inner.hasAtLeastOneCard()
 }

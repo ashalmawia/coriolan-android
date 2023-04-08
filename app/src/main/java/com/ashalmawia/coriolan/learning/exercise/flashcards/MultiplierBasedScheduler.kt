@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.exercise.sr
+package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import com.ashalmawia.coriolan.learning.TodayManager
 import org.joda.time.Days
@@ -12,12 +12,12 @@ private const val NEW_RESPONDED_EASY_DAYS = 4
 
 class MultiplierBasedScheduler : SpacedRepetitionScheduler {
 
-    override fun processAnswer(answer: SRAnswer, state: ExerciseState): ExerciseState {
+    override fun processAnswer(answer: FlashcardsAnswer, state: ExerciseState): ExerciseState {
         return when (answer) {
-            SRAnswer.WRONG -> wrong(state)
-            SRAnswer.CORRECT -> correct(state)
-            SRAnswer.EASY -> easy(state)
-            SRAnswer.HARD -> hard(state)
+            FlashcardsAnswer.WRONG -> wrong(state)
+            FlashcardsAnswer.CORRECT -> correct(state)
+            FlashcardsAnswer.EASY -> easy(state)
+            FlashcardsAnswer.HARD -> hard(state)
         }
     }
 

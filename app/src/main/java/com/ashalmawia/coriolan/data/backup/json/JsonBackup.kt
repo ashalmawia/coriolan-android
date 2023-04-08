@@ -4,7 +4,6 @@ import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.CardInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
-import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
 import com.ashalmawia.coriolan.data.backup.TermExtraInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.model.CardType
@@ -69,7 +68,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
                     cards.addAll(list)
                 }
                 FIELD_DECKS -> read(json, deserializer::readDeck, repository::writeDecks)
-                FIELD_CARD_STATES, FIELD_CARD_STATES_LEGACY -> readSRStates(json, deserializer::readCardStateSR, repository)
+                FIELD_CARD_STATES, FIELD_CARD_STATES_LEGACY -> read(json, deserializer::readExerciseState, repository::writeExerciseStates)
             }
         }
 
@@ -107,7 +106,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         write(FIELD_TERMS, repository::allTerms, json, serializer::writeTerm)
         write(FIELD_DECKS, repository::allDecks, json, serializer::writeDeck)
         write(FIELD_CARDS, repository::allCards, json, serializer::writeCard)
-        writeSRStates(repository, json, serializer::writeCardState)
+        write(FIELD_CARD_STATES, repository::allExerciseStates, json, serializer::writeCardState)
 
         json.writeEndObject()
         json.close()
@@ -145,31 +144,6 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         }
         if (items.isNotEmpty()) {
             writer(items)
-        }
-    }
-
-    private fun writeSRStates(
-            repository: BackupableRepository,
-            json: JsonGenerator,
-            serializer: (ExerciseStateInfo, JsonGenerator) -> Unit
-    ) {
-        json.writeFieldName(FIELD_CARD_STATES)
-        json.writeStartObject()
-
-        write("dummy", { offset, limit -> repository.allCardStates(offset, limit) }, json, serializer)
-
-        json.writeEndObject()
-    }
-
-    private fun readSRStates(
-            json: JsonParser,
-            deserializer: (JsonParser) -> ExerciseStateInfo,
-            repository: BackupableRepository
-    ) {
-        json.nextToken() // "{"
-
-        while (json.nextToken() != JsonToken.END_OBJECT) {
-            read(json, deserializer) { list -> repository.writeCardStates(list) }
         }
     }
 }

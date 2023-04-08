@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.learning.exercise.sr.SRAnswer
+import com.ashalmawia.coriolan.learning.exercise.flashcards.FlashcardsAnswer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
@@ -43,7 +43,7 @@ class CardView : FrameLayout {
         touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
     }
 
-    fun bind(card: Card, answers: List<SRAnswer>) {
+    fun bind(card: Card, answers: List<FlashcardsAnswer>) {
         frontText.text = card.original.value
         transcriptionText.bindTranscription(card.original.transcription)
 
@@ -55,16 +55,16 @@ class CardView : FrameLayout {
         showFront()
     }
 
-    private fun configureButtonsBar(answers: List<SRAnswer>) {
-        if (!answers.contains(SRAnswer.WRONG) || !answers.contains(SRAnswer.CORRECT)) {
+    private fun configureButtonsBar(answers: List<FlashcardsAnswer>) {
+        if (!answers.contains(FlashcardsAnswer.WRONG) || !answers.contains(FlashcardsAnswer.CORRECT)) {
             throw IllegalStateException("no wrong or correct state, unsupported")
         }
 
-        val hasHard = answers.contains(SRAnswer.HARD)
+        val hasHard = answers.contains(FlashcardsAnswer.HARD)
         buttonHard.visible = hasHard
         buttonHardCover.visible = !hasHard
 
-        val hasEasy = answers.contains(SRAnswer.EASY)
+        val hasEasy = answers.contains(FlashcardsAnswer.EASY)
         buttonEasy.visible = hasEasy
         buttonEasyCover.visible = !hasEasy
     }

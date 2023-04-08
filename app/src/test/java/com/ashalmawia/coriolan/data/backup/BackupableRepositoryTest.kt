@@ -98,7 +98,7 @@ abstract class BackupableRepositoryTest {
     @Test
     fun test__cardStates__empty() {
         // then
-        testEmpty({ states -> repo.writeCardStates(states) }, { offset, limit -> repo.allCardStates(offset, limit)})
+        testEmpty({ states -> repo.writeExerciseStates(states) }, { offset, limit -> repo.allExerciseStates(offset, limit)})
     }
 
     @Test
@@ -113,8 +113,8 @@ abstract class BackupableRepositoryTest {
         // then
         testNonEmpty(
                 cardStates.sortedBy { it.cardId },
-                { states -> repo.writeCardStates(states) },
-                { offset, limit -> repo.allCardStates(offset, limit).sortedBy { it.cardId } }
+                { states -> repo.writeExerciseStates(states) },
+                { offset, limit -> repo.allExerciseStates(offset, limit).sortedBy { it.cardId } }
         )
     }
 
@@ -126,7 +126,7 @@ abstract class BackupableRepositoryTest {
         repo.writeTerms(terms)
         repo.writeDecks(decks)
         repo.writeCards(cards)
-        repo.writeCardStates(cardStates)
+        repo.writeExerciseStates(cardStates)
 
         // when
         repo.overrideRepositoryData { }
@@ -137,7 +137,7 @@ abstract class BackupableRepositoryTest {
         assertTrue(repo.allTerms(0, 500).isEmpty())
         assertTrue(repo.allCards(0, 500).isEmpty())
         assertTrue(repo.allDecks(0, 500).isEmpty())
-        assertTrue(repo.allCardStates(0, 500).isEmpty())
+        assertTrue(repo.allExerciseStates(0, 500).isEmpty())
     }
 
     @Test
@@ -148,7 +148,7 @@ abstract class BackupableRepositoryTest {
         repo.writeTerms(terms)
         repo.writeDecks(decks)
         repo.writeCards(cards)
-        repo.writeCardStates(cardStates)
+        repo.writeExerciseStates(cardStates)
 
         // when
         repo.overrideRepositoryData { repo ->
@@ -157,7 +157,7 @@ abstract class BackupableRepositoryTest {
             repo.writeTerms(terms)
             repo.writeDecks(decks)
             repo.writeCards(cards)
-            repo.writeCardStates(cardStates)
+            repo.writeExerciseStates(cardStates)
         }
 
         // then
@@ -166,7 +166,7 @@ abstract class BackupableRepositoryTest {
         assertEquals(terms, repo.allTerms(0, 500))
         assertEquals(cards, repo.allCards(0, 500))
         assertEquals(decks, repo.allDecks(0, 500))
-        assertEquals(cardStates.sortedBy { it.cardId }, repo.allCardStates(0, 500).sortedBy { it.cardId })
+        assertEquals(cardStates.sortedBy { it.cardId }, repo.allExerciseStates(0, 500).sortedBy { it.cardId })
     }
 
     @Test

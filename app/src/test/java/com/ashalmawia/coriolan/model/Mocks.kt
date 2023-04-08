@@ -7,8 +7,8 @@ import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
-import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
-import com.ashalmawia.coriolan.learning.exercise.sr.INTERVAL_NEVER_SCHEDULED
+import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.INTERVAL_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.mockToday
 import org.joda.time.DateTime
 

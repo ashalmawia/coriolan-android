@@ -65,7 +65,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck

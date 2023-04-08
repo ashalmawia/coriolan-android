@@ -8,7 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ashalmawia.coriolan.data.storage.StorageBenchmarkUtil.benchmark
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType

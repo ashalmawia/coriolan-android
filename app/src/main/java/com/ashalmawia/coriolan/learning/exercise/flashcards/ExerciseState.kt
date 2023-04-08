@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.exercise.sr
+package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayManager

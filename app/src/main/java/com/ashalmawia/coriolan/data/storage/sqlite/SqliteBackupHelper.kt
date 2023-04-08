@@ -169,7 +169,7 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun allCardStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
+    override fun allExerciseStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -286,7 +286,7 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun writeCardStates(states: List<ExerciseStateInfo>) {
+    override fun writeExerciseStates(states: List<ExerciseStateInfo>) {
         val db = helper.writableDatabase
         states.forEach {
             val cv = createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.interval)

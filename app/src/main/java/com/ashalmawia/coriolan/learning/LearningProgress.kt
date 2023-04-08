@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning
 
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.sr.ExerciseState
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.emptyState
 
 data class LearningProgress(
     val states: Map<ExerciseId, ExerciseState>

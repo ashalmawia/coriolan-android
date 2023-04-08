@@ -431,7 +431,7 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
-    fun test__updateSRCardState__cardIncorrect() {
+    fun test__updateCardLearningProgress__cardIncorrect() {
         // when
         val storage = prefilledStorage.value
         val newLearningProgress = mockLearningProgress(today.plusDays(8), 8)

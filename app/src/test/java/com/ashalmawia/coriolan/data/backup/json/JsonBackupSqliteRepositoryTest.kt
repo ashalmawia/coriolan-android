@@ -22,7 +22,7 @@ class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
         repo.writeTerms(JsonBackupTestData.terms)
         repo.writeDecks(JsonBackupTestData.decks)
         repo.writeCards(JsonBackupTestData.cards)
-        repo.writeCardStates(JsonBackupTestData.cardStates)
+        repo.writeExerciseStates(JsonBackupTestData.cardStates)
 
         return repo
     }

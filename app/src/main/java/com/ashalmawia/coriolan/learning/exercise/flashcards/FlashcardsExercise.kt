@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.exercise.sr
+package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import android.content.Context
 import android.view.ViewGroup

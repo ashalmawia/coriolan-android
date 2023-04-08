@@ -36,7 +36,7 @@ abstract class JsonBackupTest {
     }
 
     @Test
-    fun test__singleSRStateExercise() {
+    fun test__singleExercise() {
         // given
         val repo = createNonEmptyRepo()
 
@@ -45,7 +45,7 @@ abstract class JsonBackupTest {
     }
 
     @Test
-    fun test__multipleSRStateExercises() {
+    fun test__multipleExercises() {
         // given
         val repo = createNonEmptyRepo()
 
@@ -54,7 +54,7 @@ abstract class JsonBackupTest {
     }
 
     @Test
-    fun test__multipleSRStateExercisesAndSomeWithoutState() {
+    fun test__multipleExercisesAndSomeWithoutState() {
         // given
         val repo = createNonEmptyRepo()
 
@@ -141,7 +141,7 @@ abstract class JsonBackupTest {
         assertEquals(expected.allTerms(0, 500), actual.allTerms(0, 500))
         assertEquals(expected.allCards(0, 500), actual.allCards(0, 500))
         assertEquals(expected.allDecks(0, 500), actual.allDecks(0, 500))
-        assertEquals(expected.allCardStates(0, 500), actual.allCardStates(0, 500))
+        assertEquals(expected.allExerciseStates(0, 500), actual.allExerciseStates(0, 500))
     }
 
     @Test
@@ -193,7 +193,7 @@ abstract class JsonBackupTest {
         assertEquals(decks, repo.allDecks(0, 500))
         assertEquals(terms, repo.allTerms(0, 500))
         assertEquals(cards, repo.allCards(0, 500))
-        assertEquals(states, repo.allCardStates(0, 500))
+        assertEquals(states, repo.allExerciseStates(0, 500))
     }
 }
 

@@ -1601,7 +1601,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun test__updateSRCardState__nonExistent() {
+    fun test__updateCardLearningProgress__nonExistent() {
         // given
         val storage = prefilledStorage.value
 
@@ -1615,7 +1615,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun test__updateSRCardState__stateNeverUpdated() {
+    fun test__updateCardLearningProgress__stateNeverUpdated() {
         // given
         val storage = prefilledStorage.value
 
@@ -1630,7 +1630,7 @@ abstract class StorageTest {
     }
 
     @Test
-    fun test__updateSRCardState__existent() {
+    fun test__updateCardLearningProgress__existent() {
         // given
         val storage = prefilledStorage.value
 

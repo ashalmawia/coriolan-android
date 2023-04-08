@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.sr.INTERVAL_LEARNT
-import com.ashalmawia.coriolan.learning.exercise.sr.emptyState
+import com.ashalmawia.coriolan.learning.exercise.flashcards.INTERVAL_LEARNT
+import com.ashalmawia.coriolan.learning.exercise.flashcards.emptyState
 import com.ashalmawia.coriolan.model.mockState
 import org.junit.Assert.assertEquals
 import org.junit.Test

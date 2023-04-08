@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.learning.exercise.sr
+package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import android.content.Context
 import android.view.ViewGroup
@@ -40,12 +40,12 @@ class FlashcardsExerciseExecutor(
     override fun onAnswered(answer: Any) {
         val card = currentTask!!
         val oldState = card.learningProgress
-        val updated = processReply(card, answer as SRAnswer)
+        val updated = processReply(card, answer as FlashcardsAnswer)
         logbook.recordCardAction(card.card, oldState, updated.learningProgress)
         listener.onTaskStudied(updated)
     }
 
-    private fun processReply(task: Task, answer: SRAnswer): Task {
+    private fun processReply(task: Task, answer: FlashcardsAnswer): Task {
         val newState = scheduler.processAnswer(answer, task.exerciseState)
         return updateTask(task, task.learningProgressWithUpdatedExerciseState(newState))
     }
