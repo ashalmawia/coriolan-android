@@ -21,13 +21,19 @@ object ContractStates {
     const val STATES_EXERCISE = "States_Exercise"
     const val STATES_DUE_DATE = "States_DueDate"
     const val STATES_INTERVAL = "States_Interval"
+    const val STATES_IS_ACTIVE = "States_Active"
     const val STATES_PAYLOAD = "States_Payload"
+
+    const val STATES__CARD_ACTIVE = 0
+    //const val STATES__CARD_POSTPONED = 1
+    //etc.
 
     private val allColumns = arrayOf(
             STATES_CARD_ID,
             STATES_EXERCISE,
             STATES_DUE_DATE,
             STATES_INTERVAL,
+            STATES_IS_ACTIVE,
             STATES_PAYLOAD
     )
     fun allColumnsStates(alias: String? = null): String = SqliteUtils.allColumns(allColumns, alias)
@@ -38,6 +44,7 @@ object ContractStates {
             $STATES_EXERCISE TEXT NOT NULL,
             $STATES_DUE_DATE INTEGER NOT NULL,
             $STATES_INTERVAL INTEGER NOT NULL,
+            $STATES_IS_ACTIVE INTEGER NOT NULL,
             $STATES_PAYLOAD TEXT,
             
             PRIMARY KEY($STATES_CARD_ID, $STATES_EXERCISE),
@@ -48,6 +55,9 @@ object ContractStates {
         
         CREATE INDEX idx_$STATES_DUE_DATE
         ON $STATES ($STATES_DUE_DATE);
+        
+        CREATE INDEX idx_$STATES_IS_ACTIVE
+        ON $STATES ($STATES_IS_ACTIVE);
         
         """.trimMargin()
 
@@ -83,6 +93,7 @@ object ContractStates {
         cv.put(STATES_EXERCISE, exerciseId.value)
         cv.put(STATES_DUE_DATE, due)
         cv.put(STATES_INTERVAL, interval)
+        cv.put(STATES_IS_ACTIVE, STATES__CARD_ACTIVE)
         return cv
     }
 }

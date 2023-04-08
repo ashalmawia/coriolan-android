@@ -7,11 +7,11 @@
 +-----------------------------------------+---------+
 | Task                                    |    Time |
 +-----------------------------------------+---------+
-| query deck pending cards                | 10.601s |
+| query deck pending cards                | 11.267s |
 | query progress for cards with originals |  9.230s |
 | query all cards                         |  6.876s |
 | query cards of deck                     |  6.837s |
-| query deck pending counts               |  3.172s |
+| query deck pending counts               |  3.581s |
 | query term is used                      |  0.292s |
 | query card by values                    |  0.035s |
 | query all domains                       |  0.006s |

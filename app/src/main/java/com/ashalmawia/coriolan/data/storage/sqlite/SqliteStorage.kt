@@ -40,8 +40,10 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.al
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.createLanguageContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractLanguages.language
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_IS_ACTIVE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_CARD_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_DUE_DATE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES__CARD_ACTIVE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.allColumnsStates
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createAllLearningProgressContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.exerciseState
@@ -693,7 +695,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                    AND
                $CARDS_TYPE IN (${types.joinToString { "'${it.value}'" }})
                    AND
-               ${onlyPending()}
+               ($STATES_DUE_DATE IS NULL OR $STATES_DUE_DATE <= ? AND $STATES_IS_ACTIVE = $STATES__CARD_ACTIVE)
         """.trimMargin(), arrayOf(deck.id.toString(), date.timespamp.toString()))
 
         val pendingStates = mutableMapOf<Long, MutableMap<ExerciseId, ExerciseState>>()
@@ -793,8 +795,6 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
         return map
     }
-
-    private fun onlyPending() = "($STATES_DUE_DATE IS NULL OR $STATES_DUE_DATE <= ?)"
 
     override fun invalidateCache() {
         // nothing to do here
