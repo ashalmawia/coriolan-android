@@ -8,6 +8,9 @@ interface Preferences {
     fun isFirstStart(): Boolean
     fun recordFirstStart()
 
+    fun isOnboardingCompleted(): Boolean
+    fun recordOnboardingCompleted()
+
     fun getNewCardsDailyLimitDefault(): Int?
     fun getNewCardsDailyLimit(date: DateTime): Int?
     fun setNewCardsDailyLimitDefault(limit: Int)

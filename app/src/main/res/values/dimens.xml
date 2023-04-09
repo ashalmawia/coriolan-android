@@ -31,4 +31,6 @@
 	<!-- Workaround for a Google bug with AppBarLayout elevation delay -->
 	<integer name="app_bar_elevation_anim_duration" tools:override="true">0</integer>
 
+	<dimen name="onboarding_idicator_size">8dp</dimen>
+
 </resources>

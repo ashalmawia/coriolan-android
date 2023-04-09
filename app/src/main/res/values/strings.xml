@@ -165,6 +165,27 @@
 		you need to give Coriolan permission to access files on your device.
 		You can do this in system settings.</string>
 
+	<!-- Onboarding -->
+	<string name="onboarding_1_title">Add new words</string>
+	<string name="onboarding_1_description">Every new word you add becomes a card. It has two sides:
+		one in the language you learn, and the other in your native language.</string>
+	<string name="onboarding_2_title">Studying is a game</string>
+	<string name="onboarding_2_description">You see a word in one language, and you need to guess it
+		in the other language. Then tap the question mark to see if you guessed it right.</string>
+	<string name="onboarding_3_title">Evaluate yourself</string>
+	<string name="onboarding_3_description">Evaluate yourself by pressing one of the buttons below.
+		Didn\'t guess right? Then you\'ll see the word again soon. Guessed right? It will appear again
+	    next day.</string>
+	<string name="onboarding_4_title">Smart scheduling</string>
+	<string name="onboarding_4_description">The better you remember a word, the longer you won\'t see it again.
+		And vice versa. This way you can focus on the words that need your attention more.</string>
+	<string name="onboarding_5_title">Study regularly</string>
+	<string name="onboarding_5_description">You only remember things well if you see them on a regular basis.
+		For the best results study every day. Want to study less? or more? You can change the daily limits in Settings.</string>
+	<string name="onboarding_skip">SKIP</string>
+	<string name="onboarding_done">DONE</string>
+	<string name="onboarding_next">Next</string>
+
 	<!-- General -->
 	<string name="button_ok">OK</string>
 	<string name="button_submit">Submit</string>

@@ -14,6 +14,7 @@
 	<color name="colorAccentContrast">@color/colorSecondaryDark</color>
 
 	<color name="textColorPrimary">@color/colorPrimaryDark</color>
+	<color name="textColorSecondary">@color/colorPrimary</color>
 
 	<color name="grey">#BBBBBB</color>
 	<color name="grey_light">#EEEEEE</color>

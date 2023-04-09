@@ -18,6 +18,14 @@ class SharedPreferencesImpl(context: Context) : Preferences {
         prefs.edit().putBoolean(IS_FIRST_START, false).apply()
     }
 
+    override fun isOnboardingCompleted(): Boolean {
+        return prefs.getBoolean(IS_ONBOARDING_COMPLETED, false)
+    }
+
+    override fun recordOnboardingCompleted() {
+        prefs.edit().putBoolean(IS_ONBOARDING_COMPLETED, true).apply()
+    }
+
     override fun getNewCardsDailyLimitDefault(): Int? {
         return dailyLimitsNew.getIntOrNull(DEFAULT)
     }
@@ -74,5 +82,6 @@ class SharedPreferencesImpl(context: Context) : Preferences {
 }
 
 private const val IS_FIRST_START = "is_first_start"
+private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
 private const val DEFAULT = "default"
 private const val LAST_TRANSLATIONS_LANGUAGE = "last_translations_language"

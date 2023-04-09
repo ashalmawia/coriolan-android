@@ -1,5 +1,8 @@
 <resources>
 
+	<style name="TextDefault" parent="TextAppearance.AppCompat.Medium" />
+	<style name="TextTitle" parent="TextAppearance.AppCompat.Title" />
+
 	<style name="CardText">
 		<item name="android:textSize">@dimen/card_text_size</item>
 		<item name="android:padding">10dp</item>

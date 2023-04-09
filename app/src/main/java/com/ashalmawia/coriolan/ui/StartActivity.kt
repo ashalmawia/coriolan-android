@@ -2,20 +2,36 @@ package com.ashalmawia.coriolan.ui
 
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
-import org.koin.android.ext.android.get
+import com.ashalmawia.coriolan.ui.onboarding.OnboardingActivity
+import org.koin.android.ext.android.inject
 
 class StartActivity : BaseActivity() {
 
-    private val repository: Repository = get()
+    private val repository: Repository by inject()
+    private val preferences: Preferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
+        if (!preferences.isOnboardingCompleted()) {
+            navigateToOnboarding()
+        } else {
+            navigateToDomains()
+        }
+    }
+
+    private fun navigateToOnboarding() {
+        val intent = OnboardingActivity.intent(this)
+        startActivity(intent)
+    }
+
+    private fun navigateToDomains() {
         val domains = repository.allDomains()
 
         when (domains.size) {

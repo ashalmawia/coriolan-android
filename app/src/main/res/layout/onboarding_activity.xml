@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/colorPrimaryLightest"
+	android:orientation="vertical">
+
+	<androidx.viewpager2.widget.ViewPager2
+		android:id="@+id/onboardingSlider"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="horizontal"
+		/>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<Button
+			android:id="@+id/onboardingButtonSkip"
+			style="@style/Widget.AppCompat.Button.Borderless"
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:layout_height="wrap_content"
+			android:text="@string/onboarding_skip"
+			/>
+
+		<LinearLayout
+			android:id="@+id/onboardingIndicatorsContainer"
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:layout_height="match_parent"
+			android:gravity="center">
+
+			<ImageView
+				android:layout_width="@dimen/onboarding_idicator_size"
+				android:layout_height="@dimen/onboarding_idicator_size"
+				android:layout_marginStart="4dp"
+				android:layout_marginEnd="4dp"
+				android:src="@drawable/onboarding_indicator"
+				/>
+
+			<ImageView
+				android:layout_width="@dimen/onboarding_idicator_size"
+				android:layout_height="@dimen/onboarding_idicator_size"
+				android:layout_marginEnd="4dp"
+				android:src="@drawable/onboarding_indicator"
+				/>
+
+			<ImageView
+				android:layout_width="@dimen/onboarding_idicator_size"
+				android:layout_height="@dimen/onboarding_idicator_size"
+				android:layout_marginEnd="4dp"
+				android:src="@drawable/onboarding_indicator"
+				/>
+
+			<ImageView
+				android:layout_width="@dimen/onboarding_idicator_size"
+				android:layout_height="@dimen/onboarding_idicator_size"
+				android:layout_marginEnd="4dp"
+				android:src="@drawable/onboarding_indicator"
+				/>
+
+			<ImageView
+				android:layout_width="@dimen/onboarding_idicator_size"
+				android:layout_height="@dimen/onboarding_idicator_size"
+				android:layout_marginEnd="4dp"
+				android:src="@drawable/onboarding_indicator"
+				/>
+
+		</LinearLayout>
+
+		<FrameLayout
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/onboardingButtonDone"
+				style="@style/Widget.AppCompat.Button.Borderless"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/onboarding_done"
+				android:visibility="gone" />
+
+			<ImageButton
+				android:id="@+id/onboardingButtonNext"
+				style="@style/Widget.AppCompat.Button.Borderless"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_chevron_right_24"
+				app:tint="@color/colorPrimary"
+				android:contentDescription="@string/onboarding_next"/>
+
+		</FrameLayout>
+
+	</LinearLayout>
+
+</LinearLayout>
