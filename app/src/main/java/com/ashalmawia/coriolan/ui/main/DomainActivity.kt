@@ -6,13 +6,19 @@ import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.closeScope
 import com.ashalmawia.coriolan.dependencies.createDomainScope
 import com.ashalmawia.coriolan.dependencies.createScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.commons.showFeatureDiscoverySequence
+import com.ashalmawia.coriolan.ui.commons.tapTargetForNavigationIcon
+import com.ashalmawia.coriolan.ui.commons.tapTargetForToolbarOverflow
+import com.ashalmawia.coriolan.ui.commons.tapTargetForView
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragmentListener
@@ -21,6 +27,7 @@ import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import kotlinx.android.synthetic.main.domain_activity.*
+import kotlinx.android.synthetic.main.learning_activity.toolbar
 import org.koin.android.ext.android.inject
 
 private enum class Tab {
@@ -42,6 +49,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     private val TAG = DomainActivity::class.java.simpleName
 
     private val repository: Repository by inject()
+    private val preferences: Preferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,6 +151,23 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     override fun onDataUpdated() {
         selectTab(Tab.DECKS_LIST)
+    }
+
+    fun onDecksListFragmentInflated(firstDeckView: View) {
+        if (!preferences.isMainFeatureDiscoverySeen()) {
+            showMainFeatureDiscovery(firstDeckView)
+        }
+    }
+
+    private fun showMainFeatureDiscovery(firstDeckView: View) {
+        val editTab = bottomNavigation.getViewAtPosition(1)
+
+        showFeatureDiscoverySequence(listOf(
+                tapTargetForView(firstDeckView, R.string.feature_discovery_deck_title, R.string.feature_discovery_deck_description),
+                tapTargetForView(editTab, R.string.feature_discovery_edit_title, R.string.feature_discovery_edit_description),
+                tapTargetForNavigationIcon(toolbar, R.string.feature_discovery_back_title, R.string.feature_discovery_back_description),
+                tapTargetForToolbarOverflow(toolbar, R.string.feature_discovery_overflow_title, R.string.feature_discovery_overflow_description)
+        )) { preferences.recordMainFeatureDiscoverySeen() }
     }
 
     companion object {

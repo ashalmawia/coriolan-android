@@ -26,6 +26,14 @@ class SharedPreferencesImpl(context: Context) : Preferences {
         prefs.edit().putBoolean(IS_ONBOARDING_COMPLETED, true).apply()
     }
 
+    override fun isMainFeatureDiscoverySeen(): Boolean {
+        return prefs.getBoolean(IS_MAIN_FEATURE_DISCOVERY_SEEN, false)
+    }
+
+    override fun recordMainFeatureDiscoverySeen() {
+        prefs.edit().putBoolean(IS_MAIN_FEATURE_DISCOVERY_SEEN, true).apply()
+    }
+
     override fun getNewCardsDailyLimitDefault(): Int? {
         return dailyLimitsNew.getIntOrNull(DEFAULT)
     }
@@ -83,5 +91,6 @@ class SharedPreferencesImpl(context: Context) : Preferences {
 
 private const val IS_FIRST_START = "is_first_start"
 private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
+private const val IS_MAIN_FEATURE_DISCOVERY_SEEN = "is_main_feature_discovery_seen"
 private const val DEFAULT = "default"
 private const val LAST_TRANSLATIONS_LANGUAGE = "last_translations_language"

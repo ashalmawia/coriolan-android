@@ -2,29 +2,31 @@ package com.ashalmawia.coriolan.ui.main.decks_list
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.dependencies.domainScope
-import com.ashalmawia.coriolan.learning.*
+import com.ashalmawia.coriolan.learning.TodayChangeListener
+import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
-import kotlinx.android.synthetic.main.learning.*
+import com.ashalmawia.coriolan.ui.main.DomainActivity
+import kotlinx.android.synthetic.main.learning.decksList
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
-import kotlin.collections.List
 
 private const val TAG = "LearningFragment"
 
@@ -43,6 +45,19 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
 
         setHasOptionsMenu(true)
         initializeList()
+
+        reportFragmentInflated(view)
+    }
+
+    private fun reportFragmentInflated(view: View) {
+        val globalLayoutListener = object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val firstDeckView = firstDeckView() ?: return
+                (requireActivity() as DomainActivity).onDecksListFragmentInflated(firstDeckView)
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
     }
 
     override fun onStart() {
@@ -91,6 +106,10 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
                 DeckListItem(it, CardType.FORWARD),
                 DeckListItem(it, CardType.REVERSE)
         ) }
+    }
+
+    private fun firstDeckView(): View? {
+        return (decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.text
     }
 }
 

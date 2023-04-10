@@ -185,6 +185,17 @@
 	<string name="onboarding_skip">SKIP</string>
 	<string name="onboarding_done">DONE</string>
 	<string name="onboarding_next">Next</string>
+	
+	<string name="feature_discovery_deck_title">Tap on a deck to study</string>
+	<string name="feature_discovery_deck_description">You can organize your words into more decks, such as
+		one per topic/lesson, or just use the Default one.</string>
+	<string name="feature_discovery_edit_title">Use Edit to add more words</string>
+	<string name="feature_discovery_edit_description">Also to add or edit new decks, rename decks etc.</string>
+	<string name="feature_discovery_back_title">Want to study another language?</string>
+	<string name="feature_discovery_back_description">Back button from this screen will take you to language selection.</string>
+	<string name="feature_discovery_overflow_title">Create backups</string>
+	<string name="feature_discovery_overflow_description">You can do this in Settings. Keep backups in a cloud storage
+		(such as Google Drive) to make sure you don\'t lose your data if something happens to your phone.</string>
 
 	<!-- General -->
 	<string name="button_ok">OK</string>

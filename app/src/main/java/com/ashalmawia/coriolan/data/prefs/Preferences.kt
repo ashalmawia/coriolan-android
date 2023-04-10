@@ -11,6 +11,9 @@ interface Preferences {
     fun isOnboardingCompleted(): Boolean
     fun recordOnboardingCompleted()
 
+    fun isMainFeatureDiscoverySeen(): Boolean
+    fun recordMainFeatureDiscoverySeen()
+
     fun getNewCardsDailyLimitDefault(): Int?
     fun getNewCardsDailyLimit(date: DateTime): Int?
     fun setNewCardsDailyLimitDefault(limit: Int)
