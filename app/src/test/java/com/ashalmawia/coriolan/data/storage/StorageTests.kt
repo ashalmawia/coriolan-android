@@ -1399,7 +1399,7 @@ abstract class StorageTest {
         storage.addDeck(domain, "wrong deck 2")
 
         // when
-        val deck = storage.deckById(id, domain)
+        val deck = storage.deckById(id)
 
         // assert
         assertDeckCorrect(deck, name, domain)
@@ -1424,14 +1424,14 @@ abstract class StorageTest {
         }
 
         // when
-        val deck = storage.deckById(id, domain)!!
+        val deck = storage.deckById(id)
 
         // assert
         assertDeckCorrect(deck, name, domain)
         assertDeckCardsCorrect(storage.cardsOfDeck(deck), cards, domain)
     }
 
-    @Test
+    @Test(expected = DataProcessingException::class)
     fun test__deckById__DoesNotExist() {
         // given
         val storage = prefilledStorage.value
@@ -1441,7 +1441,7 @@ abstract class StorageTest {
         storage.addDeck(domain, "wrong deck 2")
 
         // when
-        val deck = storage.deckById(id, domain)
+        val deck = storage.deckById(id)
 
         // assert
         assertNull("deck not found", deck)

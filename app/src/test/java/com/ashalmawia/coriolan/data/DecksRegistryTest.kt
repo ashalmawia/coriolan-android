@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data
 
-import android.content.Context
 import com.ashalmawia.coriolan.data.importer.reversedTo
 import com.ashalmawia.coriolan.data.prefs.MockPreferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
@@ -15,21 +14,15 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.junit.runners.JUnit4
 
-private const val DEFAULT_DECK_NAME = "Default"
-
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(JUnit4::class)
 class DecksRegistryTest {
 
     private lateinit var domain: Domain
     private lateinit var mockPrefs: MockPreferences
     private lateinit var mockRepository: MockRepository
     private lateinit var exercisesRegistry: ExercisesRegistry
-    private lateinit var context: Context
 
     @Before
     fun before() {
@@ -39,10 +32,6 @@ class DecksRegistryTest {
 
         addMockLanguages(mockRepository)
         domain = mockRepository.createDomain("Default", langOriginal(), langTranslations())
-
-        val context = mock(Context::class.java)
-        `when`(context.getString(anyInt())).thenReturn(DEFAULT_DECK_NAME)
-        this.context = context
     }
 
     @Test
@@ -51,8 +40,7 @@ class DecksRegistryTest {
         createDeckRegistry()
 
         // then
-        assertEquals("Default deck is initialized", 1, mockRepository.decks.size)
-        assertEquals("Default deck is initialized correctly", DEFAULT_DECK_NAME, mockRepository.decks[0].name)
+        assertEquals("Default deck is initialized", 0, mockRepository.decks.size)
     }
 
     private fun createDeckRegistry() = DecksRegistry(domain, mockRepository, exercisesRegistry)

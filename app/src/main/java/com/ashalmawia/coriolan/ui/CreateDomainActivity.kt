@@ -131,7 +131,11 @@ class CreateDomainActivity : BaseActivity() {
 
     private fun createDomain(originalLang: String, translationsLang: String) {
         try {
-            val (domain, defaultDeck) = domainsRegistry.createDomain(this, originalLang, translationsLang)
+            val (domain, defaultDeck) = domainsRegistry.createDomain(
+                    originalLangName = originalLang,
+                    translationsLangName = translationsLang,
+                    defaultDeckName = defaultDeckName()
+            )
             showMessage(R.string.create_domain__created)
             preferences.setLastTranslationsLanguageId(domain.langTranslations())
             openAddCardsActivity(domain, defaultDeck)
@@ -143,6 +147,10 @@ class CreateDomainActivity : BaseActivity() {
             showError(R.string.create_domain__error__generic)
             Log.e(TAG, "failed to create domain", e)
         }
+    }
+
+    private fun defaultDeckName(): String {
+        return getString(R.string.decks_default)
     }
 
     private fun openAddCardsActivity(domain: Domain, defaultDeck: Deck) {

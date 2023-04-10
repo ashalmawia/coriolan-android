@@ -48,13 +48,9 @@ class AddEditDeckActivity : BaseActivity() {
     }
 
     private fun extractData(deckId: Long) {
-        val deck = repository.deckById(deckId, decksRegistry.domain)
-        if (deck != null) {
-            this.deck = deck
-            prefillValues(deck)
-        } else {
-            finishWithError("deck with id $deckId was not in the repository")
-        }
+        val deck = repository.deckById(deckId)
+        this.deck = deck
+        prefillValues(deck)
     }
 
     private fun prefillValues(deck: Deck) {

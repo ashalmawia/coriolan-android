@@ -25,6 +25,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.DECKS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.createDeckContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.deck
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDecks.decksDomainId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractDomains.DOMAINS_LANG_ORIGINAL
@@ -534,18 +535,21 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return list
     }
 
-    override fun deckById(id: Long, domain: Domain): Deck? {
+    override fun deckById(id: Long): Deck {
         val db = helper.readableDatabase
 
-        val cursor = db.rawQuery(
-                "SELECT * FROM $DECKS WHERE $DECKS_ID = ?",
-                arrayOf(id.toString()))
+        val cursor = db.rawQuery("""
+            SELECT *
+            FROM $DECKS
+            WHERE $DECKS_ID = ?
+        """.trimIndent(), arrayOf(id.toString()))
 
         cursor.use {
-            if (it.count == 0) return null
-            if (it.count > 1) throw IllegalStateException("more that one value for deck id $id")
+            if (it.count == 0) throw DataProcessingException("could not find deck for id $id")
+            if (it.count > 1) throw DataProcessingException("more that one value for deck id $id")
 
             it.moveToFirst()
+            val domain = domainById(it.decksDomainId())
             return it.deck(domain)
         }
     }

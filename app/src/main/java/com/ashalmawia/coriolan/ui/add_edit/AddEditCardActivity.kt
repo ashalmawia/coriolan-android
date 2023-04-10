@@ -250,7 +250,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun notifyDuplicate(duplicate: Card) {
-        val deck = repository.deckById(duplicate.deckId, duplicate.domain)!!
+        val deck = repository.deckById(duplicate.deckId)
         val message = resources.getString(R.string.add_card__duplicate, deck.name)
         showError(message)
     }

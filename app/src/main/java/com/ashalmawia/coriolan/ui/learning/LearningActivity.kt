@@ -29,7 +29,6 @@ import org.koin.android.ext.android.get
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
-private const val EXTRA_DOMAIN_ID = "extra_domain_id"
 private const val EXTRA_DECK_ID = "extra_deck_id"
 private const val EXTRA_CARD_TYPE = "extra_card_type"
 private const val EXTRA_STUDY_ORDER = "extra_study_order"
@@ -39,7 +38,6 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     companion object {
         fun intent(context: Context, deck: Deck, cardType: CardType, studyOrder: StudyOrder): Intent {
             val intent = Intent(context, LearningActivity::class.java)
-            intent.putExtra(EXTRA_DOMAIN_ID, deck.domain.id)
             intent.putExtra(EXTRA_DECK_ID, deck.id)
             intent.putExtra(EXTRA_CARD_TYPE, cardType.toString())
             intent.putExtra(EXTRA_STUDY_ORDER, studyOrder.toString())
@@ -70,9 +68,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
     private fun resolveParameters(): Triple<Deck, CardType, StudyOrder> {
         val deckId = intent.getLongExtra(EXTRA_DECK_ID, 0L)
-        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, 0L)
-        val domain = repository.domainById(domainId)!!
-        val deck = repository.deckById(deckId, domain)!!
+        val deck = repository.deckById(deckId)
         val cardType = CardType.valueOf(intent.getStringExtra(EXTRA_CARD_TYPE)!!)
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
         return Triple(deck, cardType, studyOrder)

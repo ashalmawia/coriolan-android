@@ -162,11 +162,9 @@ class SqliteStorageBenchmarkTest {
     }
 
     private fun update_deck() {
-        var domain: Domain?
         var deck: Deck? = null
         benchmark("update deck", prepare = {
-            domain = it.domainById(1L)
-            deck = it.deckById(8L, domain!!)
+            deck = it.deckById(8L)
         }) {
             it.updateDeck(deck!!,"new deck name")
         }
@@ -221,11 +219,9 @@ class SqliteStorageBenchmarkTest {
     }
 
     private fun delete_deck() {
-        var domain: Domain?
         var deck: Deck? = null
         benchmark("delete deck", prepare = {
-            domain = it.domainById(1L)
-            deck = it.deckById(8L, domain!!)
+            deck = it.deckById(8L)
         }) {
             it.deleteDeck(deck!!)
         }
@@ -294,11 +290,8 @@ class SqliteStorageBenchmarkTest {
     }
 
     private fun query_deck_by_id() {
-        var domain: Domain? = null
-        benchmark("query deck by id", prepare = {
-            domain = it.domainById(1L)
-        }) {
-            it.deckById(8L, domain!!)
+        benchmark("query deck by id") {
+            it.deckById(8L)
         }
     }
 
@@ -341,33 +334,27 @@ class SqliteStorageBenchmarkTest {
     }
 
     private fun query_cards_of_deck() {
-        var domain: Domain?
         var deck: Deck? = null
         benchmark("query cards of deck", prepare = {
-            domain = it.domainById(2L)
-            deck = it.deckById(3L, domain!!)
+            deck = it.deckById(3L)
         }) {
             it.cardsOfDeck(deck!!)
         }
     }
 
     private fun query_deck_pending_cards() {
-        var domain: Domain?
         var deck: Deck? = null
         benchmark("query deck pending cards", prepare = {
-            domain = it.domainById(2L)
-            deck = it.deckById(3L, domain!!)
+            deck = it.deckById(3L)
         }) {
             it.pendingCards(deck!!, mockToday())
         }
     }
 
     private fun query_deck_pending_counts() {
-        var domain: Domain?
         var deck: Deck? = null
         benchmark("query deck pending counts", prepare = {
-            domain = it.domainById(2L)
-            deck = it.deckById(3L, domain!!)
+            deck = it.deckById(3L)
         }) {
             it.deckPendingCounts(deck!!, CardType.FORWARD, mockToday())
         }

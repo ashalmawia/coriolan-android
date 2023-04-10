@@ -22,17 +22,20 @@ class DomainsRegistryTest {
         // given
         val english = "English"
         val russian = "Russian"
+        val defaultDeckName = "Default"
 
         // when
-        val domain = registry.createDomain(english, russian)
+        val (domain, deck) = registry.createDomain(english, russian, defaultDeckName)
 
         // then
-        assertNotNull(domain)
         assertEquals(english, domain.langOriginal().value)
         assertEquals(russian, domain.langTranslations().value)
         assertEquals(2, repository.langs.size)
         assertEquals(domain.langOriginal(), repository.langs[0])
         assertEquals(domain.langTranslations(), repository.langs[1])
+
+        assertEquals(defaultDeckName, deck.name)
+        assertEquals(domain, deck.domain)
     }
 
     @Test
@@ -40,14 +43,18 @@ class DomainsRegistryTest {
         // given
         val english = repository.addLanguage("English")
         val russian = repository.addLanguage("Russian")
+        val defaultDeckName = "Default"
 
         // when
-        val domain = registry.createDomain(english.value, russian.value)
+        val (domain, deck) = registry.createDomain(english.value, russian.value, defaultDeckName)
 
         // then
         assertNotNull(domain)
         assertEquals(english, domain.langOriginal())
         assertEquals(russian, domain.langTranslations())
+
+        assertEquals(defaultDeckName, deck.name)
+        assertEquals(domain, deck.domain)
     }
 
     @Test
@@ -55,9 +62,10 @@ class DomainsRegistryTest {
         // given
         val englishValue = "English"
         val russian = repository.addLanguage("Russian")
+        val defaultDeckName = "Default"
 
         // when
-        val domain = registry.createDomain(englishValue, russian.value)
+        val (domain, deck) = registry.createDomain(englishValue, russian.value, defaultDeckName)
 
         // then
         assertNotNull(domain)
@@ -65,5 +73,8 @@ class DomainsRegistryTest {
         assertEquals(russian, domain.langTranslations())
         assertEquals(domain.langOriginal(), repository.langs[1])
         assertEquals(domain.langTranslations(), repository.langs[0])
+
+        assertEquals(defaultDeckName, deck.name)
+        assertEquals(domain, deck.domain)
     }
 }

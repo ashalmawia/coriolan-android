@@ -102,8 +102,8 @@ class MockRepository : Repository {
     override fun allDecks(domain: Domain): List<Deck> {
         return decks
     }
-    override fun deckById(id: Long, domain: Domain): Deck? {
-        return decks.find { it.id == id }
+    override fun deckById(id: Long): Deck {
+        return decks.find { it.id == id } ?: throw DataProcessingException("could not find id $id")
     }
     override fun cardsOfDeck(deck: Deck): List<Card> {
         return cards.filter { it.deckId == deck.id }

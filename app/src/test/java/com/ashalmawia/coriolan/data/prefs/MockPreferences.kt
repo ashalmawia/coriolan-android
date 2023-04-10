@@ -55,4 +55,16 @@ class MockPreferences : Preferences {
     override fun clearLastTranslationsLanguageId() {
         lastTranslationsLanguageId = null
     }
+
+    private var isOnboardingCompleted = false
+    override fun isOnboardingCompleted(): Boolean = isOnboardingCompleted
+    override fun recordOnboardingCompleted() {
+        isOnboardingCompleted = true
+    }
+
+    private var isMainFeatureDiscoverySeen = false
+    override fun isMainFeatureDiscoverySeen(): Boolean = isMainFeatureDiscoverySeen
+    override fun recordMainFeatureDiscoverySeen() {
+        isMainFeatureDiscoverySeen = true
+    }
 }

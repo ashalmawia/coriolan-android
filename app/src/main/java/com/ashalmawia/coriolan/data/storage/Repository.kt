@@ -47,7 +47,7 @@ interface Repository {
 
     fun allDecks(domain: Domain): List<Deck>
 
-    fun deckById(id: Long, domain: Domain): Deck?
+    fun deckById(id: Long): Deck
 
     fun cardsOfDeck(deck: Deck): List<Card>
 
