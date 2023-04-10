@@ -11,8 +11,8 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 
 class LearningFlow(
         context: Context,
@@ -114,7 +114,7 @@ class LearningFlow(
                 context: Context,
                 uiContainer: ViewGroup,
                 deck: Deck,
-                cardType: CardType,
+                cardTypeFilter: CardTypeFilter,
                 studyOrder: StudyOrder,
                 listener: Listener
         ) : LearningFlow

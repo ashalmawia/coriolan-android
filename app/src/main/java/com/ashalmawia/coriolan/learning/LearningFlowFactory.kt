@@ -7,8 +7,8 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.AssignmentFactory
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 
 class LearningFlowFactory(
         private val repository: Repository,
@@ -20,11 +20,11 @@ class LearningFlowFactory(
             context: Context,
             uiContainer: ViewGroup,
             deck: Deck,
-            cardType: CardType,
+            cardTypeFilter: CardTypeFilter,
             studyOrder: StudyOrder,
             listener: LearningFlow.Listener
     ): LearningFlow {
-        val assignment = assignmentFactory.createAssignment(studyOrder, deck, cardType)
+        val assignment = assignmentFactory.createAssignment(studyOrder, deck, cardTypeFilter)
         return LearningFlow(context, repository, assignment, deck, exercisesRegistry, logbook, uiContainer, listener)
     }
 }

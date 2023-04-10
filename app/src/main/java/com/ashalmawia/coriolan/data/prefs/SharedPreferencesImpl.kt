@@ -87,6 +87,10 @@ class SharedPreferencesImpl(context: Context) : Preferences {
     override fun clearLastTranslationsLanguageId() {
         prefs.edit().remove(LAST_TRANSLATIONS_LANGUAGE).apply()
     }
+
+    override var mixForwardAndReverse: Boolean
+        get() = prefs.getBoolean(MIX_FORWARD_AND_REVERSE, true)
+        set(value) { prefs.edit().putBoolean(MIX_FORWARD_AND_REVERSE, value).apply() }
 }
 
 private const val IS_FIRST_START = "is_first_start"
@@ -94,3 +98,4 @@ private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
 private const val IS_MAIN_FEATURE_DISCOVERY_SEEN = "is_main_feature_discovery_seen"
 private const val DEFAULT = "default"
 private const val LAST_TRANSLATIONS_LANGUAGE = "last_translations_language"
+private const val MIX_FORWARD_AND_REVERSE = "mix_fw_and_rev"

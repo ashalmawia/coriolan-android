@@ -1,27 +1,26 @@
 package com.ashalmawia.coriolan.ui.main.decks_list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-
-private const val TAG = "LearningFragment"
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
 
@@ -39,6 +38,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     private lateinit var views: LearningBinding
 
     private val repository: Repository by inject()
+    private val preferences: Preferences by inject()
     private val exercisesRegistry: ExercisesRegistry by inject()
 
     private val domain: Domain by lazy {
@@ -103,7 +103,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     override fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder) {
-        val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardType, studyOrder)
+        val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardTypeFilter, studyOrder)
         requireActivity().startActivity(intent)
     }
 
@@ -126,13 +126,21 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun decksList(): List<DeckListItem> {
-        val timeStart = System.currentTimeMillis()
         val decks = repository.allDecks(domain)
-        Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
-        return decks.flatMap { listOf(
-                DeckListItem(it, CardType.FORWARD),
-                DeckListItem(it, CardType.REVERSE)
-        ) }
+        return convertDecksToListItems(decks)
+    }
+
+    private fun convertDecksToListItems(decks: List<Deck>): List<DeckListItem> {
+        return if (preferences.mixForwardAndReverse) {
+            decks.map {
+                DeckListItem(it, CardTypeFilter.BOTH)
+            }
+        } else {
+            decks.flatMap { listOf(
+                    DeckListItem(it, CardTypeFilter.FORWARD),
+                    DeckListItem(it, CardTypeFilter.REVERSE)
+            ) }
+        }
     }
 
     private fun firstDeckView(): View? {

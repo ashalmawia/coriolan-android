@@ -12,6 +12,7 @@ import com.ashalmawia.coriolan.learning.DeckCountsProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
 import com.ashalmawia.coriolan.util.setStartDrawableTint
@@ -35,7 +36,7 @@ class DecksListAdapter(
         decks.addAll(data)
 
         val timeStart = System.currentTimeMillis()
-        decks.forEach { counts[it] = deckCountsProvider.peekCounts(exercise, it.deck, it.cardType) }
+        decks.forEach { counts[it] = deckCountsProvider.peekCounts(exercise, it.deck, it.cardTypeFilter) }
         Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
 
         notifyDataSetChanged()
@@ -63,7 +64,11 @@ class DecksListAdapter(
         val context = holder.text.context
 
         holder.text.text = item.deck.name
-        holder.type.text = item.cardType.toTypeStringRes().run { context.getString(this) }
+        if (item.cardTypeFilter == CardTypeFilter.BOTH) {
+            holder.type.visible = false
+        } else {
+            holder.type.text = item.cardTypeFilter.toCardType().toTypeStringRes().run { context.getString(this) }
+        }
         holder.more.isClickable = true
         holder.more.setOnClickListener { showPopupMenu(item, it) }
         holder.itemView.setOnClickListener { studyDefault(item) }

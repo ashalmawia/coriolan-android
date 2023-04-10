@@ -7,15 +7,15 @@ import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 
 interface AssignmentFactory {
 
     fun createAssignment(
             order: StudyOrder,
             deck: Deck,
-            cardType: CardType
+            cardType: CardTypeFilter
     ): Assignment
 }
 
@@ -30,13 +30,13 @@ class AssignmentFactoryImpl(
     override fun createAssignment(
             order: StudyOrder,
             deck: Deck,
-            cardType: CardType
+            cardTypeFilter: CardTypeFilter
     ): Assignment {
         val date = TodayManager.today()
         val cards = exercisesRegistry.enabledExercises().flatMap { it.pendingCards(repository, deck, date) }
         val history = historyFactory.create()
         val mutationList = exercisesRegistry.enabledExercises().flatMap {
-            it.mutations(repository, preferences, logbook, date, order, deck, cardType)
+            it.mutations(repository, preferences, logbook, date, order, deck, cardTypeFilter)
         }
         val mutations = Mutations(mutationList)
         return Assignment(date, history, mutations.apply(cards))

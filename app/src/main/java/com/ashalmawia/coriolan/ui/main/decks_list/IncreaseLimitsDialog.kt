@@ -11,6 +11,8 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.IncreaseLimitsBinding
 import com.ashalmawia.coriolan.learning.TodayManager
+import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
 import kotlin.math.max
@@ -23,7 +25,15 @@ class IncreaseLimitsDialog(
         private val preferences: Preferences
 ) {
     private lateinit var views: IncreaseLimitsBinding
-    private val totalCounts by lazy { repository.deckPendingCounts(deck.deck, deck.cardType, date) }
+    private val totalCounts by lazy {
+            if (deck.cardTypeFilter == CardTypeFilter.BOTH) {
+                val forward = repository.deckPendingCounts(deck.deck, CardType.FORWARD, date)
+                val reverse = repository.deckPendingCounts(deck.deck, CardType.REVERSE, date)
+                forward + reverse
+            } else {
+                repository.deckPendingCounts(deck.deck, deck.cardTypeFilter.toCardType(), date)
+            }
+    }
 
     private val builder = AlertDialog.Builder(activity)
 
@@ -31,7 +41,7 @@ class IncreaseLimitsDialog(
         views = IncreaseLimitsBinding.inflate(activity.layoutInflater)
         val view = views.root as ViewGroup
 
-        populateMaxCounts(view)
+        populateMaxCounts()
 
         builder.setView(view)
         builder.setTitle(activity.getString(R.string.deck_options_study_more__title, deck.deck.name))
@@ -41,12 +51,12 @@ class IncreaseLimitsDialog(
 
         return builder.create().apply {
             setOnShowListener {
-                getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener { checkAndConfirm(view, this) }
+                getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener { checkAndConfirm(this) }
             }
         }
     }
 
-    private fun populateMaxCounts(view: ViewGroup) {
+    private fun populateMaxCounts() {
         views.apply {
             views.countNewMax.text = newMax.toString()
             views.countReviewMax.text = reviewMax.toString()
@@ -61,7 +71,7 @@ class IncreaseLimitsDialog(
 
     private fun today() = TodayManager.today()
 
-    private fun checkAndConfirm(view: ViewGroup, dialog: DialogInterface) {
+    private fun checkAndConfirm(dialog: DialogInterface) {
         val new = if (views.countNew.text.isBlank()) 0 else views.countNew.text.toString().toInt()
         if (new < 0) {
             showError(R.string.increase_limits__error__wrong_new)

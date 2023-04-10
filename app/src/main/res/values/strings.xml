@@ -127,6 +127,10 @@
 	<string name="settings__error_number_negative">Number \"%s\" is incorrect, must be non-negative.</string>
 	<string name="settings__error_number_incorrect">Number \"%s\" is incorrect.</string>
 	<string name="settings__category__backup">Backup</string>
+	<string name="settings__category__advanced_learning">Advanced learning preferences</string>
+	<string name="settings__forward_and_reverse">Mix passive and active</string>
+	<string name="settings__mix_forward_and_reverse">Passive and active vocabulary will be mixed in one deck</string>
+	<string name="settings__separate_forward_and_reverse">Passive and active vocabulary will appear as separate decks</string>
 
 	<!-- Back up -->
 	<string name="backup__category_title">Backup</string>

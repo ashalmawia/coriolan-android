@@ -24,6 +24,17 @@
 
 	</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/settings__category__advanced_learning">
+
+		<SwitchPreference
+			android:key="mix_fw_and_rev"
+			android:title="@string/settings__forward_and_reverse"
+			android:summaryOn="@string/settings__mix_forward_and_reverse"
+			android:summaryOff="@string/settings__separate_forward_and_reverse"
+			/>
+
+	</PreferenceCategory>
+
 	<PreferenceCategory android:title="@string/settings__category__backup">
 
 		<Preference

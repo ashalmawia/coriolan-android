@@ -29,4 +29,6 @@ interface Preferences {
     fun getLastTranslationsLanguageId(): Long?
     fun setLastTranslationsLanguageId(language: Language)
     fun clearLastTranslationsLanguageId()
+
+    var mixForwardAndReverse: Boolean
 }

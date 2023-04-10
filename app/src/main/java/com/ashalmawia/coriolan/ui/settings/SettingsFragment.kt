@@ -15,9 +15,10 @@ import org.koin.android.ext.android.inject
 
 private const val PREFERENCE_DAILY_LIMITS_NEW = "daily_limit_new_cards"
 private const val PREFERENCE_DAILY_LIMITS_REVIEW = "daily_limit_review_cards"
-private const val PREFERENCE_VERSION = "app_version"
+private const val PREFERENCE_MIX_FORWARD_AND_REVERSE = "mix_fw_and_rev"
 private const val PREFERENCE_CREATE_BACKUP = "create_backup"
 private const val PREFERENCE_RESTORE_FROM_BACKUP = "restore_from_backup"
+private const val PREFERENCE_VERSION = "app_version"
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -97,6 +98,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 class CoriolanPreferencesDataStore(
         private val prefs: Preferences
 ) : PreferenceDataStore() {
+
+    override fun putBoolean(key: String, value: Boolean) {
+        when (key) {
+            PREFERENCE_MIX_FORWARD_AND_REVERSE -> prefs.mixForwardAndReverse = value
+        }
+    }
+
+    override fun getBoolean(key: String, defValue: Boolean): Boolean {
+        return when (key) {
+            PREFERENCE_MIX_FORWARD_AND_REVERSE -> prefs.mixForwardAndReverse
+            else -> super.getBoolean(key, defValue)
+        }
+    }
 
     override fun putString(key: String?, value: String?) {
         when (key ?: return) {

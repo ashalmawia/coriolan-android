@@ -16,9 +16,9 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.forwardAndReverseWithState
 import org.joda.time.DateTime
 
@@ -49,16 +49,19 @@ class FlashcardsExercise : Exercise {
             date: DateTime,
             order: StudyOrder,
             deck: Deck,
-            cardType: CardType
+            cardTypeFilter: CardTypeFilter
     ): List<Mutation> {
-        return listOf(
-                LearningModeMutation(repository),
-                CardTypeMutation(cardType),
-                SortReviewsByIntervalMutation,
-                NewCardsOrderMutation.from(order),
-                LimitCountMutation(preferences, logbook, date),
-                ShuffleMutation(order == StudyOrder.RANDOM)
-        )
+        val mutations = mutableListOf<Mutation>().apply {
+            add(LearningModeMutation(repository))
+            if (cardTypeFilter != CardTypeFilter.BOTH) {
+                add(CardTypeMutation(cardTypeFilter.toCardType()))
+            }
+            add(SortReviewsByIntervalMutation)
+            add(NewCardsOrderMutation.from(order))
+            add(LimitCountMutation(preferences, logbook, date))
+            add(ShuffleMutation(order == StudyOrder.RANDOM))
+        }
+        return mutations
     }
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
