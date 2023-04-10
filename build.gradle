@@ -1,16 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.6.20'
-    ext.support_version = '27.0.2'
+    ext.kotlin_version = '1.8.10'
     ext.moshi_version = '1.14.0'
     ext.jackson_version = '2.13.3'
+    ext.koin_version = '3.4.0'
 
     repositories {
         maven { url 'https://maven.fabric.io/public' }
         google()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.2'
@@ -27,7 +26,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
 }
 
@@ -36,7 +34,6 @@ ext {
     COMMON__TARGET_SDK = 33
     COMMON__MIN_SDK = 23
     COMMON__BUILD_TOOLS = "30.0.3"
-    koin_version = '2.0.1'
 }
 
 task clean(type: Delete) {
