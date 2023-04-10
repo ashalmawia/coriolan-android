@@ -9,13 +9,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.EditBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
-import kotlinx.android.synthetic.main.edit.list
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
@@ -31,6 +31,8 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         }
     }
 
+    private lateinit var views: EditBinding
+
     private val repository: Repository by inject()
     private val domain: Domain by lazy {
         val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
@@ -44,8 +46,9 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         listener = context as EditFragmentListener
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.edit, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        views = EditBinding.inflate(inflater, container, false)
+        return views.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,13 +63,13 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
     private fun initializeList() {
         val adapter = EditListAdapter()
-        list.adapter = adapter
-        list.layoutManager = LinearLayoutManager(context)
+        views.list.adapter = adapter
+        views.list.layoutManager = LinearLayoutManager(context)
         fetchData()
     }
 
     override fun fetchData() {
-        (list.adapter as EditListAdapter).setItems(items())
+        (views.list.adapter as EditListAdapter).setItems(items())
     }
 
     private fun items(): List<EditListItem> {

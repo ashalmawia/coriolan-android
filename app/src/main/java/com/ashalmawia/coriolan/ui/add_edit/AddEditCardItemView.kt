@@ -3,49 +3,49 @@ package com.ashalmawia.coriolan.ui.add_edit
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.databinding.AddEditCardItemBinding
+import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.showKeyboard
-import kotlinx.android.synthetic.main.add_edit_card_item.view.*
 
 private val killDoubleWhitespacesRegex = "\\s+".toRegex()
 
 class AddEditCardItemView : LinearLayout {
+    
+    private val views: AddEditCardItemBinding
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attr: AttributeSet?) : this(context, attr, 0)
-    constructor(context: Context, attr: AttributeSet?, defStyleAttr: Int) : super(context, attr, defStyleAttr) {
-        initialize(context)
-    }
+    constructor(context: Context, attr: AttributeSet?, defStyleAttr: Int) : super(context, attr, defStyleAttr)
 
-    private fun initialize(context: Context) {
+    init {
         orientation = HORIZONTAL
-        LayoutInflater.from(context).inflate(R.layout.add_edit_card_item, this, true)
+        views = AddEditCardItemBinding.inflate(layoutInflator, this)
         minimumHeight = context.resources.getDimensionPixelSize(R.dimen.minimum_tappable_area)
         gravity = Gravity.CENTER
 
-        removeButton.setOnClickListener { removeListener?.invoke(this) }
+        views.removeButton.setOnClickListener { removeListener?.invoke(this) }
     }
 
     fun showKeyboard() {
-        inputField.requestFocus()
-        inputField.showKeyboard()
+        views.inputField.requestFocus()
+        views.inputField.showKeyboard()
     }
 
     var input
-        get() = inputField.text.toString().trim().replace(killDoubleWhitespacesRegex, " ")
-        set(value) { inputField.setText(value) }
+        get() = views.inputField.text.toString().trim().replace(killDoubleWhitespacesRegex, " ")
+        set(value) { views.inputField.setText(value) }
 
     var removeListener: ((AddEditCardItemView) -> Unit)? = null
 
     var canBeDeleted: Boolean = true
-        set(value) { removeButton.visibility = if (value) View.VISIBLE else View.INVISIBLE }
+        set(value) { views.removeButton.visibility = if (value) View.VISIBLE else View.INVISIBLE }
 
     var ordinal: Int = -1
         set(value) {
-            ordinalLabel.text = value.toString()
-            ordinalLabel.visibility = View.VISIBLE
+            views.ordinalLabel.text = value.toString()
+            views.ordinalLabel.visibility = View.VISIBLE
         }
 }

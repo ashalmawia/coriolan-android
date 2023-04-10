@@ -11,15 +11,12 @@ import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.EnterFilePathBinding
 import com.ashalmawia.coriolan.dependencies.dataImportScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.util.isPermissionGranted
 import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
-import kotlinx.android.synthetic.main.enter_file_path.buttonCancel
-import kotlinx.android.synthetic.main.enter_file_path.buttonSubmit
-import kotlinx.android.synthetic.main.enter_file_path.deckSelector
-import kotlinx.android.synthetic.main.enter_file_path.editText
 import org.koin.android.ext.android.inject
 import java.io.File
 
@@ -30,6 +27,8 @@ private const val EXTRA_DOMAIN_ID = "domain_id"
 private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
 class EnterFilePathActivity : BaseActivity() {
+
+    private val views by lazy { EnterFilePathBinding.inflate(layoutInflater) }
 
     private val repository: Repository by inject()
     private val domain: Domain by lazy {
@@ -48,7 +47,7 @@ class EnterFilePathActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.enter_file_path)
+        setContentView(views.root)
 
         setUpToolbar(R.string.import_from_file)
 
@@ -56,14 +55,14 @@ class EnterFilePathActivity : BaseActivity() {
 
         restore(savedInstanceState)
 
-        buttonCancel.setOnClickListener { cancel() }
-        buttonSubmit.setOnClickListener { validateAndSubmitInputWithPermissionCheck() }
+        views.buttonCancel.setOnClickListener { cancel() }
+        views.buttonSubmit.setOnClickListener { validateAndSubmitInputWithPermissionCheck() }
 
         maybeSetDebugValues()
     }
 
     private fun initalize() {
-        deckSelector.initialize(repository.allDecks(domain))
+        views.deckSelector.initialize(repository.allDecks(domain))
     }
 
     private fun cancel() {
@@ -80,7 +79,7 @@ class EnterFilePathActivity : BaseActivity() {
     }
 
     private fun validateAndSubmitInput() {
-        val path = editText.text.toString()
+        val path = views.editText.text.toString()
         if (path.isBlank()) {
             showMessage(getString(R.string.import_file_empty_path))
             return
@@ -97,7 +96,7 @@ class EnterFilePathActivity : BaseActivity() {
             return
         }
 
-        (importFlow.importer as ImporterFromFile).onFile(path, deckSelector.selectedDeck())
+        (importFlow.importer as ImporterFromFile).onFile(path, views.deckSelector.selectedDeck())
         finish()
     }
 
@@ -109,17 +108,17 @@ class EnterFilePathActivity : BaseActivity() {
         if (savedInstanceState != null) {
             val text = savedInstanceState.getString(EXTRA_TEXT)
             if (text != null) {
-                editText.setText(text)
+                views.editText.setText(text)
             }
             val deckId = savedInstanceState.getLong(EXTRA_DECK_ID)
-            deckSelector.selectDeckWithId(deckId)
+            views.deckSelector.selectDeckWithId(deckId)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(EXTRA_TEXT, editText.text.toString())
-        outState.putLong(EXTRA_DECK_ID, deckSelector.selectedDeck().id)
+        outState.putString(EXTRA_TEXT, views.editText.text.toString())
+        outState.putLong(EXTRA_DECK_ID, views.deckSelector.selectedDeck().id)
     }
 
     companion object {
@@ -132,7 +131,7 @@ class EnterFilePathActivity : BaseActivity() {
     @SuppressLint("SetTextI18n", "SdCardPath")
     private fun maybeSetDebugValues() {
         if (DEBUG_PREFILL_PATH) {
-            editText.setText("/mnt/sdcard/import_from_file")
+            views.editText.setText("/mnt/sdcard/import_from_file")
         }
     }
 }

@@ -4,13 +4,15 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.databinding.DebugIncreaseDateBinding
 import com.ashalmawia.coriolan.learning.TodayManager
-import kotlinx.android.synthetic.main.debug_increase_date.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 class DebugIncreaseDateDialog(activity: Activity) : Dialog(activity) {
+
+    private val views by lazy { DebugIncreaseDateBinding.inflate(layoutInflater) }
 
     private val format = DateTimeFormat.mediumDate().withLocale(Locale.ENGLISH)
 
@@ -18,18 +20,20 @@ class DebugIncreaseDateDialog(activity: Activity) : Dialog(activity) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.debug_increase_date)
+        setContentView(views.root)
         initialize()
     }
 
     private fun initialize() {
         newDate(date)
 
-        debug_increase_date__down.setOnClickListener { decrementDate() }
-        debug_increase_date__up.setOnClickListener { incrementDate() }
+        views.apply {
+            debugIncreaseDateDown.setOnClickListener { decrementDate() }
+            debugIncreaseDateUp.setOnClickListener { incrementDate() }
 
-        debug_increase_date__cancel.setOnClickListener { cancel() }
-        debug_increase_date__apply.setOnClickListener { apply() }
+            debugIncreaseDateCancel.setOnClickListener { cancel() }
+            debugIncreaseDateApply.setOnClickListener { apply() }
+        }
     }
 
     private fun decrementDate() {
@@ -42,7 +46,7 @@ class DebugIncreaseDateDialog(activity: Activity) : Dialog(activity) {
 
     private fun newDate(date: DateTime) {
         this.date = date
-        debug_increase_date__date.text = format.print(date)
+        views.debugIncreaseDateDate.text = format.print(date)
     }
 
     private fun apply() {

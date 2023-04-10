@@ -10,6 +10,7 @@ import android.view.View
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.DomainActivityBinding
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.commons.showFeatureDiscoverySequence
@@ -23,8 +24,6 @@ import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
-import kotlinx.android.synthetic.main.domain_activity.*
-import kotlinx.android.synthetic.main.learning_activity.toolbar
 import org.koin.android.ext.android.inject
 
 private enum class Tab {
@@ -40,10 +39,11 @@ private const val FRAGMENT_STATISTICS = "fragment_statistics"
 private const val EXTRA_DOMAIN_ID = "domain_id"
 
 private const val KEY_SELECTED_TAB = "selected_tag"
+private const val TAG = "DomainActivity"
 
 class DomainActivity : BaseActivity(), EditFragmentListener {
 
-    private val TAG = DomainActivity::class.java.simpleName
+    private val views by lazy { DomainActivityBinding.inflate(layoutInflater) }
 
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
@@ -52,7 +52,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.domain_activity)
+        setContentView(views.root)
 
         if (!intent.hasExtra(EXTRA_DOMAIN_ID)) {
             throw IllegalStateException("missing domain id")
@@ -68,26 +68,28 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(KEY_SELECTED_TAB, bottomNavigation.currentItem)
+        outState.putInt(KEY_SELECTED_TAB, views.bottomNavigation.currentItem)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        bottomNavigation.currentItem = savedInstanceState.getInt(KEY_SELECTED_TAB)
+        views.bottomNavigation.currentItem = savedInstanceState.getInt(KEY_SELECTED_TAB)
     }
 
     private fun setUpBottomBarNavigation() {
-        val adapter = AHBottomNavigationAdapter(this, R.menu.domain_navigation_bar)
-        adapter.setupWithBottomNavigation(bottomNavigation)
+        views.apply {
+            val adapter = AHBottomNavigationAdapter(this@DomainActivity, R.menu.domain_navigation_bar)
+            adapter.setupWithBottomNavigation(bottomNavigation)
 
-        bottomNavigation.defaultBackgroundColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
-        bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
-        bottomNavigation.setOnTabSelectedListener { position, _ -> onNavigationItemSelected(position) }
-        selectTab(Tab.DECKS_LIST)
+            bottomNavigation.defaultBackgroundColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
+            bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
+            bottomNavigation.setOnTabSelectedListener { position, _ -> onNavigationItemSelected(position) }
+            selectTab(Tab.DECKS_LIST)
+        }
     }
 
     private fun selectTab(tab: Tab) {
-        bottomNavigation.currentItem = tab.ordinal
+        views.bottomNavigation.currentItem = tab.ordinal
     }
 
     private fun onNavigationItemSelected(position: Int): Boolean {
@@ -151,7 +153,7 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     private fun showMainFeatureDiscovery(firstDeckView: View) {
-        val editTab = bottomNavigation.getViewAtPosition(1)
+        val editTab = views.bottomNavigation.getViewAtPosition(1)
 
         showFeatureDiscoverySequence(listOf(
                 tapTargetForView(firstDeckView, R.string.feature_discovery_deck_title, R.string.feature_discovery_deck_description),

@@ -8,14 +8,16 @@ import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.DomainsListBinding
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.CreateDomainActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
-import kotlinx.android.synthetic.main.domains_list.*
 import org.koin.android.ext.android.inject
 
 class DomainsListActivity : BaseActivity() {
+
+    private val views by lazy { DomainsListBinding.inflate(layoutInflater) }
 
     private val repository: Repository by inject()
 
@@ -25,7 +27,7 @@ class DomainsListActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.domains_list)
+        setContentView(views.root)
 
         setUpToolbarWithLogo()
     }
@@ -39,7 +41,7 @@ class DomainsListActivity : BaseActivity() {
     private fun setUpList() {
         val domains = repository.allDomains()
 
-        domainsList.apply {
+        views.domainsList.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = DomainsListAdapter(toListItems(domains))
         }

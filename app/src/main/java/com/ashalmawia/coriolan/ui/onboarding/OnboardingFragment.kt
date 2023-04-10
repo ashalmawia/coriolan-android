@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.databinding.OnboardingScreenBinding
 import com.ashalmawia.coriolan.ui.BaseFragment
-import kotlinx.android.synthetic.main.onboarding_screen.onboardingDetailsView
-import kotlinx.android.synthetic.main.onboarding_screen.onboardingImageView
-import kotlinx.android.synthetic.main.onboarding_screen.onboardingTitleView
 
 private const val ARGUMENT_SCREEN_NUMBER = "screen_number"
 
@@ -24,8 +21,11 @@ class OnboardingFragment : BaseFragment() {
         }
     }
 
+    private lateinit var views: OnboardingScreenBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.onboarding_screen, container, false)
+        views = OnboardingScreenBinding.inflate(inflater, container, false)
+        return views.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,10 +33,10 @@ class OnboardingFragment : BaseFragment() {
 
         val screnNumber = requireArguments().getInt(ARGUMENT_SCREEN_NUMBER)
         val data = OnboardingData.byNumber(screnNumber)
-        bindData(data)
+        views.bindData(data)
     }
 
-    private fun bindData(data: OnboardingData) {
+    private fun OnboardingScreenBinding.bindData(data: OnboardingData) {
         onboardingImageView.setImageResource(data.imageRes)
         onboardingTitleView.setText(data.titleText)
         onboardingDetailsView.setText(data.descriptionText)

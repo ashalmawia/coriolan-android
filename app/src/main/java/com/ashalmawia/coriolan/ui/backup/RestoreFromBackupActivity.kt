@@ -16,16 +16,18 @@ import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.RestoreFromBackupBinding
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.util.finishWithAlert
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.restartApp
-import kotlinx.android.synthetic.main.restore_from_backup.*
 import org.koin.android.ext.android.inject
 
 private const val TAG = "RestoreFromBackupActivity"
 
 class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
+    
+    private val views by lazy { RestoreFromBackupBinding.inflate(layoutInflater) }
 
     private var task: RestoreFromBackupAsyncTask? = null
 
@@ -38,12 +40,14 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.restore_from_backup)
+        setContentView(views.root)
 
         setUpToolbar(R.string.backup__restore_title, false)
 
-        buttonOk.setOnClickListener { selectBackup() }
-        buttonCancel.setOnClickListener { finish() }
+        views.apply {
+            buttonOk.setOnClickListener { selectBackup() }
+            buttonCancel.setOnClickListener { finish() }
+        }
     }
 
     private fun selectBackup() {
@@ -69,17 +73,19 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     @SuppressLint("SetTextI18n")
     private fun onRestoreConfirmed(uri: Uri) {
-        buttonOk.visible = false
-        buttonCancel.visible = false
+        views.apply {
+            buttonOk.visible = false
+            buttonCancel.visible = false
 
-        dividerRestoring.visible = true
-        labelStatus.visible = true
+            dividerRestoring.root.visible = true
+            labelStatus.visible = true
 
-        labelPath.text = uri.path
-        labelPath.visible = true
+            labelPath.text = uri.path
+            labelPath.visible = true
 
-        labelRestoring.visible = true
-        progress.visible = true
+            labelRestoring.visible = true
+            progress.visible = true
+        }
 
         restoreFrom(uri)
     }
@@ -96,15 +102,17 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
     override fun onRestored() {
         repository.invalidateCache()
 
-        labelStatus.setText(R.string.backup__restore_success)
-        labelRestoring.visible = false
+        views.apply {
+            labelStatus.setText(R.string.backup__restore_success)
+            labelRestoring.visible = false
 
-        progress.visible = false
+            progress.visible = false
 
-        buttonCancel.visible = false
-        buttonOk.visible = true
-        buttonOk.setText(R.string.button_ok)
-        buttonOk.setOnClickListener { restartApp() }
+            buttonCancel.visible = false
+            buttonOk.visible = true
+            buttonOk.setText(R.string.button_ok)
+            buttonOk.setOnClickListener { restartApp() }
+        }
     }
 
     override fun onError(@StringRes messageRes: Int) {

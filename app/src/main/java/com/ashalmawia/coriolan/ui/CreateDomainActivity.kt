@@ -16,13 +16,13 @@ import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.CreateDomainBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.view.visible
-import kotlinx.android.synthetic.main.create_domain.*
 import org.koin.android.ext.android.inject
 
 private const val TAG = "CreateDomainActivity"
@@ -30,6 +30,8 @@ private const val TAG = "CreateDomainActivity"
 private const val EXTRA_FIRST_START = "cancellable"
 
 class CreateDomainActivity : BaseActivity() {
+
+    private val views by lazy { CreateDomainBinding.inflate(layoutInflater) }
 
     private val preferences: Preferences by inject()
     private val repository: Repository by inject()
@@ -39,7 +41,7 @@ class CreateDomainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.create_domain)
+        setContentView(views.root)
 
         if (firstStart) {
             // show logo and don't allow to cancel this activity
@@ -54,22 +56,22 @@ class CreateDomainActivity : BaseActivity() {
     private fun initialize(firstStart: Boolean) {
         if (firstStart) {
             // if it's the first start, user can't cancel this activity
-            buttonCancel.visibility = View.GONE
-            buttonOk.setText(R.string.button_next)
+            views.buttonCancel.visibility = View.GONE
+            views.buttonOk.setText(R.string.button_next)
 
-            welcomeLabelTitle.visibility = View.VISIBLE
-            welcomeLabelSubtitle.visibility = View.VISIBLE
+            views.welcomeLabelTitle.visibility = View.VISIBLE
+            views.welcomeLabelSubtitle.visibility = View.VISIBLE
         } else {
-            buttonCancel.setOnClickListener { finish() }
-            buttonOk.setText(R.string.button_create)
+            views.buttonCancel.setOnClickListener { finish() }
+            views.buttonOk.setText(R.string.button_create)
 
-            welcomeLabelTitle.visibility = View.GONE
-            welcomeLabelSubtitle.visibility = View.GONE
+            views.welcomeLabelTitle.visibility = View.GONE
+            views.welcomeLabelSubtitle.visibility = View.GONE
         }
 
         initializeWithLastTranslationsLanguage()
 
-        buttonOk.setOnClickListener { verifyAndSave() }
+        views.buttonOk.setOnClickListener { verifyAndSave() }
     }
 
     private fun initializeWithLastTranslationsLanguage() {
@@ -81,15 +83,15 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     private fun prefillTranslationsLanguage(language: Language) {
-        inputTranslationsLang.apply {
+        views.inputTranslationsLang.apply {
             setText(language.value)
             isEnabled = false
         }
-        buttonChangeTranslationsLang.apply {
+        views.buttonChangeTranslationsLang.apply {
             visible = true
             setOnClickListener {
-                inputTranslationsLang.isEnabled = true
-                inputTranslationsLang.requestFocus()
+                views.inputTranslationsLang.isEnabled = true
+                views.inputTranslationsLang.requestFocus()
             }
         }
     }
@@ -120,8 +122,8 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     private fun verifyAndSave() {
-        val originalLang = inputOriginalLang.text.toString()
-        val translationsLang = inputTranslationsLang.text.toString()
+        val originalLang = views.inputOriginalLang.text.toString()
+        val translationsLang = views.inputTranslationsLang.text.toString()
 
         if (verify(originalLang, translationsLang)) {
             createDomain(originalLang, translationsLang)

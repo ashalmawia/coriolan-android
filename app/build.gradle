@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-allopen"
 apply plugin: 'io.fabric'
 
@@ -44,6 +43,9 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
         }
+    }
+    buildFeatures {
+        viewBinding true
     }
     lintOptions {
         disable 'ContentDescription', 'RtlSymmetry'

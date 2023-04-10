@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui.view
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -17,3 +18,6 @@ var View.visible: Boolean
     set(value) {
         visibility = if (value) View.VISIBLE else View.GONE
     }
+
+val View.layoutInflator: LayoutInflater
+    get() = LayoutInflater.from(context)

@@ -34,7 +34,7 @@
 					android:textColor="@color/white"
 					tools:text="Title"/>
 
-				<include layout="@layout/deck_progress_bar"/>
+				<include layout="@layout/deck_progress_bar" android:id="@+id/deck_progress_bar"/>
 
 			</LinearLayout>
 

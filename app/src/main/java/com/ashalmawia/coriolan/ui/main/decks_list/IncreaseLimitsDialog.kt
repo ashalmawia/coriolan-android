@@ -4,15 +4,14 @@ import android.app.Activity
 import android.content.DialogInterface
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.IncreaseLimitsBinding
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.util.orZero
-import kotlinx.android.synthetic.main.increase_limits.view.*
 import org.joda.time.DateTime
 import kotlin.math.max
 
@@ -23,12 +22,14 @@ class IncreaseLimitsDialog(
         private val repository: Repository,
         private val preferences: Preferences
 ) {
-    private val totalCounts = lazy { repository.deckPendingCounts(deck.deck, deck.cardType, date) }
+    private lateinit var views: IncreaseLimitsBinding
+    private val totalCounts by lazy { repository.deckPendingCounts(deck.deck, deck.cardType, date) }
 
     private val builder = AlertDialog.Builder(activity)
 
     fun build() : AlertDialog {
-        val view = View.inflate(activity, R.layout.increase_limits, null) as ViewGroup
+        views = IncreaseLimitsBinding.inflate(activity.layoutInflater)
+        val view = views.root as ViewGroup
 
         populateMaxCounts(view)
 
@@ -46,26 +47,28 @@ class IncreaseLimitsDialog(
     }
 
     private fun populateMaxCounts(view: ViewGroup) {
-        view.countNewMax.text = newMax.toString()
-        view.countReviewMax.text = reviewMax.toString()
+        views.apply {
+            views.countNewMax.text = newMax.toString()
+            views.countReviewMax.text = reviewMax.toString()
+        }
     }
 
     private val newMax
-        get() = max(totalCounts.value.new - preferences.getNewCardsDailyLimit(today()).orZero(), 0)
+        get() = max(totalCounts.new - preferences.getNewCardsDailyLimit(today()).orZero(), 0)
 
     private val reviewMax
-        get() = max(totalCounts.value.review - preferences.getReviewCardsDailyLimit(today()).orZero(), 0)
+        get() = max(totalCounts.review - preferences.getReviewCardsDailyLimit(today()).orZero(), 0)
 
     private fun today() = TodayManager.today()
 
     private fun checkAndConfirm(view: ViewGroup, dialog: DialogInterface) {
-        val new = if (view.countNew.text.isBlank()) 0 else view.countNew.text.toString().toInt()
+        val new = if (views.countNew.text.isBlank()) 0 else views.countNew.text.toString().toInt()
         if (new < 0) {
             showError(R.string.increase_limits__error__wrong_new)
             return
         }
 
-        val review = if (view.countReview.text.isBlank()) 0 else view.countReview.text.toString().toInt()
+        val review = if (views.countReview.text.isBlank()) 0 else views.countReview.text.toString().toInt()
         if (review < 0) {
             showError(R.string.increase_limits__error__wrong_review)
             return

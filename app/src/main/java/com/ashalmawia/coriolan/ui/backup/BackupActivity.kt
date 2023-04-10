@@ -12,13 +12,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.databinding.BackupBinding
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
-import kotlinx.android.synthetic.main.backup.*
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
 
 class BackupActivity : BaseActivity(), BackupCreationListener {
+    
+    private val views by lazy { BackupBinding.inflate(layoutInflater) }
 
     private val backupableRepository: BackupableRepository by inject()
     private val backup: Backup by inject()
@@ -32,12 +34,12 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.backup)
+        setContentView(views.root)
 
         setUpToolbar(R.string.backup__create_title, false)
 
-        buttonOk.setOnClickListener { onCreateBackupClicked() }
-        buttonCancel.setOnClickListener { finish() }
+        views.buttonOk.setOnClickListener { onCreateBackupClicked() }
+        views.buttonCancel.setOnClickListener { finish() }
     }
 
     private fun onCreateBackupClicked() {
@@ -45,11 +47,13 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     }
 
     private fun updateUiCreatingBackup() {
-        buttonOk.isEnabled = false
-        buttonCancel.isEnabled = false
+        views.apply {
+            buttonOk.isEnabled = false
+            buttonCancel.isEnabled = false
 
-        labelCreating.visible = true
-        dividerCreating.visible = true
+            labelCreating.visible = true
+            dividerCreating.root.visible = true
+        }
     }
 
     private fun createBackup(uri: Uri?) {
@@ -67,19 +71,21 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 
     @SuppressLint("SetTextI18n")
     override fun onBackupCreated(uri: Uri) {
-        labelCreating.visible = false
-        dividerCreating.visible = false
+        views.apply {
+            labelCreating.visible = false
+            dividerCreating.root.visible = false
 
-        labelCreated.setText(R.string.backup__created)
-        labelCreated.visible = true
-        labelPath.text = uri.path
-        labelPath.visible = true
-        dividerCreated.visible = true
+            labelCreated.setText(R.string.backup__created)
+            labelCreated.visible = true
+            labelPath.text = uri.path
+            labelPath.visible = true
+            dividerCreated.root.visible = true
 
-        buttonCancel.visible = false
-        buttonOk.isEnabled = true
-        buttonOk.setText(R.string.button_ok)
-        buttonOk.setOnClickListener { finish() }
+            buttonCancel.visible = false
+            buttonOk.isEnabled = true
+            buttonOk.setText(R.string.button_ok)
+            buttonOk.setOnClickListener { finish() }
+        }
     }
 
     override fun onError() {

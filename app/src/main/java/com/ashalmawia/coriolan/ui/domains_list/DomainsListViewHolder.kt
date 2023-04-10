@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.util.setStartDrawableTint
-import kotlinx.android.synthetic.main.domain_list_item.view.*
 
 sealed class DomainsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     class Category(itemView: View): DomainsListViewHolder(itemView) {
@@ -17,8 +16,10 @@ sealed class DomainsListViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
     }
 
     class Domain(itemView: View): DomainsListViewHolder(itemView) {
+        private val name by lazy { itemView.findViewById<TextView>(R.id.name) }
+
         fun bind(item: DomainsListItem.DomainItem) {
-            itemView.name.text = item.domain.name
+            name.text = item.domain.name
             itemView.setOnClickListener { item.onClick(it.context) }
         }
     }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.LearningBinding
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
@@ -21,7 +22,6 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
-import kotlinx.android.synthetic.main.learning.decksList
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
@@ -40,6 +40,8 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         }
     }
 
+    private lateinit var views: LearningBinding
+
     private val repository: Repository by inject()
     private val exercisesRegistry: ExercisesRegistry by inject()
 
@@ -51,8 +53,9 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         DecksListAdapter(get(), exercisesRegistry.defaultExercise(), this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.learning, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        views = LearningBinding.inflate(inflater, container, false)
+        return views.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,8 +98,8 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     private fun initializeList() {
         val context = context ?: return
 
-        decksList.layoutManager = LinearLayoutManager(context)
-        decksList.adapter = adapter
+        views.decksList.layoutManager = LinearLayoutManager(context)
+        views.decksList.adapter = adapter
     }
 
     private fun fetchData() {
@@ -137,7 +140,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun firstDeckView(): View? {
-        return (decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.text
+        return (views.decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.text
     }
 }
 

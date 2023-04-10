@@ -1,10 +1,8 @@
 package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
@@ -17,13 +15,7 @@ class FlashcardsExerciseRenderer(
         private val listener: ExerciseRenderer.Listener
 ): ExerciseRenderer, CardViewListener {
 
-    private val cardView: CardView
-
-    init {
-        val inflator = LayoutInflater.from(context)
-        cardView = inflator.inflate(R.layout.card_view, uiContainer, false) as CardView
-        cardView.listener = this
-    }
+    private val cardView = CardView(context, this)
 
     override fun prepareUi(context: Context, parentView: ViewGroup): View {
         return cardView

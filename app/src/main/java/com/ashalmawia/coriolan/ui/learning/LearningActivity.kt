@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.LearningActivityBinding
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
@@ -21,11 +22,6 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.util.setStartDrawableTint
-import kotlinx.android.synthetic.main.deck_progress_bar.deck_progress_bar__new
-import kotlinx.android.synthetic.main.deck_progress_bar.deck_progress_bar__relearn
-import kotlinx.android.synthetic.main.deck_progress_bar.deck_progress_bar__review
-import kotlinx.android.synthetic.main.learning_activity.exerciseContainer
-import kotlinx.android.synthetic.main.learning_activity.toolbarTitle
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
@@ -47,19 +43,21 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
         }
     }
 
+    private val views by lazy { LearningActivityBinding.inflate(layoutInflater) }
+
     private val repository: Repository by inject()
 
     private val flow by lazy {
         val learningFlowFactory: LearningFlow.Factory = get()
         val (deck, cardType, studyOrder) = resolveParameters()
         learningFlowFactory.createLearningFlow(
-                this, exerciseContainer, deck, cardType, studyOrder, this
+                this, views.exerciseContainer, deck, cardType, studyOrder, this
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.learning_activity)
+        setContentView(views.root)
 
         adjustProgressCountsUI()
 
@@ -151,22 +149,26 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
     private fun beginExercise() {
         setUpToolbar(flow.deck.name)
-        toolbarTitle.text = flow.deck.name
+        views.toolbarTitle.text = flow.deck.name
 
         flow.showNextOrComplete()
     }
 
     private fun adjustProgressCountsUI() {
-        deck_progress_bar__new.setStartDrawableTint(R.color.card_activity__pending_counters)
-        deck_progress_bar__review.setStartDrawableTint(R.color.card_activity__pending_counters)
-        deck_progress_bar__relearn.setStartDrawableTint(R.color.card_activity__pending_counters)
+        views.deckProgressBar.apply {
+            deckProgressBarNew.setStartDrawableTint(R.color.card_activity__pending_counters)
+            deckProgressBarReview.setStartDrawableTint(R.color.card_activity__pending_counters)
+            deckProgressBarRelearn.setStartDrawableTint(R.color.card_activity__pending_counters)
+        }
     }
 
     private fun updateProgressCounts() {
         val counts = flow.counts
-        deck_progress_bar__new.text = counts.new.toString()
-        deck_progress_bar__review.text = counts.review.toString()
-        deck_progress_bar__relearn.text = counts.relearn.toString()
+        views.deckProgressBar.apply {
+            deckProgressBarNew.text = counts.new.toString()
+            deckProgressBarReview.text = counts.review.toString()
+            deckProgressBarRelearn.text = counts.relearn.toString()
+        }
     }
 
     override fun onTaskRendered() {

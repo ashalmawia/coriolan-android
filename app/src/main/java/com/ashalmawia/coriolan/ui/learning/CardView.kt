@@ -2,50 +2,44 @@ package com.ashalmawia.coriolan.ui.learning
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
-import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.databinding.CardTranslationItemBinding
+import com.ashalmawia.coriolan.databinding.CardViewBinding
 import com.ashalmawia.coriolan.learning.exercise.flashcards.FlashcardsAnswer
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
+import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.visible
-import kotlinx.android.synthetic.main.card_translation_item.view.*
-import kotlinx.android.synthetic.main.card_view.view.*
 
 private const val BUTTON_BAR_ANIMATION_DURATION = 200L
 
-class CardView : FrameLayout {
+class CardView(context: Context, private val listener: CardViewListener) : FrameLayout(context) {
 
-    lateinit var listener: CardViewListener
+    private val views: CardViewBinding = CardViewBinding.inflate(layoutInflator, this)
 
-    constructor(context: Context) : this(context, null, 0)
-    constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
-    constructor(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr)
+    init {
+        views.apply {
+            frontCover.setOnSingleClickListener { showBack() }
+            backCover.setOnSingleClickListener { showBack() }
 
-    override fun onFinishInflate() {
-        super.onFinishInflate()
+            buttonYes.setOnSingleClickListener { listener.onCorrect() }
+            buttonNo.setOnSingleClickListener { listener.onWrong() }
 
-        frontCover.setOnSingleClickListener { showBack() }
-        backCover.setOnSingleClickListener { showBack() }
+            buttonHard.setOnSingleClickListener { listener.onHard() }
+            buttonEasy.setOnSingleClickListener { listener.onEasy() }
 
-        buttonYes.setOnSingleClickListener { listener.onCorrect() }
-        buttonNo.setOnSingleClickListener { listener.onWrong() }
-
-        buttonHard.setOnSingleClickListener { listener.onHard() }
-        buttonEasy.setOnSingleClickListener { listener.onEasy() }
-
-        touchFeedbackWrong.addAnchor(buttonNo)
-        touchFeedbackCorrect.addAnchor(buttonYes)
-        touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
+            touchFeedbackWrong.addAnchor(buttonNo)
+            touchFeedbackCorrect.addAnchor(buttonYes)
+            touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
+        }
     }
 
     fun bind(card: Card, answers: List<FlashcardsAnswer>) {
-        frontText.text = card.original.value
-        transcriptionText.bindTranscription(card.original.transcription)
+        views.frontText.text = card.original.value
+        views.transcriptionText.bindTranscription(card.original.transcription)
 
         clearTranslationItems()
         card.translations.forEach { addTranslationItem(it) }
@@ -60,59 +54,71 @@ class CardView : FrameLayout {
             throw IllegalStateException("no wrong or correct state, unsupported")
         }
 
-        val hasHard = answers.contains(FlashcardsAnswer.HARD)
-        buttonHard.visible = hasHard
-        buttonHardCover.visible = !hasHard
+        views.apply {
+            val hasHard = answers.contains(FlashcardsAnswer.HARD)
+            buttonHard.visible = hasHard
+            buttonHardCover.visible = !hasHard
 
-        val hasEasy = answers.contains(FlashcardsAnswer.EASY)
-        buttonEasy.visible = hasEasy
-        buttonEasyCover.visible = !hasEasy
+            val hasEasy = answers.contains(FlashcardsAnswer.EASY)
+            buttonEasy.visible = hasEasy
+            buttonEasyCover.visible = !hasEasy
+        }
     }
 
     private fun showFront() {
         if (backShown()) {
             hideButtonBarAnimated()
         }
-        frontCover.visible = false
-        backCover.visible = true
+        views.apply {
+            frontCover.visible = false
+            backCover.visible = true
+        }
     }
 
     private fun showBack() {
-        backCover.visibility = View.GONE
+        views.backCover.visibility = View.GONE
 
         showButtonBarAnimated()
     }
 
-    private fun backShown() = !frontCover.visible && !backCover.visible
+    private fun backShown() = !views.frontCover.visible && !views.backCover.visible
 
     private fun showButtonBarAnimated() {
-        if (!buttonsBar.visible) {
-            buttonsBar.y += buttonsBar.measuredHeight
-            buttonsBar.visible = true
-        }
+        views.apply {
+            if (!buttonsBar.visible) {
+                buttonsBar.y += buttonsBar.measuredHeight
+                buttonsBar.visible = true
+            }
 
-        val animator = ObjectAnimator.ofFloat(buttonsBar, "y", buttonsBar.y, buttonsBar.y - buttonsBar.measuredHeight)
-        animator.duration = BUTTON_BAR_ANIMATION_DURATION
-        animator.start()
+            val animator = ObjectAnimator.ofFloat(
+                    buttonsBar, "y", buttonsBar.y, buttonsBar.y - buttonsBar.measuredHeight)
+            animator.duration = BUTTON_BAR_ANIMATION_DURATION
+            animator.start()
+        }
     }
 
     private fun hideButtonBarAnimated() {
-        if (!buttonsBar.visible) return
+        views.apply {
+            if (!buttonsBar.visible) return
 
-        val animator = ObjectAnimator.ofFloat(buttonsBar, "y", buttonsBar.y, buttonsBar.y + buttonsBar.measuredHeight)
-        animator.duration = BUTTON_BAR_ANIMATION_DURATION
-        animator.start()
+            val animator = ObjectAnimator.ofFloat(
+                    buttonsBar, "y", buttonsBar.y, buttonsBar.y + buttonsBar.measuredHeight)
+            animator.duration = BUTTON_BAR_ANIMATION_DURATION
+            animator.start()
+        }
     }
 
     private fun addTranslationItem(term: Term) {
-        val view = LayoutInflater.from(context).inflate(R.layout.card_translation_item, translations, false)
-        view.text.text = term.value
-        view.transcription.bindTranscription(term.transcription)
-        translations.addView(view)
+        views.apply {
+            val cardTranslationItem = CardTranslationItemBinding.inflate(layoutInflator, translations, false)
+            cardTranslationItem.text.text = term.value
+            cardTranslationItem.transcription.bindTranscription(term.transcription)
+            translations.addView(cardTranslationItem.root)
+        }
     }
 
     private fun clearTranslationItems() {
-        translations.removeViews(1, translations.childCount - 1)
+        views.translations.removeViews(1, views.translations.childCount - 1)
     }
 
     private fun TextView.bindTranscription(transcription: String?) {

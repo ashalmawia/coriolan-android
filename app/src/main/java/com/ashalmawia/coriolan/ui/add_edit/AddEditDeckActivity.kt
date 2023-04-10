@@ -8,12 +8,11 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.CreateDeckBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.errors.Errors
-import kotlinx.android.synthetic.main.button_bar.*
-import kotlinx.android.synthetic.main.create_deck.*
 import org.koin.android.ext.android.inject
 
 private const val TAG = "AddEditDeckActivity"
@@ -22,6 +21,8 @@ private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val EXTRA_DECK_ID = "deck_id"
 
 class AddEditDeckActivity : BaseActivity() {
+    
+    private val views by lazy { CreateDeckBinding.inflate(layoutInflater) }
 
     private var deck: Deck? = null
 
@@ -35,7 +36,7 @@ class AddEditDeckActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.create_deck)
+        setContentView(views.root)
         initialize()
 
         val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
@@ -49,8 +50,8 @@ class AddEditDeckActivity : BaseActivity() {
     }
 
     private fun initialize() {
-        buttonCancel.setOnClickListener { finish() }
-        buttonOk.setOnClickListener { saveWithValidation() }
+        views.buttonBar.buttonCancel.setOnClickListener { finish() }
+        views.buttonBar.buttonOk.setOnClickListener { saveWithValidation() }
     }
 
     private fun extractData(deckId: Long) {
@@ -60,12 +61,12 @@ class AddEditDeckActivity : BaseActivity() {
     }
 
     private fun prefillValues(deck: Deck) {
-        nameField.setText(deck.name)
-        buttonOk.setText(R.string.button_save)
+        views.nameField.setText(deck.name)
+        views.buttonBar.buttonOk.setText(R.string.button_save)
     }
 
     private fun saveWithValidation() {
-        val name = nameField.text.toString()
+        val name = views.nameField.text.toString()
         if (!validate(name)) {
             return
         }

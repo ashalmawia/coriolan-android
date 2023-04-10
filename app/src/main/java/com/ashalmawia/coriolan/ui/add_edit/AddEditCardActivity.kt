@@ -13,9 +13,9 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.AddCardResult
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.databinding.AddEditCardBinding
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.BaseActivity
-import kotlinx.android.synthetic.main.add_edit_card.*
 import org.koin.android.ext.android.inject
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
@@ -27,6 +27,8 @@ private const val KEY_TRANSLATIONS = "translations"
 private const val KEY_DECK_SELECTION_POSITION = "deck_id"
 
 class AddEditCardActivity : BaseActivity() {
+
+    private val views by lazy { AddEditCardBinding.inflate(layoutInflater) }
 
     private val repository: Repository by inject()
     private val decksRegistry: DecksRegistry by inject()
@@ -41,7 +43,7 @@ class AddEditCardActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.add_edit_card)
+        setContentView(views.root)
 
         setUpToolbar(R.string.edit__add_new_cards)
 
@@ -70,16 +72,18 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun initialize() {
-        labelOriginal.text = getString(R.string.edit_card__original, domain.langOriginal().value)
-        labelTranslations.text = getString(R.string.edit_card__translations, domain.langTranslations().value)
+        views.apply {
+            labelOriginal.text = getString(R.string.edit_card__original, domain.langOriginal().value)
+            labelTranslations.text = getString(R.string.edit_card__translations, domain.langTranslations().value)
 
-        findViewById<AddEditCardItemView>(R.id.original).canBeDeleted = false
-        findViewById<AddEditCardItemView>(R.id.transcription).canBeDeleted = false
+            original.canBeDeleted = false
+            transcription.canBeDeleted = false
 
-        deckSelector.initialize(decks())
+            deckSelector.initialize(decks())
 
-        addTranslation.setOnClickListener { onAddNewTranslationClicked() }
-        mockInputField.setOnClickListener { onAddNewTranslationClicked() }
+            addTranslation.setOnClickListener { onAddNewTranslationClicked() }
+            mockInputField.setOnClickListener { onAddNewTranslationClicked() }
+        }
     }
 
     private fun prefill() {
@@ -97,15 +101,15 @@ class AddEditCardActivity : BaseActivity() {
             return
         }
 
-        deckSelector.selectDeckWithId(deckId)
+        views.deckSelector.selectDeckWithId(deckId)
     }
 
     private fun prefillDataEdit(card: Card) {
-        deckSelector.selectDeckWithId(card.deckId)
+        views.deckSelector.selectDeckWithId(card.deckId)
 
-        original.input = card.original.value
+        views.original.input = card.original.value
 
-        transcription.input = transcriptionValue ?: ""
+        views.transcription.input = transcriptionValue ?: ""
 
         card.translations.forEach {
             val view = addTrasnlationField()
@@ -139,21 +143,21 @@ class AddEditCardActivity : BaseActivity() {
         val view = AddEditCardItemView(this)
         view.removeListener = { onRemoveClicked(it) }
 
-        translationsContainer.addView(view)
+        views.translationsContainer.addView(view)
         updateTranslationViews()
 
         return view
     }
 
     private fun onRemoveClicked(view: AddEditCardItemView) {
-        translationsContainer.removeView(view)
+        views.translationsContainer.removeView(view)
         updateTranslationViews()
     }
 
     private fun updateTranslationViews() {
-        val translationsCount = translationsContainer.childCount
+        val translationsCount = views.translationsContainer.childCount
         for (i in 0 until translationsCount) {
-            val child = translationsContainer.getChildAt(i) as AddEditCardItemView
+            val child = views.translationsContainer.getChildAt(i) as AddEditCardItemView
             child.ordinal = i + 1
             child.canBeDeleted = translationsCount > 1
         }
@@ -200,11 +204,11 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun collectCardData(): CardData {
-        val original = original.input
-        val transcription = transcription.input.takeIf { it.isNotBlank() }
+        val original = views.original.input
+        val transcription = views.transcription.input.takeIf { it.isNotBlank() }
         val translations = collectTranslations()
 
-        val deck = deckSelector.selectedDeck()
+        val deck = views.deckSelector.selectedDeck()
 
         return CardData(
                 original,
@@ -215,9 +219,9 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun collectTranslations(): Array<String> {
-        val array = Array(translationsContainer.childCount) { "" }
+        val array = Array(views.translationsContainer.childCount) { "" }
         for (i in 0 until array.size) {
-            val view = translationsContainer.getChildAt(i) as AddEditCardItemView
+            val view = views.translationsContainer.getChildAt(i) as AddEditCardItemView
             array[i] = view.input
         }
         return array
@@ -229,9 +233,9 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun clear() {
-        original.input = ""
-        transcription.input = ""
-        translationsContainer.removeAllViews()
+        views.original.input = ""
+        views.transcription.input = ""
+        views.translationsContainer.removeAllViews()
         addTrasnlationField()
     }
 
@@ -265,18 +269,18 @@ class AddEditCardActivity : BaseActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(KEY_DECK_SELECTION_POSITION, deckSelector.selectedItemPosition)
-        outState.putString(KEY_ORIGINAL, original.input)
+        outState.putInt(KEY_DECK_SELECTION_POSITION, views.deckSelector.selectedItemPosition)
+        outState.putString(KEY_ORIGINAL, views.original.input)
         val translations = collectTranslations()
         outState.putStringArray(KEY_TRANSLATIONS, translations)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        deckSelector.setSelection(savedInstanceState.getInt(KEY_DECK_SELECTION_POSITION, 0), false)
-        original.input = savedInstanceState.getString(KEY_ORIGINAL, "")
+        views.deckSelector.setSelection(savedInstanceState.getInt(KEY_DECK_SELECTION_POSITION, 0), false)
+        views.original.input = savedInstanceState.getString(KEY_ORIGINAL, "")
 
         val translations = savedInstanceState.getStringArray(KEY_TRANSLATIONS)
-        translationsContainer.removeAllViews()
+        views.translationsContainer.removeAllViews()
         translations?.forEach {
             val view = addTrasnlationField()
             view.input = it

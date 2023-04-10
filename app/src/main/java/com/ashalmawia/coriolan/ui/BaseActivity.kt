@@ -3,13 +3,14 @@ package com.ashalmawia.coriolan.ui
 import android.app.Activity
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.debug.DebugIncreaseDateDialog
-import kotlinx.android.synthetic.main.app_toolbar.*
 
 abstract class BaseActivity : AppCompatActivity() {
 
     protected val appMenu: AppMenu by lazy { AppMenu(this) { DebugIncreaseDateDialog(this) } }
+    protected val toolbar: Toolbar by lazy { findViewById(R.id.toolbar) }
 
     protected fun setUpToolbar(title: String, cancellable: Boolean = true) {
         setSupportActionBar(toolbar)
