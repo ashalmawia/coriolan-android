@@ -15,12 +15,11 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
-import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
 
-class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
+class EditFragment : BaseFragment(), EditDeckCallback {
 
     companion object {
         fun create(domain: Domain): EditFragment {
@@ -68,7 +67,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
         fetchData()
     }
 
-    override fun fetchData() {
+    private fun fetchData() {
         (views.list.adapter as EditListAdapter).setItems(items())
     }
 

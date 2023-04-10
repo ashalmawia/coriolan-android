@@ -6,11 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
 import com.ashalmawia.coriolan.learning.TodayChangeListener
@@ -142,20 +138,4 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     private fun firstDeckView(): View? {
         return (views.decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.text
     }
-}
-
-class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
-class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val text = view.findViewById<TextView>(R.id.deck_list_item__text)!!
-    val type = view.findViewById<TextView>(R.id.deck_list_item__type)!!
-    val more = view.findViewById<ImageView>(R.id.deck_list_item__more)!!
-    val pending = view.findViewById<ViewGroup>(R.id.deck_list_item__pending)!!
-    val countNew = view.findViewById<TextView>(R.id.pending_counter__new)!!
-    val countRelearn: TextView = view.findViewById(R.id.pending_counter__relearn)
-    val countReview = view.findViewById<TextView>(R.id.pending_counter__review)!!
-}
-
-interface DataFetcher {
-    fun fetchData()
 }
