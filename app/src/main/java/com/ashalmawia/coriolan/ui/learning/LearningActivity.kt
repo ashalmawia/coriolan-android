@@ -4,28 +4,30 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.appcompat.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.util.setStartDrawableTint
-import kotlinx.android.synthetic.main.learning_activity.*
-import kotlinx.android.synthetic.main.deck_progress_bar.*
+import kotlinx.android.synthetic.main.deck_progress_bar.deck_progress_bar__new
+import kotlinx.android.synthetic.main.deck_progress_bar.deck_progress_bar__relearn
+import kotlinx.android.synthetic.main.deck_progress_bar.deck_progress_bar__review
+import kotlinx.android.synthetic.main.learning_activity.exerciseContainer
+import kotlinx.android.synthetic.main.learning_activity.toolbarTitle
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
@@ -45,8 +47,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
         }
     }
 
-    private val decksRegistry: DecksRegistry = domainScope().get()
-    private val repository: Repository = get()
+    private val repository: Repository by inject()
 
     private val flow by lazy {
         val learningFlowFactory: LearningFlow.Factory = get()
@@ -131,7 +132,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     private fun deleteCurrentCard() {
         val current = flow.card
         flow.dropCard(current.card)
-        decksRegistry.deleteCard(current.card)
+        repository.deleteCard(current.card)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

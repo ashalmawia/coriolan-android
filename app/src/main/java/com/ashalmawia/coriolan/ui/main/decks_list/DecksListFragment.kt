@@ -12,14 +12,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.dependencies.domainScope
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
@@ -30,9 +30,24 @@ import org.koin.core.parameter.parametersOf
 
 private const val TAG = "LearningFragment"
 
+private const val ARGUMENT_DOMAIN_ID = "domain_id"
+
 class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, BeginStudyListener {
 
-    private val decksRegistry: DecksRegistry by lazy { domainScope().get() }
+    companion object {
+        fun create(domain: Domain): DecksListFragment {
+            val arguments = Bundle().also {
+                it.putLong(ARGUMENT_DOMAIN_ID, domain.id)
+            }
+            return DecksListFragment().also { it.arguments = arguments }
+        }
+    }
+
+    private val repository: Repository by inject()
+    private val domain: Domain by lazy {
+        val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
+        repository.domainById(domainId)!!
+    }
     private val adapter: DecksListAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this, this) }
     private val exercisesRegistry: ExercisesRegistry by inject()
 
@@ -100,7 +115,7 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
 
     private fun decksList(): List<DeckListItem> {
         val timeStart = System.currentTimeMillis()
-        val decks = decksRegistry.allDecks()
+        val decks = repository.allDecks(domain)
         Log.d(TAG, "time spend for loading decks: ${System.currentTimeMillis() - timeStart} ms")
         return decks.flatMap { listOf(
                 DeckListItem(it, CardType.FORWARD),

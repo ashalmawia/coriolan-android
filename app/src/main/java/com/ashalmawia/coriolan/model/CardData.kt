@@ -4,5 +4,5 @@ data class CardData(
         val original: String,
         val transcription: String?,
         val translations: List<String>,
-        val deckId: Long
+        val deck: Deck
 )

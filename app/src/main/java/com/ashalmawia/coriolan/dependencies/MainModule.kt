@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.dependencies
 import androidx.preference.PreferenceDataStore
 import com.ashalmawia.coriolan.FirstStart
 import com.ashalmawia.coriolan.FirstStartImpl
+import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.DomainsRegistryImpl
 import com.ashalmawia.coriolan.data.backup.Backup
@@ -32,6 +33,7 @@ import org.koin.dsl.module
 
 val mainModule = module {
     single<Repository> { SqliteStorage(get()) }
+    single { DecksRegistry(get(), get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
     single<Logbook> { SqliteLogbook(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get()) }

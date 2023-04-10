@@ -16,7 +16,6 @@ import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.dependencies.createDomainScope
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
@@ -154,7 +153,6 @@ class CreateDomainActivity : BaseActivity() {
     }
 
     private fun openAddCardsActivity(domain: Domain, defaultDeck: Deck) {
-        createDomainScope(domain)
         TaskStackBuilder.create(this)
                 .addNextIntent(DomainActivity.intent(this, domain))
                 .addNextIntent(AddEditCardActivity.add(this, defaultDeck))

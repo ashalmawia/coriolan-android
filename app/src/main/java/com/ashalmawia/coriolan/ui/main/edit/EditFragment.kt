@@ -8,18 +8,34 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
-import com.ashalmawia.coriolan.dependencies.domainScope
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.main.decks_list.DataFetcher
 import kotlinx.android.synthetic.main.edit.list
+import org.koin.android.ext.android.inject
+
+private const val ARGUMENT_DOMAIN_ID = "domain_id"
 
 class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
 
-    private val decksRegistry: DecksRegistry = domainScope().get()
+    companion object {
+        fun create(domain: Domain): EditFragment {
+            val arguments = Bundle().also {
+                it.putLong(ARGUMENT_DOMAIN_ID, domain.id)
+            }
+            return EditFragment().also { it.arguments = arguments }
+        }
+    }
+
+    private val repository: Repository by inject()
+    private val domain: Domain by lazy {
+        val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
+        repository.domainById(domainId)!!
+    }
 
     private lateinit var listener: EditFragmentListener
 
@@ -67,7 +83,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun decks(): List<Deck> {
-        return decksRegistry.allDecks()
+        return repository.allDecks(domain)
     }
 
     override fun addCards(context: Context, deck: Deck) {
@@ -90,7 +106,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun performDeleteDeck(context: Context, deck: Deck) {
-        val deleted = decksRegistry.deleteDeck(deck)
+        val deleted = repository.deleteDeck(deck)
         if (deleted) {
             fetchData()
         } else {
@@ -107,7 +123,7 @@ class EditFragment : BaseFragment(), EditDeckCallback, DataFetcher {
     }
 
     private fun createNewDeck(context: Context) {
-        val intent = AddEditDeckActivity.create(context)
+        val intent = AddEditDeckActivity.create(context, domain)
         startActivity(intent)
     }
 

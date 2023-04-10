@@ -13,12 +13,12 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.AddCardResult
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.BaseActivity
 import kotlinx.android.synthetic.main.add_edit_card.*
-import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
+private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val EXTRA_DECK_ID = "deck_id"
 private const val EXTRA_CARD_ID = "card_id"
 
@@ -28,9 +28,13 @@ private const val KEY_DECK_SELECTION_POSITION = "deck_id"
 
 class AddEditCardActivity : BaseActivity() {
 
-    private val repository: Repository = get()
-    private val decksRegistry: DecksRegistry = domainScope().get()
-    private val domain: Domain = domainScope().get()
+    private val repository: Repository by inject()
+    private val decksRegistry: DecksRegistry by inject()
+
+    private val domain: Domain by lazy {
+        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        repository.domainById(domainId)!!
+    }
 
     private var card: Card? = null
     private var transcriptionValue: String? = null
@@ -206,7 +210,7 @@ class AddEditCardActivity : BaseActivity() {
                 original,
                 transcription,
                 translations.asList(),
-                deck.id
+                deck
         )
     }
 
@@ -331,15 +335,15 @@ class AddEditCardActivity : BaseActivity() {
 
     companion object {
         fun add(context: Context, deck: Deck): Intent {
-            val intent = Intent(context, AddEditCardActivity::class.java)
-            intent.putExtra(EXTRA_DECK_ID, deck.id)
-            return intent
+            return Intent(context, AddEditCardActivity::class.java)
+                    .putExtra(EXTRA_DOMAIN_ID, deck.domain.id)
+                    .putExtra(EXTRA_DECK_ID, deck.id)
         }
 
         fun edit(context: Context, card: Card): Intent {
-            val intent = Intent(context, AddEditCardActivity::class.java)
-            intent.putExtra(EXTRA_CARD_ID, card.id)
-            return intent
+            return Intent(context, AddEditCardActivity::class.java)
+                    .putExtra(EXTRA_DOMAIN_ID, card.domain.id)
+                    .putExtra(EXTRA_CARD_ID, card.id)
         }
     }
 }

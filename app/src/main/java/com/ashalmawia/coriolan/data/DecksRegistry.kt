@@ -6,16 +6,11 @@ import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 
 class DecksRegistry(
-        val domain: Domain,
         private val repository: Repository,
         private val exercisesRegistry: ExercisesRegistry
 ) {
 
-    fun allDecks(): List<Deck> {
-        return repository.allDecks(domain)
-    }
-
-    fun addDeck(name: String) {
+    fun addDeck(domain: Domain, name: String) {
         repository.addDeck(domain, name)
     }
 
@@ -36,6 +31,7 @@ class DecksRegistry(
     }
 
     fun editCard(card: Card, cardData: CardData): Card {
+        val domain = card.domain
         val original = findOrAddTerm(
                 cardData.original, domain.langOriginal(card.type), cardData.transcription
         )
@@ -43,7 +39,7 @@ class DecksRegistry(
             findOrAddTerm(it, domain.langTranslations(card.type), null)
         }
 
-        val updated = repository.updateCard(card, cardData.deckId, original, translations)
+        val updated = repository.updateCard(card, cardData.deck.id, original, translations)
         deleteOrphanTerms(card.translations.plus(card.original))
 
         return updated
@@ -68,6 +64,7 @@ class DecksRegistry(
      * 3. reverse: "источник -- spring"
      */
     private fun addCard(cardData: CardData): AddCardResult {
+        val domain = cardData.deck.domain
         val original = findOrAddTerm(
                 cardData.original, domain.langOriginal(), cardData.transcription
         )
@@ -87,12 +84,12 @@ class DecksRegistry(
     }
 
     private fun addForwardAndReverseWithMerging(original: Term, translations: List<Term>, cardData: CardData) {
-        val merger = CardsMerger.create(repository, domain, exercisesRegistry)
+        val merger = CardsMerger.create(repository, cardData.deck.domain, exercisesRegistry)
 
-        merger.mergeOrAdd(original, translations, cardData.deckId)
+        merger.mergeOrAdd(original, translations, cardData.deck.id)
 
         val originalAsList = listOf(original)
-        translations.forEach { merger.mergeOrAdd(it, originalAsList, cardData.deckId) }
+        translations.forEach { merger.mergeOrAdd(it, originalAsList, cardData.deck.id) }
     }
 
     private fun findOrAddTerm(

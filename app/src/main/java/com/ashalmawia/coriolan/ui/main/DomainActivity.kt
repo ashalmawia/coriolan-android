@@ -11,7 +11,6 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.closeScope
-import com.ashalmawia.coriolan.dependencies.createDomainScope
 import com.ashalmawia.coriolan.dependencies.createScope
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
@@ -51,6 +50,8 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
 
+    private lateinit var domain: Domain
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.domain_activity)
@@ -62,12 +63,9 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
         createScope()
 
         val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
-        val domain = repository.domainById(domainId)
+        domain = repository.domainById(domainId)!!
 
-        domain?.apply {
-            createDomainScope(this)
-            setUpToolbar(this.name)
-        }
+        setUpToolbar(domain.name)
 
         setUpBottomBarNavigation()
     }
@@ -123,14 +121,16 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     private fun switchToLearning() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_DECKS_LIST) ?: DecksListFragment()
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_DECKS_LIST)
+                ?: DecksListFragment.create(domain)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_DECKS_LIST)
                 .commitAllowingStateLoss()
     }
 
     private fun switchToEdit() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_EDIT) ?: EditFragment()
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_EDIT)
+                ?: EditFragment.create(domain)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_EDIT)
                 .commitAllowingStateLoss()

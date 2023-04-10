@@ -15,10 +15,9 @@ val dataImportModule = module {
     scope(named(SCOPE_DATA_IMPORT)) {
         scoped<DataImportFlow> { (importer: DataImporter) -> DataImportFlowImpl(
                 get(),
-                domainScope().get(),
-                importer)
-        }
-
+                get(),
+                importer
+        ) }
     }
 }
 

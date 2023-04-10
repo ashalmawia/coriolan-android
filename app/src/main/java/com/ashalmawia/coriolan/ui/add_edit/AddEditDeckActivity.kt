@@ -8,8 +8,8 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.dependencies.domainScope
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.errors.Errors
 import kotlinx.android.synthetic.main.button_bar.*
@@ -18,6 +18,7 @@ import org.koin.android.ext.android.inject
 
 private const val TAG = "AddEditDeckActivity"
 
+private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val EXTRA_DECK_ID = "deck_id"
 
 class AddEditDeckActivity : BaseActivity() {
@@ -25,7 +26,12 @@ class AddEditDeckActivity : BaseActivity() {
     private var deck: Deck? = null
 
     private val repository: Repository by inject()
-    private val decksRegistry: DecksRegistry by domainScope().inject()
+    private val decksRegistry: DecksRegistry by inject()
+
+    private val domain: Domain by lazy {
+        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        repository.domainById(domainId)!!
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +80,7 @@ class AddEditDeckActivity : BaseActivity() {
 
     private fun createDeckAndFinish(name: String) {
         try {
-            decksRegistry.addDeck(name)
+            decksRegistry.addDeck(domain, name)
             finishOk()
         } catch (e: DataProcessingException) {
             showError(getString(R.string.add_deck__failed_already_exists, name))
@@ -111,20 +117,16 @@ class AddEditDeckActivity : BaseActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun finishWithError(message: String) {
-        Errors.illegalState(TAG, message)
-        finish()
-    }
-
     companion object {
-        fun create(context: Context): Intent {
+        fun create(context: Context, domain: Domain): Intent {
             return Intent(context, AddEditDeckActivity::class.java)
+                    .putExtra(EXTRA_DOMAIN_ID, domain.id)
         }
 
         fun edit(context: Context, deck: Deck): Intent {
-            val intent = Intent(context, AddEditDeckActivity::class.java)
-            intent.putExtra(EXTRA_DECK_ID, deck.id)
-            return intent
+            return Intent(context, AddEditDeckActivity::class.java)
+                    .putExtra(EXTRA_DOMAIN_ID, deck.domain.id)
+                    .putExtra(EXTRA_DECK_ID, deck.id)
         }
     }
 }

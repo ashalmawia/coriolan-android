@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.importer.file
 
 import android.content.Context
+import android.util.Log
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.importer.DataImporter
@@ -8,6 +9,8 @@ import com.ashalmawia.coriolan.data.importer.JsonCardData
 import com.ashalmawia.coriolan.model.CardData
 import com.ashalmawia.coriolan.model.Deck
 import java.io.File
+
+private const val TAG = "ImporterFromFile"
 
 class ImporterFromFile : DataImporter {
 
@@ -18,8 +21,9 @@ class ImporterFromFile : DataImporter {
     }
 
     override fun launch(context: Context) {
-        val intent = EnterFilePathActivity.intent(context)
-        context.startActivity(intent)
+        //TODO
+//        val intent = EnterFilePathActivity.intent(context)
+//        context.startActivity(intent)
     }
 
     fun onFile(path: String, deck: Deck) {
@@ -31,7 +35,7 @@ class ImporterFromFile : DataImporter {
 
         val data = parseDataSafe(file)
         if (data != null) {
-            flow?.onData(data.map { CardData(it.original, it.transcription, it.translations, deck.id) })
+            flow?.onData(data.map { CardData(it.original, it.transcription, it.translations, deck) })
         }
     }
 
@@ -42,11 +46,11 @@ class ImporterFromFile : DataImporter {
             parser.parse(text)
         } catch (e: ParsingException) {
             flow?.onError("Failed to parse file, line[" + e.line + "]")
-            e.printStackTrace()
+            Log.e(TAG, "failed to parse file", e)
             null
         } catch (e: Exception) {
             flow?.onError("Error reading the file")
-            e.printStackTrace()
+            Log.e(TAG, "failed to parse file", e)
             null
         }
     }

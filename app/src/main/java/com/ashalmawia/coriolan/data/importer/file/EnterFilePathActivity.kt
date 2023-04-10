@@ -9,24 +9,33 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import com.ashalmawia.coriolan.BuildConfig
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.DecksRegistry
 import com.ashalmawia.coriolan.data.importer.DataImportFlow
+import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.dependencies.dataImportScope
-import com.ashalmawia.coriolan.dependencies.domainScope
+import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.util.isPermissionGranted
 import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
-import kotlinx.android.synthetic.main.enter_file_path.*
+import kotlinx.android.synthetic.main.enter_file_path.buttonCancel
+import kotlinx.android.synthetic.main.enter_file_path.buttonSubmit
+import kotlinx.android.synthetic.main.enter_file_path.deckSelector
+import kotlinx.android.synthetic.main.enter_file_path.editText
+import org.koin.android.ext.android.inject
 import java.io.File
 
-const val EXTRA_TEXT = "extra_text"
-const val EXTRA_DECK_ID = "deck_id"
+private const val EXTRA_TEXT = "extra_text"
+private const val EXTRA_DECK_ID = "deck_id"
+private const val EXTRA_DOMAIN_ID = "domain_id"
 
 private val DEBUG_PREFILL_PATH = BuildConfig.DEBUG
 
 class EnterFilePathActivity : BaseActivity() {
 
-    private val decksRegistry: DecksRegistry by domainScope().inject()
+    private val repository: Repository by inject()
+    private val domain: Domain by lazy {
+        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        repository.domainById(domainId)!!
+    }
     private val importFlow: DataImportFlow by dataImportScope().inject()
 
     private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
@@ -54,7 +63,7 @@ class EnterFilePathActivity : BaseActivity() {
     }
 
     private fun initalize() {
-        deckSelector.initialize(decksRegistry.allDecks())
+        deckSelector.initialize(repository.allDecks(domain))
     }
 
     private fun cancel() {
@@ -114,8 +123,9 @@ class EnterFilePathActivity : BaseActivity() {
     }
 
     companion object {
-        fun intent(context: Context): Intent {
+        fun intent(context: Context, domain: Domain): Intent {
             return Intent(context, EnterFilePathActivity::class.java)
+                    .putExtra(EXTRA_DOMAIN_ID, domain.id)
         }
     }
 
