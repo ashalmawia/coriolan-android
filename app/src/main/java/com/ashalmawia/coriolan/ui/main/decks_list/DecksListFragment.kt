@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.ui.main.decks_list
 
-import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,21 +17,19 @@ import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import kotlinx.android.synthetic.main.learning.decksList
-import org.joda.time.DateTime
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
 
 private const val TAG = "LearningFragment"
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
 
-class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, BeginStudyListener {
+class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeListener {
 
     companion object {
         fun create(domain: Domain): DecksListFragment {
@@ -44,12 +41,15 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
     }
 
     private val repository: Repository by inject()
+    private val exercisesRegistry: ExercisesRegistry by inject()
+
     private val domain: Domain by lazy {
         val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
         repository.domainById(domainId)!!
     }
-    private val adapter: DecksListAdapter by inject { parametersOf(exercisesRegistry.defaultExercise(), this, this) }
-    private val exercisesRegistry: ExercisesRegistry by inject()
+    private val adapter: DecksListAdapter by lazy {
+        DecksListAdapter(get(), exercisesRegistry.defaultExercise(), this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.learning, container, false)
@@ -99,14 +99,27 @@ class DecksListFragment : BaseFragment(), TodayChangeListener, DataFetcher, Begi
         decksList.adapter = adapter
     }
 
-    override fun fetchData() {
+    private fun fetchData() {
         adapter.setData(decksList())
     }
 
-    override fun beginStudy(deck: Deck, cardType: CardType, studyOrder: StudyOrder) {
-        val intent = LearningActivity.intent(requireContext(), deck, cardType, studyOrder)
+    override fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder) {
+        val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardType, studyOrder)
         requireActivity().startActivity(intent)
     }
+
+    override fun showDeckDetailsDialog(deck: DeckListItem) {
+        val dialog = DeckDetailsDialog(requireActivity(), deck, today(), repository)
+        dialog.show()
+    }
+
+    override fun showIncreaseLimitsDialog(deck: DeckListItem) {
+        val dialog = IncreaseLimitsDialog(requireActivity(), deck, today(), repository, get()).build()
+        dialog.setOnDismissListener { fetchData() }
+        dialog.show()
+    }
+
+    private fun today() = TodayManager.today()
 
     override fun onDayChanged() {
         // to update pending counters on deck items
@@ -143,11 +156,3 @@ class DeckViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 interface DataFetcher {
     fun fetchData()
 }
-
-interface BeginStudyListener {
-
-    fun beginStudy(deck: Deck, cardType: CardType, studyOrder: StudyOrder)
-}
-
-typealias DeckDetailsDialogCreator = (DeckListItem, DateTime) -> Dialog
-typealias IncreaseLimitsDialogCreator = (DeckListItem, DateTime) -> Dialog

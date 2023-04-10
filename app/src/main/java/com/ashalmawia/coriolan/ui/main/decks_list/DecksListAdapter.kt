@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.DeckCountsProvider
-import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
@@ -25,10 +24,7 @@ private const val TYPE_ITEM = 2
 class DecksListAdapter(
         private val deckCountsProvider: DeckCountsProvider,
         private val exercise: Exercise,
-        private val dataFetcher: DataFetcher,
-        private val beginStudyListener: BeginStudyListener,
-        private val createDeckDetailsDialog: DeckDetailsDialogCreator,
-        private val createIncreaseLimitsDialog: IncreaseLimitsDialogCreator
+        private val listener: DeckListAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<DeckListItem> = mutableListOf()
@@ -135,21 +131,16 @@ class DecksListAdapter(
     }
 
     private fun instantiateLearningFlow(item: DeckListItem, studyOrder: StudyOrder) {
-        beginStudyListener.beginStudy(item.deck, item.cardType, studyOrder)
+        listener.beginStudy(item, studyOrder)
     }
 
     private fun studyMore(item: DeckListItem) {
-        val dialog = createIncreaseLimitsDialog(item, today())
-        dialog.setOnDismissListener { dataFetcher.fetchData() }
-        dialog.show()
+        listener.showIncreaseLimitsDialog(item)
     }
 
     private fun showDeckDetails(item: DeckListItem) {
-        val dialog = createDeckDetailsDialog(item, today())
-        dialog.show()
+        listener.showDeckDetailsDialog(item)
     }
-
-    private fun today() = TodayManager.today()
 
     private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
         if (counts.isAnythingPending()) {
@@ -167,6 +158,14 @@ class DecksListAdapter(
             holder.pending.visibility = View.INVISIBLE
         }
     }
+}
+
+interface DeckListAdapterListener {
+    fun showDeckDetailsDialog(deck: DeckListItem)
+
+    fun showIncreaseLimitsDialog(deck: DeckListItem)
+
+    fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder)
 }
 
 private fun CardType.toTypeStringRes() = when (this) {
