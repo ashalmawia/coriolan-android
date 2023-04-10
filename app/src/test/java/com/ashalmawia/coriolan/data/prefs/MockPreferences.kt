@@ -67,4 +67,9 @@ class MockPreferences : Preferences {
     override fun recordMainFeatureDiscoverySeen() {
         isMainFeatureDiscoverySeen = true
     }
+
+    private var shouldMixForwardAndReverse = true
+    override var mixForwardAndReverse: Boolean
+        get() = shouldMixForwardAndReverse
+        set(value) { shouldMixForwardAndReverse = value }
 }

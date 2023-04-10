@@ -26,15 +26,15 @@ fun addMockLanguages(storage: Repository) {
 fun mockCardData(
         original: String,
         translations: List<String>,
-        deckId: Long = 1L,
+        deck: Deck,
         transcription: String? = "[ɪɡˌzædʒəˈreɪʃən]"
-) = CardData(original, transcription, translations, deckId)
+) = CardData(original, transcription, translations, deck)
 
 fun mockCardData(
         original: String = "shrimp",
         translation: String = "креветка",
-        deckId: Long = 1L
-) = mockCardData(original, listOf(translation), deckId)
+        deck: Deck
+) = mockCardData(original, listOf(translation), deck)
 
 private var termId = 1L
 fun mockTerm(value: String = "mock value", language: Language = mockLanguage(), transcription: String? = null)

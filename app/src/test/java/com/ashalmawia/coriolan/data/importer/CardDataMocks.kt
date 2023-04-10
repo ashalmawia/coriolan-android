@@ -10,7 +10,7 @@ private fun createReversedForTranslation(cardData: CardData, translation: String
     return CardData(
             original = translation,
             transcription = null,
-            deckId = cardData.deckId,
+            deck = cardData.deck,
             translations = listOf(cardData.original)
     )
 }

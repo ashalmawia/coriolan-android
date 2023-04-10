@@ -648,7 +648,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
         val deck = addMockDeck(storage)
 
-        val data = mockCardData("shrimp", "креветка", deck.id)
+        val data = mockCardData("shrimp", "креветка", deck)
 
         // when
         val card = addMockCard(storage, data, domain)
@@ -666,7 +666,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
         val deck = addMockDeck(storage)
 
-        val data = mockCardData("shrimp", "креветка", deck.id)
+        val data = mockCardData("shrimp", "креветка", deck)
 
         // when
         val card = addMockCard(storage, data, domain, CardType.REVERSE)
@@ -687,7 +687,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val data = mockCardData("ракета", listOf("firework", "rocket", "missile"), deck.id)
+        val data = mockCardData("ракета", listOf("firework", "rocket", "missile"), deck)
 
         // when
         val card = addMockCard(storage, data, domain, CardType.FORWARD)
@@ -705,7 +705,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val data = mockCardData("ракета", listOf("firework", "rocket", "missile"), deck.id)
+        val data = mockCardData("ракета", listOf("firework", "rocket", "missile"), deck)
 
         // when
         val card = addMockCard(storage, data, domain, CardType.REVERSE)
@@ -726,7 +726,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val data = mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", deck.id)
+        val data = mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", deck)
 
         // when
         val card = addMockCard(storage, data, domain)
@@ -743,7 +743,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         val deck = addMockDeck(storage)
-        val data = mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", deck.id)
+        val data = mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", deck)
 
         // when
         val card = addMockCard(storage, data, domain)
@@ -1104,7 +1104,7 @@ abstract class StorageTest {
 
         val deck = addMockDeck(storage)
 
-        val data = mockCardData(deckId = deck.id)
+        val data = mockCardData(deck = deck)
         val card = addMockCard(storage, data, domain)
 
         // when
@@ -1300,12 +1300,12 @@ abstract class StorageTest {
 
         val deck = storage.addDeck(domain, "mock deck")
         val forward = (0 until 3)
-                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { mockCardData("original $it", "translation $it", deck) }
                 .map {
                     addMockCard(storage, it, domain, CardType.FORWARD)
                 }
         val reverse = (0 until 5)
-                .map { mockCardData("translation 1 $it", "original 1 $it", deck.id) }
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck) }
                 .map {
                     addMockCard(storage, it, domain, CardType.REVERSE)
                 }
@@ -1347,12 +1347,12 @@ abstract class StorageTest {
 
         val deck = storage.addDeck(domain, "mock deck")
         val forward = (0 until 4)
-                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { mockCardData("original $it", "translation $it", deck) }
                 .map {
                     addMockCard(storage, it, domain, CardType.FORWARD)
                 }
         val reverse = (0 until 6)
-                .map { mockCardData("translation 1 $it", "original 1 $it", deck.id) }
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck) }
                 .map {
                     addMockCard(storage, it, domain, CardType.REVERSE)
                 }
@@ -1412,23 +1412,23 @@ abstract class StorageTest {
 
         val name = "EN - My deck"
         storage.addDeck(domain, "wrong deck 1")
-        val id = storage.addDeck(domain, name).id
+        val deck = storage.addDeck(domain, name)
         storage.addDeck(domain, "wrong deck 2")
         val cards = listOf(
-                mockCardData("shrimp", "креветка", id),
-                mockCardData("ракета", listOf("rocket", "missile", "firework"), id),
-                mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", id)
+                mockCardData("shrimp", "креветка", deck),
+                mockCardData("ракета", listOf("rocket", "missile", "firework"), deck),
+                mockCardData("Shrimp is going out on Fridays.", "Креветка гуляет по пятницам.", deck)
         )
         for (card in cards) {
             addMockCard(storage, card, domain)
         }
 
         // when
-        val deck = storage.deckById(id)
+        val deck1 = storage.deckById(deck.id)
 
         // assert
-        assertDeckCorrect(deck, name, domain)
-        assertDeckCardsCorrect(storage.cardsOfDeck(deck), cards, domain)
+        assertDeckCorrect(deck1, name, domain)
+        assertDeckCardsCorrect(storage.cardsOfDeck(deck1), cards, domain)
     }
 
     @Test(expected = DataProcessingException::class)
@@ -1493,8 +1493,8 @@ abstract class StorageTest {
             val deck = storage.addDeck(domain, "deck $i")
             decks.add(deck)
             cardData.add(listOf(
-                    mockCardData("original ${2*i}", "translation ${2*i}", deck.id),
-                    mockCardData("original ${2*i+1}", "translation ${2*i+1}", deck.id)
+                    mockCardData("original ${2*i}", "translation ${2*i}", deck),
+                    mockCardData("original ${2*i+1}", "translation ${2*i+1}", deck)
             ))
         }
         cardData.forEach { it.forEach { addMockCard(storage, it, domain) } }
@@ -1518,8 +1518,8 @@ abstract class StorageTest {
         val deck1 = storage.addDeck(domain, "deck 1")
         decks.add(deck1)
         cardData.add(listOf(
-                mockCardData("original $1", "translation $1", deck1.id),
-                mockCardData("original $2", "translation $2", deck1.id)
+                mockCardData("original $1", "translation $1", deck1),
+                mockCardData("original $2", "translation $2", deck1)
         ))
         val deck2 = storage.addDeck(domain, "deck 2")
         decks.add(deck2)
@@ -1527,8 +1527,8 @@ abstract class StorageTest {
         val deck3 = storage.addDeck(domain, "deck 3")
         decks.add(deck3)
         cardData.add(listOf(
-                mockCardData("original $4", "translation $4", deck3.id),
-                mockCardData("original $5", "translation $5", deck3.id)
+                mockCardData("original $4", "translation $4", deck3),
+                mockCardData("original $5", "translation $5", deck3)
         ))
         cardData.forEach { it.forEach { addMockCard(storage, it, domain) } }
 
@@ -1572,7 +1572,7 @@ abstract class StorageTest {
             val deck = storage.addDeck(domain, "deck $i")
             decks.add(deck)
             cardData.add(listOf(
-                    mockCardData("original $i", "translation $i", deck.id)
+                    mockCardData("original $i", "translation $i", deck)
             ))
         }
         cardData.forEach { it.forEach { addMockCard(storage, it, domain) } }
@@ -1665,7 +1665,7 @@ abstract class StorageTest {
         val count = 3
         val cardData = mutableListOf<CardData>()
         for (i in 0 until count) {
-            val data = mockCardData("original $i", "translation $i", deck.id)
+            val data = mockCardData("original $i", "translation $i", deck)
             cardData.add(data)
             addMockCard(storage, data, domain)
         }
@@ -1692,7 +1692,7 @@ abstract class StorageTest {
         val cardsData = mutableListOf<CardData>()
         val cards = mutableListOf<Card>()
         for (i in 0 until count) {
-            val data = mockCardData("original $i", "translation $i", deck.id)
+            val data = mockCardData("original $i", "translation $i", deck)
             cardsData.add(data)
             val added = addMockCard(storage, data, domain)
             cards.add(added)
@@ -1720,7 +1720,7 @@ abstract class StorageTest {
         val deck = storage.addDeck(domain, "mock deck")
         val count = 3
         val cards = (0 until count)
-                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { mockCardData("original $it", "translation $it", deck) }
                 .map { addMockCard(storage, it, domain) }
         val today = today
 
@@ -1743,7 +1743,7 @@ abstract class StorageTest {
         val deck = storage.addDeck(domain, "mock deck")
         val count = 3
         val cards = (0 until count)
-                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { mockCardData("original $it", "translation $it", deck) }
                 .map { addMockCard(storage, it, domain) }
 
         // when
@@ -1788,7 +1788,7 @@ abstract class StorageTest {
         val deck = storage.addDeck(domain, "mock deck")
         val count = 3
         val cards = (0 until count)
-                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { mockCardData("original $it", "translation $it", deck) }
                 .map { addMockCard(storage, it, domain) }
 
         // when
@@ -1807,7 +1807,7 @@ abstract class StorageTest {
         val deck = storage.addDeck(domain, "mock deck")
         val count = 3
         val cards = (0 until count)
-                .map { mockCardData("original $it", "translation $it", deck.id) }
+                .map { mockCardData("original $it", "translation $it", deck) }
                 .map { addMockCard(storage, it, domain) }
         val today = today
 

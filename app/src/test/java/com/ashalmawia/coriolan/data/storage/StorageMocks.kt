@@ -21,7 +21,7 @@ fun addMockCard(storage: Repository, cardData: CardData, domain: Domain = mockDo
     val original = storage.justAddTerm(cardData.original, domain.langOriginal(type))
     return storage.addCard(
             domain,
-            cardData.deckId,
+            cardData.deck.id,
             original,
             cardData.translations.map { storage.justAddTerm(it, domain.langTranslations(type)) }
     )

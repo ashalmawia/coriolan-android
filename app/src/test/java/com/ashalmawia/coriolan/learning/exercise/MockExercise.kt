@@ -9,8 +9,8 @@ import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import org.joda.time.DateTime
 
 class MockExercise : Exercise {
@@ -21,7 +21,7 @@ class MockExercise : Exercise {
     override val canUndo: Boolean
         get() = true
 
-    override fun mutations(repository: Repository, preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardType): List<Mutation> {
+    override fun mutations(repository: Repository, preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardTypeFilter): List<Mutation> {
         return emptyList()
     }
 
