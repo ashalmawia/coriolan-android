@@ -15,7 +15,7 @@ val domainModule = module {
 
     scope(named(SCOPE_DOMAIN)) {
         scoped { (domain: Domain) -> domain }
-        scoped { DecksRegistry(get(), get(), get(), get()) }
+        scoped { DecksRegistry(get(), get(), get()) }
     }
 }
 

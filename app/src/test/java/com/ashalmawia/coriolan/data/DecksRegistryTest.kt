@@ -55,7 +55,7 @@ class DecksRegistryTest {
         assertEquals("Default deck is initialized correctly", DEFAULT_DECK_NAME, mockRepository.decks[0].name)
     }
 
-    private fun createDeckRegistry() = DecksRegistry(context, domain, mockRepository, exercisesRegistry)
+    private fun createDeckRegistry() = DecksRegistry(domain, mockRepository, exercisesRegistry)
 
     @Test
     fun preinitializeTestHasDefaultDeck() {

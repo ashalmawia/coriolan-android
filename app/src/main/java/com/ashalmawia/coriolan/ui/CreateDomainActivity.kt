@@ -3,24 +3,30 @@ package com.ashalmawia.coriolan.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.StringRes
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.TaskStackBuilder
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.dependencies.createDomainScope
+import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.view.visible
-import com.ashalmawia.coriolan.util.restartApp
 import kotlinx.android.synthetic.main.create_domain.*
 import org.koin.android.ext.android.inject
+
+private const val TAG = "CreateDomainActivity"
 
 private const val EXTRA_FIRST_START = "cancellable"
 
@@ -30,13 +36,12 @@ class CreateDomainActivity : BaseActivity() {
     private val repository: Repository by inject()
     private val domainsRegistry: DomainsRegistry by inject()
 
-    private var firstStart = false
+    private val firstStart by lazy { intent.getBooleanExtra(EXTRA_FIRST_START, false) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.create_domain)
 
-        firstStart = intent.getBooleanExtra(EXTRA_FIRST_START, false)
         if (firstStart) {
             // show logo and don't allow to cancel this activity
             setUpToolbarWithLogo()
@@ -126,27 +131,26 @@ class CreateDomainActivity : BaseActivity() {
 
     private fun createDomain(originalLang: String, translationsLang: String) {
         try {
-            val domain = domainsRegistry.createDomain(originalLang, translationsLang)
+            val (domain, defaultDeck) = domainsRegistry.createDomain(this, originalLang, translationsLang)
             showMessage(R.string.create_domain__created)
             preferences.setLastTranslationsLanguageId(domain.langTranslations())
-            if (firstStart) {
-                // do not go to domain details directly on the first start
-                // as we want to configure backstack properly
-                restartApp()
-            } else {
-                openDomainActivity(domain)
-            }
+            openAddCardsActivity(domain, defaultDeck)
             finish()
         } catch (e: DataProcessingException) {
             showError(getString(R.string.create_domain__error__already_exists, originalLang, translationsLang))
+            Log.e(TAG, "failed to create domain", e)
         } catch (e: Exception) {
             showError(R.string.create_domain__error__generic)
+            Log.e(TAG, "failed to create domain", e)
         }
     }
 
-    private fun openDomainActivity(domain: Domain) {
-        val intent = DomainActivity.intent(this, domain)
-        startActivity(intent)
+    private fun openAddCardsActivity(domain: Domain, defaultDeck: Deck) {
+        createDomainScope(domain)
+        TaskStackBuilder.create(this)
+                .addNextIntent(DomainActivity.intent(this, domain))
+                .addNextIntent(AddEditCardActivity.add(this, defaultDeck))
+                .startActivities()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

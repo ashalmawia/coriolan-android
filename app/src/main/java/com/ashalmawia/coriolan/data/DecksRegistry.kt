@@ -1,25 +1,15 @@
 package com.ashalmawia.coriolan.data
 
-import android.content.Context
-import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.merger.CardsMerger
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.model.*
 
 class DecksRegistry(
-        context: Context,
         val domain: Domain,
         private val repository: Repository,
         private val exercisesRegistry: ExercisesRegistry
 ) {
-
-    init {
-        val decksCount = repository.allDecks(domain).size
-        if (decksCount == 0) {
-            addDefaultDeck(context, repository)
-        }
-    }
 
     fun allDecks(): List<Deck> {
         return repository.allDecks(domain)
@@ -116,10 +106,6 @@ class DecksRegistry(
         } else {
             return repository.updateTerm(existingTerm, transcription)
         }
-    }
-
-    private fun addDefaultDeck(context: Context, repository: Repository): Deck {
-        return repository.addDeck(domain, context.getString(R.string.decks_default))
     }
 }
 
