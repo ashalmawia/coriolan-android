@@ -1,7 +1,22 @@
 <resources>
 
+	<style name="TetStyleSmall" parent="TextAppearance.AppCompat.Small">
+		<item name="android:textSize">12sp</item>
+	</style>
 	<style name="TextDefault" parent="TextAppearance.AppCompat.Medium" />
-	<style name="TextTitle" parent="TextAppearance.AppCompat.Title" />
+	<style name="TextTitle" parent="TextAppearance.AppCompat.Title">
+		<item name="fontFamily">sans-serif-smallcaps</item>
+	</style>
+	<style name="TextSubtitle" parent="TextAppearance.AppCompat.Medium">
+		<item name="android:textColor">@color/textColorSecondary</item>
+		<item name="fontFamily">sans-serif-smallcaps</item>
+	</style>
+
+	<style name="DialogTitle" parent="RtlOverlay.DialogWindowTitle.AppCompat">
+		<item name="android:textAlignment">center</item>
+		<item name="android:textColor">@color/colorPrimary</item>
+		<item name="fontFamily">sans-serif-smallcaps</item>
+	</style>
 
 	<style name="CardText">
 		<item name="android:textSize">@dimen/card_text_size</item>
@@ -83,7 +98,6 @@
 	<style name="DeckDetails" />
 
 	<style name="DeckDetails.Caption" parent="DeckDetails.Cell">
-		<item name="android:textStyle">bold</item>
 	</style>
 
 	<style name="DeckDetails.Caption.Vertical">
@@ -91,10 +105,10 @@
 		<item name="android:gravity">end</item>
 	</style>
 
-	<style name="DeckDetails.Cell">
+	<style name="DeckDetails.Cell" parent="TextAppearance.AppCompat.Small">
 		<item name="android:layout_width">100dp</item>
 		<item name="android:gravity">center_horizontal</item>
-		<item name="android:layout_margin">@dimen/spacing__small</item>
+		<item name="android:layout_marginBottom">@dimen/spacing__small</item>
 	</style>
 
 	<style name="IncreaseLimits">

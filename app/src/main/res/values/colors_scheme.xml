@@ -15,6 +15,7 @@
 
 	<color name="textColorPrimary">@color/colorPrimaryDark</color>
 	<color name="textColorSecondary">@color/colorPrimary</color>
+	<color name="textColorTertiary">@color/colorPrimary__60</color>
 
 	<color name="grey">#BBBBBB</color>
 	<color name="grey_light">#EEEEEE</color>

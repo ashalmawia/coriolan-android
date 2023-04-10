@@ -108,7 +108,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     override fun showDeckDetailsDialog(deck: DeckListItem) {
-        val dialog = DeckDetailsDialog(requireActivity(), deck, today(), repository)
+        val dialog = DeckDetailsDialog(requireActivity(), deck.deck, today(), repository)
         dialog.show()
     }
 

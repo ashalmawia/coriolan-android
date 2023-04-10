@@ -1,57 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			 xmlns:tools="http://schemas.android.com/tools"
-			 android:layout_width="match_parent"
-			 android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="@dimen/spacing__medium">
 
-	<TableLayout
-		android:layout_width="wrap_content"
-		android:layout_height="match_parent"
-		android:layout_gravity="center"
-		android:padding="@dimen/spacing__medium"
-		tools:ignore="UselessParent">
+	<LinearLayout
+		android:id="@+id/container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		/>
 
-		<TableRow>
-
-			<TextView
-				style="@style/DeckDetails.Caption.Vertical"
-				android:text="@string/deck_details_new"
-				/>
-
-			<TextView
-				android:id="@+id/cellNew"
-				style="@style/DeckDetails.Cell"
-				/>
-
-		</TableRow>
-
-		<TableRow>
-
-			<TextView
-				style="@style/DeckDetails.Caption.Vertical"
-				android:text="@string/deck_details_review"
-				/>
-
-			<TextView
-				android:id="@+id/cellReview"
-				style="@style/DeckDetails.Cell"
-				/>
-
-		</TableRow>
-
-		<TableRow>
-
-			<TextView
-				style="@style/DeckDetails.Caption.Vertical"
-				android:text="@string/deck_details_total"
-				/>
-
-			<TextView
-				android:id="@+id/cellTotal"
-				style="@style/DeckDetails.Cell"
-				/>
-
-		</TableRow>
-
-	</TableLayout>
-</FrameLayout>
+</ScrollView>

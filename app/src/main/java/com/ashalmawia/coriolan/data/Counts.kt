@@ -9,6 +9,15 @@ data class Counts(val new: Int, val review: Int, val relearn: Int, val total: In
         return new > 0 || review > 0 || relearn > 0
     }
 
+    operator fun plus(other: Counts): Counts {
+        return Counts(
+                new = new + other.new,
+                review = review + other.review,
+                relearn = relearn + other.relearn,
+                total = total + other.total
+        )
+    }
+
     companion object {
         fun createFrom(counts: Map<Status, Int>, total: Int): Counts {
             return Counts(

@@ -38,8 +38,11 @@
 	<string name="decks_pending">new: {%1$d}, review: {%2$d}</string>
 
 	<string name="deck_details_new">New:</string>
-	<string name="deck_details_review">Pending review:</string>
+	<string name="deck_details_review">In progress:</string>
 	<string name="deck_details_total">Total:</string>
+	<string name="deck_details_passive_vocabulary">Passive vocabulary</string>
+	<string name="deck_details_active_vocabulary">Active vocabulary</string>
+	<string name="deck_details_summary">Summary</string>
 
 	<string name="increase_limits__new">New:</string>
 	<string name="increase_limits__review">Review:</string>

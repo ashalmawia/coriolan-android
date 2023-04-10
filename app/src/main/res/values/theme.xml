@@ -11,6 +11,8 @@
 		<item name="android:textColor">@color/textColorPrimary</item>
 		<item name="android:textColorPrimary">@color/textColorPrimary</item>
 		<item name="android:textColorSecondary">@color/textColorSecondary</item>
+		<item name="android:textColorTertiary">@color/textColorTertiary</item>
+		<item name="fontFamily">sans-serif</item>
 
 		<item name="preferenceCategoryTitleTextColor">@color/colorAccentContrast</item>
 
@@ -27,6 +29,7 @@
 	<style name="Coriolan.Theme.Dialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
 		<item name="android:windowNoTitle">false</item>
 		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowTitleStyle">@style/DialogTitle</item>
 
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
