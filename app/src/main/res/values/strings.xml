@@ -105,7 +105,7 @@
 	other decks first and then retry.</string>
 
 	<!-- Create domain -->
-	<string name="create_domain__title">Create new domain</string>
+	<string name="create_domain__title">Add new language</string>
 	<string name="create_domain__label_first_start__welcome">Welcome!</string>
 	<string name="create_domain__label_first_start__text">To proceed, we only need to know which language you are
 	going to study with Coriolan, and which language you will use to translate the new words into!</string>
@@ -115,9 +115,9 @@
 	<string name="create_domain__specify_translations_lang_hint">(e.g. English)</string>
 	<string name="create_domain__verify__empty_original">Please specify the language you learn</string>
 	<string name="create_domain__verify__empty_translations">Please specify the language you will use for translations</string>
-	<string name="create_domain__error__already_exists">Domain like this already exists (language to learn: %1$s, translations: %2$s)</string>
-	<string name="create_domain__error__generic">Failed to create domain</string>
-	<string name="create_domain__created">Domain created successfully</string>
+	<string name="create_domain__error__already_exists">This language is already added!</string>
+	<string name="create_domain__error__generic">Failed to add language</string>
+	<string name="create_domain__created">Language added successfully</string>
 	<string name="create_domain__translations_lang_change">CHANGE</string>
 
 	<!-- Domains list -->
