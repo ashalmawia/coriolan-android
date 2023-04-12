@@ -1,9 +1,7 @@
 package com.ashalmawia.coriolan.ui.util
 
-import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.os.Build.VERSION
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
 
@@ -35,10 +33,12 @@ fun Activity.showStoragePermissionDeniedAlert() {
     finishWithAlert(R.string.permissions__permission_denied_title, R.string.permissions__storage_permission_denied_message)
 }
 
-fun manageStoragePermission(): String {
-    return if (VERSION.SDK_INT >= 30) {
-        Manifest.permission.MANAGE_EXTERNAL_STORAGE
-    } else {
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    }
+fun AlertDialog.Builder.positiveButton(@StringRes titleRes: Int, listener: () -> Unit): AlertDialog.Builder {
+    setPositiveButton(titleRes) { _, _ -> listener() }
+    return this
+}
+
+fun AlertDialog.Builder.negativeButton(@StringRes titleRes: Int, listener: () -> Unit = {}): AlertDialog.Builder {
+    setNegativeButton(titleRes) { _, _ -> listener() }
+    return this
 }

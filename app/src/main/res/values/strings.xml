@@ -24,19 +24,25 @@
 	<string name="decks__category_title">Decks</string>
 	<string name="decks__type__passive">Passive vocabulary</string>
 	<string name="decks__type__active">Active vocabulary</string>
-
 	<string name="deck_content_cards">Cards:</string>
-
 	<string name="deck_options_study_random">Study in random order</string>
 	<string name="deck_options_study_straightforward">Study in order added</string>
 	<string name="deck_options_study_newest_first">Study in reverse order (newest first)</string>
 	<string name="deck_options_study_more">Study more</string>
 	<string name="deck_options_details">Details</string>
-
 	<string name="deck_options_study_more__title">Study more: %s</string>
+	<string name="decks_list_nothing_to_learn_dialog_title">You\'re done here!</string>
+	<string name="decks_list_nothing_to_learn_dialog_description">You have reached your targets
+		for today in this deck, congratulations! Come back tomorrow for more.</string>
+	<string name="decks_list_suggest_study_more_dialog_title">You\'re done here!</string>
+	<string name="decks_list_suggest_study_more_dialog_description">You have reached your targets
+		for today in this deck, congratulations! Do you want to study even further?</string>
+	<string name="decks_list_suggest_study_more_dialog_cta">STUDY MORE</string>
+	<string name="decks_list_deck_empty_dialog_title">Empty deck</string>
+	<string name="decks_list_deck_empty_dialog_description">This deck is still empty. Do you want to add new words to it?</string>
+	<string name="decks_list_deck_empty_dialog_cta">ADD CARDS</string>
 
-	<string name="decks_pending">new: {%1$d}, review: {%2$d}</string>
-
+	<!-- Deck details -->
 	<string name="deck_details_new">New:</string>
 	<string name="deck_details_review">In progress:</string>
 	<string name="deck_details_total">Total:</string>

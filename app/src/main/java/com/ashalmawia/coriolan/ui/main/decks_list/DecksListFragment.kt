@@ -1,11 +1,14 @@
 package com.ashalmawia.coriolan.ui.main.decks_list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
@@ -16,9 +19,12 @@ import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
+import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
+import com.ashalmawia.coriolan.ui.util.negativeButton
+import com.ashalmawia.coriolan.ui.util.positiveButton
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
@@ -102,7 +108,60 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         adapter.setData(decksList())
     }
 
-    override fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder) {
+    override fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder, counts: Counts) {
+        if (counts.isAnythingPending()) {
+            launchLearning(deck, studyOrder)
+        } else {
+            val totalCounts = repository.deckPendingCountsMix(deck.deck, today())
+            if (totalCounts.total == 0) {
+                showDeckEmptyMessage(deck)
+            } else if (totalCounts.isAnythingPending()) {
+                showSuggestStudyMoreDialog(deck)
+            } else {
+                showNothingToLearnTodayDialog()
+            }
+        }
+    }
+
+    private fun showNothingToLearnTodayDialog() {
+        AlertDialog.Builder(requireContext())
+                .setTitle(R.string.decks_list_nothing_to_learn_dialog_title)
+                .setMessage(R.string.decks_list_nothing_to_learn_dialog_description)
+                .negativeButton(R.string.button_cancel)
+                .create()
+                .show()
+    }
+
+    private fun showSuggestStudyMoreDialog(deck: DeckListItem) {
+        AlertDialog.Builder(requireContext())
+                .setTitle(R.string.decks_list_suggest_study_more_dialog_title)
+                .setMessage(R.string.decks_list_suggest_study_more_dialog_description)
+                .positiveButton(R.string.decks_list_suggest_study_more_dialog_cta) {
+                    showIncreaseLimitsDialog(deck)
+                }
+                .negativeButton(R.string.button_cancel)
+                .create()
+                .show()
+    }
+
+    private fun showDeckEmptyMessage(deck: DeckListItem) {
+        AlertDialog.Builder(requireContext())
+                .setTitle(R.string.decks_list_deck_empty_dialog_title)
+                .setMessage(R.string.decks_list_deck_empty_dialog_description)
+                .positiveButton(R.string.decks_list_deck_empty_dialog_cta) {
+                    startAddCards(deck.deck)
+                }
+                .negativeButton(R.string.button_cancel)
+                .create()
+                .show()
+    }
+
+    private fun startAddCards(deck: Deck) {
+        val intent = AddEditCardActivity.add(requireContext(), deck)
+        startActivity(intent)
+    }
+
+    private fun launchLearning(deck: DeckListItem, studyOrder: StudyOrder) {
         val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardTypeFilter, studyOrder)
         requireActivity().startActivity(intent)
     }

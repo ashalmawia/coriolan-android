@@ -136,7 +136,7 @@ class DecksListAdapter(
     }
 
     private fun instantiateLearningFlow(item: DeckListItem, studyOrder: StudyOrder) {
-        listener.beginStudy(item, studyOrder)
+        listener.beginStudy(item, studyOrder, counts[item]!!)
     }
 
     private fun studyMore(item: DeckListItem) {
@@ -170,7 +170,7 @@ interface DeckListAdapterListener {
 
     fun showIncreaseLimitsDialog(deck: DeckListItem)
 
-    fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder)
+    fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder, counts: Counts)
 }
 
 private fun CardType.toTypeStringRes() = when (this) {

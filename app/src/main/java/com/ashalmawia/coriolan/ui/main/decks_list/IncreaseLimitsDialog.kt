@@ -11,7 +11,6 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.IncreaseLimitsBinding
 import com.ashalmawia.coriolan.learning.TodayManager
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
@@ -27,9 +26,7 @@ class IncreaseLimitsDialog(
     private lateinit var views: IncreaseLimitsBinding
     private val totalCounts by lazy {
             if (deck.cardTypeFilter == CardTypeFilter.BOTH) {
-                val forward = repository.deckPendingCounts(deck.deck, CardType.FORWARD, date)
-                val reverse = repository.deckPendingCounts(deck.deck, CardType.REVERSE, date)
-                forward + reverse
+                repository.deckPendingCountsMix(deck.deck, date)
             } else {
                 repository.deckPendingCounts(deck.deck, deck.cardTypeFilter.toCardType(), date)
             }

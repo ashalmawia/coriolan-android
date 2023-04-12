@@ -59,6 +59,10 @@ interface Repository {
 
     fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts
 
+    fun deckPendingCountsMix(deck: Deck, date: DateTime): Counts {
+        return deckPendingCounts(deck, CardType.FORWARD, date) + deckPendingCounts(deck, CardType.REVERSE, date)
+    }
+
     fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress)
 
     fun getCardLearningProgress(card: Card): LearningProgress
