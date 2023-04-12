@@ -10,6 +10,10 @@
 	<!-- Exercise types -->
 	<string name="exercise_flashcards">Flashcards</string>
 
+	<!-- Learning flow -->
+	<string name="assignment_accomplished_congratulation">Congratulations! You have completed all the tasks
+		in this deck for today.</string>
+
 	<!-- Data import -->
 	<string name="import__category_title">Import</string>
 	<string name="import_from_file">Import from file</string>

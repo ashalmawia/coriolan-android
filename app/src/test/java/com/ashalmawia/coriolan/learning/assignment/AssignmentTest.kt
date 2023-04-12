@@ -33,11 +33,35 @@ class AssignmentTest {
     }
 
     @Test
+    fun test__originalCount() {
+        // given
+        val map = mutableMapOf<Task, Int>()
+        for (i in 0 until MAGIC_COLLECTION_LENGTH) {
+            map[mockTask()] = 0
+        }
+        val cards = map.keys.toList()
+
+        // when
+        val assignment = create(date, cards)
+
+        // then
+        assertEquals(MAGIC_COLLECTION_LENGTH, assignment.originalCount)
+
+        // when
+        while (assignment.hasNext()) {
+            assignment.next()
+        }
+
+        // then
+        assertEquals(MAGIC_COLLECTION_LENGTH, assignment.originalCount)
+    }
+
+    @Test
     fun test__rescheduled() {
         // given
         val map = mutableMapOf<Task, Int>()
         for (i in 0 until MAGIC_COLLECTION_LENGTH) {
-            map.put(mockTask(), 0)
+            map[mockTask()] = 0
         }
         val cards = map.keys.toList()
 
@@ -70,7 +94,7 @@ class AssignmentTest {
         // given
         val map = mutableMapOf<Task, Boolean>()     // boolean means - to be rescheduled
         for (i in 0 until MAGIC_COLLECTION_LENGTH) {
-            map.put(mockTask(), i % 2 == 0)
+            map[mockTask()] = i % 2 == 0
         }
         val cards = map.keys.toList()
 
@@ -150,7 +174,7 @@ class AssignmentTest {
         // then
         (0 until cards.size - 1).forEach {
             assertFalse(assignment.canUndo())
-            val next = assignment.next()
+            assignment.next()
             assertTrue(assignment.canUndo())
             val restored = assignment.undo()
             assertFalse(assignment.canUndo())

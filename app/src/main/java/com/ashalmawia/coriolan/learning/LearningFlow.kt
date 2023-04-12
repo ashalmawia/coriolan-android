@@ -39,7 +39,8 @@ class LearningFlow(
             val card = assignment.next()
             renderTask(card)
         } else {
-            finish()
+            val emptyAssignment = assignment.originalCount == 0
+            finish(emptyAssignment)
         }
     }
 
@@ -54,8 +55,8 @@ class LearningFlow(
         }
     }
 
-    private fun finish() {
-        listener.onFinish()
+    private fun finish(emptyAssignment: Boolean) {
+        listener.onFinish(emptyAssignment)
     }
 
     private fun Task.executor(): ExerciseExecutor {
@@ -106,7 +107,7 @@ class LearningFlow(
 
     interface Listener {
         fun onTaskRendered()
-        fun onFinish()
+        fun onFinish(emptyAssignment: Boolean)
     }
 
     interface Factory {

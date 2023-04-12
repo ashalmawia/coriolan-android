@@ -18,6 +18,8 @@ class Assignment(
 ) {
     private val queue = LinkedList(tasks)
 
+    val originalCount = tasks.size
+
     var current: Task? = null
         protected set
 
