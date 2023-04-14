@@ -38,10 +38,22 @@
 
 			<TextView
 				style="@style/DeckDetails.Caption.Vertical"
-				android:text="@string/deck_details_review" />
+				android:text="@string/deck_details_in_progress" />
 
 			<TextView
-				android:id="@+id/cellReview"
+				android:id="@+id/cellInProgress"
+				style="@style/DeckDetails.Cell" />
+
+		</TableRow>
+
+		<TableRow>
+
+			<TextView
+				style="@style/DeckDetails.Caption.Vertical"
+				android:text="@string/deck_details_learnt" />
+
+			<TextView
+				android:id="@+id/cellLearnt"
 				style="@style/DeckDetails.Cell" />
 
 		</TableRow>

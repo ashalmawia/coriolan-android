@@ -1,9 +1,12 @@
 package com.ashalmawia.coriolan.data.storage
 
+import com.ashalmawia.coriolan.data.stats.DeckStats
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.exercise.flashcards.INTERVAL_LEARNT
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -1413,6 +1416,94 @@ abstract class StorageTest {
         assertEquals(2, countsMix.review)
         assertEquals(2, countsMix.relearn)
         assertEquals(forward.count() + reverse.count(), countsMix.total)
+    }
+
+    @Test
+    fun test__deckStats__emptyDeck() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+
+        // when
+        val stats = storage.deckStats(deck)
+
+        // then
+        val emptyStats = DeckStats(0, 0, 0)
+
+        assertEquals(emptyStats, stats[CardTypeFilter.FORWARD])
+        assertEquals(emptyStats, stats[CardTypeFilter.REVERSE])
+        assertEquals(emptyStats, stats[CardTypeFilter.BOTH])
+
+        // when
+        (0 until 4)
+                .map { mockCardData("original $it", "translation $it", deck) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val stats1 = storage.deckStats(deck)
+
+        // then
+        val updatedStats = DeckStats(4, 0, 0)
+        assertEquals(updatedStats, stats1[CardTypeFilter.FORWARD])
+        assertEquals(emptyStats, stats1[CardTypeFilter.REVERSE])
+        assertEquals(updatedStats, stats1[CardTypeFilter.BOTH])
+    }
+
+    @Test
+    fun test__deckStats__hasPendingCards() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck = storage.addDeck(domain, "mock deck")
+        val forward = (0 until 4)
+                .map { mockCardData("original $it", "translation $it", deck) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse = (0 until 6)
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+
+        storage.updateCardLearningProgress(forward[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward[1], mockLearningProgress(today.minusDays(1), 4))
+        storage.updateCardLearningProgress(forward[2], mockLearningProgress(today, -1))
+        storage.updateCardLearningProgress(forward[3], mockLearningProgress(today.plusDays(1), INTERVAL_LEARNT))
+
+        storage.updateCardLearningProgress(reverse[0], mockLearningProgress(today, -1))
+        storage.updateCardLearningProgress(reverse[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse[2], mockLearningProgress(today.minusDays(10), 4))
+        storage.updateCardLearningProgress(reverse[3], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse[4], emptyState())
+        storage.updateCardLearningProgress(reverse[5], emptyState())
+
+        // when
+        val stats = storage.deckStats(deck)
+
+        // then
+        val expectedStatsForward = DeckStats(1, 2, 1)
+        val expectedStatsReverse = DeckStats(3, 3, 0)
+        val expectedStatsTotal = DeckStats(4, 5, 1)
+
+        assertEquals(expectedStatsForward, stats[CardTypeFilter.FORWARD])
+        assertEquals(expectedStatsReverse, stats[CardTypeFilter.REVERSE])
+        assertEquals(expectedStatsTotal, stats[CardTypeFilter.BOTH])
+
+        // when
+        storage.updateCardLearningProgress(forward[3], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse[0], mockLearningProgress(today.plusDays(1), 1))
+        val stats1 = storage.deckStats(deck)
+
+        // then
+        val expectedStatsForward1 = DeckStats(1, 3, 0)
+        val expectedStatsReverse1 = DeckStats(2, 4, 0)
+        val expectedStatsTotal1 = DeckStats(3, 7, 0)
+
+        assertEquals(expectedStatsForward1, stats1[CardTypeFilter.FORWARD])
+        assertEquals(expectedStatsReverse1, stats1[CardTypeFilter.REVERSE])
+        assertEquals(expectedStatsTotal1, stats1[CardTypeFilter.BOTH])
     }
 
     @Test

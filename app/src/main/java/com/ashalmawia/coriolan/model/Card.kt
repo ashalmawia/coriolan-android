@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.model
 
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import java.lang.IllegalArgumentException
 
 data class Card(
@@ -13,6 +14,13 @@ data class Card(
 
 enum class CardType(val value: String) {
     FORWARD("forward"), REVERSE("reverse");
+
+    fun toCardTypeFilter(): CardTypeFilter {
+        return when (this) {
+            FORWARD -> CardTypeFilter.FORWARD
+            REVERSE -> CardTypeFilter.REVERSE
+        }
+    }
 
     companion object {
         fun fromValue(value: String) = values().find { it.value == value }

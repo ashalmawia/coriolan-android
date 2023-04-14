@@ -16,6 +16,7 @@
 | query domain by id                      | 0.003s |
 | query language by id                    | 0.002s |
 | query language by name                  | 0.002s |
+| query deck stats                        | 0.002s |
 | query term by name                      | 0.002s |
 | query card by id                        | 0.002s |
 | query term by values                    | 0.001s |

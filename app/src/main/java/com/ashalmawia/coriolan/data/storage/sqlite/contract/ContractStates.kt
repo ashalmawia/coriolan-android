@@ -8,9 +8,11 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
 import com.ashalmawia.coriolan.data.storage.sqlite.date
 import com.ashalmawia.coriolan.data.storage.sqlite.int
+import com.ashalmawia.coriolan.data.storage.sqlite.intOrNull
 import com.ashalmawia.coriolan.data.storage.sqlite.isNull
 import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.learning.exercise.flashcards.INTERVAL_NEVER_SCHEDULED
 import org.joda.time.DateTime
 
 object ContractStates {
@@ -70,6 +72,7 @@ object ContractStates {
     }
     fun Cursor.statesDateDue(): DateTime { return date(STATES_DUE_DATE) }
     fun Cursor.statesInterval(): Int { return int(STATES_INTERVAL) }
+    fun Cursor.statesIntervalOrNeverScheduled(): Int { return intOrNull(STATES_INTERVAL) ?: INTERVAL_NEVER_SCHEDULED }
     fun Cursor.statesHasSavedExerciseState(): Boolean { return !isNull(STATES_EXERCISE) }
     fun Cursor.exerciseState(): ExerciseState {
         return ExerciseState(statesDateDue(), statesInterval())

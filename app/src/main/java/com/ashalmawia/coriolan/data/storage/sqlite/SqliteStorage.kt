@@ -4,7 +4,9 @@ import android.database.Cursor
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.stats.DeckStats
+import com.ashalmawia.coriolan.data.stats.MutableDeckStats
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS
@@ -15,6 +17,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_PAYLOAD
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS_TYPE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardWihoutTranslations
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsCardType
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsFrontId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.cardsPayload
@@ -44,6 +47,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_IS_ACTIVE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_CARD_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_DUE_DATE
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES_INTERVAL
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES__CARD_ACTIVE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.allColumnsStates
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createAllLearningProgressContentValues
@@ -53,6 +57,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.state
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesHasSavedExerciseState
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesInterval
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesIntervalOrNeverScheduled
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_LANGUAGE_ID
@@ -73,6 +78,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
 import org.joda.time.DateTime
@@ -741,6 +747,50 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 deckDue.count { it.value.globalStatus == Status.RELEARN },
                 totalCount
         )
+    }
+
+    override fun deckStats(deck: Deck): Map<CardTypeFilter, DeckStats> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            SELECT $CARDS_TYPE, $STATES_INTERVAL
+            FROM 
+               $CARDS
+               LEFT JOIN $STATES ON $CARDS_ID = $STATES_CARD_ID
+            WHERE $CARDS_DECK_ID = ?
+            """.trimMargin(), arrayOf(deck.id.toString()))
+
+        val stats = mapOf(
+                CardTypeFilter.FORWARD to MutableDeckStats(),
+                CardTypeFilter.REVERSE to MutableDeckStats(),
+                CardTypeFilter.BOTH to MutableDeckStats()
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                val cardType = it.cardsCardType()
+                val interval = it.statesIntervalOrNeverScheduled()
+                val status = ExerciseState.statusFromInterval(interval)
+
+                val filter = cardType.toCardTypeFilter()
+                when (status) {
+                    Status.NEW -> {
+                        stats[filter]!!.new++
+                        stats[CardTypeFilter.BOTH]!!.new++
+                    }
+                    Status.LEARNT -> {
+                        stats[filter]!!.learnt++
+                        stats[CardTypeFilter.BOTH]!!.learnt++
+                    }
+                    else -> {
+                        stats[filter]!!.inProgress++
+                        stats[CardTypeFilter.BOTH]!!.inProgress++
+                    }
+                }
+            }
+        }
+
+        return stats.mapValues { (_, it) -> it.toDeckStats() }
     }
 
     private fun countCardsOfDeck(deck: Deck, cardType: CardType): Int {

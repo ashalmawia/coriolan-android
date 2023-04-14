@@ -7,7 +7,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.DeckCountsProvider
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder

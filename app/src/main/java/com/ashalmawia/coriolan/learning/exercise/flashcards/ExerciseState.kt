@@ -18,7 +18,14 @@ data class ExerciseState(
 ) {
 
     val status: Status
-        get() {
+        get() = statusFromInterval(interval)
+
+    override fun toString(): String {
+        return "due: ${format.print(due)}, interval: $interval"
+    }
+
+    companion object {
+        fun statusFromInterval(interval: Int): Status {
             return when (interval) {
                 INTERVAL_NEVER_SCHEDULED -> Status.NEW
                 0, INTERVAL_FIRST_ASNWER_WRONG -> Status.RELEARN
@@ -26,10 +33,6 @@ data class ExerciseState(
                 else /* >= INTERVAL_LEARNT */ -> Status.LEARNT
             }
         }
-
-
-    override fun toString(): String {
-        return "due: ${format.print(due)}, interval: $interval"
     }
 }
 

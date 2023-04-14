@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.util.OpenForTesting

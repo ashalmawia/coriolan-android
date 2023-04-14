@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.logbook
 
-import com.ashalmawia.coriolan.data.Counts
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import org.joda.time.DateTime

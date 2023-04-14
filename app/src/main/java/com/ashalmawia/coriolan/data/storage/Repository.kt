@@ -1,9 +1,11 @@
 package com.ashalmawia.coriolan.data.storage
 
 import androidx.annotation.VisibleForTesting
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.stats.DeckStats
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import org.joda.time.DateTime
 
 interface Repository {
@@ -56,6 +58,8 @@ interface Repository {
     fun updateDeck(deck: Deck, name: String): Deck
 
     fun deleteDeck(deck: Deck): Boolean
+
+    fun deckStats(deck: Deck): Map<CardTypeFilter, DeckStats>
 
     fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts
 

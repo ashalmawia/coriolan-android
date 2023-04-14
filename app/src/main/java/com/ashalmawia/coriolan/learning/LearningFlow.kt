@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning
 
 import android.content.Context
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment

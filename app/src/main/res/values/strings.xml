@@ -48,7 +48,8 @@
 
 	<!-- Deck details -->
 	<string name="deck_details_new">New:</string>
-	<string name="deck_details_review">In progress:</string>
+	<string name="deck_details_in_progress">In progress:</string>
+	<string name="deck_details_learnt">Learnt:</string>
 	<string name="deck_details_total">Total:</string>
 	<string name="deck_details_passive_vocabulary">Passive vocabulary</string>
 	<string name="deck_details_active_vocabulary">Active vocabulary</string>

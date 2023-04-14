@@ -5,19 +5,17 @@ import android.app.Dialog
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.stats.DeckStats
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.DeckDetailsBinding
 import com.ashalmawia.coriolan.databinding.DeckDetailsSectionBinding
-import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
-import org.joda.time.DateTime
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 
 class DeckDetailsDialog(
         activity: Activity,
-        private val deck: Deck,
-        private val date: DateTime,
-        private val repository: Repository
+        deck: Deck,
+        repository: Repository
 ) : Dialog(activity, R.style.Coriolan_Theme_Dialog) {
 
     private val container: ViewGroup
@@ -27,28 +25,24 @@ class DeckDetailsDialog(
         val views = DeckDetailsBinding.inflate(layoutInflater)
         container = views.container
         setContentView(views.root)
-        fillInfo()
+
+        val stats = repository.deckStats(deck)
+        fillInfo(stats)
     }
 
-    private fun fillInfo() {
-        val countsForward = counts(CardType.FORWARD)
-        val countsReverse = counts(CardType.REVERSE)
-        val countsTotal = countsForward + countsReverse
-
-        addCategory(R.string.deck_details_summary, countsTotal)
-        addCategory(R.string.deck_details_passive_vocabulary, countsForward)
-        addCategory(R.string.deck_details_active_vocabulary, countsReverse)
+    private fun fillInfo(data: Map<CardTypeFilter, DeckStats>) {
+        addCategory(R.string.deck_details_summary, data[CardTypeFilter.BOTH]!!)
+        addCategory(R.string.deck_details_passive_vocabulary, data[CardTypeFilter.FORWARD]!!)
+        addCategory(R.string.deck_details_active_vocabulary, data[CardTypeFilter.REVERSE]!!)
     }
 
-    private fun addCategory(@StringRes title: Int, counts: Counts) {
+    private fun addCategory(@StringRes title: Int, stats: DeckStats) {
         DeckDetailsSectionBinding.inflate(layoutInflater, container, true).apply {
             sectionTitle.setText(title)
-            cellNew.text = counts.new.toString()
-            cellReview.text = counts.review.toString()
-            cellTotal.text = counts.total.toString()
+            cellNew.text = stats.new.toString()
+            cellInProgress.text = stats.inProgress.toString()
+            cellLearnt.text = stats.learnt.toString()
+            cellTotal.text = stats.total.toString()
         }
     }
-
-    private fun counts(cardType: CardType) = repository.deckPendingCounts(deck, cardType, date)
-
 }

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
@@ -167,7 +167,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     override fun showDeckDetailsDialog(deck: DeckListItem) {
-        val dialog = DeckDetailsDialog(requireActivity(), deck.deck, today(), repository)
+        val dialog = DeckDetailsDialog(requireActivity(), deck.deck, repository)
         dialog.show()
     }
 

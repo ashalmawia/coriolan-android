@@ -1,10 +1,12 @@
 package com.ashalmawia.coriolan.data.storage
 
-import com.ashalmawia.coriolan.data.Counts
+import com.ashalmawia.coriolan.data.stats.DeckStats
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
@@ -147,6 +149,31 @@ class MockRepository : Repository {
                         || it.second.globalStatus == Status.LEARNT },
                 deckDue.count { it.second.globalStatus == Status.RELEARN },
                 total.filter { it.type == cardType }.size
+        )
+    }
+
+    override fun deckStats(deck: Deck): Map<CardTypeFilter, DeckStats> {
+        val cards = cards
+                .filter { it.deckId == deck.id }
+                .associateWith { card -> states[card.id] ?: mockLearningProgress() }
+        val forward = cards.filterKeys { it.type == CardType.FORWARD }
+        val reverse = cards.filterKeys { it.type == CardType.REVERSE }
+        return mapOf(
+                CardTypeFilter.FORWARD to DeckStats(
+                        forward.count { (_, status) -> status.globalStatus == Status.NEW },
+                        forward.count { (_, status) -> status.globalStatus == Status.IN_PROGRESS || status.globalStatus == Status.RELEARN },
+                        forward.count { (_, status) -> status.globalStatus == Status.LEARNT }
+                ),
+                CardTypeFilter.REVERSE to DeckStats(
+                        reverse.count { (_, status) -> status.globalStatus == Status.NEW },
+                        reverse.count { (_, status) -> status.globalStatus == Status.IN_PROGRESS || status.globalStatus == Status.RELEARN },
+                        reverse.count { (_, status) -> status.globalStatus == Status.LEARNT }
+                ),
+                CardTypeFilter.BOTH to DeckStats(
+                        cards.count { (_, status) -> status.globalStatus == Status.NEW },
+                        cards.count { (_, status) -> status.globalStatus == Status.IN_PROGRESS || status.globalStatus == Status.RELEARN },
+                        cards.count { (_, status) -> status.globalStatus == Status.LEARNT }
+                )
         )
     }
 

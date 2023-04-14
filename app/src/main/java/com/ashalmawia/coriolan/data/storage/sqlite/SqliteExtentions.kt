@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.storage.sqlite
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import androidx.core.database.getIntOrNull
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
 import org.joda.time.DateTime
 
@@ -22,6 +23,7 @@ fun Cursor.stringOrNull(name: String, alias: String? = null): String? {
 }
 
 fun Cursor.int(name: String, alias: String? = null): Int { return getInt(getColumnIndexOrThrow(name.from(alias))) }
+fun Cursor.intOrNull(name: String, alias: String? = null): Int? { return getIntOrNull(getColumnIndexOrThrow(name.from(alias))) }
 fun Cursor.long(name: String, alias: String? = null): Long { return getLong(getColumnIndexOrThrow(name.from(alias))) }
 fun Cursor.date(column: String, alias: String? = null): DateTime {
     val longValue = long(column, alias)

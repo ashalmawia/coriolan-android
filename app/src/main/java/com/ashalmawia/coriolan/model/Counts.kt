@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.data
+package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.util.orZero

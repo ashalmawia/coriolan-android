@@ -12,6 +12,7 @@
 | query all cards                         | 2.150s |
 | query card by values                    | 1.941s |
 | query progress for cards with originals | 0.655s |
+| query deck stats                        | 0.047s |
 | query term is used                      | 0.020s |
 | query all domains                       | 0.004s |
 | query language by id                    | 0.003s |
