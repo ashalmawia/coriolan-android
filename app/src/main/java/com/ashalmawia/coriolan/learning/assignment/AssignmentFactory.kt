@@ -15,7 +15,7 @@ interface AssignmentFactory {
     fun createAssignment(
             order: StudyOrder,
             deck: Deck,
-            cardType: CardTypeFilter
+            cardTypeFilter: CardTypeFilter
     ): Assignment
 }
 
@@ -33,12 +33,13 @@ class AssignmentFactoryImpl(
             cardTypeFilter: CardTypeFilter
     ): Assignment {
         val date = TodayManager.today()
-        val cards = exercisesRegistry.enabledExercises().flatMap { it.pendingCards(repository, deck, date) }
+        val cards = repository.pendingCards(deck, date)
+        val tasks = exercisesRegistry.enabledExercises().flatMap { it.generateTasks(cards) }
         val history = historyFactory.create()
         val mutationList = exercisesRegistry.enabledExercises().flatMap {
             it.mutations(repository, preferences, logbook, date, order, deck, cardTypeFilter)
         }
         val mutations = Mutations(mutationList)
-        return Assignment(date, history, mutations.apply(cards))
+        return Assignment(date, history, mutations.apply(tasks))
     }
 }

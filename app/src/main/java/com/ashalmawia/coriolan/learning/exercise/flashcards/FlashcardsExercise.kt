@@ -87,10 +87,8 @@ class FlashcardsExercise : Exercise {
         )
     }
 
-    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<Task> {
-        return repository.pendingCards(deck, date).map {
-            Task(it.first, it.second, this)
-        }
+    override fun generateTasks(cards: List<Pair<Card, LearningProgress>>): List<Task> {
+        return cards.map { Task(it.first, it.second, this) }
     }
 
     private fun createScheduler() = MultiplierBasedScheduler()

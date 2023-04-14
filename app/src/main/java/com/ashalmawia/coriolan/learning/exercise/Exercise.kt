@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -32,7 +33,7 @@ interface Exercise {
 
     val canUndo: Boolean
 
-    fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<Task>
+    fun generateTasks(cards: List<Pair<Card, LearningProgress>>): List<Task>
 
     fun mutations(
             repository: Repository,
@@ -41,7 +42,7 @@ interface Exercise {
             date: DateTime,
             order: StudyOrder,
             deck: Deck,
-            cardType: CardTypeFilter
+            cardTypeFilter: CardTypeFilter
     ): List<Mutation>
 
     fun onTranslationAdded(repository: Repository, card: Card)

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -21,7 +22,7 @@ class MockExercise : Exercise {
     override val canUndo: Boolean
         get() = true
 
-    override fun mutations(repository: Repository, preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardType: CardTypeFilter): List<Mutation> {
+    override fun mutations(repository: Repository, preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardTypeFilter: CardTypeFilter): List<Mutation> {
         return emptyList()
     }
 
@@ -31,7 +32,7 @@ class MockExercise : Exercise {
 
     override fun name(): Int = 0
 
-    override fun pendingCards(repository: Repository, deck: Deck, date: DateTime): List<Task> {
+    override fun generateTasks(cards: List<Pair<Card, LearningProgress>>): List<Task> {
         return emptyList()
     }
 
