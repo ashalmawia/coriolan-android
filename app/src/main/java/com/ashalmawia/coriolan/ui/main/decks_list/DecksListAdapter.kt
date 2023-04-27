@@ -4,39 +4,31 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.model.Counts
-import com.ashalmawia.coriolan.learning.DeckCountsProvider
-import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.databinding.DeckListItemBinding
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.visible
 import com.ashalmawia.coriolan.util.inflate
-import com.ashalmawia.coriolan.util.setStartDrawableTint
 
 private const val TAG = "DecksListAdapter"
 
 private const val TYPE_HEADER = 1
 private const val TYPE_ITEM = 2
 
-class DecksListAdapter(
-        private val deckCountsProvider: DeckCountsProvider,
-        private val exercise: Exercise,
-        private val listener: DeckListAdapterListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DecksListAdapter(private val listener: DeckListAdapterListener)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val decks: MutableList<DeckListItem> = mutableListOf()
-    private val counts: MutableMap<DeckListItem, Counts> = mutableMapOf()
 
     fun setData(data: List<DeckListItem>) {
         decks.clear()
         decks.addAll(data)
 
         val timeStart = System.currentTimeMillis()
-        decks.forEach { counts[it] = deckCountsProvider.peekCounts(exercise, it.deck, it.cardTypeFilter) }
         Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
 
         notifyDataSetChanged()
@@ -61,18 +53,18 @@ class DecksListAdapter(
         holder as DeckViewHolder
         val item = decks[positionToIndex(position)]
 
-        val context = holder.text.context
+        val context = holder.views.deckListItemText.context
 
-        holder.text.text = item.deck.name
+        holder.views.deckListItemText.text = item.deck.name
         if (item.cardTypeFilter == CardTypeFilter.BOTH) {
-            holder.type.visible = false
+            holder.views.deckListItemType.visible = false
         } else {
-            holder.type.text = item.cardTypeFilter.toCardType().toTypeStringRes().run { context.getString(this) }
+            holder.views.deckListItemType.text = item.cardTypeFilter.toCardType().toTypeStringRes().run { context.getString(this) }
         }
-        holder.more.isClickable = true
-        holder.more.setOnClickListener { showPopupMenu(item, it) }
+        holder.views.deckListItemMore.isClickable = true
+        holder.views.deckListItemMore.setOnClickListener { showPopupMenu(item, it) }
         holder.itemView.setOnClickListener { studyDefault(item) }
-        setPendingStatus(holder, counts.getValue(item))
+        holder.views.pendingIndicator.visible = item.hasPending
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -88,18 +80,8 @@ class DecksListAdapter(
     }
 
     private fun createItemViewHolder(parent: ViewGroup): DeckViewHolder {
-        val view = parent.inflate(R.layout.deck_list_item, false)
-        val holder = DeckViewHolder(view)
-
-        setTint(holder.countNew)
-        setTint(holder.countRelearn)
-        setTint(holder.countReview)
-
-        return holder
-    }
-
-    private fun setTint(view: TextView) {
-        view.setStartDrawableTint(R.color.pending_item__foreground)
+        val views = DeckListItemBinding.inflate(parent.layoutInflator, parent, false)
+        return DeckViewHolder(views)
     }
 
     private fun showPopupMenu(item: DeckListItem, anchor: View) {
@@ -136,7 +118,7 @@ class DecksListAdapter(
     }
 
     private fun instantiateLearningFlow(item: DeckListItem, studyOrder: StudyOrder) {
-        listener.beginStudy(item, studyOrder, counts[item]!!)
+        listener.beginStudy(item, studyOrder)
     }
 
     private fun studyMore(item: DeckListItem) {
@@ -146,23 +128,6 @@ class DecksListAdapter(
     private fun showDeckDetails(item: DeckListItem) {
         listener.showDeckDetailsDialog(item)
     }
-
-    private fun setPendingStatus(holder: DeckViewHolder, counts: Counts) {
-        if (counts.isAnythingPending()) {
-            holder.countNew.text = counts.new.toString()
-            holder.countNew.visible = counts.new > 0
-
-            holder.countRelearn.text = counts.relearn.toString()
-            holder.countRelearn.visible = counts.relearn > 0
-
-            holder.countReview.text = counts.review.toString()
-            holder.countReview.visible = counts.review > 0
-
-            holder.pending.visibility = View.VISIBLE
-        } else {
-            holder.pending.visibility = View.INVISIBLE
-        }
-    }
 }
 
 interface DeckListAdapterListener {
@@ -170,7 +135,7 @@ interface DeckListAdapterListener {
 
     fun showIncreaseLimitsDialog(deck: DeckListItem)
 
-    fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder, counts: Counts)
+    fun beginStudy(item: DeckListItem, studyOrder: StudyOrder)
 }
 
 private fun CardType.toTypeStringRes() = when (this) {

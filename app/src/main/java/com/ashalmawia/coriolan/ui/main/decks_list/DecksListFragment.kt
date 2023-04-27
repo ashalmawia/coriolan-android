@@ -8,16 +8,15 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
-import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.PendingCardsCount
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
@@ -45,15 +44,12 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
 
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
-    private val exercisesRegistry: ExercisesRegistry by inject()
 
     private val domain: Domain by lazy {
         val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
         repository.domainById(domainId)!!
     }
-    private val adapter: DecksListAdapter by lazy {
-        DecksListAdapter(get(), exercisesRegistry.defaultExercise(), this)
-    }
+    private val adapter = DecksListAdapter(this)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         views = LearningBinding.inflate(inflater, container, false)
@@ -108,16 +104,16 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         adapter.setData(decksList())
     }
 
-    override fun beginStudy(deck: DeckListItem, studyOrder: StudyOrder, counts: Counts) {
-        if (counts.isAnythingPending()) {
-            launchLearning(deck, studyOrder)
+    override fun beginStudy(item: DeckListItem, studyOrder: StudyOrder) {
+        if (item.hasPending) {
+            launchLearning(item, studyOrder)
         } else {
-            val totalCounts = repository.deckPendingCountsMix(deck.deck, today())
-            val total = repository.deckStats(deck.deck)[CardTypeFilter.BOTH]!!.total
+            val totalCounts = repository.deckPendingCountsMix(item.deck, today())
+            val total = repository.deckStats(item.deck)[CardTypeFilter.BOTH]!!.total
             if (total == 0) {
-                showDeckEmptyMessage(deck)
+                showDeckEmptyMessage(item)
             } else if (totalCounts.isAnythingPending()) {
-                showSuggestStudyMoreDialog(deck)
+                showSuggestStudyMoreDialog(item)
             } else {
                 showNothingToLearnTodayDialog()
             }
@@ -186,24 +182,24 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun decksList(): List<DeckListItem> {
-        val decks = repository.allDecks(domain)
+        val decks = repository.allDecksWithPendingCounts(domain, today())
         return convertDecksToListItems(decks)
     }
 
-    private fun convertDecksToListItems(decks: List<Deck>): List<DeckListItem> {
+    private fun convertDecksToListItems(decks: Map<Deck, PendingCardsCount>): List<DeckListItem> {
         return if (preferences.mixForwardAndReverse) {
-            decks.map {
-                DeckListItem(it, CardTypeFilter.BOTH)
+            decks.map { (deck, counts) ->
+                DeckListItem(deck, CardTypeFilter.BOTH, counts.total > 0)
             }
         } else {
-            decks.flatMap { listOf(
-                    DeckListItem(it, CardTypeFilter.FORWARD),
-                    DeckListItem(it, CardTypeFilter.REVERSE)
+            decks.flatMap { (deck, counts) -> listOf(
+                    DeckListItem(deck, CardTypeFilter.FORWARD, counts.forward > 0),
+                    DeckListItem(deck, CardTypeFilter.REVERSE, counts.reverse > 0)
             ) }
         }
     }
 
     private fun firstDeckView(): View? {
-        return (views.decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.text
+        return (views.decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.views?.deckListItemText
     }
 }

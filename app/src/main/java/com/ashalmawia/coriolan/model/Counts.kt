@@ -5,6 +5,8 @@ import com.ashalmawia.coriolan.util.orZero
 
 data class Counts(val new: Int, val review: Int, val relearn: Int) {
 
+    val total = new + review + relearn
+
     fun isAnythingPending(): Boolean {
         return new > 0 || review > 0 || relearn > 0
     }

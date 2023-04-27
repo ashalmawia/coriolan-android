@@ -147,8 +147,7 @@ class MockRepository : Repository {
                 deckDue.count { it.second.globalStatus == Status.NEW },
                 deckDue.count { it.second.globalStatus == Status.IN_PROGRESS
                         || it.second.globalStatus == Status.LEARNT },
-                deckDue.count { it.second.globalStatus == Status.RELEARN },
-                total.filter { it.type == cardType }.size
+                deckDue.count { it.second.globalStatus == Status.RELEARN }
         )
     }
 

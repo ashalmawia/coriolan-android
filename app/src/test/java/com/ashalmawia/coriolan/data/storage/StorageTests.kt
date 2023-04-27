@@ -1411,6 +1411,144 @@ abstract class StorageTest {
     }
 
     @Test
+    fun test__allDecksWithPendingCounts__emptyStorage() {
+        // given
+        val storage = emptyStorage.value
+        val domain = mockDomain()
+
+        // when
+        val decks = storage.allDecksWithPendingCounts(domain, today)
+
+        // then
+        assertEquals(0, decks.size)
+    }
+
+    @Test
+    fun test__allDecksWithPendingCounts__noDecks() {
+        // given
+        val storage = prefilledStorage.value
+        val today = today
+
+        // when
+        val decks = storage.allDecksWithPendingCounts(domain, today)
+
+        // then
+        assertEquals(0, decks.size)
+    }
+
+    @Test
+    fun test__allDecksWithPendingCounts__noPendingCards() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck1 = storage.addDeck(domain, "mock deck")
+        val forward1 = (0 until 3)
+                .map { mockCardData("original $it", "translation $it", deck1) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse1 = (0 until 5)
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck1) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+        val deck2 = storage.addDeck(domain, "mock deck 2")
+        val forward2 = (0 until 3)
+                .map { mockCardData("original $it - 2", "translation $it - 2", deck2) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse2 = (0 until 5)
+                .map { mockCardData("translation 1 $it - 2", "original 1 $it - 2", deck2) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+
+        storage.updateCardLearningProgress(forward1[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward1[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(forward1[2], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(forward2[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward2[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(forward2[2], mockLearningProgress(today.plusDays(10), 4))
+
+        storage.updateCardLearningProgress(reverse1[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(reverse1[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse1[2], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse1[3], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse1[4], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse2[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(reverse2[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse2[2], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse2[3], mockLearningProgress(today.plusDays(10), 4))
+        storage.updateCardLearningProgress(reverse2[4], mockLearningProgress(today.plusDays(10), 4))
+
+        // when
+        val decks = storage.allDecksWithPendingCounts(domain, today)
+
+        // then
+        assertEquals(2, decks.size)
+        assertEquals(PendingCardsCount(0, 0), decks[deck1])
+        assertEquals(PendingCardsCount(0, 0), decks[deck2])
+    }
+
+    @Test
+    fun test__allDecksWithPendingCounts__hasPendingCards() {
+        // given
+        val storage = prefilledStorage.value
+
+        val deck1 = storage.addDeck(domain, "mock deck")
+        val forward1 = (0 until 4)
+                .map { mockCardData("original $it", "translation $it", deck1) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse1 = (0 until 6)
+                .map { mockCardData("translation 1 $it", "original 1 $it", deck1) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+        val deck2 = storage.addDeck(domain, "mock deck 2")
+        val forward2 = (0 until 4)
+                .map { mockCardData("original $it - 2", "translation $it - 2", deck2) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.FORWARD)
+                }
+        val reverse2 = (0 until 6)
+                .map { mockCardData("translation 1 $it - 2", "original 1 $it - 2", deck2) }
+                .map {
+                    addMockCard(storage, it, domain, CardType.REVERSE)
+                }
+
+        storage.updateCardLearningProgress(forward1[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward1[1], mockLearningProgress(today.minusDays(1), 4))
+        storage.updateCardLearningProgress(forward1[2], mockLearningProgress(today, -1))
+        storage.updateCardLearningProgress(forward1[3], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(forward2[0], mockLearningProgress(today.plusDays(3), 4))
+        storage.updateCardLearningProgress(forward1[2], mockLearningProgress(today, -1))
+        storage.updateCardLearningProgress(forward2[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(forward2[3], mockLearningProgress(today.plusDays(1), 4))
+
+        storage.updateCardLearningProgress(reverse1[0], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse1[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse1[2], mockLearningProgress(today.minusDays(10), 4))
+        storage.updateCardLearningProgress(reverse1[3], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse1[4], emptyState())
+        storage.updateCardLearningProgress(reverse1[5], emptyState())
+        storage.updateCardLearningProgress(reverse2[0], mockLearningProgress(today.plusDays(1), 0))
+        storage.updateCardLearningProgress(reverse2[1], mockLearningProgress(today.plusDays(1), 4))
+        storage.updateCardLearningProgress(reverse2[2], mockLearningProgress(today.minusDays(10), 4))
+        storage.updateCardLearningProgress(reverse2[3], mockLearningProgress(today, 0))
+        storage.updateCardLearningProgress(reverse2[4], emptyState())
+        storage.updateCardLearningProgress(reverse2[5], emptyState())
+
+        // when
+        val decks = storage.allDecksWithPendingCounts(domain, today)
+        assertEquals(2, decks.size)
+        assertEquals(PendingCardsCount(2, 5), decks[deck1])
+        assertEquals(PendingCardsCount(1, 4), decks[deck2])
+    }
+
+    @Test
     fun test__deckStats__emptyDeck() {
         // given
         val storage = prefilledStorage.value

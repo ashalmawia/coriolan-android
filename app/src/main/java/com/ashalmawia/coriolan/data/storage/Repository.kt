@@ -49,6 +49,14 @@ interface Repository {
 
     fun allDecks(domain: Domain): List<Deck>
 
+    fun allDecksWithPendingCounts(domain: Domain, date: DateTime): Map<Deck, PendingCardsCount> {
+        return allDecks(domain).associateWith { deck ->
+            val forward = deckPendingCounts(deck, CardType.FORWARD, date)
+            val reverse = deckPendingCounts(deck, CardType.REVERSE, date)
+            PendingCardsCount(forward.total, reverse.total)
+        }
+    }
+
     fun deckById(id: Long): Deck
 
     fun cardsOfDeck(deck: Deck): List<Card>

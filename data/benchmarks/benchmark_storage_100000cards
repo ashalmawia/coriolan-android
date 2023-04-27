@@ -2,45 +2,44 @@
     - sample size: 100000 cards
     - database size: 28 MB
     - averaged over: 5 runs
-    - date: 2023-04-07, 18:41
+    - date: 2023-04-27, 15:41
     - ran with Google Pixel 3a, API 30, RAM 3.7GB
 +-----------------------------------------+---------+
 | Task                                    |    Time |
 +-----------------------------------------+---------+
-| query deck pending cards                | 11.267s |
-| query progress for cards with originals |  9.230s |
-| query all cards                         |  6.876s |
-| query cards of deck                     |  6.837s |
-| query deck pending counts               |  3.581s |
-| query deck stats                        |  1.227s |
-| query term is used                      |  0.292s |
-| query card by values                    |  0.035s |
-| query all domains                       |  0.006s |
-| query card by id                        |  0.004s |
-| query domain by id                      |  0.003s |
-| query term by name                      |  0.003s |
-| query language by id                    |  0.002s |
-| query language by name                  |  0.002s |
+| query deck pending cards                | 13.393s |
+| query progress for cards with originals | 10.356s |
+| query all cards                         |  9.108s |
+| query cards of deck                     |  9.093s |
+| query deck pending counts               |  3.743s |
+| query all decks with pending counts     |  3.681s |
+| query deck stats                        |  2.621s |
+| query term is used                      |  0.233s |
+| query card by values                    |  0.030s |
+| query term by name                      |  0.005s |
+| query card by id                        |  0.005s |
+| query language by id                    |  0.004s |
+| query domain by id                      |  0.004s |
+| query all domains                       |  0.004s |
+| query deck by id                        |  0.004s |
+| query language by name                  |  0.003s |
 | query term by values                    |  0.000s |
-| query deck by id                        |  0.000s |
 | query all decks                         |  0.000s |
 | query card learning progress            |  0.000s |
 +-----------------------------------------+---------+
-| add deck                                |  0.137s |
-| add language                            |  0.130s |
-| add domain                              |  0.130s |
-| add term without extras                 |  0.125s |
-| add term with extras                    |  0.124s |
-| add card                                |  0.014s |
+| add domain                              |  0.137s |
+| add language                            |  0.133s |
+| add term                                |  0.129s |
+| add deck                                |  0.128s |
+| add card                                |  0.006s |
 +-----------------------------------------+---------+
-| update card learning progress           |  0.400s |
-| update card - move                      |  0.353s |
-| update term with extras                 |  0.171s |
-| update term without extras              |  0.169s |
-| update deck                             |  0.128s |
+| update term                             |  0.170s |
+| update card learning progress           |  0.127s |
+| update deck                             |  0.126s |
+| update card - move                      |  0.123s |
 | update card - add translation           |  0.007s |
 +-----------------------------------------+---------+
-| delete term                             |  0.451s |
-| delete deck                             |  0.446s |
-| delete card                             |  0.397s |
+| delete term                             |  0.172s |
+| delete deck                             |  0.172s |
+| delete card                             |  0.123s |
 +-----------------------------------------+---------+

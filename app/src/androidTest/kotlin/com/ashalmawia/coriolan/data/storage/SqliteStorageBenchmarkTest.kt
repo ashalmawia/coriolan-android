@@ -91,6 +91,7 @@ class SqliteStorageBenchmarkTest {
         query_cards_of_deck()
         query_deck_pending_cards()
         query_deck_pending_counts()
+        query_all_decks_with_pending_counts()
         query_deck_stats()
         query_card_learning_progress()
         query_progress_for_cards_with_originals()
@@ -358,6 +359,15 @@ class SqliteStorageBenchmarkTest {
             deck = it.deckById(3L)
         }) {
             it.deckPendingCounts(deck!!, CardType.FORWARD, mockToday())
+        }
+    }
+
+    private fun query_all_decks_with_pending_counts() {
+        var domain: Domain? = null
+        benchmark("query all decks with pending counts", prepare = {
+            domain = it.domainById(1L)
+        }) {
+            it.allDecksWithPendingCounts(domain!!, mockToday())
         }
     }
 
