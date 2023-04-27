@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.storage.sqlite
 
 import android.database.Cursor
-import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.ashalmawia.coriolan.data.stats.DeckStats
@@ -738,14 +737,12 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     }
 
     override fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
-        val totalCount = countCardsOfDeck(deck, cardType)
         val deckDue = pendingCardIds(deck, date, arrayOf(cardType))
         return Counts(
                 deckDue.count { it.value.globalStatus == Status.NEW },
                 deckDue.count { it.value.globalStatus == Status.IN_PROGRESS
                         || it.value.globalStatus == Status.LEARNT },
-                deckDue.count { it.value.globalStatus == Status.RELEARN },
-                totalCount
+                deckDue.count { it.value.globalStatus == Status.RELEARN }
         )
     }
 
@@ -791,14 +788,6 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
 
         return stats.mapValues { (_, it) -> it.toDeckStats() }
-    }
-
-    private fun countCardsOfDeck(deck: Deck, cardType: CardType): Int {
-        return DatabaseUtils.queryNumEntries(
-                helper.readableDatabase,
-                CARDS,
-                "$CARDS_DECK_ID = ${deck.id} AND $CARDS_TYPE = '${cardType.value}'"
-        ).toInt()
     }
 
     override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {

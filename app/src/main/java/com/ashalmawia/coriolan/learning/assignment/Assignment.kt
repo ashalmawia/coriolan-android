@@ -26,7 +26,7 @@ class Assignment(
     fun counts(): Counts {
         val tasks = tasks()
         val counts = tasks.groupBy { it.exerciseState.status }.mapValues { it.value.size }
-        return Counts.createFrom(counts, tasks.size)
+        return Counts.createFrom(counts)
     }
     fun hasNext(): Boolean {
         return queue.size > 0

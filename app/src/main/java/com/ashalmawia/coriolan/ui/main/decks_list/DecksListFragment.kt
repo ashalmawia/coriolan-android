@@ -113,7 +113,8 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
             launchLearning(deck, studyOrder)
         } else {
             val totalCounts = repository.deckPendingCountsMix(deck.deck, today())
-            if (totalCounts.total == 0) {
+            val total = repository.deckStats(deck.deck)[CardTypeFilter.BOTH]!!.total
+            if (total == 0) {
                 showDeckEmptyMessage(deck)
             } else if (totalCounts.isAnythingPending()) {
                 showSuggestStudyMoreDialog(deck)

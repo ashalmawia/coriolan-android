@@ -1293,7 +1293,6 @@ abstract class StorageTest {
         assertEquals(0, counts.new)
         assertEquals(0, counts.review)
         assertEquals(0, counts.relearn)
-        assertEquals(0, counts.total)
 
         // when
         val countsMix = storage.deckPendingCountsMix(deck, today)
@@ -1302,7 +1301,6 @@ abstract class StorageTest {
         assertEquals(0, countsMix.new)
         assertEquals(0, countsMix.review)
         assertEquals(0, countsMix.relearn)
-        assertEquals(0, countsMix.total)
     }
 
     @Test
@@ -1340,7 +1338,6 @@ abstract class StorageTest {
         assertEquals(0, counts.new)
         assertEquals(0, counts.review)
         assertEquals(0, counts.relearn)
-        assertEquals(forward.count(), counts.total)
 
         // when
         val counts1 = storage.deckPendingCounts(deck, CardType.REVERSE, today)
@@ -1349,7 +1346,6 @@ abstract class StorageTest {
         assertEquals(0, counts1.new)
         assertEquals(0, counts1.review)
         assertEquals(0, counts1.relearn)
-        assertEquals(reverse.count(), counts1.total)
 
         // when
         val countsMix = storage.deckPendingCountsMix(deck, today)
@@ -1358,7 +1354,6 @@ abstract class StorageTest {
         assertEquals(0, countsMix.new)
         assertEquals(0, countsMix.review)
         assertEquals(0, countsMix.relearn)
-        assertEquals(forward.count() + reverse.count(), countsMix.total)
     }
 
     @Test
@@ -1397,7 +1392,6 @@ abstract class StorageTest {
         assertEquals(1, counts.new)
         assertEquals(1, counts.review)
         assertEquals(0, counts.relearn)
-        assertEquals(forward.count(), counts.total)
 
         // when
         val counts1 = storage.deckPendingCounts(deck, CardType.REVERSE, today)
@@ -1406,7 +1400,6 @@ abstract class StorageTest {
         assertEquals(2, counts1.new)
         assertEquals(1, counts1.review)
         assertEquals(2, counts1.relearn)
-        assertEquals(reverse.count(), counts1.total)
 
         // when
         val countsMix = storage.deckPendingCountsMix(deck, today)
@@ -1415,7 +1408,6 @@ abstract class StorageTest {
         assertEquals(3, countsMix.new)
         assertEquals(2, countsMix.review)
         assertEquals(2, countsMix.relearn)
-        assertEquals(forward.count() + reverse.count(), countsMix.total)
     }
 
     @Test
