@@ -16,6 +16,8 @@
 
 		<item name="preferenceCategoryTitleTextColor">@color/colorAccentContrast</item>
 
+		<item name="android:alertDialogTheme">@style/Coriolan.AlertDialog</item>
+		<item name="alertDialogTheme">@style/Coriolan.AlertDialog</item>
 		<item name="buttonBarButtonStyle">@style/Coriolan.ButtonBarButton</item>
 	</style>
 	
@@ -69,8 +71,20 @@
 		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
 	</style>
 
-	<style name="Coriolan.ButtonBarButton" parent="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog">
+	<style name="Coriolan.ButtonBarButton" parent="@style/Widget.AppCompat.Button.Borderless">
+		<item name="android:textAppearance">@style/Coriolan.ButtonBarButton.TextAppearance</item>
 		<item name="android:textColor">@color/colorAccentContrast</item>
+	</style>
+
+	<style name="Coriolan.ButtonBarButton.TextAppearance" parent="TextAppearance.MaterialComponents.Button">
+		<item name="android:textColor">@color/colorAccentContrast</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+	
+	<style name="Coriolan.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+		<item name="android:buttonBarPositiveButtonStyle">@style/Coriolan.ButtonBarButton</item>
+		<item name="android:buttonBarNegativeButtonStyle">@style/Coriolan.ButtonBarButton</item>
+		<item name="android:buttonBarNeutralButtonStyle">@style/Coriolan.ButtonBarButton</item>
 	</style>
 
 </resources>
