@@ -12,7 +12,8 @@
 		<item name="android:textColorPrimary">@color/textColorPrimary</item>
 		<item name="android:textColorSecondary">@color/textColorSecondary</item>
 		<item name="android:textColorTertiary">@color/textColorTertiary</item>
-		<item name="fontFamily">sans-serif</item>
+		<item name="fontFamily">@font/montserrat</item>
+		<item name="android:fontFamily">@font/montserrat</item>
 
 		<item name="preferenceCategoryTitleTextColor">@color/colorAccentContrast</item>
 
