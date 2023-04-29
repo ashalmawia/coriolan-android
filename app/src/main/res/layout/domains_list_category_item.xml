@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
-	android:id="@+id/myView"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/myView"
 	style="@style/DeckList.Category"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:layout_marginTop="@dimen/spacing__small"
-	android:textColor="@color/colorAccentContrast"
+	tools:text="Select deck"
 	/>

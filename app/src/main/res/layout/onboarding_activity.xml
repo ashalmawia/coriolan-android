@@ -22,10 +22,11 @@
 
 		<Button
 			android:id="@+id/onboardingButtonSkip"
-			style="@style/Widget.AppCompat.Button.Borderless"
+			style="@style/Coriolan.Button.Borderless"
 			android:layout_width="0dp"
 			android:layout_weight="1"
 			android:layout_height="wrap_content"
+			android:textColor="@color/textColorPrimary"
 			android:text="@string/onboarding_skip"
 			/>
 

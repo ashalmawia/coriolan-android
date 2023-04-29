@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:app="http://schemas.android.com/apk/res-auto"
+			  xmlns:tools="http://schemas.android.com/tools"
 			  android:layout_width="match_parent"
 			  android:layout_height="wrap_content"
 			  android:gravity="center_vertical"
@@ -8,10 +10,11 @@
 
 	<TextView
 		android:id="@+id/title"
-		style="@style/DeckList.Item"
+		style="@style/Coriolan.Widget.ListItem"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
+		tools:text="Default"
 		/>
 
 	<ImageView
@@ -20,7 +23,7 @@
 		android:layout_height="@dimen/edit_list_deck_item__icon_size"
 		android:layout_marginStart="@dimen/spacing__small"
 		android:src="@drawable/ic_add"
-		android:tint="@color/colorPrimary"
+		app:tint="@color/colorPrimary"
 		/>
 
 	<ImageView
@@ -29,7 +32,7 @@
 		android:layout_height="@dimen/edit_list_deck_item__icon_size"
 		android:layout_marginStart="@dimen/spacing__small"
 		android:src="@drawable/ic_edit"
-		android:tint="@color/colorPrimary"
+		app:tint="@color/colorPrimary"
 		/>
 
 	<ImageView
@@ -38,7 +41,6 @@
 		android:layout_height="@dimen/edit_list_deck_item__icon_size"
 		android:layout_marginStart="@dimen/spacing__small"
 		android:src="@drawable/ic_cross"
-		android:tint="@color/colorPrimary"
-		/>
+		app:tint="@color/colorPrimary" />
 
 </LinearLayout>

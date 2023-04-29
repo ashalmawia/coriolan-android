@@ -13,7 +13,7 @@
 
 		<androidx.appcompat.widget.Toolbar
 			android:id="@+id/toolbar"
-			style="@style/Coriolan.Toolbar"
+			style="@style/Coriolan.Widget.Toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:paddingBottom="@dimen/spacing__tiny"
@@ -26,12 +26,11 @@
 
 				<TextView
 					android:id="@+id/toolbarTitle"
-					style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+					style="@style/Coriolan.Text.Title.Toolbar"
 					android:layout_width="wrap_content"
 					android:layout_height="?attr/actionBarSize"
 					android:gravity="center_vertical"
 					android:maxLines="1"
-					android:textColor="@color/white"
 					tools:text="Title"/>
 
 				<include layout="@layout/deck_progress_bar" android:id="@+id/deck_progress_bar"/>

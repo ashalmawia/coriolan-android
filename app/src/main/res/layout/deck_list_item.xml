@@ -15,7 +15,7 @@
 
 		<TextView
 			android:id="@+id/deck_list_item__text"
-			style="@style/DeckList.Item"
+			style="@style/Coriolan.Widget.ListItem"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:paddingBottom="@dimen/spacing__tiny"
@@ -24,10 +24,14 @@
 
 		<TextView
 			android:id="@+id/deck_list_item__type"
-			style="@style/DeckList.Item.Comment"
+			style="@style/Coriolan.Text.Body.Small.Thin"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:paddingTop="0dp"
+			android:paddingBottom="@dimen/spacing__small"
+			android:paddingStart="@dimen/spacing__small"
+			android:paddingEnd="@dimen/spacing__small"
+			android:textStyle="italic"
 			tools:text="Passive vocabulary"
 			/>
 

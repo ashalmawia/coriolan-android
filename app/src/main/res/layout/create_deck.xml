@@ -9,7 +9,7 @@
 			  android:paddingEnd="@dimen/spacing__very_large">
 
 	<TextView
-		style="@style/Coriolan.Text.Subtitle"
+		style="@style/Coriolan.Text.Label"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:labelFor="@id/nameField"

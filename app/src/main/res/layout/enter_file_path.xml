@@ -13,7 +13,7 @@
 		android:padding="10dp">
 
 		<TextView
-			style="@style/Coriolan.Text.Caption.Label"
+			style="@style/Coriolan.Text.Label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="5dp"
@@ -28,7 +28,7 @@
 			android:inputType="textUri"/>
 
 		<TextView
-			style="@style/Coriolan.Text.Caption.Label"
+			style="@style/Coriolan.Text.Label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="5dp"

@@ -28,7 +28,6 @@
 
 		<TextView
 			android:id="@+id/welcomeLabelSubtitle"
-			style="@style/Coriolan.Text.Subtitle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="@dimen/spacing__very_large"
@@ -38,7 +37,7 @@
 			android:gravity="center"/>
 
 		<TextView
-			style="@style/Coriolan.Text.Caption.Label"
+			style="@style/Coriolan.Text.Label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:labelFor="@id/inputOriginalLang"
@@ -53,7 +52,7 @@
 			android:hint="@string/create_domain__specify_original_lang_hint"/>
 
 		<TextView
-			style="@style/Coriolan.Text.Caption.Label"
+			style="@style/Coriolan.Text.Label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="@dimen/spacing__medium"

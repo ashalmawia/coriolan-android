@@ -12,14 +12,28 @@
 		<item name="android:textColorPrimary">@color/textColorPrimary</item>
 		<item name="android:textColorSecondary">@color/textColorSecondary</item>
 		<item name="android:textColorTertiary">@color/textColorTertiary</item>
-		<item name="fontFamily">@font/montserrat</item>
-		<item name="android:fontFamily">@font/montserrat</item>
+		<item name="hintTextColor">@color/textColorTertiary</item>
+		<item name="textAppearanceBody1">@style/Coriolan.Text.Body.Regular</item>
+		<item name="textAppearanceBody2">@style/Coriolan.Text.Body.Regular</item>
+		<item name="textAppearanceBodyMedium">@style/Coriolan.Text.Body.Regular</item>
+		<item name="textAppearanceBodySmall">@style/Coriolan.Text.Body.Small</item>
+		<item name="textAppearanceBodyLarge">@style/Coriolan.Text.Body.Large</item>
+		<item name="android:textAppearance">@style/Coriolan.Text.Body.Regular</item>
+		<item name="android:textAppearanceSmall">@style/Coriolan.Text.Body.Regular</item>
+		<item name="android:textAppearanceMedium">@style/Coriolan.Text.Body.Regular</item>
+		<item name="android:textAppearanceLarge">@style/Coriolan.Text.Body.Large</item>
 
+		<item name="preferenceCategoryTitleTextAppearance">@style/Coriolan.Text.Preference.Title</item>
 		<item name="preferenceCategoryTitleTextColor">@color/colorAccentContrast</item>
 
 		<item name="android:alertDialogTheme">@style/Coriolan.AlertDialog</item>
 		<item name="alertDialogTheme">@style/Coriolan.AlertDialog</item>
-		<item name="buttonBarButtonStyle">@style/Coriolan.ButtonBarButton</item>
+		<item name="buttonBarButtonStyle">@style/Coriolan.Button.Borderless</item>
+		<item name="buttonStyle">@style/Coriolan.Button.Borderless</item>
+		<item name="editTextStyle">@style/Coriolan.Widget.EditText</item>
+
+		<item name="toolbarStyle">@style/Coriolan.Widget.Toolbar</item>
+		<item name="android:toolbarStyle">@style/Coriolan.Widget.Toolbar</item>
 	</style>
 	
 	<style name="Coriolan.Theme.Splash" parent="Theme.SplashScreen">
@@ -41,51 +55,48 @@
 		<item name="android:textColor">@color/textColorPrimary</item>
 		<item name="android:textColorPrimary">@color/textColorPrimary</item>
 
-		<item name="buttonBarButtonStyle">@style/Coriolan.ButtonBarButton</item>
+		<item name="buttonBarButtonStyle">@style/Coriolan.Button.Borderless</item>
 	</style>
 
-	<style name="Coriolan.Toolbar">
+	<style name="Coriolan.Text.Preference.Title" parent="Coriolan.Text.Body.Regular.Heavy" />
+
+	<style name="Coriolan.Widget.Toolbar" parent="Widget.AppCompat.Toolbar">
 		<item name="android:background">@color/colorPrimary</item>
 		<item name="popupTheme">@style/Theme.AppCompat.Light</item>
 		<item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
 		<item name="titleTextColor">@color/white</item>
-	</style>
-
-	<style name="Coriolan.Text" />
-
-	<style name="Coriolan.Text.Title">
-		<item name="android:textSize">20sp</item>
-		<item name="android:textStyle">bold</item>
-	</style>
-
-	<style name="Coriolan.Text.Subtitle">
-		<item name="android:textSize">16sp</item>
+		<item name="titleTextAppearance">@style/Coriolan.Text.Title.Toolbar</item>
 	</style>
 
 	<style name="Coriolan.Text.Caption">
 		<item name="android:textSize">14sp</item>
 		<item name="android:textStyle">bold</item>
 	</style>
-
-	<style name="Coriolan.Text.Caption.Label">
-		<item name="android:layout_marginLeft">@dimen/spacing__tiny</item>
-		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
-	</style>
-
-	<style name="Coriolan.ButtonBarButton" parent="@style/Widget.AppCompat.Button.Borderless">
-		<item name="android:textAppearance">@style/Coriolan.ButtonBarButton.TextAppearance</item>
-		<item name="android:textColor">@color/colorAccentContrast</item>
-	</style>
-
-	<style name="Coriolan.ButtonBarButton.TextAppearance" parent="TextAppearance.MaterialComponents.Button">
-		<item name="android:textColor">@color/colorAccentContrast</item>
-		<item name="android:textStyle">bold</item>
-	</style>
 	
 	<style name="Coriolan.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
-		<item name="android:buttonBarPositiveButtonStyle">@style/Coriolan.ButtonBarButton</item>
-		<item name="android:buttonBarNegativeButtonStyle">@style/Coriolan.ButtonBarButton</item>
-		<item name="android:buttonBarNeutralButtonStyle">@style/Coriolan.ButtonBarButton</item>
+		<item name="android:textAppearanceMedium">@style/Coriolan.Text.Body.Regular</item>
+		<item name="android:textAppearanceLarge">@style/Coriolan.Text.Title</item>
+		<item name="android:buttonBarPositiveButtonStyle">@style/Coriolan.Button.Borderless</item>
+		<item name="android:buttonBarNegativeButtonStyle">@style/Coriolan.Button.Borderless</item>
+		<item name="android:buttonBarNeutralButtonStyle">@style/Coriolan.Button.Borderless</item>
 	</style>
+
+	<style name="Coriolan.Button.Borderless" parent="@style/Widget.AppCompat.Button.Borderless">
+		<item name="android:textAppearance">@style/Coriolan.Text.Button</item>
+		<item name="android:textColor">@color/colorAccentContrast</item>
+	</style>
+
+	<style name="Coriolan.Widget.EditText" parent="Widget.AppCompat.EditText">
+		<item name="android:textAppearance">@style/Coriolan.Text.Input</item>
+	</style>
+
+	<style name="Coriolan.Widget.ListItem" parent="Coriolan.Text.SelectableItem">
+		<item name="android:paddingStart">@dimen/spacing__small</item>
+		<item name="android:paddingEnd">@dimen/spacing__small</item>
+		<item name="android:paddingTop">@dimen/spacing__small</item>
+		<item name="android:paddingBottom">@dimen/spacing__small</item>
+	</style>
+
+	<style name="Coriolan.Widget.ListItem.Action" />
 
 </resources>

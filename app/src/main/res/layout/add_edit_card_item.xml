@@ -5,7 +5,7 @@
 
 	<TextView
 		android:id="@+id/ordinalLabel"
-		style="@style/EditCardSubtitle"
+		style="@style/Coriolan.Text.Label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="top"
@@ -15,6 +15,7 @@
 
 	<EditText
 		android:id="@+id/inputField"
+		style="@style/Coriolan.Text.Body.Large"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_gravity="top"

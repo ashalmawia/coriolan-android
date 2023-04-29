@@ -8,7 +8,7 @@
 
 	<TextView
 		android:id="@+id/sectionTitle"
-		style="@style/TextSubtitle"
+		style="@style/Coriolan.Text.Subtitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="@dimen/spacing__medium"

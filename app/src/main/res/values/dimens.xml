@@ -8,6 +8,12 @@
 	<dimen name="spacing__very_large">25dp</dimen>
 	<dimen name="spacing__largest">30dp</dimen>
 
+	<dimen name="text__tiny">10sp</dimen>
+	<dimen name="text__small">12sp</dimen>
+	<dimen name="text__medium">14sp</dimen>
+	<dimen name="text__large">16sp</dimen>
+	<dimen name="text__title">18sp</dimen>
+
 	<dimen name="minimum_tappable_area">48dp</dimen>
 
 	<dimen name="pending_item_size">14dp</dimen>
