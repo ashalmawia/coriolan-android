@@ -3,16 +3,15 @@ package com.ashalmawia.coriolan.learning.exercise
 import android.content.Context
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.data.logbook.Logbook
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.mutation.Mutation
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
-import org.joda.time.DateTime
 
 class MockExercise : Exercise {
 
@@ -22,7 +21,7 @@ class MockExercise : Exercise {
     override val canUndo: Boolean
         get() = true
 
-    override fun mutations(repository: Repository, preferences: Preferences, logbook: Logbook, date: DateTime, order: StudyOrder, deck: Deck, cardTypeFilter: CardTypeFilter): List<Mutation> {
+    override fun mutations(repository: Repository, order: StudyOrder, deck: Deck, cardTypeFilter: CardTypeFilter, studyTargets: StudyTargets): List<Mutation> {
         return emptyList()
     }
 

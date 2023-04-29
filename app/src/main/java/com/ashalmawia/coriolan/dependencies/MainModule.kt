@@ -41,13 +41,13 @@ val mainModule = module {
     single<ImporterRegistry> { ImporterRegistryImpl() }
     single<DomainsRegistry> { DomainsRegistryImpl(get()) }
     single<ExercisesRegistry> { ExercisesRegistryImpl() }
-    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get(), get(), get()) }
-    single<DeckCountsProvider> { DeckCountsProviderImpl(get()) }
+    single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
     single { SqliteRepositoryOpenHelper(get()) }
     single<SpacedRepetitionScheduler> { MultiplierBasedScheduler() }
     single<HistoryFactory> { HistoryFactoryImpl }
     single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get(), get()) }
     single<Backup> { JsonBackup() }
+    single<StudyTargetsResolver> { StudyTargetsResolverImpl(get(), get()) }
 
     factory<FirstStart> { FirstStartImpl(get()) }
 }

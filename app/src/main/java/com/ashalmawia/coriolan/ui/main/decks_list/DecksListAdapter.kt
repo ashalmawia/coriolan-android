@@ -101,7 +101,7 @@ class DecksListAdapter(private val listener: DeckListAdapterListener)
     }
 
     private fun studyDefault(item: DeckListItem) {
-        studyRandom(item)
+        instantiateLearningFlow(item, StudyOrder.default())
     }
 
     private fun studyStraightforward(item: DeckListItem) {
@@ -122,7 +122,7 @@ class DecksListAdapter(private val listener: DeckListAdapterListener)
     }
 
     private fun studyMore(item: DeckListItem) {
-        listener.showIncreaseLimitsDialog(item)
+        listener.showLearnMoreDialog(item)
     }
 
     private fun showDeckDetails(item: DeckListItem) {
@@ -133,7 +133,7 @@ class DecksListAdapter(private val listener: DeckListAdapterListener)
 interface DeckListAdapterListener {
     fun showDeckDetailsDialog(deck: DeckListItem)
 
-    fun showIncreaseLimitsDialog(deck: DeckListItem)
+    fun showLearnMoreDialog(deck: DeckListItem)
 
     fun beginStudy(item: DeckListItem, studyOrder: StudyOrder)
 }

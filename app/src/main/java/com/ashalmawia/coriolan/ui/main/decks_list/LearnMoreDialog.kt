@@ -7,23 +7,21 @@ import androidx.appcompat.app.AlertDialog
 import android.view.ViewGroup
 import android.widget.Toast
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.databinding.IncreaseLimitsBinding
-import com.ashalmawia.coriolan.learning.TodayManager
+import com.ashalmawia.coriolan.databinding.LearnMoreDialogBinding
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
-import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
-import kotlin.math.max
 
-class IncreaseLimitsDialog(
+typealias LearnMoreDialogListener = (Int, Int) -> Unit
+
+class LearnMoreDialog(
         private val activity: Activity,
         private val deck: DeckListItem,
         private val date: DateTime,
         private val repository: Repository,
-        private val preferences: Preferences
+        private val onTargetsSet: LearnMoreDialogListener
 ) {
-    private lateinit var views: IncreaseLimitsBinding
+    private lateinit var views: LearnMoreDialogBinding
     private val totalCounts by lazy {
             if (deck.cardTypeFilter == CardTypeFilter.BOTH) {
                 repository.deckPendingCountsMix(deck.deck, date)
@@ -35,7 +33,7 @@ class IncreaseLimitsDialog(
     private val builder = AlertDialog.Builder(activity)
 
     fun build() : AlertDialog {
-        views = IncreaseLimitsBinding.inflate(activity.layoutInflater)
+        views = LearnMoreDialogBinding.inflate(activity.layoutInflater)
         val view = views.root as ViewGroup
 
         populateMaxCounts()
@@ -44,7 +42,7 @@ class IncreaseLimitsDialog(
         builder.setTitle(activity.getString(R.string.deck_options_study_more__title, deck.deck.name))
 
         builder.setNegativeButton(R.string.button_cancel, null)
-        builder.setPositiveButton(R.string.button_ok, null)
+        builder.setPositiveButton(R.string.increase_limits__study, null)
 
         return builder.create().apply {
             setOnShowListener {
@@ -55,18 +53,10 @@ class IncreaseLimitsDialog(
 
     private fun populateMaxCounts() {
         views.apply {
-            views.countNewMax.text = newMax.toString()
-            views.countReviewMax.text = reviewMax.toString()
+            views.countNewMax.text = totalCounts.new.toString()
+            views.countReviewMax.text = totalCounts.review.toString()
         }
     }
-
-    private val newMax
-        get() = max(totalCounts.new - preferences.getNewCardsDailyLimit(today()).orZero(), 0)
-
-    private val reviewMax
-        get() = max(totalCounts.review - preferences.getReviewCardsDailyLimit(today()).orZero(), 0)
-
-    private fun today() = TodayManager.today()
 
     private fun checkAndConfirm(dialog: DialogInterface) {
         val new = if (views.countNew.text.isBlank()) 0 else views.countNew.text.toString().toInt()
@@ -81,26 +71,11 @@ class IncreaseLimitsDialog(
             return
         }
 
-        confirm(new, review)
+        onTargetsSet(new, review)
         dialog.dismiss()
     }
 
     private fun showError(@StringRes error: Int) {
         Toast.makeText(activity, error, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun confirm(new: Int, review: Int) {
-        updateDailyLimits(new, review)
-    }
-
-    private fun updateDailyLimits(new: Int, review: Int) {
-        preferences.setNewCardsDailyLimit(
-                preferences.getNewCardsDailyLimit(date).orZero() + new,
-                date
-        )
-        preferences.setReviewCardsDailyLimit(
-                preferences.getReviewCardsDailyLimit(date).orZero() + review,
-                date
-        )
     }
 }

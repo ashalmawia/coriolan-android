@@ -7,7 +7,12 @@ import com.ashalmawia.coriolan.util.review
 enum class StudyOrder {
     ORDER_ADDED,
     RANDOM,
-    NEWEST_FIRST
+    NEWEST_FIRST;
+
+    companion object {
+        // todo: move default study order to settings
+        fun default() = RANDOM
+    }
 }
 
 class OrderAdded: NewCardsOrderMutation() {

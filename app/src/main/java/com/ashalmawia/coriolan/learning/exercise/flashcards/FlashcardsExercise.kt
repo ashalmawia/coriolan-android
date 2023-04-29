@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.logbook.Logbook
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -20,7 +20,6 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.forwardAndReverseWithState
-import org.joda.time.DateTime
 
 /**
  * Simple learning exercise which shows all the cards in the assignment: given front, guess back.
@@ -44,12 +43,10 @@ class FlashcardsExercise : Exercise {
 
     override fun mutations(
             repository: Repository,
-            preferences: Preferences,
-            logbook: Logbook,
-            date: DateTime,
             order: StudyOrder,
             deck: Deck,
-            cardTypeFilter: CardTypeFilter
+            cardTypeFilter: CardTypeFilter,
+            studyTargets: StudyTargets
     ): List<Mutation> {
         val mutations = mutableListOf<Mutation>().apply {
             add(LearningModeMutation(repository))
@@ -58,7 +55,7 @@ class FlashcardsExercise : Exercise {
             }
             add(SortReviewsByIntervalMutation)
             add(NewCardsOrderMutation.from(order))
-            add(LimitCountMutation(preferences, logbook, date))
+            add(LimitCountMutation(studyTargets))
             add(ShuffleMutation(order == StudyOrder.RANDOM))
         }
         return mutations

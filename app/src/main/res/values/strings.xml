@@ -59,6 +59,7 @@
 	<string name="increase_limits__review">Review:</string>
 	<string name="increase_limits__error__wrong_new">The value for \"New\" is incorrect</string>
 	<string name="increase_limits__error__wrong_review">The value for \"Review\" is incorrect</string>
+	<string name="increase_limits__study">STUDY</string>
 
 	<!-- Cards -->
 	<string name="cards_yes">Yes</string>

@@ -117,6 +117,7 @@ class LearningFlow(
                 deck: Deck,
                 cardTypeFilter: CardTypeFilter,
                 studyOrder: StudyOrder,
+                studyTargets: StudyTargets,
                 listener: Listener
         ) : LearningFlow
     }

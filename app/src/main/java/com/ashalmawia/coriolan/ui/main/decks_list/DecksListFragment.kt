@@ -11,6 +11,8 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
+import com.ashalmawia.coriolan.learning.StudyTargets
+import com.ashalmawia.coriolan.learning.StudyTargetsResolver
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
@@ -24,7 +26,6 @@ import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.util.negativeButton
 import com.ashalmawia.coriolan.ui.util.positiveButton
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
@@ -44,6 +45,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
 
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
+    private val studyTargetsResolver: StudyTargetsResolver by inject()
 
     private val domain: Domain by lazy {
         val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
@@ -134,7 +136,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
                 .setTitle(R.string.decks_list_suggest_study_more_dialog_title)
                 .setMessage(R.string.decks_list_suggest_study_more_dialog_description)
                 .positiveButton(R.string.decks_list_suggest_study_more_dialog_cta) {
-                    showIncreaseLimitsDialog(deck)
+                    showLearnMoreDialog(deck)
                 }
                 .negativeButton(R.string.button_cancel)
                 .create()
@@ -158,8 +160,12 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         startActivity(intent)
     }
 
-    private fun launchLearning(deck: DeckListItem, studyOrder: StudyOrder) {
-        val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardTypeFilter, studyOrder)
+    private fun launchLearning(
+            deck: DeckListItem,
+            studyOrder: StudyOrder,
+            studyTargets: StudyTargets = studyTargetsResolver.defaultStudyTargets(today())
+    ) {
+        val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardTypeFilter, studyOrder, studyTargets)
         requireActivity().startActivity(intent)
     }
 
@@ -168,10 +174,13 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         dialog.show()
     }
 
-    override fun showIncreaseLimitsDialog(deck: DeckListItem) {
-        val dialog = IncreaseLimitsDialog(requireActivity(), deck, today(), repository, get()).build()
-        dialog.setOnDismissListener { fetchData() }
-        dialog.show()
+    override fun showLearnMoreDialog(deck: DeckListItem) {
+        val dialog = LearnMoreDialog(requireActivity(), deck, today(), repository) { new, review ->
+            if (new + review > 0) {
+                launchLearning(deck, StudyOrder.default(), StudyTargets(new, review))
+            }
+        }
+        dialog.build().show()
     }
 
     private fun today() = TodayManager.today()

@@ -22,9 +22,10 @@ class LearningFlowFactory(
             deck: Deck,
             cardTypeFilter: CardTypeFilter,
             studyOrder: StudyOrder,
+            studyTargets: StudyTargets,
             listener: LearningFlow.Listener
     ): LearningFlow {
-        val assignment = assignmentFactory.createAssignment(studyOrder, deck, cardTypeFilter)
+        val assignment = assignmentFactory.createAssignment(studyOrder, deck, cardTypeFilter, studyTargets)
         return LearningFlow(context, repository, assignment, deck, exercisesRegistry, logbook, uiContainer, listener)
     }
 }

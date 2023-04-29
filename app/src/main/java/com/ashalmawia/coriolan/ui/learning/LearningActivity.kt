@@ -18,6 +18,7 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningActivityBinding
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
@@ -30,15 +31,22 @@ private const val REQUEST_CODE_EDIT_CARD = 1
 private const val EXTRA_DECK_ID = "extra_deck_id"
 private const val EXTRA_CARD_TYPE_FILTER = "extra_card_type"
 private const val EXTRA_STUDY_ORDER = "extra_study_order"
+private const val EXTRA_STUDY_TARGETS = "extra_study_targets"
 
 class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
     companion object {
-        fun intent(context: Context, deck: Deck, cardTypeFilter: CardTypeFilter, studyOrder: StudyOrder): Intent {
+        fun intent(context: Context,
+                   deck: Deck,
+                   cardTypeFilter: CardTypeFilter,
+                   studyOrder: StudyOrder,
+                   studyTargets: StudyTargets
+        ): Intent {
             val intent = Intent(context, LearningActivity::class.java)
             intent.putExtra(EXTRA_DECK_ID, deck.id)
             intent.putExtra(EXTRA_CARD_TYPE_FILTER, cardTypeFilter.toString())
             intent.putExtra(EXTRA_STUDY_ORDER, studyOrder.toString())
+            intent.putExtra(EXTRA_STUDY_TARGETS, studyTargets)
             return intent
         }
     }
@@ -49,10 +57,12 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
     private val flow by lazy {
         val learningFlowFactory: LearningFlow.Factory = get()
-        val (deck, cardType, studyOrder) = resolveParameters()
-        learningFlowFactory.createLearningFlow(
-                this, views.exerciseContainer, deck, cardType, studyOrder, this
-        )
+
+        withParameters { deck, cardType, studyOrder, studyTargets ->
+            learningFlowFactory.createLearningFlow(
+                    this, views.exerciseContainer, deck, cardType, studyOrder, studyTargets, this
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,12 +75,14 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
         delegate.isHandleNativeActionModesEnabled = false
     }
 
-    private fun resolveParameters(): Triple<Deck, CardTypeFilter, StudyOrder> {
+    private fun <T> withParameters(onResolved: (Deck, CardTypeFilter, StudyOrder, StudyTargets) -> T): T {
         val deckId = intent.getLongExtra(EXTRA_DECK_ID, 0L)
         val deck = repository.deckById(deckId)
         val cardType = CardTypeFilter.valueOf(intent.getStringExtra(EXTRA_CARD_TYPE_FILTER)!!)
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
-        return Triple(deck, cardType, studyOrder)
+        val studyTargets = intent.getSerializableExtra(EXTRA_STUDY_TARGETS, StudyTargets::class.java)!!
+
+        return onResolved(deck, cardType, studyOrder, studyTargets)
     }
 
     private lateinit var undoIcon: VectorDrawableSelector
