@@ -75,7 +75,6 @@
 
 	<style name="Coriolan.WindowTitle">
 		<item name="android:textAppearance">@style/Coriolan.Text.Title</item>
-		<item name="android:textStyle">bold</item>
 		<item name="android:singleLine">true</item>
 		<item name="android:shadowRadius">0</item>
 		<item name="android:ellipsize">end</item>

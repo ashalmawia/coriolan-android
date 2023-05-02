@@ -46,10 +46,7 @@
 		<item name="fontFamily">@font/montserrat_heavy</item>
 		<item name="android:textSize">@dimen/text__large</item>
 	</style>
-	<style name="Coriolan.Text.Label" parent="Coriolan.Text.Body">
-		<item name="android:textSize">@dimen/text__medium</item>
-		<item name="android:fontFamily">@font/montserrat_heavy</item>
-		<item name="fontFamily">@font/montserrat_heavy</item>
+	<style name="Coriolan.Text.Label" parent="Coriolan.Text.Body.Regular.Heavy">
 		<item name="android:layout_marginLeft">@dimen/spacing__tiny</item>
 		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
 	</style>
@@ -63,7 +60,7 @@
 
 	<style name="Coriolan.Text.Input" parent="Coriolan.Text.Body.Large" />
 
-	<style name="Coriolan.Text.SelectableItem" parent="Coriolan.Text.Body.Large.Heavy" />
+	<style name="Coriolan.Text.SelectableItem" parent="Coriolan.Text.Body.Large" />
 
 	<style name="Coriolan.Text.Title.Toolbar" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
 		<item name="android:fontFamily">@font/montserrat_heavy</item>
