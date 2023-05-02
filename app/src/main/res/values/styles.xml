@@ -1,12 +1,5 @@
 <resources>
 
-	<style name="DialogTitle" parent="RtlOverlay.DialogWindowTitle.AppCompat">
-		<item name="android:textAlignment">center</item>
-		<item name="android:textColor">@color/colorPrimary</item>
-		<item name="fontFamily">@font/montserrat</item>
-		<item name="android:textStyle">bold</item>
-	</style>
-
 	<style name="CardText" parent="Coriolan.Text.Body.Large">
 		<item name="android:textSize">@dimen/card_text_size</item>
 		<item name="android:padding">10dp</item>

@@ -12,7 +12,7 @@
 	<dimen name="text__small">12sp</dimen>
 	<dimen name="text__medium">14sp</dimen>
 	<dimen name="text__large">16sp</dimen>
-	<dimen name="text__title">18sp</dimen>
+	<dimen name="text__title">20sp</dimen>
 
 	<dimen name="minimum_tappable_area">48dp</dimen>
 

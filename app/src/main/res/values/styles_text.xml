@@ -2,6 +2,7 @@
 <resources>
 	<style name="Coriolan.Text"  parent="TextAppearance.AppCompat">
 		<item name="fontFamily">@font/montserrat</item>
+		<item name="android:fontFamily">@font/montserrat</item>
 		<item name="android:textColor">@color/textColorPrimary</item>
 	</style>
 
@@ -21,14 +22,17 @@
 	</style>
 	<style name="Coriolan.Text.Body.Large.Heavy">
 		<item name="fontFamily">@font/montserrat_heavy</item>
+		<item name="android:fontFamily">@font/montserrat_heavy</item>
 		<item name="android:textSize">@dimen/text__large</item>
 	</style>
 	<style name="Coriolan.Text.Body.Small.Thin">
 		<item name="fontFamily">@font/montserrat_light</item>
+		<item name="android:fontFamily">@font/montserrat_light</item>
 		<item name="android:textSize">@dimen/text__small</item>
 	</style>
 	<style name="Coriolan.Text.Body.Regular.Thin">
 		<item name="fontFamily">@font/montserrat_light</item>
+		<item name="android:fontFamily">@font/montserrat_light</item>
 		<item name="android:textSize">@dimen/text__medium</item>
 	</style>
 
@@ -37,17 +41,20 @@
 		<item name="android:textStyle">bold</item>
 	</style>
 	<style name="Coriolan.Text.Subtitle">
+		<item name="android:fontFamily">@font/montserrat_heavy</item>
 		<item name="fontFamily">@font/montserrat_heavy</item>
 		<item name="android:textSize">@dimen/text__large</item>
 	</style>
 	<style name="Coriolan.Text.Label" parent="Coriolan.Text.Body">
 		<item name="android:textSize">@dimen/text__medium</item>
+		<item name="android:fontFamily">@font/montserrat_heavy</item>
 		<item name="fontFamily">@font/montserrat_heavy</item>
 		<item name="android:layout_marginLeft">@dimen/spacing__tiny</item>
 		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
 	</style>
 
 	<style name="Coriolan.Text.Button" parent="TextAppearance.MaterialComponents.Button">
+		<item name="android:fontFamily">@font/montserrat</item>
 		<item name="fontFamily">@font/montserrat</item>
 		<item name="android:textColor">@color/colorAccentContrast</item>
 		<item name="android:textStyle">bold</item>
@@ -58,6 +65,7 @@
 	<style name="Coriolan.Text.SelectableItem" parent="Coriolan.Text.Body.Large.Heavy" />
 
 	<style name="Coriolan.Text.Title.Toolbar" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+		<item name="android:fontFamily">@font/montserrat_heavy</item>
 		<item name="fontFamily">@font/montserrat_heavy</item>
 		<item name="android:textColor">@color/white</item>
 	</style>

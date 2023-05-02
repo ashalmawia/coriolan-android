@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.ui.add_edit
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -9,6 +8,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.AddCardResult
 import com.ashalmawia.coriolan.data.DecksRegistry
