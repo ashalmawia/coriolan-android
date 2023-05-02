@@ -38,6 +38,13 @@
 
 		<item name="toolbarStyle">@style/Coriolan.Widget.Toolbar</item>
 		<item name="android:toolbarStyle">@style/Coriolan.Widget.Toolbar</item>
+
+		<item name="preferenceTheme">@style/Coriolan.Preference</item>
+	</style>
+
+	<style name="Coriolan.Preference" parent="PreferenceThemeOverlay">
+		<item name="preferenceCategoryTitleTextAppearance">@style/Coriolan.Text.Preference.Title</item>
+		<item name="preferenceCategoryTitleTextColor">@color/colorAccentContrast</item>
 	</style>
 	
 	<style name="Coriolan.Theme.Splash" parent="Theme.SplashScreen">
@@ -74,7 +81,9 @@
 		<item name="android:ellipsize">end</item>
 		<item name="android:textAlignment">viewStart</item>
 	</style>
-	<style name="Coriolan.Text.Preference.Title" parent="Coriolan.Text.Body.Regular.Heavy" />
+	<style name="Coriolan.Text.Preference.Title" parent="Coriolan.Text.Body.Regular.Heavy">
+		<item name="android:textStyle">bold</item>
+	</style>
 
 	<style name="Coriolan.Widget.Toolbar" parent="Widget.AppCompat.Toolbar">
 		<item name="android:background">@color/colorPrimary</item>

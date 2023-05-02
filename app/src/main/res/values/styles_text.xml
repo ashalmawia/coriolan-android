@@ -18,6 +18,7 @@
 	</style>
 	<style name="Coriolan.Text.Body.Regular.Heavy">
 		<item name="fontFamily">@font/montserrat_heavy</item>
+		<item name="android:fontFamily">@font/montserrat_heavy</item>
 		<item name="android:textSize">@dimen/text__medium</item>
 	</style>
 	<style name="Coriolan.Text.Body.Large.Heavy">
