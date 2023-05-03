@@ -31,4 +31,7 @@
 	<color name="wrong">#c62828</color>
 	<color name="correct">#369c3b</color>
 	<color name="additional">@color/colorPrimary</color>
+	<color name="wrong_ripple">#55c62828</color>
+	<color name="correct_ripple">#55369c3b</color>
+	<color name="additional_ripple">#555b2a4f</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui.learning
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
@@ -15,7 +16,9 @@ import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.visible
 
 private const val BUTTON_BAR_ANIMATION_DURATION = 200L
+private const val BUTTON_RIPLLE_ANIMATION_DURATION = 150L
 
+@SuppressLint("ViewConstructor")    // not intended to be used by tools
 class CardView(context: Context, private val listener: CardViewListener) : FrameLayout(context) {
 
     private val views: CardViewBinding = CardViewBinding.inflate(layoutInflator, this)
@@ -25,11 +28,11 @@ class CardView(context: Context, private val listener: CardViewListener) : Frame
             frontCover.setOnSingleClickListener { showBack() }
             backCover.setOnSingleClickListener { showBack() }
 
-            buttonYes.setOnSingleClickListener { listener.onCorrect() }
-            buttonNo.setOnSingleClickListener { listener.onWrong() }
+            buttonYes.setOnSingleClickListenerWithDelay { listener.onCorrect() }
+            buttonNo.setOnSingleClickListenerWithDelay { listener.onWrong() }
 
-            buttonHard.setOnSingleClickListener { listener.onHard() }
-            buttonEasy.setOnSingleClickListener { listener.onEasy() }
+            buttonHard.setOnSingleClickListenerWithDelay { listener.onHard() }
+            buttonEasy.setOnSingleClickListenerWithDelay { listener.onEasy() }
 
             touchFeedbackWrong.addAnchor(buttonNo)
             touchFeedbackCorrect.addAnchor(buttonYes)
@@ -136,4 +139,10 @@ interface CardViewListener {
     fun onHard()
 
     fun onWrong()
+}
+
+private fun View.setOnSingleClickListenerWithDelay(listener: (View) -> Unit) {
+    setOnSingleClickListener {
+        postDelayed({ listener(it) }, BUTTON_RIPLLE_ANIMATION_DURATION)
+    }
 }

@@ -114,27 +114,6 @@
 
 		</FrameLayout>
 
-		<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
-			android:id="@+id/touchFeedbackWrong"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@drawable/answer_wrong_bg_ripple"
-			/>
-
-		<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
-			android:id="@+id/touchFeedbackCorrect"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@drawable/answer_correct_bg_ripple"
-			/>
-
-		<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
-			android:id="@+id/touchFeedbackAdditional"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@drawable/answer_additional_bg_ripple"
-			/>
-
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -215,6 +194,36 @@
 			</androidx.cardview.widget.CardView>
 
 		</LinearLayout>
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@color/transparent">
+
+			<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
+				android:id="@+id/touchFeedbackWrong"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:elevation="10dp"
+				android:background="@drawable/answer_wrong_bg_ripple"
+				/>
+
+			<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
+				android:id="@+id/touchFeedbackCorrect"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:elevation="10dp"
+				android:background="@drawable/answer_correct_bg_ripple"
+				/>
+
+			<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
+				android:id="@+id/touchFeedbackAdditional"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="@drawable/answer_additional_bg_ripple"
+				/>
+
+		</FrameLayout>
 
 	</RelativeLayout>
 
