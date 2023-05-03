@@ -2,15 +2,12 @@ package com.ashalmawia.coriolan.ui.commons.decks_list
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import com.ashalmawia.coriolan.R
 
-abstract class BaseDeckListAdapter<DeckHolder : BaseDeckListViewHolder.DeckItem<DeckData>, DeckData>(
-        @LayoutRes private val deckItemLayoutRes: Int
-) : RecyclerView.Adapter<BaseDeckListViewHolder>() {
+abstract class BaseDeckListAdapter<DeckHolder : BaseDeckListViewHolder.DeckItem<DeckData>, DeckData>
+    : RecyclerView.Adapter<BaseDeckListViewHolder>() {
 
     private val items = mutableListOf<BaseDeckListItem>()
 
@@ -46,8 +43,7 @@ abstract class BaseDeckListAdapter<DeckHolder : BaseDeckListViewHolder.DeckItem<
                 BaseDeckListViewHolder.CategoryItem(view)
             }
             BaseDeckListItemType.DECK -> {
-                val view = LayoutInflater.from(context).inflate(deckItemLayoutRes, parent, false)
-                createDeckViewHolder(view)
+                createDeckViewHolder(context, parent)
             }
             BaseDeckListItemType.OPTION -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.edit_list_option_item, parent, false)
@@ -71,5 +67,5 @@ abstract class BaseDeckListAdapter<DeckHolder : BaseDeckListViewHolder.DeckItem<
         }
     }
 
-    protected abstract fun createDeckViewHolder(view: View): DeckHolder
+    protected abstract fun createDeckViewHolder(context: Context, parent: ViewGroup): DeckHolder
 }

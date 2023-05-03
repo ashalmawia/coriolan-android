@@ -1,6 +1,9 @@
 package com.ashalmawia.coriolan.ui.main.edit
 
+import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.ashalmawia.coriolan.R
@@ -11,9 +14,11 @@ import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListViewHolder
 
 class EditDeckListAdapter(
         private val callback: EditDeckCallback
-) : BaseDeckListAdapter<EditDeckViewHolder, Deck>(R.layout.edit_list_deck_item) {
+) : BaseDeckListAdapter<EditDeckViewHolder, Deck>() {
 
-    override fun createDeckViewHolder(view: View): EditDeckViewHolder {
+    override fun createDeckViewHolder(context: Context, parent: ViewGroup): EditDeckViewHolder {
+        val layoutInflater = LayoutInflater.from(context)
+        val view = layoutInflater.inflate(R.layout.edit_list_deck_item, parent, false)
         return EditDeckViewHolder(view, callback)
     }
 }

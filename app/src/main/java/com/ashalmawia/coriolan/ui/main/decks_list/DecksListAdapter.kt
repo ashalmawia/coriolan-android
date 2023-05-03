@@ -1,90 +1,29 @@
 package com.ashalmawia.coriolan.ui.main.decks_list
 
-import android.util.Log
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.recyclerview.widget.RecyclerView
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.DeckListItemBinding
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListAdapter
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListViewHolder
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.visible
-import com.ashalmawia.coriolan.util.inflate
-
-private const val TAG = "DecksListAdapter"
-
-private const val TYPE_HEADER = 1
-private const val TYPE_ITEM = 2
 
 class DecksListAdapter(private val listener: DeckListAdapterListener)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    : BaseDeckListAdapter<DeckListDeckViewHolder, DeckListItem>(), DeckListDeckViewHolder.Callback {
 
-    private val decks: MutableList<DeckListItem> = mutableListOf()
-
-    fun setData(data: List<DeckListItem>) {
-        decks.clear()
-        decks.addAll(data)
-
-        val timeStart = System.currentTimeMillis()
-        Log.d(TAG, "time spend for loading decks states: ${System.currentTimeMillis() - timeStart} ms")
-
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int {
-        return decks.size + 1
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (position == 0) TYPE_HEADER else TYPE_ITEM
-    }
-
-    private fun positionToIndex(position: Int): Int = position - 1
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == TYPE_HEADER) {
-            // skip
-            return
-        }
-
-        holder as DeckViewHolder
-        val item = decks[positionToIndex(position)]
-
-        val context = holder.views.deckListItemText.context
-
-        holder.views.deckListItemText.text = item.deck.name
-        if (item.cardTypeFilter == CardTypeFilter.BOTH) {
-            holder.views.deckListItemType.visible = false
-        } else {
-            holder.views.deckListItemType.text = item.cardTypeFilter.toCardType().toTypeStringRes().run { context.getString(this) }
-        }
-        holder.views.deckListItemMore.isClickable = true
-        holder.views.deckListItemMore.setOnClickListener { showPopupMenu(item, it) }
-        holder.itemView.setOnClickListener { studyDefault(item) }
-        holder.views.pendingIndicator.visible = item.hasPending
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TYPE_HEADER) {
-            createHeaderViewHolder(parent)
-        } else {
-            createItemViewHolder(parent)
-        }
-    }
-
-    private fun createHeaderViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return HeaderViewHolder(parent.inflate(R.layout.learning_list_header, false))
-    }
-
-    private fun createItemViewHolder(parent: ViewGroup): DeckViewHolder {
+    override fun createDeckViewHolder(context: Context, parent: ViewGroup): DeckListDeckViewHolder {
         val views = DeckListItemBinding.inflate(parent.layoutInflator, parent, false)
-        return DeckViewHolder(views)
+        return DeckListDeckViewHolder(views, this)
     }
 
-    private fun showPopupMenu(item: DeckListItem, anchor: View) {
+    override fun showPopupMenu(item: DeckListItem, anchor: View) {
         val menu = PopupMenu(anchor.context, anchor)
         menu.inflate(R.menu.decks_study_options_popup)
         menu.setOnMenuItemClickListener {
@@ -100,7 +39,7 @@ class DecksListAdapter(private val listener: DeckListAdapterListener)
         menu.show()
     }
 
-    private fun studyDefault(item: DeckListItem) {
+    override fun studyDefault(item: DeckListItem) {
         instantiateLearningFlow(item, StudyOrder.default())
     }
 
@@ -141,4 +80,31 @@ interface DeckListAdapterListener {
 private fun CardType.toTypeStringRes() = when (this) {
     CardType.FORWARD -> R.string.decks__type__passive
     CardType.REVERSE -> R.string.decks__type__active
+}
+
+class DeckListDeckViewHolder(
+        val views: DeckListItemBinding,
+        private val callback: Callback
+) : BaseDeckListViewHolder.DeckItem<DeckListItem>(views.root) {
+
+    override fun bind(item: BaseDeckListItem.DeckItem<DeckListItem>) {
+        val context = views.deckListItemText.context
+        val deck = item.deck
+
+        views.deckListItemText.text = deck.deck.name
+        if (deck.cardTypeFilter == CardTypeFilter.BOTH) {
+            views.deckListItemType.visible = false
+        } else {
+            views.deckListItemType.text = deck.cardTypeFilter.toCardType().toTypeStringRes().run { context.getString(this) }
+        }
+        views.deckListItemMore.isClickable = true
+        views.deckListItemMore.setOnClickListener { callback.showPopupMenu(deck, it) }
+        itemView.setOnClickListener { callback.studyDefault(deck) }
+        views.pendingIndicator.visible = deck.hasPending
+    }
+
+    interface Callback {
+        fun showPopupMenu(item: DeckListItem, anchor: View)
+        fun studyDefault(item: DeckListItem)
+    }
 }

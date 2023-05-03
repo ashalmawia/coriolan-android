@@ -21,6 +21,8 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.PendingCardsCount
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListBuilder
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
@@ -103,7 +105,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun fetchData() {
-        adapter.setData(decksList())
+        adapter.setItems(decksList())
     }
 
     override fun beginStudy(item: DeckListItem, studyOrder: StudyOrder) {
@@ -190,9 +192,10 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         fetchData()
     }
 
-    private fun decksList(): List<DeckListItem> {
+    private fun decksList(): List<BaseDeckListItem> {
         val decks = repository.allDecksWithPendingCounts(domain, today())
-        return convertDecksToListItems(decks)
+        val listItems = convertDecksToListItems(decks)
+        return buildDecksList(listItems)
     }
 
     private fun convertDecksToListItems(decks: Map<Deck, PendingCardsCount>): List<DeckListItem> {
@@ -208,7 +211,15 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         }
     }
 
+    private fun buildDecksList(decks: List<DeckListItem>): List<BaseDeckListItem> {
+        val builder = BaseDeckListBuilder<DeckListItem>()
+        builder.addCategory(R.string.decks_select_deck)
+        builder.addDecks(decks)
+        return builder.build()
+    }
+
     private fun firstDeckView(): View? {
-        return (views.decksList.findViewHolderForAdapterPosition(1) as? DeckViewHolder)?.views?.deckListItemText
+        return (views.decksList.findViewHolderForAdapterPosition(1)
+                as? DeckListDeckViewHolder)?.views?.deckListItemText
     }
 }

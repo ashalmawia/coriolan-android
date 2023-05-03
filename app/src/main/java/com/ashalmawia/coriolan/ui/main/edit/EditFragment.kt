@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListBuilder
 import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
 import org.koin.android.ext.android.inject
 
@@ -73,7 +74,7 @@ class EditFragment : BaseFragment(), EditDeckCallback {
     }
 
     private fun items(): List<BaseDeckListItem> {
-        val builder = EditListBuilder()
+        val builder = BaseDeckListBuilder<Deck>()
 
         builder.addCategory(R.string.decks__category_title)
         builder.addDecks(decks())
