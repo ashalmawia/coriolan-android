@@ -4,25 +4,26 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
 
 class EditListBuilder {
 
-    private val list = mutableListOf<EditListItem>()
+    private val list = mutableListOf<BaseDeckListItem>()
 
     fun addCategory(@StringRes title: Int): EditListBuilder {
-        list.add(EditListItem.CategoryItem(title))
+        list.add(BaseDeckListItem.CategoryItem(title))
         return this
     }
 
-    fun addDecks(decks: List<Deck>, listener: EditDeckCallback): EditListBuilder {
-        list.addAll(decks.map { EditListItem.DeckItem(it, listener) })
+    fun addDecks(decks: List<Deck>): EditListBuilder {
+        list.addAll(decks.map { BaseDeckListItem.DeckItem(it) })
         return this
     }
 
     fun addOption(@StringRes title: Int, onClick: (Context) -> Unit, @DrawableRes icon: Int? = null): EditListBuilder {
-        list.add(EditListItem.OptionItem(title, icon, onClick))
+        list.add(BaseDeckListItem.OptionItem(title, icon, onClick))
         return this
     }
 
-    fun build(): List<EditListItem> = list
+    fun build(): List<BaseDeckListItem> = list
 }
