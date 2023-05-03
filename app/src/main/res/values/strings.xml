@@ -128,7 +128,7 @@
 
 	<!-- Settings -->
 	<string name="settings__title">Settings</string>
-	<string name="settings__category__daily_limits">Daily limits</string>
+	<string name="settings__category__daily_limits">Daily targets</string>
 	<string name="settings_daily_limit_use">Limit the maximum daily amount of new and review cards</string>
 	<string name="settings__daily_limit_new_cards">New cards per day</string>
 	<string name="settings__daily_limit_review">Reviews per day</string>
@@ -200,7 +200,7 @@
 		And vice versa. This way you can focus on the words that need your attention more.</string>
 	<string name="onboarding_5_title">Study regularly</string>
 	<string name="onboarding_5_description">You only remember things well if you see them on a regular basis.
-		For the best results study every day. Want to study less? or more? You can change the daily limits in Settings.</string>
+		For the best results study every day. Want to study less? or more? You can change the daily targets in Settings.</string>
 	<string name="onboarding_skip">SKIP</string>
 	<string name="onboarding_done">DONE</string>
 	<string name="onboarding_next">Next</string>
