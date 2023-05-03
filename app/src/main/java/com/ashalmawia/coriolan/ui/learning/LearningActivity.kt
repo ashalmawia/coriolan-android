@@ -80,7 +80,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
         val deck = repository.deckById(deckId)
         val cardType = CardTypeFilter.valueOf(intent.getStringExtra(EXTRA_CARD_TYPE_FILTER)!!)
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
-        val studyTargets = intent.getSerializableExtra(EXTRA_STUDY_TARGETS, StudyTargets::class.java)!!
+        val studyTargets = intent.getSerializableExtra(EXTRA_STUDY_TARGETS) as StudyTargets
 
         return onResolved(deck, cardType, studyOrder, studyTargets)
     }
