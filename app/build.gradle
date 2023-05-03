@@ -21,8 +21,8 @@ android {
         namespace "com.ashalmawia.coriolan"
         minSdkVersion COMMON__MIN_SDK
         targetSdkVersion COMMON__TARGET_SDK
-        versionCode 11
-        versionName "1.1"
+        versionCode 12
+        versionName "1.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
