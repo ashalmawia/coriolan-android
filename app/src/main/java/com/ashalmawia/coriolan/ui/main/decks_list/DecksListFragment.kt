@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.ui.main.decks_list
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.PendingCardsCount
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListBuilder
 import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
@@ -215,7 +217,13 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         val builder = BaseDeckListBuilder<DeckListItem>()
         builder.addCategory(R.string.decks_select_deck)
         builder.addDecks(decks)
+        builder.addOption(R.string.add_deck__title, { createNewDeck(it) }, R.drawable.ic_add)
         return builder.build()
+    }
+
+    private fun createNewDeck(context: Context) {
+        val intent = AddEditDeckActivity.create(context, domain)
+        startActivity(intent)
     }
 
     private fun firstDeckView(): View? {
