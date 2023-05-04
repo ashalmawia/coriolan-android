@@ -23,8 +23,8 @@ import com.ashalmawia.coriolan.model.PendingCardsCount
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
-import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListBuilder
-import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
+import com.ashalmawia.coriolan.ui.commons.list.FlexListBuilder
+import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
@@ -194,7 +194,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         fetchData()
     }
 
-    private fun decksList(): List<BaseDeckListItem> {
+    private fun decksList(): List<FlexListItem> {
         val decks = repository.allDecksWithPendingCounts(domain, today())
         val listItems = convertDecksToListItems(decks)
         return buildDecksList(listItems)
@@ -213,10 +213,10 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         }
     }
 
-    private fun buildDecksList(decks: List<DeckListItem>): List<BaseDeckListItem> {
-        val builder = BaseDeckListBuilder<DeckListItem>()
+    private fun buildDecksList(decks: List<DeckListItem>): List<FlexListItem> {
+        val builder = FlexListBuilder<DeckListItem>()
         builder.addCategory(R.string.decks_select_deck)
-        builder.addDecks(decks)
+        builder.addEntities(decks)
         builder.addOption(R.string.add_deck__title, { createNewDeck(it) }, R.drawable.ic_add)
         return builder.build()
     }

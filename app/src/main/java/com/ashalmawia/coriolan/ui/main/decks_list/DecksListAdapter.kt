@@ -8,17 +8,17 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.DeckListItemBinding
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListAdapter
-import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListItem
-import com.ashalmawia.coriolan.ui.commons.decks_list.BaseDeckListViewHolder
+import com.ashalmawia.coriolan.ui.commons.list.FlexListAdapter
+import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
+import com.ashalmawia.coriolan.ui.commons.list.FlexListViewHolder
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.visible
 
 class DecksListAdapter(private val listener: DeckListAdapterListener)
-    : BaseDeckListAdapter<DeckListDeckViewHolder, DeckListItem>(), DeckListDeckViewHolder.Callback {
+    : FlexListAdapter<DeckListDeckViewHolder, DeckListItem>(), DeckListDeckViewHolder.Callback {
 
-    override fun createDeckViewHolder(context: Context, parent: ViewGroup): DeckListDeckViewHolder {
+    override fun createEntityViewHolder(context: Context, parent: ViewGroup): DeckListDeckViewHolder {
         val views = DeckListItemBinding.inflate(parent.layoutInflator, parent, false)
         return DeckListDeckViewHolder(views, this)
     }
@@ -85,11 +85,11 @@ private fun CardType.toTypeStringRes() = when (this) {
 class DeckListDeckViewHolder(
         val views: DeckListItemBinding,
         private val callback: Callback
-) : BaseDeckListViewHolder.DeckItem<DeckListItem>(views.root) {
+) : FlexListViewHolder.EntityItem<DeckListItem>(views.root) {
 
-    override fun bind(item: BaseDeckListItem.DeckItem<DeckListItem>) {
+    override fun bind(item: FlexListItem.EntityItem<DeckListItem>) {
         val context = views.deckListItemText.context
-        val deck = item.deck
+        val deck = item.entity
 
         views.deckListItemText.text = deck.deck.name
         if (deck.cardTypeFilter == CardTypeFilter.BOTH) {
