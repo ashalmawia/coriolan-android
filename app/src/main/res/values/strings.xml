@@ -216,6 +216,13 @@
 	<string name="feature_discovery_overflow_description">You can do this in Settings. Keep backups in a cloud storage
 		(such as Google Drive) to make sure you don\'t lose your data if something happens to your phone.</string>
 
+	<!-- Overview -->
+	<string name="overview__sorting_label">Sort by:</string>
+	<string name="overview__sorting_date_added_acs">Date added (newest first)</string>
+	<string name="overview__sorting_date_added_des">Date added (oldest first)</string>
+	<string name="overview__sorting_name_acs">Alphabetically A-Z</string>
+	<string name="overview__sorting_name_des">Alphabetically Z-A</string>
+
 	<!-- General -->
 	<string name="button_ok">OK</string>
 	<string name="button_submit">Submit</string>

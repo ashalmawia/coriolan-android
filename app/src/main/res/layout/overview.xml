@@ -6,6 +6,30 @@
 
 	<include layout="@layout/app_toolbar" />
 
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingTop="@dimen/spacing__small"
+		android:paddingStart="@dimen/spacing__large"
+		android:paddingEnd="@dimen/spacing__large">
+
+		<TextView
+			style="@style/Coriolan.Text.Label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="@dimen/spacing__large"
+			android:text="@string/overview__sorting_label"
+			/>
+
+		<Spinner
+			android:id="@+id/sortingSpinner"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			/>
+
+	</LinearLayout>
+
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/cardsList"
 		android:layout_width="match_parent"
