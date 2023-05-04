@@ -3,7 +3,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:paddingTop="@dimen/spacing__tiny"
-	android:paddingBottom="@dimen/spacing__tiny">
+	android:paddingBottom="@dimen/spacing__tiny"
+	android:paddingStart="@dimen/spacing__large"
+	android:paddingEnd="@dimen/spacing__large"
+	android:background="?android:attr/selectableItemBackground">
 
 	<TextView
 		android:id="@+id/title"

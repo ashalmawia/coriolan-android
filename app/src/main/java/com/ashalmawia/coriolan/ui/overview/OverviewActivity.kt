@@ -9,12 +9,13 @@ import com.ashalmawia.coriolan.databinding.OverviewBinding
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
 import org.koin.android.ext.android.inject
 
 private const val KEY_DECK_ID = "deck_id"
 
-class OverviewActivity : BaseActivity() {
+class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
 
     companion object {
         fun intent(context: Context, deck: Deck): Intent {
@@ -27,21 +28,27 @@ class OverviewActivity : BaseActivity() {
     private val repository: Repository by inject()
 
     private val views by lazy { OverviewBinding.inflate(layoutInflater) }
-    private val adapter = OverviewAdapter()
+    private val adapter = OverviewAdapter(this)
+
+    private val deck by lazy {
+        val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
+        repository.deckById(deckId)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(views.root)
         initialize()
-
-        val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
-        val deck = repository.deckById(deckId)
-        bind(deck)
     }
 
     private fun initialize() {
         views.cardsList.layoutManager = LinearLayoutManager(this)
         views.cardsList.adapter = adapter
+    }
+
+    override fun onStart() {
+        super.onStart()
+        bind(deck)
     }
 
     private fun bind(deck: Deck) {
@@ -53,4 +60,9 @@ class OverviewActivity : BaseActivity() {
     }
 
     private fun buildCardsList(cards: List<Card>) = cards.map { FlexListItem.EntityItem(it) }
+
+    override fun onCardClicked(card: Card) {
+        val intent = AddEditCardActivity.edit(this, card)
+        startActivity(intent)
+    }
 }
