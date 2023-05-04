@@ -17,6 +17,7 @@ import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListBuilder
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
+import com.ashalmawia.coriolan.ui.overview.OverviewActivity
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
@@ -90,17 +91,23 @@ class EditFragment : BaseFragment(), EditDeckCallback {
         return repository.allDecks(domain)
     }
 
-    override fun addCards(context: Context, deck: Deck) {
-        val intent = AddEditCardActivity.add(context, deck)
+    override fun onDeckClicked(deck: Deck) {
+        val intent = OverviewActivity.intent(requireContext(), deck)
         startActivity(intent)
     }
 
-    override fun editDeck(context: Context, deck: Deck) {
-        val intent = AddEditDeckActivity.edit(context, deck)
-        context.startActivity(intent)
+    override fun addCards(deck: Deck) {
+        val intent = AddEditCardActivity.add(requireContext(), deck)
+        startActivity(intent)
     }
 
-    override fun deleteDeck(context: Context, deck: Deck) {
+    override fun editDeck(deck: Deck) {
+        val intent = AddEditDeckActivity.edit(requireContext(), deck)
+        startActivity(intent)
+    }
+
+    override fun deleteDeck(deck: Deck) {
+        val context = requireContext()
         val dialog = AlertDialog.Builder(context)
                 .setTitle(R.string.delete_deck__title)
                 .setMessage(context.getString(R.string.delete_deck__message, deck.name))
