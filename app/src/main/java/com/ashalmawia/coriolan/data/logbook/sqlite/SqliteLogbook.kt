@@ -9,7 +9,6 @@ import com.ashalmawia.coriolan.data.storage.sqlite.insertOrUpdate
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.string
-import com.ashalmawia.coriolan.util.orZero
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
 
@@ -20,17 +19,15 @@ class SqliteLogbook(context: Context) : Logbook {
 
     override fun cardsStudiedOnDate(date: DateTime): Map<CardAction, Int> {
         val payload = readPayload(date)
-        val map = mutableMapOf<CardAction, Int>()
-        payload.cardActions.values.forEach {
-            for ((action, count) in it) {
-                map[action] = map[action].orZero() + count
-            }
-        }
-        return map
+        return payload.cardActions.total.unwrap()
     }
 
     override fun cardsStudiedOnDate(date: DateTime, exercise: ExerciseId): Map<CardAction, Int> {
-        return readPayload(date).cardActions[exercise] ?: emptyMap()
+        return readPayload(date).cardActions.byExercise(exercise).unwrap()
+    }
+
+    override fun cardsStudiedOnDate(date: DateTime, deckId: Long): Map<CardAction, Int> {
+        return readPayload(date).cardActions.byDeck(deckId).unwrap()
     }
 
     private fun readPayload(date: DateTime): LogbookPayload {
@@ -46,24 +43,20 @@ class SqliteLogbook(context: Context) : Logbook {
             if (it.moveToNext()) {
                 return serializer.deserializeLogbookPayload(it.getPayload())
             } else {
-                return LogbookPayload(mutableMapOf())
+                return LogbookPayload.create()
             }
         }
     }
 
-    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction) {
+    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
         updatePayload(date) {
-            val exercisePayload = cardActions[exercise] ?: mutableMapOf()
-            exercisePayload[cardAction] = exercisePayload[cardAction].orZero() + 1
-            cardActions[exercise] = exercisePayload
+            cardActions.increment(exercise, deckId, cardAction)
         }
     }
 
-    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction) {
+    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
         updatePayload(date) {
-            val exercisePayload = cardActions[exercise] ?: mutableMapOf()
-            exercisePayload[cardAction] = exercisePayload[cardAction].orZero() - 1
-            cardActions[exercise] = exercisePayload
+            cardActions.decrement(exercise, deckId, cardAction)
         }
     }
 

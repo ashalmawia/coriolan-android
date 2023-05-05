@@ -15,14 +15,14 @@ class GenericLogbook(
         val date = TodayManager.today()
         when (oldLearningProgress.statusFor(exercise.id)) {
             Status.NEW -> {
-                logbook.incrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
+                logbook.incrementCardActions(date, exercise.id, card.deckId, CardAction.NEW_CARD_FIRST_SEEN)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
                 if (newLearningProgress.statusFor(exercise.id) == Status.RELEARN) {
-                    logbook.incrementCardActions(date, exercise.id, CardAction.CARD_RELEARNED)
+                    logbook.incrementCardActions(date, exercise.id, card.deckId, CardAction.CARD_RELEARNED)
                 } else {
-                    logbook.incrementCardActions(date, exercise.id, CardAction.CARD_REVIEWED)
+                    logbook.incrementCardActions(date, exercise.id, card.deckId, CardAction.CARD_REVIEWED)
                 }
             }
 
@@ -35,14 +35,14 @@ class GenericLogbook(
         val date = TodayManager.today()
         when (learningProgress.statusFor(exercise.id)) {
             Status.NEW -> {
-                logbook.decrementCardActions(date, exercise.id, CardAction.NEW_CARD_FIRST_SEEN)
+                logbook.decrementCardActions(date, exercise.id, card.deckId, CardAction.NEW_CARD_FIRST_SEEN)
             }
 
             Status.IN_PROGRESS, Status.LEARNT -> {
                 if (learningProgressThatWasUndone.statusFor(exercise.id) == Status.RELEARN) {
-                    logbook.decrementCardActions(date, exercise.id, CardAction.CARD_REVIEWED)
+                    logbook.decrementCardActions(date, exercise.id, card.deckId, CardAction.CARD_REVIEWED)
                 } else {
-                    logbook.decrementCardActions(date, exercise.id, CardAction.CARD_RELEARNED)
+                    logbook.decrementCardActions(date, exercise.id, card.deckId, CardAction.CARD_RELEARNED)
                 }
             }
 

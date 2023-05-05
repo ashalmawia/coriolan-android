@@ -22,11 +22,15 @@ class MockLogbook : Logbook {
         return data
     }
 
-    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction) {
+    override fun cardsStudiedOnDate(date: DateTime, deckId: Long): Map<CardAction, Int> {
+        return data
+    }
+
+    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
         data[cardAction] = data[cardAction].orZero() + 1
     }
 
-    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, cardAction: CardAction) {
+    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
         data[cardAction] = data[cardAction].orZero() - 1
     }
 }

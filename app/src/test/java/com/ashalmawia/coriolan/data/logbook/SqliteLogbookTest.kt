@@ -17,7 +17,7 @@ import org.robolectric.annotation.SQLiteMode
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
 class SqliteLogbookTest {
 
-    private val journal = SqliteLogbook(RuntimeEnvironment.application)
+    private val logbook = SqliteLogbook(RuntimeEnvironment.application)
 
     private val today = mockToday()
     private val exerciseId = ExerciseId.TEST
@@ -28,7 +28,7 @@ class SqliteLogbookTest {
         val date = today
 
         // when
-        val counts = journal.cardsStudiedOnDate(date)
+        val counts = logbook.cardsStudiedOnDate(date)
 
         // then
         assertEmpty(counts)
@@ -41,27 +41,27 @@ class SqliteLogbookTest {
 
         // when
         recordNewCardStudied(date)
-        val counts = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(1, 0, 0, counts)
-        assertEquals(counts, journal.cardsStudiedOnDate(date))
+        assertEquals(counts, logbook.cardsStudiedOnDate(date))
 
         // when
         recordNewCardStudied(date)
-        val counts2 = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts2 = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(2, 0, 0, counts2)
-        assertEquals(counts2, journal.cardsStudiedOnDate(date))
+        assertEquals(counts2, logbook.cardsStudiedOnDate(date))
 
         // when
         undoNewCardStudied(date)
-        val counts3 = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts3 = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(1, 0, 0, counts3)
-        assertEquals(counts3, journal.cardsStudiedOnDate(date))
+        assertEquals(counts3, logbook.cardsStudiedOnDate(date))
     }
 
     @Test
@@ -71,27 +71,27 @@ class SqliteLogbookTest {
 
         // when
         recordReviewStudied(date)
-        val counts = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(0, 1, 0, counts)
-        assertEquals(counts, journal.cardsStudiedOnDate(date))
+        assertEquals(counts, logbook.cardsStudiedOnDate(date))
 
         // when
         recordReviewStudied(date)
-        val counts2 = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts2 = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(0, 2, 0, counts2)
-        assertEquals(counts2, journal.cardsStudiedOnDate(date))
+        assertEquals(counts2, logbook.cardsStudiedOnDate(date))
 
         // when
         undoReviewStudied(date)
-        val counts3 = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts3 = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(0, 1, 0, counts3)
-        assertEquals(counts3, journal.cardsStudiedOnDate(date))
+        assertEquals(counts3, logbook.cardsStudiedOnDate(date))
     }
 
     @Test
@@ -101,27 +101,27 @@ class SqliteLogbookTest {
 
         // when
         recordCardRelearned(date)
-        val counts = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(0, 0, 1, counts)
-        assertEquals(counts, journal.cardsStudiedOnDate(date))
+        assertEquals(counts, logbook.cardsStudiedOnDate(date))
 
         // when
         recordCardRelearned(date)
-        val counts2 = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts2 = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(0, 0, 2, counts2)
-        assertEquals(counts2, journal.cardsStudiedOnDate(date))
+        assertEquals(counts2, logbook.cardsStudiedOnDate(date))
 
         // when
         undoCardRelearned(date)
-        val counts3 = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts3 = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(0, 0, 1, counts3)
-        assertEquals(counts3, journal.cardsStudiedOnDate(date))
+        assertEquals(counts3, logbook.cardsStudiedOnDate(date))
     }
 
     @Test
@@ -137,11 +137,11 @@ class SqliteLogbookTest {
         recordReviewStudied(date)
         recordReviewStudied(date)
         recordNewCardStudied(date)
-        val counts = journal.cardsStudiedOnDate(date, exerciseId)
+        val counts = logbook.cardsStudiedOnDate(date, exerciseId)
 
         // then
         assertValues(4, 3, 0, counts)
-        assertEquals(counts, journal.cardsStudiedOnDate(date))
+        assertEquals(counts, logbook.cardsStudiedOnDate(date))
 
         // when
         recordCardRelearned(date)
@@ -153,8 +153,8 @@ class SqliteLogbookTest {
         undoReviewStudied(date)
         recordReviewStudied(date)
         undoNewCardStudied(date)
-        val counts2 = journal.cardsStudiedOnDate(date, exerciseId)
-        assertEquals(counts2, journal.cardsStudiedOnDate(date))
+        val counts2 = logbook.cardsStudiedOnDate(date, exerciseId)
+        assertEquals(counts2, logbook.cardsStudiedOnDate(date))
 
         // then
         assertValues(3, 5, 2, counts2)
@@ -164,25 +164,27 @@ class SqliteLogbookTest {
     fun test__multipleExercises() {
         // given
         val date = today
+        val deckId = 1L
+        val anotherDeckId = 2L
         val anotherExerciseId = ExerciseId.FLASHCARDS
 
         // when
-        journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
-        journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
-        journal.incrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
-        journal.incrementCardActions(date, exerciseId, CardAction.CARD_RELEARNED)
-        journal.incrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, anotherDeckId, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.CARD_RELEARNED)
+        logbook.incrementCardActions(date, exerciseId, anotherDeckId, CardAction.CARD_REVIEWED)
 
-        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
-        journal.incrementCardActions(date, anotherExerciseId, CardAction.CARD_REVIEWED)
-        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
-        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
-        journal.incrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
-        journal.decrementCardActions(date, anotherExerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, anotherExerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, anotherExerciseId, anotherDeckId, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, anotherExerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, anotherExerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, anotherExerciseId, anotherDeckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.decrementCardActions(date, anotherExerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
 
-        val countsA = journal.cardsStudiedOnDate(date, exerciseId)
-        val countsB = journal.cardsStudiedOnDate(date, anotherExerciseId)
-        val countsTotal = journal.cardsStudiedOnDate(date)
+        val countsA = logbook.cardsStudiedOnDate(date, exerciseId)
+        val countsB = logbook.cardsStudiedOnDate(date, anotherExerciseId)
+        val countsTotal = logbook.cardsStudiedOnDate(date)
 
         // then
         assertValues(2, 2, 1, countsA)
@@ -190,28 +192,60 @@ class SqliteLogbookTest {
         assertValues(5, 3, 1, countsTotal)
     }
 
-    private fun recordCardRelearned(date: LearningDay) {
-        journal.incrementCardActions(date, exerciseId, CardAction.CARD_RELEARNED)
+    @Test
+    fun test__multipleDecks() {
+        // given
+        val date = today
+        val deckId1 = 1L
+        val deckId2 = 2L
+        val anotherExerciseId = ExerciseId.FLASHCARDS
+
+        // when
+        logbook.incrementCardActions(date, exerciseId, deckId1, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, deckId1, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, deckId1, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, anotherExerciseId, deckId1, CardAction.CARD_RELEARNED)
+        logbook.incrementCardActions(date, exerciseId, deckId1, CardAction.CARD_REVIEWED)
+
+        logbook.incrementCardActions(date, exerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, anotherExerciseId, deckId2, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, exerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, anotherExerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.decrementCardActions(date, exerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+
+        val countsA = logbook.cardsStudiedOnDate(date, deckId1)
+        val countsB = logbook.cardsStudiedOnDate(date, deckId2)
+        val countsTotal = logbook.cardsStudiedOnDate(date)
+
+        // then
+        assertValues(2, 2, 1, countsA)
+        assertValues(3, 1, 0, countsB)
+        assertValues(5, 3, 1, countsTotal)
     }
 
-    private fun recordReviewStudied(date: LearningDay) {
-        journal.incrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
+    private fun recordCardRelearned(date: LearningDay, deckId: Long = 1L) {
+        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.CARD_RELEARNED)
     }
 
-    private fun recordNewCardStudied(date: LearningDay) {
-        journal.incrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+    private fun recordReviewStudied(date: LearningDay, deckId: Long = 1L) {
+        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.CARD_REVIEWED)
     }
 
-    private fun undoCardRelearned(date: LearningDay) {
-        journal.decrementCardActions(date, exerciseId, CardAction.CARD_RELEARNED)
+    private fun recordNewCardStudied(date: LearningDay, deckId: Long = 1L) {
+        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
     }
 
-    private fun undoReviewStudied(date: LearningDay) {
-        journal.decrementCardActions(date, exerciseId, CardAction.CARD_REVIEWED)
+    private fun undoCardRelearned(date: LearningDay, deckId: Long = 1L) {
+        logbook.decrementCardActions(date, exerciseId, deckId, CardAction.CARD_RELEARNED)
     }
 
-    private fun undoNewCardStudied(date: LearningDay) {
-        journal.decrementCardActions(date, exerciseId, CardAction.NEW_CARD_FIRST_SEEN)
+    private fun undoReviewStudied(date: LearningDay, deckId: Long = 1L) {
+        logbook.decrementCardActions(date, exerciseId, deckId, CardAction.CARD_REVIEWED)
+    }
+
+    private fun undoNewCardStudied(date: LearningDay, deckId: Long = 1L) {
+        logbook.decrementCardActions(date, exerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
     }
 }
 
