@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -17,6 +18,7 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
 import com.ashalmawia.coriolan.ui.view.visible
 import org.koin.android.ext.android.inject
@@ -40,39 +42,49 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
     private val views by lazy { OverviewBinding.inflate(layoutInflater) }
     private val adapter = OverviewAdapter(this)
 
-    private val deck by lazy {
-        val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
-        repository.deckById(deckId)
-    }
-    private val allCards by lazy {
-        val list = buildCardsList(repository.cardsOfDeck(deck))
-        currentCards = list
-        list
-    }
+    private lateinit var deck: Deck
+    private lateinit var allCards: List<CardItem>
     private lateinit var currentCards: List<CardItem>
+
     private var searchTerm: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(views.root)
-        initialize()
     }
 
     private fun initialize() {
+        deck = fetchDeck()
+        allCards = fetchCards()
+
         views.cardsList.layoutManager = LinearLayoutManager(this)
         views.cardsList.adapter = adapter
 
         val count = allCards.size
         val subtitle = resources.getQuantityString(R.plurals.cards_count, count, count)
         setUpToolbar(deck.name, subtitle)
-        setUpSorting()
+
+        val defaultSorting = OverviewSorting.default()
+        setUpSorting(defaultSorting)
+        bind(defaultSorting)
     }
 
-    private fun setUpSorting() {
+    private fun fetchDeck(): Deck {
+        val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
+        return repository.deckById(deckId)
+    }
+
+    private fun fetchCards(): List<CardItem> {
+        val list = buildCardsList(repository.cardsOfDeck(deck))
+        currentCards = list
+        return list
+    }
+
+    private fun setUpSorting(defaultSorting: OverviewSorting) {
         val values = OverviewSorting.values().map { getString(it.titleRes) }
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, values)
         views.sortingSpinner.adapter = spinnerAdapter
-        views.sortingSpinner.setSelection(OverviewSorting.values().indexOf(OverviewSorting.default()))
+        views.sortingSpinner.setSelection(OverviewSorting.values().indexOf(defaultSorting))
         views.sortingSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val sorting = OverviewSorting.values()[position]
@@ -83,10 +95,9 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        bind(selectedSorting())
+    override fun onResume() {
+        super.onResume()
+        initialize()
     }
 
     private fun selectedSorting(): OverviewSorting {
@@ -126,6 +137,20 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
         menuInflater.inflate(R.menu.overview, menu)
         initializeSearch(menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.add_card -> {
+                startAddCardsActivity()
+                return true
+            }
+            R.id.edit_deck -> {
+                startEditDeckActivity()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     private fun initializeSearch(menu: Menu) {
@@ -173,5 +198,15 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
 
             adapter.setItems(list)
         }
+    }
+
+    private fun startAddCardsActivity() {
+        val intent = AddEditCardActivity.add(this, deck)
+        startActivity(intent)
+    }
+
+    private fun startEditDeckActivity() {
+        val intent = AddEditDeckActivity.edit(this, deck)
+        startActivity(intent)
     }
 }

@@ -2,6 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<item
+		android:id="@+id/add_card"
+		android:icon="@drawable/ic_add"
+		android:title="@string/edit__add_new_cards"
+		app:iconTint="@color/white"
+		app:showAsAction="always" />
+	<item
+		android:id="@+id/edit_deck"
+		android:icon="@drawable/ic_edit"
+		android:title="@string/edit_deck__title"
+		app:iconTint="@color/white"
+		app:showAsAction="always" />
+	<item
 		android:id="@+id/toolbar_search"
 		android:icon="@android:drawable/ic_search_category_default"
 		android:title="@string/search"
