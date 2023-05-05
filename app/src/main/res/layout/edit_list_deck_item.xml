@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  xmlns:app="http://schemas.android.com/apk/res-auto"
-			  xmlns:tools="http://schemas.android.com/tools"
-			  android:layout_width="match_parent"
-			  android:layout_height="wrap_content"
-			  android:orientation="horizontal"
-			  android:gravity="center_vertical"
-			  android:paddingStart="@dimen/deck_list_item_padding_horizontal"
-			  android:paddingEnd="@dimen/deck_list_item_padding_horizontal">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="?attr/selectableItemBackground"
+	android:gravity="center_vertical"
+	android:orientation="horizontal"
+	android:paddingStart="@dimen/deck_list_item_padding_horizontal"
+	android:paddingEnd="@dimen/deck_list_item_padding_horizontal">
 
 	<LinearLayout
 		android:layout_width="0dp"
@@ -43,27 +44,33 @@
 	<ImageView
 		android:id="@+id/add"
 		android:layout_width="@dimen/edit_list_deck_item__icon_size"
-		android:layout_height="@dimen/edit_list_deck_item__icon_size"
+		android:layout_height="@dimen/minimum_tappable_area"
 		android:layout_marginStart="@dimen/spacing__small"
+		android:background="?attr/selectableItemBackgroundBorderless"
 		android:src="@drawable/ic_add"
+		android:scaleType="centerInside"
 		app:tint="@color/colorPrimary"
 		/>
 
 	<ImageView
 		android:id="@+id/edit"
 		android:layout_width="@dimen/edit_list_deck_item__icon_size"
-		android:layout_height="@dimen/edit_list_deck_item__icon_size"
+		android:layout_height="@dimen/minimum_tappable_area"
 		android:layout_marginStart="@dimen/spacing__small"
+		android:background="?attr/selectableItemBackgroundBorderless"
 		android:src="@drawable/ic_edit"
+		android:scaleType="centerInside"
 		app:tint="@color/colorPrimary"
 		/>
 
 	<ImageView
 		android:id="@+id/delete"
 		android:layout_width="@dimen/edit_list_deck_item__icon_size"
-		android:layout_height="@dimen/edit_list_deck_item__icon_size"
+		android:layout_height="@dimen/minimum_tappable_area"
 		android:layout_marginStart="@dimen/spacing__small"
+		android:background="?attr/selectableItemBackgroundBorderless"
 		android:src="@drawable/ic_cross"
+		android:scaleType="centerInside"
 		app:tint="@color/colorPrimary" />
 
 </LinearLayout>

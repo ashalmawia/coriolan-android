@@ -6,7 +6,7 @@
 	android:paddingBottom="@dimen/spacing__tiny"
 	android:paddingStart="@dimen/spacing__large"
 	android:paddingEnd="@dimen/spacing__large"
-	android:background="?android:attr/selectableItemBackground">
+	android:background="?attr/selectableItemBackground">
 
 	<TextView
 		android:id="@+id/title"
