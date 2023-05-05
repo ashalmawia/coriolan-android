@@ -3,11 +3,14 @@ package com.ashalmawia.coriolan.ui.overview
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.OverviewBinding
 import com.ashalmawia.coriolan.model.Card
@@ -19,7 +22,9 @@ import org.koin.android.ext.android.inject
 
 private const val KEY_DECK_ID = "deck_id"
 
-class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
+private typealias CardItem = FlexListItem.EntityItem<Card>
+
+class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.OnQueryTextListener {
 
     companion object {
         fun intent(context: Context, deck: Deck): Intent {
@@ -38,6 +43,9 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
         val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
         repository.deckById(deckId)
     }
+    private val allCards by lazy { buildCardsList(repository.cardsOfDeck(deck)) }
+    private var currentCards = listOf<CardItem>()
+    private var searchTerm: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +56,7 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
     private fun initialize() {
         views.cardsList.layoutManager = LinearLayoutManager(this)
         views.cardsList.adapter = adapter
+        setUpToolbar(deck.name)
         setUpSorting()
     }
 
@@ -59,7 +68,7 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
         views.sortingSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val sorting = OverviewSorting.values()[position]
-                bind(deck, sorting)
+                bind(sorting)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
@@ -69,7 +78,7 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
     override fun onStart() {
         super.onStart()
 
-        bind(deck, selectedSorting())
+        bind(selectedSorting())
     }
 
     private fun selectedSorting(): OverviewSorting {
@@ -81,31 +90,66 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback {
         }
     }
 
-    private fun bind(deck: Deck, sorting: OverviewSorting) {
-        setUpToolbar(deck.name)
-
+    private fun bind(sorting: OverviewSorting) {
         views.sortingSpinner.setSelection(OverviewSorting.values().indexOf(sorting))
-
-        val cards = repository.cardsOfDeck(deck)
-        val list = buildCardsList(cards, sorting)
-        adapter.setItems(list)
+        val cards = if (searchTerm.isEmpty()) allCards else currentCards
+        setItems(sort(cards, sorting))
     }
 
-    private fun buildCardsList(cards: List<Card>, sorting: OverviewSorting): List<FlexListItem> {
-        return sort(cards, sorting).map { FlexListItem.EntityItem(it) }
+    private fun buildCardsList(cards: List<Card>): List<CardItem> {
+        return cards.map { FlexListItem.EntityItem(it) }
     }
 
-    private fun sort(cards: List<Card>, sorting: OverviewSorting): List<Card> {
+    private fun sort(cards: List<CardItem>, sorting: OverviewSorting): List<CardItem> {
         return when (sorting) {
-            OverviewSorting.DATE_ADDED_NEWEST_FIRST -> cards.sortedByDescending { it.id }
-            OverviewSorting.DATE_ADDED_OLDEST_FIRST -> cards.sortedBy { it.id }
-            OverviewSorting.ALPHABETICALLY_A_Z -> cards.sortedBy { it.original.value }
-            OverviewSorting.ALPHABETICALLY_Z_A -> cards.sortedByDescending { it.original.value }
+            OverviewSorting.DATE_ADDED_NEWEST_FIRST -> cards.sortedByDescending { it.entity.id }
+            OverviewSorting.DATE_ADDED_OLDEST_FIRST -> cards.sortedBy { it.entity.id }
+            OverviewSorting.ALPHABETICALLY_A_Z -> cards.sortedBy { it.entity.original.value }
+            OverviewSorting.ALPHABETICALLY_Z_A -> cards.sortedByDescending { it.entity.original.value }
         }
     }
 
     override fun onCardClicked(card: Card) {
         val intent = AddEditCardActivity.edit(this, card)
         startActivity(intent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.overview, menu)
+        initializeSearch(menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun initializeSearch(menu: Menu) {
+        val searchItem = menu.findItem(R.id.toolbar_search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(this)
+    }
+
+    override fun onQueryTextSubmit(query: String): Boolean {
+        searchTerm(query)
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String): Boolean {
+        searchTerm(newText)
+        return true
+    }
+
+    private fun searchTerm(term: String) {
+        val oldTerm = searchTerm
+        val baseList = if (oldTerm != null && term.contains(oldTerm)) {
+            currentCards
+        } else {
+            sort(allCards, selectedSorting())
+        }
+
+        setItems(baseList.filter { it.entity.original.value.contains(term) })
+        searchTerm = term
+    }
+
+    private fun setItems(list: List<CardItem>) {
+        currentCards = list
+        adapter.setItems(list)
     }
 }
