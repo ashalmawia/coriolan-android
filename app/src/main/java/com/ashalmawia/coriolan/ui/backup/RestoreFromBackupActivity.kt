@@ -42,7 +42,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
         super.onCreate(savedInstanceState)
         setContentView(views.root)
 
-        setUpToolbar(R.string.backup__restore_title, false)
+        setUpToolbar(titleRes = R.string.backup__restore_title, cancellable = false)
 
         views.apply {
             buttonOk.setOnClickListener { selectBackup() }

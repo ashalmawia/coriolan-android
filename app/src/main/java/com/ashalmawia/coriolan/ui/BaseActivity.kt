@@ -12,15 +12,17 @@ abstract class BaseActivity : AppCompatActivity() {
     protected val appMenu: AppMenu by lazy { AppMenu(this) { DebugIncreaseDateDialog(this) } }
     protected val toolbar: Toolbar by lazy { findViewById(R.id.toolbar) }
 
-    protected fun setUpToolbar(title: String, cancellable: Boolean = true) {
+    protected fun setUpToolbar(title: String, subtitle: String? = null, cancellable: Boolean = true) {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(cancellable)
         supportActionBar!!.title = title
+        supportActionBar!!.subtitle = subtitle
     }
 
-    protected fun setUpToolbar(@StringRes titleRes: Int, cancellable: Boolean = true) {
+    protected fun setUpToolbar(@StringRes titleRes: Int, @StringRes subtitleRes: Int = 0, cancellable: Boolean = true) {
         val title = getString(titleRes)
-        setUpToolbar(title, cancellable)
+        val subtitle = if (subtitleRes == 0) null else getString(subtitleRes)
+        setUpToolbar(title, subtitle, cancellable)
     }
 
     protected fun setUpToolbarWithLogo() {

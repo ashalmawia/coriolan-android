@@ -36,7 +36,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
         super.onCreate(savedInstanceState)
         setContentView(views.root)
 
-        setUpToolbar(R.string.backup__create_title, false)
+        setUpToolbar(titleRes = R.string.backup__create_title, cancellable = false)
 
         views.buttonOk.setOnClickListener { onCreateBackupClicked() }
         views.buttonCancel.setOnClickListener { finish() }

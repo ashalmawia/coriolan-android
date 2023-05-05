@@ -43,8 +43,12 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
         val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
         repository.deckById(deckId)
     }
-    private val allCards by lazy { buildCardsList(repository.cardsOfDeck(deck)) }
-    private var currentCards = listOf<CardItem>()
+    private val allCards by lazy {
+        val list = buildCardsList(repository.cardsOfDeck(deck))
+        currentCards = list
+        list
+    }
+    private lateinit var currentCards: List<CardItem>
     private var searchTerm: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +60,8 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
     private fun initialize() {
         views.cardsList.layoutManager = LinearLayoutManager(this)
         views.cardsList.adapter = adapter
-        setUpToolbar(deck.name)
+        val subtitle = getString(R.string.cards_count, allCards.size)
+        setUpToolbar(deck.name, subtitle)
         setUpSorting()
     }
 
@@ -82,11 +87,11 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
     }
 
     private fun selectedSorting(): OverviewSorting {
-        if (views.sortingSpinner.selectedItemPosition >= 0) {
+        return if (views.sortingSpinner.selectedItemPosition >= 0) {
             val position = views.sortingSpinner.selectedItemPosition
-            return OverviewSorting.values()[position]
+            OverviewSorting.values()[position]
         } else {
-            return OverviewSorting.default()
+            OverviewSorting.default()
         }
     }
 
@@ -138,7 +143,7 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
 
     private fun searchTerm(term: String) {
         val oldTerm = searchTerm
-        val baseList = if (oldTerm != null && term.contains(oldTerm)) {
+        val baseList = if (term.contains(oldTerm)) {
             currentCards
         } else {
             sort(allCards, selectedSorting())
