@@ -109,7 +109,7 @@ class MockRepository : Repository {
             val id = it.id
             val count = cards.count { it.deckId == id }
             Pair(id, count)
-        }
+        }.filter { it.value > 0 }
     }
     override fun deckById(id: Long): Deck {
         return decks.find { it.id == id } ?: throw DataProcessingException("could not find id $id")
