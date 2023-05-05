@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
@@ -22,6 +21,7 @@ import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
+import com.ashalmawia.coriolan.ui.commons.DeletingCard.confirmDeleteCurrentCard
 import com.ashalmawia.coriolan.util.setStartDrawableTint
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
@@ -113,7 +113,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
                 return true
             }
             R.id.learning_menu__delete_card -> {
-                confirmDeleteCurrentCard()
+                confirmDeleteCurrentCard(this, this::deleteCurrentCard)
                 return true
             }
         }
@@ -127,16 +127,6 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     private fun editCurrentCard() {
         val intent = AddEditCardActivity.edit(this, flow.card.card)
         startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
-    }
-
-    private fun confirmDeleteCurrentCard() {
-        val dialog = AlertDialog.Builder(this)
-                .setTitle(R.string.learning_menu_delete_card)
-                .setMessage(R.string.deleting_card__are_you_sure)
-                .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(R.string.button_delete) { _, _ -> deleteCurrentCard() }
-                .create()
-        dialog.show()
     }
 
     private fun deleteCurrentCard() {

@@ -16,6 +16,7 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.AddEditCardBinding
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.commons.DeletingCard.confirmDeleteCurrentCard
 import org.koin.android.ext.android.inject
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
@@ -123,15 +124,30 @@ class AddEditCardActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val deleteItem = menu.findItem(R.id.menu__delete)
+        deleteItem.isVisible = isInEditMode
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu__done -> {
                 onSaveClicked()
                 return true
             }
+            R.id.menu__delete -> {
+                confirmDeleteCurrentCard(this, this::deleteCard)
+                return true
+            }
 
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun deleteCard() {
+        repository.deleteCard(card!!)
+        finishOk()
     }
 
     private fun onAddNewTranslationClicked() {
