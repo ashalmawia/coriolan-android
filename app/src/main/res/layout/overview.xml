@@ -30,14 +30,29 @@
 
 	</LinearLayout>
 
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/cardsList"
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:paddingTop="@dimen/spacing__medium"
-		android:paddingBottom="@dimen/spacing__medium"
-		android:clipToPadding="false"
-		/>
+		android:layout_weight="1">
+
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/cardsList"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:paddingTop="@dimen/spacing__medium"
+			android:paddingBottom="@dimen/spacing__medium"
+			android:clipToPadding="false"
+			/>
+
+		<TextView
+			style="@style/Coriolan.Text.Body.Large"
+			android:id="@+id/emptyDeckLabel"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:textColor="@color/colorPrimary__60"
+			android:gravity="center"
+			/>
+
+	</FrameLayout>
 
 </LinearLayout>

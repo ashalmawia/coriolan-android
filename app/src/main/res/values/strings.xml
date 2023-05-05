@@ -222,6 +222,8 @@
 	<string name="overview__sorting_date_added_des">Date added (oldest first)</string>
 	<string name="overview__sorting_name_acs">Alphabetically A-Z</string>
 	<string name="overview__sorting_name_des">Alphabetically Z-A</string>
+	<string name="overview__empty_deck">This deck is still empty</string>
+	<string name="overview__empty_result">No cards matching this filter</string>
 
 	<!-- General -->
 	<string name="button_ok">OK</string>

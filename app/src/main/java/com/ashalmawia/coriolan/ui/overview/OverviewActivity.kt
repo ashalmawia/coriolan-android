@@ -18,6 +18,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
+import com.ashalmawia.coriolan.ui.view.visible
 import org.koin.android.ext.android.inject
 
 private const val KEY_DECK_ID = "deck_id"
@@ -100,7 +101,7 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
     private fun bind(sorting: OverviewSorting) {
         views.sortingSpinner.setSelection(OverviewSorting.values().indexOf(sorting))
         val cards = if (searchTerm.isEmpty()) allCards else currentCards
-        setItems(sort(cards, sorting))
+        updateContent(sort(cards, sorting))
     }
 
     private fun buildCardsList(cards: List<Card>): List<CardItem> {
@@ -151,12 +152,26 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
             sort(allCards, selectedSorting())
         }
 
-        setItems(baseList.filter { it.entity.original.value.contains(term) })
+        updateContent(baseList.filter { it.entity.original.value.contains(term) })
         searchTerm = term
     }
 
-    private fun setItems(list: List<CardItem>) {
+    private fun updateContent(list: List<CardItem>) {
         currentCards = list
-        adapter.setItems(list)
+
+        if (allCards.isEmpty()) {
+            views.emptyDeckLabel.setText(R.string.overview__empty_deck)
+            views.emptyDeckLabel.visible = true
+            views.cardsList.visible = false
+        } else if (currentCards.isEmpty()) {
+            views.emptyDeckLabel.setText(R.string.overview__empty_result)
+            views.emptyDeckLabel.visible = true
+            views.cardsList.visible = false
+        } else {
+            views.emptyDeckLabel.visible = false
+            views.cardsList.visible = true
+
+            adapter.setItems(list)
+        }
     }
 }
