@@ -104,6 +104,13 @@ class MockRepository : Repository {
     override fun allDecks(domain: Domain): List<Deck> {
         return decks
     }
+    override fun allDecksCardsCount(domain: Domain): Map<Long, Int> {
+        return decks.associate {
+            val id = it.id
+            val count = cards.count { it.deckId == id }
+            Pair(id, count)
+        }
+    }
     override fun deckById(id: Long): Deck {
         return decks.find { it.id == id } ?: throw DataProcessingException("could not find id $id")
     }

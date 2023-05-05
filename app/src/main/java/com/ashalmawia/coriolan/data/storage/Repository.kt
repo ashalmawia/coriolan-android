@@ -57,6 +57,8 @@ interface Repository {
         }
     }
 
+    fun allDecksCardsCount(domain: Domain): Map<Long, Int>
+
     fun deckById(id: Long): Deck
 
     fun cardsOfDeck(deck: Deck): List<Card>

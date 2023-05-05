@@ -60,7 +60,9 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
     private fun initialize() {
         views.cardsList.layoutManager = LinearLayoutManager(this)
         views.cardsList.adapter = adapter
-        val subtitle = getString(R.string.cards_count, allCards.size)
+
+        val count = allCards.size
+        val subtitle = resources.getQuantityString(R.plurals.cards_count, count, count)
         setUpToolbar(deck.name, subtitle)
         setUpSorting()
     }

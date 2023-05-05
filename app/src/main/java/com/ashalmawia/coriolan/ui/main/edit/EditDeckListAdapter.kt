@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.ui.main.edit
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.EditListDeckItemBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.commons.list.FlexListAdapter
@@ -11,7 +12,7 @@ import com.ashalmawia.coriolan.ui.commons.list.FlexListViewHolder
 
 class EditDeckListAdapter(
         private val callback: EditDeckCallback
-) : FlexListAdapter<EditDeckViewHolder, Deck>() {
+) : FlexListAdapter<EditDeckViewHolder, EditDeckListItem>() {
 
     override fun createEntityViewHolder(context: Context, parent: ViewGroup): EditDeckViewHolder {
         val layoutInflater = LayoutInflater.from(context)
@@ -22,14 +23,21 @@ class EditDeckListAdapter(
 
 class EditDeckViewHolder(
         private val views: EditListDeckItemBinding, private val listener: EditDeckCallback
-) : FlexListViewHolder.EntityItem<Deck>(views.root) {
+) : FlexListViewHolder.EntityItem<EditDeckListItem>(views.root) {
 
-    override fun bind(item: FlexListItem.EntityItem<Deck>) {
-        views.title.text = item.entity.name
+    private val context: Context
+        get() = views.root.context
 
-        views.root.setOnClickListener { listener.onDeckClicked(item.entity) }
-        views.add.setOnClickListener { listener.addCards(item.entity) }
-        views.edit.setOnClickListener { listener.editDeck(item.entity) }
-        views.delete.setOnClickListener { listener.deleteDeck(item.entity) }
+    override fun bind(item: FlexListItem.EntityItem<EditDeckListItem>) {
+        val deck = item.entity.deck
+
+        views.title.text = deck.name
+        val cardsCount = item.entity.cardsCount
+        views.subtitle.text = context.resources.getQuantityString(R.plurals.cards_count, cardsCount, cardsCount)
+
+        views.root.setOnClickListener { listener.onDeckClicked(deck) }
+        views.add.setOnClickListener { listener.addCards(deck) }
+        views.edit.setOnClickListener { listener.editDeck(deck) }
+        views.delete.setOnClickListener { listener.deleteDeck(deck) }
     }
 }

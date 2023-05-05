@@ -1849,6 +1849,79 @@ abstract class StorageTest {
     }
 
     @Test
+    fun test__allDecksCardsCount__DecksAreEmpty() {
+        // given
+        val storage = prefilledStorage.value
+
+        val decks = mutableListOf<Deck>()
+        for (i in 0 until 3) {
+            decks.add(storage.addDeck(domain, "deck $i"))
+        }
+
+        // when
+        val allDecksCounts = storage.allDecksCardsCount(domain)
+
+        // then
+        assertEquals("decks number is correct", 0, allDecksCounts.size)
+    }
+
+    @Test
+    fun test__allDecksCardsCount__DecksAreNonEmpty() {
+        // given
+        val storage = prefilledStorage.value
+
+        val decks = mutableListOf<Deck>()
+        val cardData = mutableListOf<List<CardData>>()
+
+        val deck1 = storage.addDeck(domain, "deck 1")
+        decks.add(deck1)
+        cardData.add(listOf(
+                mockCardData("original 1_1", "translation 1_1", deck1),
+                mockCardData("original 1_2", "translation 1_2", deck1),
+        ))
+
+        val deck2 = storage.addDeck(domain, "deck 2")
+        decks.add(deck2)
+        cardData.add(listOf(
+                mockCardData("original 2_1", "translation 2_1", deck2),
+        ))
+
+        val deck3 = storage.addDeck(domain, "deck 3")
+        decks.add(deck3)
+
+        val deck4 = storage.addDeck(domain, "deck 4")
+        decks.add(deck4)
+        cardData.add(listOf(
+                mockCardData("original 4_1", "translation 4_1", deck4),
+                mockCardData("original 4_2", "translation 4_2", deck4),
+                mockCardData("original 4_3", "translation 4_3", deck4),
+        ))
+
+        cardData.forEach { it.forEach { addMockCard(storage, it, domain) } }
+
+        // when
+        val allDecksCounts = storage.allDecksCardsCount(domain)
+
+        // then
+        assertEquals("decks number is correct", 3, allDecksCounts.size)
+        assertEquals(2, allDecksCounts[deck1.id])
+        assertEquals(1, allDecksCounts[deck2.id])
+        assertEquals(3, allDecksCounts[deck4.id])
+    }
+
+    @Test
+    fun test__allDecksCardsCount__NoDecks() {
+        // given
+        val storage = prefilledStorage.value
+
+        // when
+        val allDecksCounts = storage.allDecksCardsCount(domain)
+
+        // then
+        assertEquals("no decks found", 0, allDecksCounts.size)
+    }
+
+    @Test
     fun test__updateCardLearningProgress__nonExistent() {
         // given
         val storage = prefilledStorage.value

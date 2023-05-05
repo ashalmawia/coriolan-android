@@ -85,6 +85,7 @@ class SqliteStorageBenchmarkTest {
         query_term_is_used()
         query_deck_by_id()
         query_all_decks()
+        query_all_decks_cards_count()
         query_card_by_id()
         query_card_by_values()
         query_all_cards()
@@ -303,6 +304,15 @@ class SqliteStorageBenchmarkTest {
             domain = it.domainById(1L)
         }) {
             it.allDecks(domain!!)
+        }
+    }
+
+    private fun query_all_decks_cards_count() {
+        var domain: Domain? = null
+        benchmark("query all decks cards count", prepare = {
+            domain = it.domainById(1L)
+        }) {
+            it.allDecksCardsCount(domain!!)
         }
     }
 

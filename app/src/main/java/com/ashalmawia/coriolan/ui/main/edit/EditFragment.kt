@@ -75,7 +75,7 @@ class EditFragment : BaseFragment(), EditDeckCallback {
     }
 
     private fun items(): List<FlexListItem> {
-        val builder = FlexListBuilder<Deck>()
+        val builder = FlexListBuilder<EditDeckListItem>()
 
         builder.addCategory(R.string.decks__category_title)
         builder.addEntities(decks())
@@ -87,8 +87,10 @@ class EditFragment : BaseFragment(), EditDeckCallback {
         return builder.build()
     }
 
-    private fun decks(): List<Deck> {
-        return repository.allDecks(domain)
+    private fun decks(): List<EditDeckListItem> {
+        val decks = repository.allDecks(domain)
+        val cardsCounts = repository.allDecksCardsCount(domain)
+        return decks.map { EditDeckListItem(it, cardsCounts[it.id] ?: 0) }
     }
 
     override fun onDeckClicked(deck: Deck) {

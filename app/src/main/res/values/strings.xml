@@ -234,5 +234,4 @@
 	<string name="button_delete">Delete</string>
 	<string name="button_leave">Leave</string>
 	<string name="search">Search</string>
-	<string name="cards_count">%1$d cards</string>
 </resources>

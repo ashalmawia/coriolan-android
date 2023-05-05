@@ -24,13 +24,14 @@
 
 		<TextView
 			android:id="@+id/deck_list_item__type"
-			style="@style/Coriolan.Text.Body.Small.Thin"
+			style="@style/Coriolan.Text.Body.Small"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:paddingTop="0dp"
 			android:paddingBottom="@dimen/spacing__small"
 			android:paddingStart="@dimen/spacing__small"
 			android:paddingEnd="@dimen/spacing__small"
+			android:textColor="@color/colorPrimary__60"
 			android:textStyle="italic"
 			tools:text="Passive vocabulary"
 			/>

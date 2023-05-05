@@ -540,6 +540,28 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return list
     }
 
+    override fun allDecksCardsCount(domain: Domain): Map<Long, Int> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            SELECT $CARDS_DECK_ID, COUNT(*)
+               FROM $CARDS
+               WHERE $CARDS_DOMAIN_ID = ?
+               GROUP BY $CARDS_DECK_ID
+        """.trimMargin(), arrayOf(domain.id.toString()))
+
+        val map = mutableMapOf<Long, Int>()
+        cursor.use {
+            while (it.moveToNext()) {
+                val deckId = it.getLong(0)
+                val count = it.getInt(1)
+                map[deckId] = count
+            }
+        }
+
+        return map
+    }
+
     override fun deckById(id: Long): Deck {
         val db = helper.readableDatabase
 
