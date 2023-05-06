@@ -37,7 +37,7 @@ class FlashcardsExercise : Exercise {
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
         // TODO: decouple
-        repository.updateCardLearningProgress(card, LearningProgress(emptyMap()))
+        repository.updateCardLearningProgress(card, LearningProgress.empty())
     }
 
     override fun createExecutor(

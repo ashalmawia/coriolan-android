@@ -1,23 +1,39 @@
 package com.ashalmawia.coriolan.learning
 
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
-import com.ashalmawia.coriolan.learning.exercise.flashcards.emptyState
+import org.joda.time.DateTime
+
+const val INTERVAL_NEVER_SCHEDULED = -1
+const val INTERVAL_FIRST_ASNWER_WRONG = -2
+const val INTERVAL_LEARNT = 30 * 4               // 4 months
 
 data class LearningProgress(
-    val states: Map<ExerciseId, ExerciseState>
+        val state: SchedulingState,
+        val exerciseData: ExerciseData
 ) {
-    val globalStatus: Status
-        get() {
-            if (states.isEmpty()) return Status.NEW
-            if (states.any { it.value.status == Status.RELEARN}) return Status.RELEARN
-            if (states.all { it.value.status == Status.NEW }) return Status.NEW
-            if (states.all { it.value.status == Status.LEARNT }) return Status.LEARNT
-            return Status.IN_PROGRESS
-        }
-    val flashcards: ExerciseState
-        get() = stateFor(ExerciseId.FLASHCARDS)
+    val status = state.status
 
-    fun stateFor(exerciseId: ExerciseId) = states[exerciseId] ?: emptyState()
-    fun statusFor(exerciseId: ExerciseId) = stateFor(exerciseId).status
+    companion object {
+
+        fun empty() = LearningProgress(SchedulingState.new(), ExerciseData())
+    }
+}
+
+data class SchedulingState(
+        val due: DateTime,
+        val interval: Int
+) {
+    val status: Status = statusFromInterval(interval)
+
+    companion object {
+        fun new() = SchedulingState(TodayManager.today(), INTERVAL_NEVER_SCHEDULED)
+
+        fun statusFromInterval(interval: Int): Status {
+            return when (interval) {
+                INTERVAL_NEVER_SCHEDULED -> Status.NEW
+                0, INTERVAL_FIRST_ASNWER_WRONG -> Status.RELEARN
+                in 1 until INTERVAL_LEARNT -> Status.IN_PROGRESS
+                else /* >= INTERVAL_LEARNT */ -> Status.LEARNT
+            }
+        }
+    }
 }

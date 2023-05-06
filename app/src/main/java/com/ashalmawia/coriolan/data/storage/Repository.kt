@@ -84,7 +84,7 @@ interface Repository {
 
     fun pendingCards(deck: Deck, date: DateTime): List<CardWithProgress>
 
-    fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress>
+    fun getProgressForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress>
 
     fun invalidateCache()
 }

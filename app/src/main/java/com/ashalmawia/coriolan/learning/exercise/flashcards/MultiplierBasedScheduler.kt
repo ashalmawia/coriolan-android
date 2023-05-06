@@ -1,5 +1,8 @@
 package com.ashalmawia.coriolan.learning.exercise.flashcards
 
+import com.ashalmawia.coriolan.learning.INTERVAL_FIRST_ASNWER_WRONG
+import com.ashalmawia.coriolan.learning.INTERVAL_NEVER_SCHEDULED
+import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.TodayManager
 import org.joda.time.Days
 import kotlin.math.*
@@ -12,7 +15,7 @@ private const val NEW_RESPONDED_EASY_DAYS = 4
 
 class MultiplierBasedScheduler : SpacedRepetitionScheduler {
 
-    override fun processAnswer(answer: FlashcardsAnswer, state: ExerciseState): ExerciseState {
+    override fun processAnswer(answer: FlashcardsAnswer, state: SchedulingState): SchedulingState {
         return when (answer) {
             FlashcardsAnswer.WRONG -> wrong(state)
             FlashcardsAnswer.CORRECT -> correct(state)
@@ -21,40 +24,41 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
         }
     }
 
-    private fun wrong(state: ExerciseState): ExerciseState {
-        return if (state.interval == INTERVAL_NEVER_SCHEDULED || state.interval == INTERVAL_FIRST_ASNWER_WRONG) {
-            ExerciseState(today(), INTERVAL_FIRST_ASNWER_WRONG)
+    private fun wrong(progress: SchedulingState): SchedulingState {
+        return if (progress.interval == INTERVAL_NEVER_SCHEDULED || progress.interval == INTERVAL_FIRST_ASNWER_WRONG) {
+            progress.copy(due = today(), interval = INTERVAL_FIRST_ASNWER_WRONG)
         } else {
-            stateForRelearn()
+            stateForRelearn(progress)
         }
     }
 
-    private fun hard(state: ExerciseState): ExerciseState = stateForCorrect(state, MULTIPLIER_HARD)
+    private fun hard(state: SchedulingState): SchedulingState = stateForCorrect(state, MULTIPLIER_HARD)
 
-    private fun correct(state: ExerciseState): ExerciseState = stateForCorrect(state, MULTIPLIER_CORRECT)
+    private fun correct(state: SchedulingState): SchedulingState = stateForCorrect(state, MULTIPLIER_CORRECT)
 
-    private fun easy(state: ExerciseState): ExerciseState {
+    private fun easy(state: SchedulingState): SchedulingState {
         return if (state.interval == INTERVAL_NEVER_SCHEDULED) {
             // a special rule for easy for a new card, don't show it in this assignment
-            ExerciseState(today().plusDays(NEW_RESPONDED_EASY_DAYS), NEW_RESPONDED_EASY_DAYS)
+            state.copy(due = today().plusDays(NEW_RESPONDED_EASY_DAYS), interval = NEW_RESPONDED_EASY_DAYS)
         } else {
             stateForCorrect(state, MULTIPLIER_EASY)
         }
     }
 
-    private fun stateForRelearn(): ExerciseState = ExerciseState(today(), 0)
+    private fun stateForRelearn(progress: SchedulingState): SchedulingState =
+            progress.copy(due = today(), interval = 0)
 
-    private fun stateForCorrect(state: ExerciseState, multiplier: Float): ExerciseState {
-        return if (state.interval == INTERVAL_NEVER_SCHEDULED || state.interval == INTERVAL_FIRST_ASNWER_WRONG) {
+    private fun stateForCorrect(progress: SchedulingState, multiplier: Float): SchedulingState {
+        return if (progress.interval == INTERVAL_NEVER_SCHEDULED || progress.interval == INTERVAL_FIRST_ASNWER_WRONG) {
             // the card is completely new
             // the first correct answer actually counts like "wrong"
-            stateForRelearn()
+            stateForRelearn(progress)
         } else {
-            val expectedInterval = state.interval
-            val actualInterval = abs(Days.daysBetween(state.due.minusDays(state.interval), today()).days)
+            val expectedInterval = progress.interval
+            val actualInterval = abs(Days.daysBetween(progress.due.minusDays(progress.interval), today()).days)
             val interval = max(floor(max(expectedInterval, actualInterval) * multiplier).roundToInt(), 1)
             val due = today().plusDays(interval)
-            ExerciseState(due, interval)
+            progress.copy(due = due, interval = interval)
         }
     }
 

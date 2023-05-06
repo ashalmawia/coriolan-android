@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.CardType
 import java.util.*
@@ -98,18 +97,17 @@ object JsonBackupTestData {
 
     private val random = Random()
     private val today = mockToday()
-    private val exerciseId = ExerciseId.TEST
 
     val cardStates = listOf(
-            ExerciseStateInfo(20L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(6L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(11L, exerciseId, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(1L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(9L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(10L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(15L, exerciseId, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(21L, exerciseId, today, random.nextInt(500)),
-            ExerciseStateInfo(2L, exerciseId, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            ExerciseStateInfo(7L, exerciseId, today, random.nextInt(500))
+            LearningProgressInfo(20L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(6L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(11L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(1L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(9L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(10L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(15L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(21L, today, random.nextInt(500)),
+            LearningProgressInfo(2L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            LearningProgressInfo(7L, today, random.nextInt(500))
     )
 }

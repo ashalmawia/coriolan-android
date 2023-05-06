@@ -22,20 +22,20 @@ class LearningModeMutation(private val repository: Repository) : Mutation {
         val cardsAndTranslationsIds = flatMap { it.card.translations }.map { it.id }
                 .plus(this.map { it.card.id })
 
-        val states = repository.getStatesForCardsWithOriginals(cardsAndTranslationsIds)
+        val progresses = repository.getProgressForCardsWithOriginals(cardsAndTranslationsIds)
 
         return filter {
-            it.card.alreadySeen(states) || it.card.translations.all { exp -> exp.isReady(states) }
+            it.card.alreadySeen(progresses) || it.card.translations.all { exp -> exp.isReady(progresses) }
         }
     }
 
     private fun Card.alreadySeen(states: Map<Long, LearningProgress>): Boolean {
-        return (states[id]?.globalStatus ?: Status.NEW) != Status.NEW
+        return (states[id]?.status ?: Status.NEW) != Status.NEW
     }
 
-    private fun Term.isReady(states: Map<Long, LearningProgress>): Boolean {
-        val state = states[id]
-        return state != null && state.flashcards.interval >= 4
+    private fun Term.isReady(progresses: Map<Long, LearningProgress>): Boolean {
+        val progress = progresses[id]
+        return progress != null && progress.state.interval >= 4
     }
 }
 

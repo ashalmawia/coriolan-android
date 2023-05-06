@@ -1,8 +1,6 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.*
-import com.ashalmawia.coriolan.model.mockEmptyExerciseState
-import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
 import com.ashalmawia.coriolan.learning.exercise.flashcards.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.flashcards.FlashcardsAnswer
 import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
@@ -15,7 +13,7 @@ import org.junit.runners.JUnit4
 class MultiplierBasedSchedulerTest {
 
     private val today = TodayManager.today()
-    private fun emptyState() = mockEmptyExerciseState(today)
+    private fun emptyState() = SchedulingState.new()
 
     private fun scheduler() = MultiplierBasedScheduler()
 
@@ -132,7 +130,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today, 4)
+        val state = SchedulingState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -149,7 +147,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today, 4)
+        val state = SchedulingState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -166,7 +164,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today, 4)
+        val state = SchedulingState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -183,7 +181,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today, 4)
+        val state = SchedulingState(today, 4)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -200,7 +198,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(5), 8)
+        val state = SchedulingState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -217,7 +215,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(5), 8)
+        val state = SchedulingState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -234,7 +232,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(5), 8)
+        val state = SchedulingState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -251,7 +249,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(5), 8)
+        val state = SchedulingState(today.minusDays(5), 8)
         assertEquals(Status.IN_PROGRESS, state.status)       // test requirement, update if needed
 
         // when
@@ -268,7 +266,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(217), 200)
+        val state = SchedulingState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -285,7 +283,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(216), 200)
+        val state = SchedulingState(today.minusDays(216), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -303,7 +301,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(217), 200)
+        val state = SchedulingState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -321,7 +319,7 @@ class MultiplierBasedSchedulerTest {
         val scheduler = scheduler()
         val today = today
 
-        val state = ExerciseState(today.minusDays(217), 200)
+        val state = SchedulingState(today.minusDays(217), 200)
         assertEquals(Status.LEARNT, state.status)       // test requirement, update if needed
 
         // when
@@ -334,7 +332,7 @@ class MultiplierBasedSchedulerTest {
     }
 }
 
-private fun SpacedRepetitionScheduler.wrong(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.WRONG, ExerciseState)
-private fun SpacedRepetitionScheduler.correct(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.CORRECT, ExerciseState)
-private fun SpacedRepetitionScheduler.easy(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.EASY, ExerciseState)
-private fun SpacedRepetitionScheduler.hard(ExerciseState: ExerciseState) = processAnswer(FlashcardsAnswer.HARD, ExerciseState)
+private fun SpacedRepetitionScheduler.wrong(SchedulingState: SchedulingState) = processAnswer(FlashcardsAnswer.WRONG, SchedulingState)
+private fun SpacedRepetitionScheduler.correct(SchedulingState: SchedulingState) = processAnswer(FlashcardsAnswer.CORRECT, SchedulingState)
+private fun SpacedRepetitionScheduler.easy(SchedulingState: SchedulingState) = processAnswer(FlashcardsAnswer.EASY, SchedulingState)
+private fun SpacedRepetitionScheduler.hard(SchedulingState: SchedulingState) = processAnswer(FlashcardsAnswer.HARD, SchedulingState)

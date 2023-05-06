@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.scheduler
 
+import com.ashalmawia.coriolan.learning.INTERVAL_LEARNT
+import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.flashcards.INTERVAL_LEARNT
-import com.ashalmawia.coriolan.learning.exercise.flashcards.emptyState
 import com.ashalmawia.coriolan.model.mockState
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,7 +15,7 @@ class ExerciseStateTest {
     @Test
     fun test__stateNew() {
         // when
-        val state = emptyState()
+        val state = SchedulingState.new()
 
         // then
         assertEquals(Status.NEW, state.status)

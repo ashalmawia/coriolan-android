@@ -3,12 +3,11 @@ package com.ashalmawia.coriolan.data.backup.json
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.CardInfo
-import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
+import com.ashalmawia.coriolan.data.backup.LearningProgressInfo
 import com.ashalmawia.coriolan.data.backup.DeckInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
 import org.junit.Assert.*
 import org.joda.time.DateTime
@@ -176,9 +175,9 @@ abstract class JsonBackupTest {
                 DeckInfo(1, 1, "Default")
         )
         val states = listOf(
-                ExerciseStateInfo(1, ExerciseId.FLASHCARDS, DateTime(1680400800000), 1),
-                ExerciseStateInfo(3, ExerciseId.FLASHCARDS, DateTime(1680314400000), -1),
-                ExerciseStateInfo(5, ExerciseId.FLASHCARDS, DateTime(1680400800000), 1),
+                LearningProgressInfo(1, DateTime(1680400800000), 1),
+                LearningProgressInfo(3, DateTime(1680314400000), -1),
+                LearningProgressInfo(5, DateTime(1680400800000), 1),
         )
 
         // when

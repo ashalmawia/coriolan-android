@@ -50,10 +50,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATES__CARD_ACTIVE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.allColumnsStates
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createAllLearningProgressContentValues
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.exerciseState
+import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.schedulingState
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesCardId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesDateDue
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesHasSavedExerciseState
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesInterval
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesIntervalOrNeverScheduled
@@ -68,10 +67,10 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsI
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.learning.CardWithProgress
+import com.ashalmawia.coriolan.learning.ExerciseData
 import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
@@ -684,8 +683,13 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                WHERE $STATES_CARD_ID = ?
         """.trimMargin(), arrayOf(card.id.toString()))
 
-        cursor.use {
-            return extractLearningProgress(cursor)
+        return cursor.use {
+            if (it.moveToNext()) {
+                val state = it.schedulingState()
+                LearningProgress(state, ExerciseData())
+            } else {
+                LearningProgress.empty()
+            }
         }
     }
 
@@ -730,21 +734,19 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                ($STATES_DUE_DATE IS NULL OR $STATES_DUE_DATE <= ? AND $STATES_IS_ACTIVE = $STATES__CARD_ACTIVE)
         """.trimMargin(), arrayOf(deck.id.toString(), date.timespamp.toString()))
 
-        val pendingStates = mutableMapOf<Long, MutableMap<ExerciseId, ExerciseState>>()
+        val pendingStates = mutableMapOf<Long, SchedulingState>()
         cursor.use {
             while (cursor.moveToNext()) {
                 val cardId = cursor.cardsId()
-                val map = pendingStates[cardId] ?: mutableMapOf()
-                if (cursor.statesHasSavedExerciseState()) {
-                    val exerciseId = cursor.statesExerciseId()
-                    val state = ExerciseState(cursor.statesDateDue(), cursor.statesInterval())
-                    map[exerciseId] = state
-                }
-                pendingStates[cardId] = map
+                val state = if (cursor.statesHasSavedExerciseState())
+                    SchedulingState(cursor.statesDateDue(), cursor.statesInterval())
+                else
+                    SchedulingState.new()
+                pendingStates[cardId] = state
             }
         }
 
-        return pendingStates.mapValues { LearningProgress(it.value) }
+        return pendingStates.mapValues { LearningProgress(it.value, ExerciseData()) }
     }
     override fun pendingCards(deck: Deck, date: DateTime): List<CardWithProgress> {
         val pendingWithProgress = pendingCardIds(deck, date, CardType.values())
@@ -762,10 +764,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
         val deckDue = pendingCardIds(deck, date, arrayOf(cardType))
         return Counts(
-                deckDue.count { it.value.globalStatus == Status.NEW },
-                deckDue.count { it.value.globalStatus == Status.IN_PROGRESS
-                        || it.value.globalStatus == Status.LEARNT },
-                deckDue.count { it.value.globalStatus == Status.RELEARN }
+                deckDue.count { it.value.status == Status.NEW },
+                deckDue.count { it.value.status == Status.IN_PROGRESS
+                        || it.value.status == Status.LEARNT },
+                deckDue.count { it.value.status == Status.RELEARN }
         )
     }
 
@@ -790,7 +792,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             while (it.moveToNext()) {
                 val cardType = it.cardsCardType()
                 val interval = it.statesIntervalOrNeverScheduled()
-                val status = ExerciseState.statusFromInterval(interval)
+                val status = SchedulingState.statusFromInterval(interval)
 
                 val filter = cardType.toCardTypeFilter()
                 when (status) {
@@ -813,7 +815,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return stats.mapValues { (_, it) -> it.toDeckStats() }
     }
 
-    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
+    override fun getProgressForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
         val db = helper.readableDatabase
 
         val cardIdsToFrontIds = cardIdsToFrontIds(db, originalIds)
@@ -830,18 +832,15 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             while (it.moveToNext()) {
                 val cardId = it.statesCardId()
                 val termId = cardIdsToFrontIds[cardId]!!
-                // TODO: support multiple exercises
                 val progress = if (it.statesHasSavedExerciseState()) {
-                    LearningProgress(mapOf(
-                            it.statesExerciseId() to it.exerciseState()
-                    ))
+                    LearningProgress(it.schedulingState(), ExerciseData())
                 } else {
-                    LearningProgress(emptyMap())
+                    LearningProgress.empty()
                 }
                 map[termId] = progress
             }
         }
-        return cardIdsToFrontIds.values.associateWith { map[it] ?: LearningProgress(emptyMap()) }
+        return cardIdsToFrontIds.values.associateWith { map[it] ?: LearningProgress.empty() }
     }
 
     private fun cardIdsToFrontIds(db: SQLiteDatabase, frontIds: List<Long>): Map<Long, Long> {
@@ -864,15 +863,5 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
     override fun invalidateCache() {
         // nothing to do here
-    }
-
-    private fun extractLearningProgress(cursor: Cursor): LearningProgress {
-        val map = mutableMapOf<ExerciseId, ExerciseState>()
-        while (cursor.moveToNext()) {
-            val exerciseId = cursor.statesExerciseId()
-            val state = cursor.exerciseState()
-            map[exerciseId] = state
-        }
-        return LearningProgress(map)
     }
 }

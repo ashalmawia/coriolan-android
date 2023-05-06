@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.stats.DeckStats
+import com.ashalmawia.coriolan.learning.INTERVAL_LEARNT
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.exercise.flashcards.INTERVAL_LEARNT
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
@@ -1962,8 +1962,8 @@ abstract class StorageTest {
         val progress = storage.getCardLearningProgress(card)
 
         // then
-        assertEquals("state is correct", Status.NEW, progress.mock.status)
-        assertEquals("new card is due today", today, progress.mock.due)
+        assertEquals("state is correct", Status.NEW, progress.status)
+        assertEquals("new card is due today", today, progress.state.due)
 
         // given
         val newLearningProgress = mockLearningProgress(today.plusDays(8), 8)
@@ -1973,8 +1973,8 @@ abstract class StorageTest {
         val readState = storage.getCardLearningProgress(card)
 
         // then
-        assertEquals("state is correct", newLearningProgress.mock.status, readState.mock.status)
-        assertEquals("new card is due today", newLearningProgress.mock.due, readState.mock.due)
+        assertEquals("state is correct", newLearningProgress.status, readState.status)
+        assertEquals("new card is due today", newLearningProgress.state.due, readState.state.due)
     }
 
     @Test
@@ -1998,8 +1998,8 @@ abstract class StorageTest {
         assertEquals("all new cards are due today", count, due.size)
         for (i in 0 until count) {
             assertCardCorrect(due[i].card, cardData[i], domain)
-            assertEquals("state is correct", today, due[i].learningProgress.mock.due)
-            assertEquals("state is correct", Status.NEW, due[i].learningProgress.mock.status)
+            assertEquals("state is correct", today, due[i].learningProgress.state.due)
+            assertEquals("state is correct", Status.NEW, due[i].learningProgress.status)
         }
     }
 
@@ -2068,7 +2068,7 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(emptyList())
+        val map = storage.getProgressForCardsWithOriginals(emptyList())
 
         // then
         assertEquals(0, map.size)
@@ -2083,7 +2083,7 @@ abstract class StorageTest {
         storage.updateCardLearningProgress(cards[2], learningProgress3)
 
         // when
-        val map2 = storage.getStatesForCardsWithOriginals(emptyList())
+        val map2 = storage.getProgressForCardsWithOriginals(emptyList())
 
         // then
         assertEquals(0, map2.size)
@@ -2095,7 +2095,7 @@ abstract class StorageTest {
         val storage = emptyStorage.value
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(listOf(1L, 5L, 10L))
+        val map = storage.getProgressForCardsWithOriginals(listOf(1L, 5L, 10L))
 
         // then
         assertEquals(0, map.size)
@@ -2113,7 +2113,7 @@ abstract class StorageTest {
                 .map { addMockCard(storage, it, domain) }
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id })
+        val map = storage.getProgressForCardsWithOriginals(cards.map { it.original.id })
 
         // then
         assertEquals(3, map.size)
@@ -2141,7 +2141,7 @@ abstract class StorageTest {
         storage.updateCardLearningProgress(cards[2], learningProgress3)
 
         // when
-        val map = storage.getStatesForCardsWithOriginals(cards.map { it.original.id })
+        val map = storage.getProgressForCardsWithOriginals(cards.map { it.original.id })
 
         // then
         assertEquals(3, map.size)

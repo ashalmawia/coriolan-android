@@ -25,7 +25,7 @@ class Assignment(
 
     fun counts(): Counts {
         val tasks = tasks()
-        val counts = tasks.groupBy { it.exerciseState.status }.mapValues { it.value.size }
+        val counts = tasks.groupBy { it.learningProgress.status }.mapValues { it.value.size }
         return Counts.createFrom(counts)
     }
     fun hasNext(): Boolean {

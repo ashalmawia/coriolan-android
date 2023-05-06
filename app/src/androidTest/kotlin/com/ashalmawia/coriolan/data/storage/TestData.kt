@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.backup.*
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.CardType
 
@@ -73,13 +72,13 @@ fun fillDatabase(count: Int, backupableRepository: BackupableRepository) {
         ))
     }
 
-    val states = mutableListOf<ExerciseStateInfo>()
+    val states = mutableListOf<LearningProgressInfo>()
     for (i in 0 until count) {
-        states.add(ExerciseStateInfo(
-                (i + 1).toLong(), ExerciseId.FLASHCARDS, mockToday(), 4
+        states.add(LearningProgressInfo(
+                (i + 1).toLong(), mockToday(), 4
         ))
-        states.add(ExerciseStateInfo(
-                (i + 1).toLong(), ExerciseId.TEST, mockToday().minus(5), -1
+        states.add(LearningProgressInfo(
+                (i + 1).toLong(), mockToday().minus(5), -1
         ))
     }
 

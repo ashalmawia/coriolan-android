@@ -46,7 +46,7 @@ class FlashcardsExerciseExecutor(
     }
 
     private fun processReply(task: Task, answer: FlashcardsAnswer): Task {
-        val newState = scheduler.processAnswer(answer, task.exerciseState)
+        val newState = scheduler.processAnswer(answer, task.learningProgress.state)
         return updateTask(task, task.learningProgressWithUpdatedExerciseState(newState))
     }
 
@@ -68,4 +68,4 @@ class FlashcardsExerciseExecutor(
     override fun isPending(task: Task): Boolean = task.state().due <= TodayManager.today()
 }
 
-private fun Task.state() = learningProgress.flashcards
+private fun Task.state() = learningProgress.state

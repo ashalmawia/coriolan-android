@@ -146,9 +146,9 @@ class LimitCountMutationMutationTest {
 }
 
 private fun List<CardWithProgress>.filter(vararg statuses: Status): List<CardWithProgress> {
-    return filter { statuses.contains(it.learningProgress.globalStatus) }
+    return filter { statuses.contains(it.learningProgress.status) }
 }
 
 private fun List<CardWithProgress>.count(vararg statuses: Status): Int {
-    return count { statuses.contains(it.learningProgress.globalStatus) }
+    return count { statuses.contains(it.learningProgress.status) }
 }

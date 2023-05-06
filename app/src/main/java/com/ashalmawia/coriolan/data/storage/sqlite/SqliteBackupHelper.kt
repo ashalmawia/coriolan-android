@@ -4,7 +4,7 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.CardInfo
 import com.ashalmawia.coriolan.data.backup.DeckInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
-import com.ashalmawia.coriolan.data.backup.ExerciseStateInfo
+import com.ashalmawia.coriolan.data.backup.LearningProgressInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractCards.CARDS
@@ -40,7 +40,6 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.STATE
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.createCardStateContentValues
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesCardId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesDateDue
-import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractStates.statesInterval
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.TERMS_ID
@@ -169,7 +168,7 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun allExerciseStates(offset: Int, limit: Int): List<ExerciseStateInfo> {
+    override fun allExerciseStates(offset: Int, limit: Int): List<LearningProgressInfo> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -180,10 +179,10 @@ class SqliteBackupHelper(
         """.trimMargin(), arrayOf())
 
         cursor.use {
-            val list = mutableListOf<ExerciseStateInfo>()
+            val list = mutableListOf<LearningProgressInfo>()
             while (cursor.moveToNext()) {
-                list.add(ExerciseStateInfo(
-                        cursor.statesCardId(), cursor.statesExerciseId(), cursor.statesDateDue(), cursor.statesInterval()
+                list.add(LearningProgressInfo(
+                        cursor.statesCardId(), cursor.statesDateDue(), cursor.statesInterval()
                 ))
             }
             return list
@@ -286,10 +285,10 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun writeExerciseStates(states: List<ExerciseStateInfo>) {
+    override fun writeExerciseStates(states: List<LearningProgressInfo>) {
         val db = helper.writableDatabase
         states.forEach {
-            val cv = createCardStateContentValues(it.cardId, it.exerciseId, it.due, it.interval)
+            val cv = createCardStateContentValues(it.cardId, it.due, it.interval)
             db.insertOrThrow(STATES, null, cv)
         }
     }

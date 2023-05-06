@@ -166,19 +166,19 @@ class MockRepository : Repository {
         val reverse = cards.filterKeys { it.type == CardType.REVERSE }
         return mapOf(
                 CardTypeFilter.FORWARD to DeckStats(
-                        forward.count { (_, status) -> status.globalStatus == Status.NEW },
-                        forward.count { (_, status) -> status.globalStatus == Status.IN_PROGRESS || status.globalStatus == Status.RELEARN },
-                        forward.count { (_, status) -> status.globalStatus == Status.LEARNT }
+                        forward.count { (_, status) -> status.status == Status.NEW },
+                        forward.count { (_, status) -> status.status == Status.IN_PROGRESS || status.status == Status.RELEARN },
+                        forward.count { (_, status) -> status.status == Status.LEARNT }
                 ),
                 CardTypeFilter.REVERSE to DeckStats(
-                        reverse.count { (_, status) -> status.globalStatus == Status.NEW },
-                        reverse.count { (_, status) -> status.globalStatus == Status.IN_PROGRESS || status.globalStatus == Status.RELEARN },
-                        reverse.count { (_, status) -> status.globalStatus == Status.LEARNT }
+                        reverse.count { (_, status) -> status.status == Status.NEW },
+                        reverse.count { (_, status) -> status.status == Status.IN_PROGRESS || status.status == Status.RELEARN },
+                        reverse.count { (_, status) -> status.status == Status.LEARNT }
                 ),
                 CardTypeFilter.BOTH to DeckStats(
-                        cards.count { (_, status) -> status.globalStatus == Status.NEW },
-                        cards.count { (_, status) -> status.globalStatus == Status.IN_PROGRESS || status.globalStatus == Status.RELEARN },
-                        cards.count { (_, status) -> status.globalStatus == Status.LEARNT }
+                        cards.count { (_, status) -> status.status == Status.NEW },
+                        cards.count { (_, status) -> status.status == Status.IN_PROGRESS || status.status == Status.RELEARN },
+                        cards.count { (_, status) -> status.status == Status.LEARNT }
                 )
         )
     }
@@ -198,10 +198,10 @@ class MockRepository : Repository {
         return cardsOfDeck(deck)
                 .map { card -> CardWithProgress(card, getCardLearningProgress(card)) }
                 .filter { (_, progress) ->
-                    progress.states.isEmpty() || progress.states.any { it.value.due <= date }
+                    progress.state.due <= date
                 }
     }
-    override fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
+    override fun getProgressForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
         val cards = originalIds.mapNotNull { cards.find { card -> card.original.id == it } }
         return cards.associateBy(
                 { it.original.id },

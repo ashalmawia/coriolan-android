@@ -16,7 +16,7 @@ interface BackupableRepository {
 
     fun allDecks(offset: Int, limit: Int): List<DeckInfo>
 
-    fun allExerciseStates(offset: Int, limit: Int): List<ExerciseStateInfo>
+    fun allExerciseStates(offset: Int, limit: Int): List<LearningProgressInfo>
 
     fun writeLanguages(languages: List<LanguageInfo>)
 
@@ -28,7 +28,7 @@ interface BackupableRepository {
 
     fun writeDecks(decks: List<DeckInfo>)
 
-    fun writeExerciseStates(states: List<ExerciseStateInfo>)
+    fun writeExerciseStates(states: List<LearningProgressInfo>)
 
     fun overrideRepositoryData(override: (BackupableRepository) -> Unit)
 
@@ -71,8 +71,7 @@ data class DeckInfo(
         val domainId: Long,
         val name: String)
 
-data class ExerciseStateInfo(
+data class LearningProgressInfo(
         val cardId: Long,
-        val exerciseId: ExerciseId,
         val due: DateTime,
         val interval: Int)

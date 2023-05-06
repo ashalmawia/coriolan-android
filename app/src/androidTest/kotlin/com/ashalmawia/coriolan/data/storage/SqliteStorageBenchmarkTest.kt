@@ -6,9 +6,9 @@ import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ashalmawia.coriolan.data.storage.StorageBenchmarkUtil.benchmark
+import com.ashalmawia.coriolan.learning.ExerciseData
 import com.ashalmawia.coriolan.learning.LearningProgress
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
-import com.ashalmawia.coriolan.learning.exercise.flashcards.ExerciseState
+import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
@@ -204,9 +204,7 @@ class SqliteStorageBenchmarkTest {
             domain = it.domainById(1L)
             card = it.cardById(count.toLong(), domain!!)
         }) {
-            it.updateCardLearningProgress(card!!, LearningProgress(
-                    mapOf(ExerciseId.TEST to ExerciseState(mockToday(), 5))
-            ))
+            it.updateCardLearningProgress(card!!, LearningProgress(SchedulingState(mockToday(), 5), ExerciseData()))
         }
     }
 
@@ -403,7 +401,7 @@ class SqliteStorageBenchmarkTest {
 
     private fun query_progress_for_cards_with_originals() {
         benchmark("query progress for cards with originals") {
-            it.getStatesForCardsWithOriginals(
+            it.getProgressForCardsWithOriginals(
                     (1..count).map { id -> id.toLong() }
             )
         }

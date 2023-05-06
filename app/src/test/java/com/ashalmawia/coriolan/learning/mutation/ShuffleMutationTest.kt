@@ -58,6 +58,6 @@ class ShuffleMutationTest {
         assertFalse(cards == processed)
         assertEquals(cards.sortedBy { it.card.id }, processed.sortedBy { it.card.id })
         assertFalse(processed.subList(processed.size - processed.size / 3, processed.size)
-                .any { it.learningProgress.mock.status == Status.NEW })
+                .any { it.learningProgress.status == Status.NEW })
     }
 }

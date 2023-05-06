@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.learning.CardWithProgress
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -24,7 +23,7 @@ class SortReviewsByIntervalMutationTest {
     }
 
     private fun mockCardWithInterval(interval: Int) =
-            mockCardWithProgress(mockLearningProgress(interval = interval - 1, exerciseId = ExerciseId.FLASHCARDS))
+            mockCardWithProgress(mockLearningProgress(interval = interval - 1))
 
     @Test
     fun test__sortedDescending() {
@@ -57,8 +56,8 @@ class SortReviewsByIntervalMutationTest {
     private fun checkAscending(tasks: List<CardWithProgress>): Boolean {
         var previous = -1000
         tasks.forEach {
-            if (it.learningProgress.flashcards.interval < previous) return false
-            previous = it.learningProgress.flashcards.interval
+            if (it.learningProgress.state.interval < previous) return false
+            previous = it.learningProgress.state.interval
         }
         return true
     }
