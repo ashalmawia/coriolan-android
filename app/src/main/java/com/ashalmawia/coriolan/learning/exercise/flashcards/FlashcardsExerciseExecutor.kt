@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
+import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
 
 class FlashcardsExerciseExecutor(
         context: Context,
@@ -31,7 +32,7 @@ class FlashcardsExerciseExecutor(
     override fun onAnswered(answer: Any) {
         val task = currentTask!!
         currentTask = null
-        val newState = scheduler.processAnswer(answer as FlashcardsAnswer, task.learningProgress.state)
+        val newState = scheduler.processAnswer(answer as CardViewAnswer, task.learningProgress.state)
         val newProgress = task.learningProgress.copy(state = newState)
         listener.onTaskStudied(task, newProgress)
     }

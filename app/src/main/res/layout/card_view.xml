@@ -34,81 +34,14 @@
 				app:cardElevation="15dp">
 
 				<androidx.gridlayout.widget.GridLayout
+					android:id="@+id/buttonsContainer"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:background="@color/white"
 					android:paddingLeft="@dimen/spacing__large"
 					android:paddingRight="@dimen/spacing__large"
 					android:paddingTop="@dimen/spacing__small"
-					app:columnCount="2"
-					app:rowCount="2">
-
-					<FrameLayout
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						app:layout_columnWeight="1">
-
-						<Button
-							android:id="@+id/buttonHard"
-							style="@style/CardButton"
-							android:layout_width="match_parent"
-							android:background="@drawable/answer_additional_bg"
-							android:text="@string/cards_hard"
-							android:textColor="@color/answer_additional_text_color"/>
-
-						<ImageView
-							android:id="@+id/buttonHardCover"
-							style="@style/CardButton"
-							android:layout_width="match_parent"
-							android:background="@drawable/answer_disabled_bg"
-							android:scaleType="centerInside"
-							android:src="@drawable/ic_answer_disabled_fg"
-							tools:visibility="gone"/>
-
-					</FrameLayout>
-
-					<FrameLayout
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						app:layout_columnWeight="1">
-
-						<Button
-							android:id="@+id/buttonEasy"
-							style="@style/CardButton"
-							android:layout_width="match_parent"
-							android:background="@drawable/answer_additional_bg"
-							android:text="@string/cards_easy"
-							android:textColor="@color/answer_additional_text_color"/>
-
-						<ImageView
-							android:id="@+id/buttonEasyCover"
-							style="@style/CardButton"
-							android:layout_width="match_parent"
-							android:background="@drawable/answer_disabled_bg"
-							android:scaleType="centerInside"
-							android:src="@drawable/ic_answer_disabled_fg"/>
-
-					</FrameLayout>
-
-					<Button
-						android:id="@+id/buttonNo"
-						style="@style/CardButton"
-						android:layout_width="0dp"
-						android:background="@drawable/answer_wrong_bg"
-						android:text="@string/cards_no"
-						android:textColor="@color/white"
-						app:layout_columnWeight="1"/>
-
-					<Button
-						android:id="@+id/buttonYes"
-						style="@style/CardButton"
-						android:layout_width="0dp"
-						android:background="@drawable/answer_correct_bg"
-						android:text="@string/cards_yes"
-						android:textColor="@color/white"
-						app:layout_columnWeight="1"/>
-
-				</androidx.gridlayout.widget.GridLayout>
+					app:columnCount="2" />
 
 			</androidx.cardview.widget.CardView>
 
@@ -201,7 +134,7 @@
 			android:background="@color/transparent">
 
 			<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
-				android:id="@+id/touchFeedbackWrong"
+				android:id="@+id/touchFeedbackNegative"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:elevation="10dp"
@@ -209,7 +142,7 @@
 				/>
 
 			<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
-				android:id="@+id/touchFeedbackCorrect"
+				android:id="@+id/touchFeedbackPositive"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:elevation="10dp"
@@ -217,7 +150,7 @@
 				/>
 
 			<com.ashalmawia.coriolan.ui.learning.TouchInterceptorView
-				android:id="@+id/touchFeedbackAdditional"
+				android:id="@+id/touchFeedbackNeutral"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:background="@drawable/answer_additional_bg_ripple"

@@ -3,12 +3,16 @@ package com.ashalmawia.coriolan.learning.exercise.flashcards
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.ui.learning.CardView
 import com.ashalmawia.coriolan.ui.learning.CardViewListener
+import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
+import com.ashalmawia.coriolan.ui.learning.CardViewButton
+import com.ashalmawia.coriolan.ui.learning.CardViewConfiguration
 
 class FlashcardsExerciseRenderer(
         context: Context,
@@ -16,7 +20,7 @@ class FlashcardsExerciseRenderer(
         private val listener: ExerciseRenderer.Listener
 ): ExerciseRenderer, CardViewListener {
 
-    private val cardView = CardView(context, this)
+    private val cardView = CardView(context, flashcardsCardViewConfig(), this)
 
     override fun prepareUi(context: Context, parentView: ViewGroup): View {
         return cardView
@@ -31,27 +35,23 @@ class FlashcardsExerciseRenderer(
         uiContainer.addView(cardView)
     }
 
-    private fun answers(progress: LearningProgress): Array<FlashcardsAnswer> {
+    private fun answers(progress: LearningProgress): Array<CardViewAnswer> {
         return when (progress.status) {
-            Status.NEW -> arrayOf(FlashcardsAnswer.WRONG, FlashcardsAnswer.CORRECT, FlashcardsAnswer.EASY)
-            Status.RELEARN -> arrayOf(FlashcardsAnswer.WRONG, FlashcardsAnswer.CORRECT)
-            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(FlashcardsAnswer.WRONG, FlashcardsAnswer.HARD, FlashcardsAnswer.CORRECT, FlashcardsAnswer.EASY)
+            Status.NEW -> arrayOf(CardViewAnswer.WRONG, CardViewAnswer.CORRECT, CardViewAnswer.EASY)
+            Status.RELEARN -> arrayOf(CardViewAnswer.WRONG, CardViewAnswer.CORRECT)
+            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(CardViewAnswer.WRONG, CardViewAnswer.HARD, CardViewAnswer.CORRECT, CardViewAnswer.EASY)
         }
     }
 
-    override fun onEasy() {
-        listener.onAnswered(FlashcardsAnswer.EASY)
-    }
-
-    override fun onCorrect() {
-        listener.onAnswered(FlashcardsAnswer.CORRECT)
-    }
-
-    override fun onHard() {
-        listener.onAnswered(FlashcardsAnswer.HARD)
-    }
-
-    override fun onWrong() {
-        listener.onAnswered(FlashcardsAnswer.WRONG)
+    override fun onAnswered(answer: CardViewAnswer) {
+        listener.onAnswered(answer)
     }
 }
+
+private fun flashcardsCardViewConfig() = CardViewConfiguration.Builder()
+        .addButton(R.string.cards_hard, CardViewButton.Type.NEUTRAL, CardViewAnswer.HARD)
+        .addButton(R.string.cards_easy, CardViewButton.Type.NEUTRAL, CardViewAnswer.EASY)
+        .addButton(R.string.cards_no, CardViewButton.Type.NEGATIVE, CardViewAnswer.WRONG)
+        .addButton(R.string.cards_yes, CardViewButton.Type.POSITIVE, CardViewAnswer.CORRECT)
+        .alwaysOpen(false)
+        .build()

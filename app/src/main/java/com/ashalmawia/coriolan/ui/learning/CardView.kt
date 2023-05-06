@@ -8,7 +8,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.ashalmawia.coriolan.databinding.CardTranslationItemBinding
 import com.ashalmawia.coriolan.databinding.CardViewBinding
-import com.ashalmawia.coriolan.learning.exercise.flashcards.FlashcardsAnswer
+import com.ashalmawia.coriolan.databinding.CardViewButtonBinding
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
@@ -19,28 +19,30 @@ private const val BUTTON_BAR_ANIMATION_DURATION = 200L
 private const val BUTTON_RIPLLE_ANIMATION_DURATION = 150L
 
 @SuppressLint("ViewConstructor")    // not intended to be used by tools
-class CardView(context: Context, private val listener: CardViewListener) : FrameLayout(context) {
+class CardView(
+        context: Context,
+        private val config: CardViewConfiguration,
+        private val listener: CardViewListener
+) : FrameLayout(context) {
 
     private val views: CardViewBinding = CardViewBinding.inflate(layoutInflator, this)
+    private val buttons: Map<CardViewAnswer, CardViewButtonBinding>
 
     init {
         views.apply {
             frontCover.setOnSingleClickListener { showBack() }
             backCover.setOnSingleClickListener { showBack() }
 
-            buttonYes.setOnSingleClickListenerWithDelay { listener.onCorrect() }
-            buttonNo.setOnSingleClickListenerWithDelay { listener.onWrong() }
-
-            buttonHard.setOnSingleClickListenerWithDelay { listener.onHard() }
-            buttonEasy.setOnSingleClickListenerWithDelay { listener.onEasy() }
-
-            touchFeedbackWrong.addAnchor(buttonNo)
-            touchFeedbackCorrect.addAnchor(buttonYes)
-            touchFeedbackAdditional.addAnchor(buttonEasy, buttonHard)
+            buttons = initializeButtons(config.buttons)
         }
     }
 
-    fun bind(card: Card, answers: List<FlashcardsAnswer>) {
+    private fun initializeButtons(buttons: List<CardViewButton>): Map<CardViewAnswer, CardViewButtonBinding> {
+        views.buttonsContainer.rowCount = (buttons.size + 1) / 2
+        return buttons.associate { Pair(it.answer, inflateButton(it)) }
+    }
+
+    fun bind(card: Card, answers: List<CardViewAnswer>) {
         views.frontText.text = card.original.value
         views.transcriptionText.bindTranscription(card.original.transcription)
 
@@ -49,22 +51,18 @@ class CardView(context: Context, private val listener: CardViewListener) : Frame
 
         configureButtonsBar(answers)
 
-        showFront()
+        if (config.alwaysOpen) {
+            showBack()
+        } else {
+            showFront()
+        }
     }
 
-    private fun configureButtonsBar(answers: List<FlashcardsAnswer>) {
-        if (!answers.contains(FlashcardsAnswer.WRONG) || !answers.contains(FlashcardsAnswer.CORRECT)) {
-            throw IllegalStateException("no wrong or correct state, unsupported")
-        }
-
-        views.apply {
-            val hasHard = answers.contains(FlashcardsAnswer.HARD)
-            buttonHard.visible = hasHard
-            buttonHardCover.visible = !hasHard
-
-            val hasEasy = answers.contains(FlashcardsAnswer.EASY)
-            buttonEasy.visible = hasEasy
-            buttonEasyCover.visible = !hasEasy
+    private fun configureButtonsBar(answers: List<CardViewAnswer>) {
+        buttons.forEach { (answer, binding) ->
+            val available = answers.contains(answer)
+            binding.button.visible = available
+            binding.buttonCover.visible = !available
         }
     }
 
@@ -128,17 +126,28 @@ class CardView(context: Context, private val listener: CardViewListener) : Frame
         text = transcription
         visible = !transcription.isNullOrBlank()
     }
+
+    private fun inflateButton(config: CardViewButton): CardViewButtonBinding {
+        val binding = CardViewButtonBinding.inflate(layoutInflator, views.buttonsContainer, true)
+        return binding.apply {
+            button.setText(config.textRes)
+            button.setBackgroundResource(config.type.backgroundRes)
+            button.setTextColor(context.getColor(config.type.textColorRes))
+            button.setOnSingleClickListenerWithDelay { listener.onAnswered(config.answer) }
+
+            val feedbackView = when (config.type) {
+                CardViewButton.Type.POSITIVE -> views.touchFeedbackPositive
+                CardViewButton.Type.NEGATIVE -> views.touchFeedbackNegative
+                CardViewButton.Type.NEUTRAL -> views.touchFeedbackNeutral
+            }
+            feedbackView.addAnchor(button)
+        }
+    }
 }
 
 interface CardViewListener {
 
-    fun onEasy()
-
-    fun onCorrect()
-
-    fun onHard()
-
-    fun onWrong()
+    fun onAnswered(answer: CardViewAnswer)
 }
 
 private fun View.setOnSingleClickListenerWithDelay(listener: (View) -> Unit) {

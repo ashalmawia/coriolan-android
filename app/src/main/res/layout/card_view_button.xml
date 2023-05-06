@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="0dp"
+	android:layout_height="wrap_content"
+	app:layout_columnWeight="1">
+
+	<Button
+		android:id="@+id/button"
+		style="@style/CardButton"
+		android:layout_width="match_parent"/>
+
+	<ImageView
+		android:id="@+id/buttonCover"
+		style="@style/CardButton"
+		android:layout_width="match_parent"
+		android:background="@drawable/answer_disabled_bg"
+		android:scaleType="centerInside"
+		android:src="@drawable/ic_answer_disabled_fg"/>
+
+</FrameLayout>
