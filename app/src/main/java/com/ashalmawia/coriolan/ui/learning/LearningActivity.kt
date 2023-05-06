@@ -125,12 +125,12 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     }
 
     private fun editCurrentCard() {
-        val intent = AddEditCardActivity.edit(this, flow.card.card)
+        val intent = AddEditCardActivity.edit(this, flow.current.card)
         startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
     }
 
     private fun deleteCurrentCard() {
-        val current = flow.card
+        val current = flow.current
         flow.dropCard(current.card)
         repository.deleteCard(current.card)
     }
@@ -146,7 +146,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     }
 
     private fun onCurrentCardUpdated() {
-        flow.refetchTask(flow.card)
+        flow.refetchTask(flow.current)
     }
 
     private fun beginExercise() {

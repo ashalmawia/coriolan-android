@@ -3,12 +3,14 @@ package com.ashalmawia.coriolan.learning
 import android.content.Context
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.model.Counts
-import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
+import com.ashalmawia.coriolan.learning.exercise.LogbookWriter
+import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
@@ -20,15 +22,16 @@ class LearningFlow(
         private val assignment: Assignment,
         val deck: Deck,
         exercisesRegistry: ExercisesRegistry,
-        logbook: Logbook,
+        scheduler: SpacedRepetitionScheduler,
+        private val logbook: LogbookWriter,
         uiContainer: ViewGroup,
         private val listener: Listener
 ) : ExerciseListener {
 
     private val executors = exercisesRegistry.enabledExercises()
-            .map { it.createExecutor(context, repository, uiContainer, logbook, this) }
+            .map { it.createExecutor(context, repository, scheduler, uiContainer, this) }
 
-    val card
+    val current
         get() = assignment.current!!
 
     val counts: Counts
@@ -44,13 +47,15 @@ class LearningFlow(
         }
     }
 
-    override fun onTaskStudied(updated: Task) {
+    override fun onTaskStudied(task: Task, newProgress: LearningProgress) {
+        val updated = updateTask(task, newProgress)
         rescheduleIfNeeded(updated)
+        logbook.recordCardAction(current, newProgress.state)
         showNextOrComplete()
     }
 
     private fun rescheduleIfNeeded(task: Task) {
-        if (task.executor().isPending(task)) {
+        if (task.isPending()) {
             assignment.reschedule(task)
         }
     }
@@ -68,18 +73,19 @@ class LearningFlow(
     fun canUndo() = assignment.canUndo()
 
     fun undo() {
-        val card = assignment.current!!
-        val stateToUndo = card.learningProgress
+        val task = assignment.current!!
+        val progressToUndo = task.learningProgress
         val undone = assignment.undo()
-        undone.executor().undoTask(undone, stateToUndo)
+        updateTask(task, undone.learningProgress)
+        logbook.unrecordCardAction(undone, progressToUndo.state)
         renderTask(undone)
     }
 
     fun refetchTask(task: Task) {
         val card = task.card
         val updated = repository.cardById(card.id, card.domain)!!
-        val updatedWithState = task.executor().getTask(updated)
-        if (updated.deckId == deck.id && task.executor().isPending(updatedWithState)) {
+        val updatedWithState = createTask(updated, task.exercise)
+        if (updated.deckId == deck.id && updatedWithState.isPending()) {
             assignment.replace(card, updatedWithState)
             if (isCurrent(card)) {
                 // make exercise pre-present the card with the changes
@@ -88,6 +94,11 @@ class LearningFlow(
         } else {
             dropCard(card)
         }
+    }
+
+    private fun updateTask(task: Task, newLearningProgress: LearningProgress): Task {
+        repository.updateCardLearningProgress(task.card, newLearningProgress)
+        return Task(task.card, newLearningProgress, task.exercise)
     }
 
     private fun renderTask(task: Task) {
@@ -103,7 +114,11 @@ class LearningFlow(
         }
     }
 
-    private fun isCurrent(card: Card) = this.card.card.id == card.id
+    private fun isCurrent(card: Card) = this.current.card.id == card.id
+
+    private fun createTask(card: Card, exercise: Exercise): Task {
+        return Task(card, repository.getCardLearningProgress(card), exercise)
+    }
 
     interface Listener {
         fun onTaskRendered()

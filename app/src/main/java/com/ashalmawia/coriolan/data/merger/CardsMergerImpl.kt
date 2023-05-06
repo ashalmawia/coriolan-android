@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.merger
 
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Domain
@@ -34,10 +35,21 @@ class CardsMergerImpl(
         }
 
         val updated = repository.updateCard(card, deckId, card.original, mergedTranslations)
-        notifyExercises(updated)
+        resetLearningProgress(updated)
     }
 
-    private fun notifyExercises(card: Card) {
-        exercisesRegistry.allExercises().forEach { it.onTranslationAdded(repository, card) }
+    private fun resetLearningProgress(card: Card) {
+        val learningProgress = repository.getCardLearningProgress(card)
+        var exerciseData = learningProgress.exerciseData
+
+        // let exercises update their payload
+        exercisesRegistry.allExercises().forEach {
+            exerciseData = it.onTranslationAdded(card, exerciseData)
+        }
+
+        val updatedLearningProgress = learningProgress.copy(
+                state = SchedulingState.new(), exerciseData = exerciseData
+        )
+        repository.updateCardLearningProgress(card, updatedLearningProgress)
     }
 }

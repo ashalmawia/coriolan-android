@@ -8,4 +8,6 @@ data class Task(val card: Card, val learningProgress: LearningProgress, val exer
     fun learningProgressWithUpdatedExerciseState(newState: SchedulingState): LearningProgress {
         return learningProgress.copy(state = newState)
     }
+
+    fun isPending() = learningProgress.state.due <= TodayManager.today()
 }

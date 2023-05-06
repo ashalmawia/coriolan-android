@@ -26,6 +26,8 @@ import com.ashalmawia.coriolan.learning.assignment.HistoryFactory
 import com.ashalmawia.coriolan.learning.assignment.HistoryFactoryImpl
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistryImpl
+import com.ashalmawia.coriolan.learning.exercise.LogbookWriter
+import com.ashalmawia.coriolan.learning.exercise.LogbookWriterImpl
 import com.ashalmawia.coriolan.learning.exercise.flashcards.MultiplierBasedScheduler
 import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.ui.settings.CoriolanPreferencesDataStore
@@ -36,6 +38,7 @@ val mainModule = module {
     single { DecksRegistry(get(), get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
     single<Logbook> { SqliteLogbook(get()) }
+    single<LogbookWriter> { LogbookWriterImpl(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get()) }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
