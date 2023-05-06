@@ -1,8 +1,8 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.Task
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.model.CardType
-import com.ashalmawia.coriolan.model.mockTask
+import com.ashalmawia.coriolan.model.mockCardWithProgress
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -11,13 +11,13 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class CardTypeMutationTest {
 
-    private val forwardCards = List(50) { i -> mockTask(id = i.toLong(), type = CardType.FORWARD) }
-    private val reverseCards = List(50) { i -> mockTask(id = (50+i).toLong(), type = CardType.REVERSE) }
+    private val forwardCards = List(50) { i -> mockCardWithProgress(id = i.toLong(), type = CardType.FORWARD) }
+    private val reverseCards = List(50) { i -> mockCardWithProgress(id = (50+i).toLong(), type = CardType.REVERSE) }
 
-    private val cards = mixTasks()
+    private val cards = testData()
 
-    private fun mixTasks(): List<Task> {
-        val result = mutableListOf<Task>()
+    private fun testData(): List<CardWithProgress> {
+        val result = mutableListOf<CardWithProgress>()
         for (i in 0 until 50) {
             result.add(forwardCards[i])
             result.add(reverseCards[i])

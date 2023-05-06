@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.LearningDay
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.LearningProgress
@@ -80,6 +81,16 @@ fun mockTask(
     return Task(mockCard(domain, id, type), learningProgress, exercise)
 }
 
+fun mockCardWithProgress(
+        learningProgress: LearningProgress = mockLearningProgress(),
+        domain: Domain = mockDomain(),
+        id: Long = cardId++,
+        type: CardType = CardType.FORWARD
+): CardWithProgress {
+    val mockTask = mockTask(learningProgress, domain, id, type)
+    return CardWithProgress(mockTask.card, mockTask.learningProgress)
+}
+
 private var deckId = 1L
 fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
 
@@ -93,10 +104,10 @@ fun mockLearningProgressRelearn(): LearningProgress = mockLearningProgress(mockS
 fun mockLearningProgressInProgress(): LearningProgress = mockLearningProgress(mockStateInProgress())
 fun mockLearningProgressLearnt(): LearningProgress = mockLearningProgress(mockStateLearnt())
 fun mockLearningProgress(): LearningProgress = LearningProgress(emptyMap())
-fun mockLearningProgress(due: DateTime = mockToday(), interval: Int = 0): LearningProgress =
-        mockLearningProgress(ExerciseState(due, interval))
-fun mockLearningProgress(exerciseState: ExerciseState): LearningProgress = LearningProgress(
-        mapOf(ExerciseId.TEST to exerciseState)
+fun mockLearningProgress(due: DateTime = mockToday(), interval: Int = 0, exerciseId: ExerciseId = ExerciseId.TEST): LearningProgress =
+        mockLearningProgress(ExerciseState(due, interval), exerciseId)
+fun mockLearningProgress(exerciseState: ExerciseState, exerciseId: ExerciseId = ExerciseId.TEST): LearningProgress = LearningProgress(
+        mapOf(exerciseId to exerciseState)
 )
 
 fun mockEmptyExerciseState(today: LearningDay) = ExerciseState(today, INTERVAL_NEVER_SCHEDULED)

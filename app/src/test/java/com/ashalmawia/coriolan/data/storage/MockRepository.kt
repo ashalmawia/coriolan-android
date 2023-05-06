@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.data.stats.DeckStats
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
@@ -146,15 +147,14 @@ class MockRepository : Repository {
 
     override fun deckPendingCounts(deck: Deck, cardType: CardType, date: DateTime): Counts {
         val due = pendingCards(deck, date)
-        val total = cardsOfDeck(deck)
 
-        val deckDue = due.filter { it.first.type == cardType }
+        val deckDue = due.filter { it.card.type == cardType }
 
         return Counts(
-                deckDue.count { it.second.globalStatus == Status.NEW },
-                deckDue.count { it.second.globalStatus == Status.IN_PROGRESS
-                        || it.second.globalStatus == Status.LEARNT },
-                deckDue.count { it.second.globalStatus == Status.RELEARN }
+                deckDue.count { it.status == Status.NEW },
+                deckDue.count { it.status == Status.IN_PROGRESS
+                        || it.status == Status.LEARNT },
+                deckDue.count { it.status == Status.RELEARN }
         )
     }
 
@@ -194,9 +194,9 @@ class MockRepository : Repository {
     override fun getCardLearningProgress(card: Card): LearningProgress {
         return states[card.id] ?: mockLearningProgress()
     }
-    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
+    override fun pendingCards(deck: Deck, date: DateTime): List<CardWithProgress> {
         return cardsOfDeck(deck)
-                .map { card -> Pair(card, getCardLearningProgress(card)) }
+                .map { card -> CardWithProgress(card, getCardLearningProgress(card)) }
                 .filter { (_, progress) ->
                     progress.states.isEmpty() || progress.states.any { it.value.due <= date }
                 }

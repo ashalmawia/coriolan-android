@@ -67,6 +67,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -745,7 +746,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
         return pendingStates.mapValues { LearningProgress(it.value) }
     }
-    override fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>> {
+    override fun pendingCards(deck: Deck, date: DateTime): List<CardWithProgress> {
         val pendingWithProgress = pendingCardIds(deck, date, CardType.values())
         val pendingCardsIds = pendingWithProgress.keys.toList()
         return if (pendingCardsIds.isEmpty()) {
@@ -753,7 +754,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         } else {
             val cards = cardsWithIds(pendingCardsIds, deck.domain)
             cards.map { card ->
-                Pair(card, pendingWithProgress[card.id]!!)
+                CardWithProgress(card, pendingWithProgress[card.id]!!)
             }
         }
     }

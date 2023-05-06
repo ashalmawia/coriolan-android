@@ -1,6 +1,6 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.Task
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.model.*
@@ -12,7 +12,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class LimitCountMutationMutationTest {
 
-    private val cards = List(60) { i -> mockTask(procudeMockLearningProgress(i)) }
+    private val cards = List(60) { i -> mockCardWithProgress(procudeMockLearningProgress(i)) }
 
     private fun procudeMockLearningProgress(i: Int) =
             when (i % 4) {
@@ -145,10 +145,10 @@ class LimitCountMutationMutationTest {
     }
 }
 
-private fun List<Task>.filter(vararg statuses: Status): List<Task> {
+private fun List<CardWithProgress>.filter(vararg statuses: Status): List<CardWithProgress> {
     return filter { statuses.contains(it.learningProgress.globalStatus) }
 }
 
-private fun List<Task>.count(vararg statuses: Status): Int {
+private fun List<CardWithProgress>.count(vararg statuses: Status): Int {
     return count { statuses.contains(it.learningProgress.globalStatus) }
 }

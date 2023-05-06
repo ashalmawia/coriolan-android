@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning.mutation
 
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.*
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -10,7 +10,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class ShuffleMutationTest {
 
-    private val cards = List(50) { i -> mockTask(id = i.toLong()) }
+    private val cards = List(50) { i -> mockCardWithProgress(id = i.toLong()) }
 
     @Test
     fun testNoShuffle() {
@@ -42,13 +42,13 @@ class ShuffleMutationTest {
         // given
         val mutation = ShuffleMutation(true)
         val cards = listOf(
-                mockTask(mockLearningProgressNew()),
-                mockTask(mockLearningProgressNew()),
-                mockTask(mockLearningProgressInProgress()),
-                mockTask(mockLearningProgressLearnt()),
-                mockTask(mockLearningProgressInProgress()),
-                mockTask(mockLearningProgressNew()),
-                mockTask(mockLearningProgressNew())
+                mockCardWithProgress(mockLearningProgressNew()),
+                mockCardWithProgress(mockLearningProgressNew()),
+                mockCardWithProgress(mockLearningProgressInProgress()),
+                mockCardWithProgress(mockLearningProgressLearnt()),
+                mockCardWithProgress(mockLearningProgressInProgress()),
+                mockCardWithProgress(mockLearningProgressNew()),
+                mockCardWithProgress(mockLearningProgressNew())
         )
 
         // when

@@ -6,20 +6,14 @@ import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.LearningProgress
-import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
-import com.ashalmawia.coriolan.learning.mutation.*
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.model.Term
-import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
-import com.ashalmawia.coriolan.util.forwardAndReverseWithState
 
 /**
  * Simple learning exercise which shows all the cards in the assignment: given front, guess back.
@@ -40,26 +34,6 @@ class FlashcardsExercise : Exercise {
 
     override val canUndo: Boolean
         get() = true
-
-    override fun mutations(
-            repository: Repository,
-            order: StudyOrder,
-            deck: Deck,
-            cardTypeFilter: CardTypeFilter,
-            studyTargets: StudyTargets
-    ): List<Mutation> {
-        val mutations = mutableListOf<Mutation>().apply {
-            add(LearningModeMutation(repository))
-            if (cardTypeFilter != CardTypeFilter.BOTH) {
-                add(CardTypeMutation(cardTypeFilter.toCardType()))
-            }
-            add(SortReviewsByIntervalMutation)
-            add(NewCardsOrderMutation.from(order))
-            add(LimitCountMutation(studyTargets))
-            add(ShuffleMutation(order == StudyOrder.RANDOM))
-        }
-        return mutations
-    }
 
     override fun onTranslationAdded(repository: Repository, card: Card) {
         // TODO: decouple
@@ -84,34 +58,10 @@ class FlashcardsExercise : Exercise {
         )
     }
 
-    override fun generateTasks(cards: List<Pair<Card, LearningProgress>>): List<Task> {
-        return cards.map { Task(it.first, it.second, this) }
+    override fun generateTasks(cards: List<CardWithProgress>): List<Task> {
+        return cards.map { Task(it.card, it.learningProgress, this) }
     }
 
     private fun createScheduler() = MultiplierBasedScheduler()
 
-    class LearningModeMutation(private val repository: Repository) : Mutation {
-
-        override fun apply(tasks: List<Task>): List<Task> {
-            val (forward, reverse) = tasks.forwardAndReverseWithState()
-            return forward.plus(reverse.filterReady())
-        }
-
-        private fun List<Task>.filterReady() : List<Task> {
-            val translationIds = flatMap { it.card.translations }.map { it.id }
-
-            val states = repository.getStatesForCardsWithOriginals(translationIds)
-
-            return filter {
-                it.status() != Status.NEW || it.card.translations.all { exp -> exp.isReady(states) }
-            }
-        }
-
-        private fun Term.isReady(states: Map<Long, LearningProgress>): Boolean {
-            val state = states[id]
-            return state != null && state.flashcards.interval >= 4
-        }
-    }
 }
-
-private fun Task.status() = learningProgress.flashcards.status

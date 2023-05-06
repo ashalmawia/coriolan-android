@@ -6,15 +6,9 @@ import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.mutation.Mutation
-import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.model.Deck
-import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
-import java.lang.IllegalArgumentException
 
 interface Exercise {
 
@@ -32,15 +26,7 @@ interface Exercise {
 
     val canUndo: Boolean
 
-    fun generateTasks(cards: List<Pair<Card, LearningProgress>>): List<Task>
-
-    fun mutations(
-            repository: Repository,
-            order: StudyOrder,
-            deck: Deck,
-            cardTypeFilter: CardTypeFilter,
-            studyTargets: StudyTargets
-    ): List<Mutation>
+    fun generateTasks(cards: List<CardWithProgress>): List<Task>
 
     fun onTranslationAdded(repository: Repository, card: Card)
 

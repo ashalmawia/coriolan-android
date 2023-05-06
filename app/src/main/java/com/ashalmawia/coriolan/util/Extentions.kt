@@ -33,7 +33,3 @@ fun Int?.orZero(): Int {
 
 fun List<Card>.forward() = filter { it.type == CardType.FORWARD }
 fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
-fun  List<Task>.forwardAndReverseWithState() = partition { it.card.type == CardType.FORWARD }
-
-fun  List<Task>.new() = this.filter { it.learningProgress.globalStatus == Status.NEW }
-fun  List<Task>.review() = this.filter { it.learningProgress.globalStatus != Status.NEW }

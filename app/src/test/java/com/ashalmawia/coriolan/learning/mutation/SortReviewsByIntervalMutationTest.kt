@@ -1,8 +1,9 @@
 package com.ashalmawia.coriolan.learning.mutation
 
-import com.ashalmawia.coriolan.learning.Task
+import com.ashalmawia.coriolan.learning.CardWithProgress
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.*
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -15,17 +16,20 @@ class SortReviewsByIntervalMutationTest {
     @Test
     fun test__sortedAscending() {
         // when
-        val cards = List(5) { i -> mockTask(mockLearningProgress(interval = i - 1)) }
+        val cards = List(5) { i -> mockCardWithInterval(i - 1) }
         val processed = mutation.value.apply(cards)
 
         // then
         assertEquals(cards, processed)
     }
 
+    private fun mockCardWithInterval(interval: Int) =
+            mockCardWithProgress(mockLearningProgress(interval = interval - 1, exerciseId = ExerciseId.FLASHCARDS))
+
     @Test
     fun test__sortedDescending() {
         // when
-        val cards = List(5) { i -> mockTask(mockLearningProgress(interval = 5 - i)) }
+        val cards = List(5) { i -> mockCardWithInterval(interval = 5 - i) }
         val processed = mutation.value.apply(cards)
 
         // then
@@ -36,12 +40,12 @@ class SortReviewsByIntervalMutationTest {
     fun test__mixed() {
         // when
         val cards = listOf(
-                mockTask(mockLearningProgress(interval = 5)),
-                mockTask(mockLearningProgress(interval = -1)),
-                mockTask(mockLearningProgress(interval = 10)),
-                mockTask(mockLearningProgress(interval = 2)),
-                mockTask(mockLearningProgress(interval = 0)),
-                mockTask(mockLearningProgress(interval = -1))
+                mockCardWithInterval(interval = 5),
+                mockCardWithInterval(interval = -1),
+                mockCardWithInterval(interval = 10),
+                mockCardWithInterval(interval = 2),
+                mockCardWithInterval(interval = 0),
+                mockCardWithInterval(interval = -1)
         )
         val processed = mutation.value.apply(cards)
 
@@ -50,11 +54,11 @@ class SortReviewsByIntervalMutationTest {
         assertTrue(checkAscending(processed))
     }
 
-    private fun checkAscending(tasks: List<Task>): Boolean {
+    private fun checkAscending(tasks: List<CardWithProgress>): Boolean {
         var previous = -1000
         tasks.forEach {
-            if (it.learningProgress.mock.interval < previous) return false
-            previous = it.learningProgress.mock.interval
+            if (it.learningProgress.flashcards.interval < previous) return false
+            previous = it.learningProgress.flashcards.interval
         }
         return true
     }

@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.storage
 
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.stats.DeckStats
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.model.*
@@ -81,7 +82,7 @@ interface Repository {
 
     fun getCardLearningProgress(card: Card): LearningProgress
 
-    fun pendingCards(deck: Deck, date: DateTime): List<Pair<Card, LearningProgress>>
+    fun pendingCards(deck: Deck, date: DateTime): List<CardWithProgress>
 
     fun getStatesForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress>
 
