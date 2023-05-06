@@ -6,8 +6,7 @@ import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
 import com.ashalmawia.coriolan.learning.exercise.Exercise
-import com.ashalmawia.coriolan.learning.exercise.ExerciseExecutor
-import com.ashalmawia.coriolan.learning.exercise.ExerciseListener
+import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.LogbookWriter
 import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
@@ -15,6 +14,7 @@ import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
 
 class LearningFlow(
         context: Context,
@@ -22,14 +22,14 @@ class LearningFlow(
         private val assignment: Assignment,
         val deck: Deck,
         exercisesRegistry: ExercisesRegistry,
-        scheduler: SpacedRepetitionScheduler,
+        private val scheduler: SpacedRepetitionScheduler,
         private val logbook: LogbookWriter,
         uiContainer: ViewGroup,
         private val listener: Listener
-) : ExerciseListener {
+) : ExerciseRenderer.Listener {
 
-    private val executors = exercisesRegistry.enabledExercises()
-            .map { it.createExecutor(context, repository, scheduler, uiContainer, this) }
+    private val renderers = exercisesRegistry.enabledExercises()
+            .associate { Pair(it.id, it.createRenderer(context, uiContainer, this)) }
 
     val current
         get() = assignment.current!!
@@ -47,10 +47,15 @@ class LearningFlow(
         }
     }
 
-    override fun onTaskStudied(task: Task, newProgress: LearningProgress) {
+    override fun onAnswered(answer: Any) {
+        val task = current
+        val newState = scheduler.processAnswer(answer as CardViewAnswer, task.learningProgress.state)
+        val newData = task.exercise.onTaskStudied(task.card, answer, task.learningProgress.exerciseData)
+        val newProgress = task.learningProgress.copy(state = newState, exerciseData = newData)
         val updated = updateTask(task, newProgress)
+
         rescheduleIfNeeded(updated)
-        logbook.recordCardAction(current, newProgress.state)
+        logbook.recordCardAction(task, newProgress.state)
         showNextOrComplete()
     }
 
@@ -64,9 +69,9 @@ class LearningFlow(
         listener.onFinish(emptyAssignment)
     }
 
-    private fun Task.executor(): ExerciseExecutor {
+    private fun Task.renderer(): ExerciseRenderer {
         val exerciseId = this.exercise.id
-        return executors.find { it.exerciseId == exerciseId }
+        return renderers[exerciseId]
                 ?: throw IllegalStateException("could not find executor for exercise $exerciseId")
     }
 
@@ -102,7 +107,7 @@ class LearningFlow(
     }
 
     private fun renderTask(task: Task) {
-        task.executor().renderTask(task)
+        task.renderer().renderTask(task)
         listener.onTaskRendered()
     }
 

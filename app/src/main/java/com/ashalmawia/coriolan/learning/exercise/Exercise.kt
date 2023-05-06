@@ -4,11 +4,9 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.ExerciseData
 import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
 import com.ashalmawia.coriolan.model.Card
 
 interface Exercise {
@@ -33,13 +31,15 @@ interface Exercise {
         return exerciseData
     }
 
-    fun createExecutor(
+    fun onTaskStudied(card: Card, answer: Any, exerciseData: ExerciseData): ExerciseData {
+        return exerciseData
+    }
+
+    fun createRenderer(
             context: Context,
-            repository: Repository,
-            scheduler: SpacedRepetitionScheduler,
             uiContainer: ViewGroup,
-            listener: ExerciseListener
-    ): ExerciseExecutor
+            listener: ExerciseRenderer.Listener
+    ): ExerciseRenderer
 }
 
 enum class ExerciseId(val value: String) {
