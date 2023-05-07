@@ -6,6 +6,8 @@ import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.Mutations
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.StudyTargets
+import com.ashalmawia.coriolan.learning.Task
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mutation.CardTypeMutation
 import com.ashalmawia.coriolan.learning.mutation.LearningModeMutation
 import com.ashalmawia.coriolan.learning.mutation.LimitCountMutation
@@ -44,7 +46,9 @@ class AssignmentFactoryImpl(
 
         val cards = repository.pendingCards(deck, date)
         val cardsToLearn = mutations.apply(cards)
-        val tasks = exercisesRegistry.enabledExercises().flatMap { it.generateTasks(cardsToLearn) }
+        val tasks = orderTasks(
+                exercisesRegistry.enabledExercises().flatMap { it.generateTasks(cardsToLearn) }
+        )
 
         return Assignment(date, history, tasks)
     }
@@ -66,5 +70,11 @@ class AssignmentFactoryImpl(
             add(ShuffleMutation(order == StudyOrder.RANDOM))
         }
         return Mutations(mutations)
+    }
+
+    private fun orderTasks(tasks: List<Task>): List<Task> {
+        // show Preview tasks in the beginning
+        val (preview, rest) = tasks.partition { it.exercise.id == ExerciseId.PREVIEW }
+        return preview + rest
     }
 }
