@@ -31,9 +31,12 @@ interface Exercise {
         return exerciseData
     }
 
-    fun onTaskStudied(card: Card, answer: Any, exerciseData: ExerciseData): ExerciseData {
-        return exerciseData
-    }
+    /**
+     * Returns: Pair of
+     *      - should reschedule (true if the answer was wrong)
+     *      - udpated exercise data for this card
+     */
+    fun onTaskStudied(card: Card, answer: Any, exerciseData: ExerciseData): Pair<Boolean, ExerciseData>
 
     fun createRenderer(
             context: Context,

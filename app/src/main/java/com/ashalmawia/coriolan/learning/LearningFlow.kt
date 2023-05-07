@@ -50,19 +50,15 @@ class LearningFlow(
     override fun onAnswered(answer: Any) {
         val task = current
         val newState = scheduler.processAnswer(answer as CardViewAnswer, task.learningProgress.state)
-        val newData = task.exercise.onTaskStudied(task.card, answer, task.learningProgress.exerciseData)
+        val (shouldReschedule, newData) = task.exercise.onTaskStudied(task.card, answer, task.learningProgress.exerciseData)
         val newProgress = task.learningProgress.copy(state = newState, exerciseData = newData)
         val updated = updateTask(task, newProgress)
 
-        rescheduleIfNeeded(updated)
+        if (shouldReschedule) {
+            assignment.reschedule(updated)
+        }
         logbook.recordCardAction(task, newProgress.state)
         showNextOrComplete()
-    }
-
-    private fun rescheduleIfNeeded(task: Task) {
-        if (task.isPending()) {
-            assignment.reschedule(task)
-        }
     }
 
     private fun finish(emptyAssignment: Boolean) {
