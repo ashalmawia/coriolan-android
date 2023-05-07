@@ -30,8 +30,8 @@ class CardView(
 
     init {
         views.apply {
-            frontCover.setOnSingleClickListener { showBack() }
-            backCover.setOnSingleClickListener { showBack() }
+            frontCover.setOnSingleClickListener { showBack(true) }
+            backCover.setOnSingleClickListener { showBack(true) }
 
             buttons = initializeButtons(config.buttons)
         }
@@ -51,10 +51,9 @@ class CardView(
 
         configureButtonsBar(answers)
 
+        showFront()
         if (config.alwaysOpen) {
-            showBack()
-        } else {
-            showFront()
+            showBack(false)
         }
     }
 
@@ -67,7 +66,7 @@ class CardView(
     }
 
     private fun showFront() {
-        if (backShown()) {
+        if (backShown() && !config.alwaysOpen) {
             hideButtonBarAnimated()
         }
         views.apply {
@@ -76,10 +75,14 @@ class CardView(
         }
     }
 
-    private fun showBack() {
+    private fun showBack(animated: Boolean) {
         views.backCover.visibility = View.GONE
 
-        showButtonBarAnimated()
+        if (animated) {
+            showButtonBarAnimated()
+        } else {
+            views.buttonsBar.visible = true
+        }
     }
 
     private fun backShown() = !views.frontCover.visible && !views.backCover.visible

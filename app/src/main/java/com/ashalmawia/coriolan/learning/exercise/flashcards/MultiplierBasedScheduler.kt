@@ -22,6 +22,7 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
             CardViewAnswer.CORRECT -> correct(state)
             CardViewAnswer.EASY -> easy(state)
             CardViewAnswer.HARD -> hard(state)
+            CardViewAnswer.NEXT -> state
         }
     }
 

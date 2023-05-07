@@ -7,6 +7,4 @@ interface ExercisesRegistry {
     fun enabledExercises(): List<Exercise> {
         return allExercises()
     }
-
-    fun defaultExercise(): Exercise
 }

@@ -4,5 +4,6 @@ enum class CardViewAnswer {
     WRONG,
     CORRECT,
     EASY,
-    HARD
+    HARD,
+    NEXT
 }

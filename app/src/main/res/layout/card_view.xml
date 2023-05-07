@@ -41,6 +41,9 @@
 					android:paddingLeft="@dimen/spacing__large"
 					android:paddingRight="@dimen/spacing__large"
 					android:paddingTop="@dimen/spacing__small"
+					android:paddingBottom="@dimen/spacing__small"
+					app:useDefaultMargins="true"
+					app:rowCount="2"
 					app:columnCount="2" />
 
 			</androidx.cardview.widget.CardView>

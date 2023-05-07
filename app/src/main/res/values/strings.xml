@@ -9,6 +9,7 @@
 
 	<!-- Exercise types -->
 	<string name="exercise_flashcards">Flashcards</string>
+	<string name="exercise_preview">Preview</string>
 
 	<!-- Learning flow -->
 	<string name="assignment_accomplished_congratulation">Congratulations! You have completed all the tasks
