@@ -38,4 +38,5 @@ class PreviewExerciseRenderer(
 private fun cardViewConfig() = CardViewConfiguration.Builder()
         .addButton(R.string.button_next, CardViewButton.Type.NEUTRAL, CardViewAnswer.NEXT)
         .alwaysOpen(true)
+        .showNewBadge(true)
         .build()

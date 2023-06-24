@@ -68,6 +68,7 @@
 	<string name="cards_hard">Hard</string>
 	<string name="cards_easy">Easy</string>
 	<string name="cards_tap_to_show_answer">Tap on the question mark to show the answer</string>
+	<string name="card_badge_new">New\nword</string>
 
 	<!-- Learning menu -->
 	<string name="learning_menu_undo">Undo</string>

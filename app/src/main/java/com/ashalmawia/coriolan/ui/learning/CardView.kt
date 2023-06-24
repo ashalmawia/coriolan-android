@@ -6,6 +6,7 @@ import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.ashalmawia.coriolan.databinding.CardTranslationItemBinding
 import com.ashalmawia.coriolan.databinding.CardViewBinding
 import com.ashalmawia.coriolan.databinding.CardViewButtonBinding
@@ -55,6 +56,8 @@ class CardView(
         if (config.alwaysOpen) {
             showBack(false)
         }
+
+        views.badgeNewWord.isVisible = config.showNewBadge
     }
 
     private fun configureButtonsBar(answers: List<CardViewAnswer>) {

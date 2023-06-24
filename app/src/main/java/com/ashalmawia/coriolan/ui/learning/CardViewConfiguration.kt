@@ -7,12 +7,14 @@ import com.ashalmawia.coriolan.R
 
 data class CardViewConfiguration(
         val buttons: List<CardViewButton>,
-        val alwaysOpen: Boolean
+        val alwaysOpen: Boolean,
+        val showNewBadge: Boolean
 ) {
 
     class Builder {
         private val buttons = mutableListOf<CardViewButton>()
         private var alwaysOpen: Boolean? = null
+        private var showNewBadge: Boolean? = null
 
         fun addButton(
                 @StringRes textRes: Int,
@@ -28,12 +30,18 @@ data class CardViewConfiguration(
             return this
         }
 
+        fun showNewBadge(value: Boolean): Builder {
+            showNewBadge = value
+            return this
+        }
+
         fun build(): CardViewConfiguration {
             val open = alwaysOpen ?: throw IllegalStateException("always open must be set")
             if (buttons.isEmpty()) throw IllegalStateException("at least one button must be added")
             if (buttons.size > 4) throw IllegalStateException("CardView can have max 4 buttons")
+            val showNewBadge = showNewBadge ?: false
 
-            return CardViewConfiguration(buttons.toList(), open)
+            return CardViewConfiguration(buttons.toList(), open, showNewBadge)
         }
     }
 }
