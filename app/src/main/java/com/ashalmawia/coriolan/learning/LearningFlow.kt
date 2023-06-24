@@ -84,7 +84,13 @@ class LearningFlow(
 
     fun refetchTask(task: Task) {
         val card = task.card
-        val updated = repository.cardById(card.id, card.domain)!!
+        val updated = repository.cardById(card.id, card.domain)
+        if (updated == null) {
+            // card was deleted
+            dropCard(card)
+            return
+        }
+
         val updatedWithState = createTask(updated, task.exercise)
         if (updated.deckId == deck.id && updatedWithState.isPending()) {
             assignment.replace(card, updatedWithState)
