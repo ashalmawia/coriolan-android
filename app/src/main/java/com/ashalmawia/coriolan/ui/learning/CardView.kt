@@ -3,10 +3,12 @@ package com.ashalmawia.coriolan.ui.learning
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.CardTranslationItemBinding
 import com.ashalmawia.coriolan.databinding.CardViewBinding
 import com.ashalmawia.coriolan.databinding.CardViewButtonBinding
@@ -45,6 +47,8 @@ class CardView(
 
     fun bind(card: Card, answers: List<CardViewAnswer>) {
         views.frontText.text = card.original.value
+        views.frontText.adjustTextSizeForString(card.original.value)
+
         views.transcriptionText.bindTranscription(card.original.transcription)
 
         clearTranslationItems()
@@ -120,6 +124,7 @@ class CardView(
         views.apply {
             val cardTranslationItem = CardTranslationItemBinding.inflate(layoutInflator, translations, false)
             cardTranslationItem.text.text = " " + term.value + " " // fix for italic text clipped by TextView
+            cardTranslationItem.text.adjustTextSizeForString(term.value)
             cardTranslationItem.transcription.bindTranscription(term.transcription)
             translations.addView(cardTranslationItem.root)
         }
@@ -150,7 +155,18 @@ class CardView(
             feedbackView.addAnchor(button)
         }
     }
+
+    private fun TextView.adjustTextSizeForString(string: String) {
+        val textSizeRes = if (string.consistsOfHyeroglyphs()) {
+            R.dimen.text__glyphs
+        } else {
+            R.dimen.card_text_size
+        }
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(textSizeRes))
+    }
 }
+
+private fun String.consistsOfHyeroglyphs() = all { Character.isIdeographic(it.code) }
 
 interface CardViewListener {
 
