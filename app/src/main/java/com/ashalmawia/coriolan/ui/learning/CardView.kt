@@ -115,10 +115,11 @@ class CardView(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun addTranslationItem(term: Term) {
         views.apply {
             val cardTranslationItem = CardTranslationItemBinding.inflate(layoutInflator, translations, false)
-            cardTranslationItem.text.text = term.value
+            cardTranslationItem.text.text = " " + term.value + " " // fix for italic text clipped by TextView
             cardTranslationItem.transcription.bindTranscription(term.transcription)
             translations.addView(cardTranslationItem.root)
         }
