@@ -20,7 +20,7 @@ class PreviewExercise : Exercise {
     override fun name() = R.string.exercise_preview
 
     override val canUndo: Boolean
-        get() = false
+        get() = true
 
     override fun generateTasks(cards: List<CardWithProgress>): List<Task> {
         return cards
