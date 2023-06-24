@@ -54,7 +54,7 @@ interface Repository {
         return allDecks(domain).associateWith { deck ->
             val forward = deckPendingCounts(deck, CardType.FORWARD, date)
             val reverse = deckPendingCounts(deck, CardType.REVERSE, date)
-            PendingCardsCount(forward.total, reverse.total)
+            PendingCardsCount(forward, reverse)
         }
     }
 

@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.ashalmawia.coriolan.learning.Task
-import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import org.joda.time.DateTime
@@ -29,6 +27,9 @@ fun TextView.setStartDrawableTint(@ColorRes colorRes: Int) {
 
 fun Int?.orZero(): Int {
     return this ?: 0
+}
+fun Int?.orMax(): Int {
+    return this ?: Int.MAX_VALUE
 }
 
 fun List<Card>.forward() = filter { it.type == CardType.FORWARD }

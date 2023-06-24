@@ -1487,8 +1487,8 @@ abstract class StorageTest {
 
         // then
         assertEquals(2, decks.size)
-        assertEquals(PendingCardsCount(0, 0), decks[deck1])
-        assertEquals(PendingCardsCount(0, 0), decks[deck2])
+        assertEquals(PendingCardsCount(Counts.empty(), Counts.empty()), decks[deck1])
+        assertEquals(PendingCardsCount(Counts.empty(), Counts.empty()), decks[deck2])
     }
 
     @Test
@@ -1524,7 +1524,7 @@ abstract class StorageTest {
         storage.updateCardLearningProgress(forward1[2], mockLearningProgress(today, -1))
         storage.updateCardLearningProgress(forward1[3], mockLearningProgress(today.plusDays(1), 4))
         storage.updateCardLearningProgress(forward2[0], mockLearningProgress(today.plusDays(3), 4))
-        storage.updateCardLearningProgress(forward1[2], mockLearningProgress(today, -1))
+        storage.updateCardLearningProgress(forward2[2], mockLearningProgress(today, -1))
         storage.updateCardLearningProgress(forward2[1], mockLearningProgress(today.plusDays(1), 4))
         storage.updateCardLearningProgress(forward2[3], mockLearningProgress(today.plusDays(1), 4))
 
@@ -1544,8 +1544,8 @@ abstract class StorageTest {
         // when
         val decks = storage.allDecksWithPendingCounts(domain, today)
         assertEquals(2, decks.size)
-        assertEquals(PendingCardsCount(2, 5), decks[deck1])
-        assertEquals(PendingCardsCount(1, 4), decks[deck2])
+        assertEquals(PendingCardsCount(Counts(1, 1, 0), Counts(2, 1, 2)), decks[deck1])
+        assertEquals(PendingCardsCount(Counts(1, 0, 0), Counts(2, 1, 1)), decks[deck2])
     }
 
     @Test

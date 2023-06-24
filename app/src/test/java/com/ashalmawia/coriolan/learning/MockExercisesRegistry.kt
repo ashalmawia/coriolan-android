@@ -8,6 +8,4 @@ class MockExercisesRegistry(
 ) : ExercisesRegistry {
 
     override fun allExercises(): List<Exercise> = list
-
-    override fun defaultExercise(): Exercise = list[0]
 }

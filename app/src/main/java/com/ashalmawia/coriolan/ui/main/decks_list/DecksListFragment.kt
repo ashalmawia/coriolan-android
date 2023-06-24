@@ -17,6 +17,7 @@ import com.ashalmawia.coriolan.learning.StudyTargetsResolver
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.PendingCardsCount
@@ -30,6 +31,7 @@ import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.util.negativeButton
 import com.ashalmawia.coriolan.ui.util.positiveButton
+import com.ashalmawia.coriolan.util.orMax
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
@@ -196,21 +198,29 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
 
     private fun decksList(): List<FlexListItem> {
         val decks = repository.allDecksWithPendingCounts(domain, today())
-        val listItems = convertDecksToListItems(decks)
+        val studyTargets = studyTargetsResolver.defaultStudyTargets(today())
+        val listItems = convertDecksToListItems(decks, studyTargets)
         return buildDecksList(listItems)
     }
 
-    private fun convertDecksToListItems(decks: Map<Deck, PendingCardsCount>): List<DeckListItem> {
+    private fun convertDecksToListItems(decks: Map<Deck, PendingCardsCount>, studyTargets: StudyTargets): List<DeckListItem> {
         return if (preferences.mixForwardAndReverse) {
             decks.map { (deck, counts) ->
-                DeckListItem(deck, CardTypeFilter.BOTH, counts.total > 0)
+                DeckListItem(deck, CardTypeFilter.BOTH, hasPendingCardsForToday(counts.total, studyTargets))
             }
         } else {
             decks.flatMap { (deck, counts) -> listOf(
-                    DeckListItem(deck, CardTypeFilter.FORWARD, counts.forward > 0),
-                    DeckListItem(deck, CardTypeFilter.REVERSE, counts.reverse > 0)
+                    DeckListItem(deck, CardTypeFilter.FORWARD, hasPendingCardsForToday(counts.forward, studyTargets)),
+                    DeckListItem(deck, CardTypeFilter.REVERSE, hasPendingCardsForToday(counts.reverse, studyTargets))
             ) }
         }
+    }
+
+    private fun hasPendingCardsForToday(counts: Counts, studyTargets: StudyTargets): Boolean {
+        if (counts.relearn > 0) return true
+        val hasPendingNew = counts.new > 0 && studyTargets.new.orMax() > 0
+        val hasPendingReview = counts.review > 0 && studyTargets.review.orMax() > 0
+        return hasPendingNew || hasPendingReview
     }
 
     private fun buildDecksList(decks: List<DeckListItem>): List<FlexListItem> {
