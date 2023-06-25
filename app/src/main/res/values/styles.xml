@@ -120,4 +120,26 @@
 		<item name="android:text">/</item>
 	</style>
 
+	<style name="StatisticsLabel" parent="Coriolan.Text.Body.Large">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginTop">@dimen/spacing__medium</item>
+		<item name="android:layout_marginBottom">@dimen/spacing__tiny</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="StatisticsLegendEntry" parent="Coriolan.Text.Body.Regular">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginBottom">@dimen/spacing__tiny</item>
+		<item name="drawableStartCompat">@drawable/ic_circle_stats</item>
+		<item name="android:drawablePadding">@dimen/spacing__tiny</item>
+		<item name="android:drawableTint">@color/transparent</item>
+	</style>
+
+	<style name="StatisticsLegendEntry.Title">
+		<item name="fontFamily">@font/montserrat_heavy</item>
+		<item name="android:layout_marginBottom">0dp</item>
+	</style>
+
 </resources>

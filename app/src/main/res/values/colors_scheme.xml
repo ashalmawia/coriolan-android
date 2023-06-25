@@ -17,6 +17,7 @@
 	<color name="textColorSecondary">@color/colorPrimary__60</color>
 	<color name="textColorTertiary">@color/grey</color>
 
+	<color name="grey_dark">#7A7979</color>
 	<color name="grey">#BBBBBB</color>
 	<color name="grey_light">#EEEEEE</color>
 	<color name="grey_lightest">#33EEEEEE</color>

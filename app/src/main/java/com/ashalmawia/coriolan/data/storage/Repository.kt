@@ -45,7 +45,6 @@ interface Repository {
 
     fun deleteCard(card: Card)
 
-    @VisibleForTesting
     fun allCards(domain: Domain): List<Card>
 
     fun allDecks(domain: Domain): List<Deck>

@@ -130,7 +130,8 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
     }
 
     private fun switchToStatistics() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_STATISTICS) ?: StatisticsFragment()
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_STATISTICS)
+                ?: StatisticsFragment.create(domain)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_STATISTICS)
                 .commitAllowingStateLoss()

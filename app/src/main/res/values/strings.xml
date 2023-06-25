@@ -227,6 +227,10 @@
 	<string name="overview__empty_deck">This deck is still empty</string>
 	<string name="overview__empty_result">No cards matching this filter</string>
 
+	<!-- Statistics -->
+	<string name="statistics_panel_cards_by_learning_progress">Cards by learning progress</string>
+	<string name="statistics_card_status_forgot">Forgot:</string>
+
 	<!-- General -->
 	<string name="button_ok">OK</string>
 	<string name="button_submit">Submit</string>

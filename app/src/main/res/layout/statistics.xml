@@ -1,14 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:orientation="vertical"
-			  android:layout_width="match_parent"
-			  android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:gravity="center_horizontal"
+	android:orientation="vertical">
 
 	<TextView
-		style="@style/Coriolan.Text.Body.Large.Heavy"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:text="Statistics will be here soon!"/>
+		style="@style/StatisticsLabel"
+		android:text="@string/statistics_panel_cards_by_learning_progress" />
 
-</FrameLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<ir.mahozad.android.PieChart
+			android:id="@+id/panel_cards_by_learning_progress"
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:layout_height="wrap_content" />
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:layout_margin="@dimen/spacing__small"
+			android:orientation="vertical">
+
+			<TextView
+				style="@style/StatisticsLegendEntry.Title"
+				android:text="@string/deck_details_new"
+				app:drawableTint="@color/statistics_new" />
+
+			<TextView
+				android:id="@+id/cards_by_learning_progress_legend_new"
+				style="@style/StatisticsLegendEntry"
+				tools:text="123"
+				/>
+
+			<TextView
+				style="@style/StatisticsLegendEntry.Title"
+				android:text="@string/deck_details_in_progress"
+				app:drawableTint="@color/statistics_in_progress" />
+
+			<TextView
+				android:id="@+id/cards_by_learning_progress_legend_in_progress"
+				style="@style/StatisticsLegendEntry"
+				tools:text="123"
+				/>
+
+			<TextView
+				style="@style/StatisticsLegendEntry.Title"
+				android:text="@string/deck_details_learnt"
+				app:drawableTint="@color/statistics_learnt" />
+
+			<TextView
+				android:id="@+id/cards_by_learning_progress_legend_learnt"
+				style="@style/StatisticsLegendEntry"
+				tools:text="123"
+				/>
+
+			<TextView
+				style="@style/StatisticsLegendEntry.Title"
+				android:text="@string/statistics_card_status_forgot"
+				app:drawableTint="@color/statistics_forgot" />
+
+			<TextView
+				android:id="@+id/cards_by_learning_progress_legend_forgot"
+				style="@style/StatisticsLegendEntry"
+				tools:text="2"
+				/>
+
+			<TextView
+				style="@style/StatisticsLegendEntry.Title"
+				android:layout_marginTop="@dimen/spacing__medium"
+				android:text="@string/deck_details_total"
+				/>
+
+			<TextView
+				android:id="@+id/cards_by_learning_progress_legend_total"
+				style="@style/StatisticsLegendEntry"
+				tools:text="349"
+				/>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</LinearLayout>
