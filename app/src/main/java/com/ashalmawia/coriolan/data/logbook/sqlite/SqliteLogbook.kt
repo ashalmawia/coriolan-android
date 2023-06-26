@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.logbook.LogbookPayload
+import com.ashalmawia.coriolan.data.storage.sqlite.date
 import com.ashalmawia.coriolan.data.storage.sqlite.insertOrUpdate
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -45,6 +46,31 @@ class SqliteLogbook(context: Context) : Logbook {
             } else {
                 return LogbookPayload.create()
             }
+        }
+    }
+
+    override fun cardsStudiedOnDateRange(from: DateTime, to: DateTime): Map<DateTime, Map<CardAction, Int>> {
+        val payloads = readPayloads(from, to)
+        return payloads.mapValues { it.value.cardActions.total.unwrap() }
+    }
+
+    private fun readPayloads(from: DateTime, to: DateTime): Map<DateTime, LogbookPayload> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |   FROM $SQLITE_TABLE_JOURNAL
+            |   WHERE $SQLITE_COLUMN_DATE BETWEEN ? AND ?
+        """.trimMargin(), arrayOf(from.timespamp.toString(), to.timespamp.toString()))
+
+        return cursor.use {
+            val map = mutableMapOf<DateTime, LogbookPayload>()
+            while (it.moveToNext()) {
+                val date = it.date(SQLITE_COLUMN_DATE)
+                val payload = serializer.deserializeLogbookPayload(it.getPayload())
+                map[date] = payload
+            }
+            map
         }
     }
 

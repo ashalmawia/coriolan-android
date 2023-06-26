@@ -13,4 +13,16 @@
 		android:id="@+id/statistics_cards_by_progress"
 		layout="@layout/statistics_cards_by_progress" />
 
+	<TextView
+		style="@style/StatisticsLabel"
+		android:text="@string/statistics_panel_cards_studied_by_day" />
+
+	<com.github.mikephil.charting.charts.LineChart
+		android:id="@+id/cards_studied_by_day"
+		android:layout_width="match_parent"
+		android:layout_height="200dp"
+		android:layout_marginStart="@dimen/spacing__small"
+		android:layout_marginEnd="@dimen/spacing__small"
+		/>
+
 </LinearLayout>
