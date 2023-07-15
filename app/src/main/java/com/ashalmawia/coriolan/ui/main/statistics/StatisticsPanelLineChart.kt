@@ -1,9 +1,10 @@
 package com.ashalmawia.coriolan.ui.main.statistics
 
+import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.databinding.StatisticsBinding
 import com.ashalmawia.coriolan.util.orZero
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -16,18 +17,25 @@ import org.joda.time.format.DateTimeFormat
 
 private val dateFormat = DateTimeFormat.forPattern("dd MMM")
 
-object StatisticsPanelCardsStudiedByDate {
+object StatisticsPanelLineChart {
 
-    fun StatisticsBinding.setUpCardsLearntByDayPanel(from: DateTime, to: DateTime, data: Map<DateTime, Int>) {
+    fun LineChart.setUpLineChart(
+            from: DateTime,
+            to: DateTime,
+            data: Map<DateTime, Int>,
+            @ColorRes colorRes: Int
+    ) {
         val rangeLength = Days.daysBetween(from, to).days
         val allDates = (0 .. rangeLength).map {
             from.plusDays(it)
         }
         val labels = allDates.map { dateFormat.print(it) }
+
         val points = allDates.mapIndexedNotNull { index, date ->
             Entry(index.toFloat(), data[date].orZero().toFloat())
         }
-        val font = ResourcesCompat.getFont(root.context, R.font.font_montserrat_bold)
+
+        val font = ResourcesCompat.getFont(context, R.font.font_montserrat_bold)
         val formatter = object : ValueFormatter() {
             override fun getAxisLabel(value: Float, axis: AxisBase?): String {
                 return labels[value.toInt()]
@@ -37,7 +45,7 @@ object StatisticsPanelCardsStudiedByDate {
                 return ""
             }
         }
-        cardsStudiedByDay.apply {
+        apply {
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 valueFormatter = formatter
@@ -61,7 +69,7 @@ object StatisticsPanelCardsStudiedByDate {
             val lineDataSet = LineDataSet(points, "").apply {
                 lineWidth = 3f
                 mode = LineDataSet.Mode.LINEAR
-                color = resources.getColor(R.color.statistics_learnt, null)
+                color = resources.getColor(colorRes, null)
                 circleRadius = 7f
                 setCircleColor(color)
                 setDrawCircleHole(false)
@@ -72,4 +80,3 @@ object StatisticsPanelCardsStudiedByDate {
         }
     }
 }
-

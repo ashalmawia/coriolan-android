@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.StatisticsBinding
@@ -14,7 +15,7 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsPanelCardsByLearningProgress.setupCardsByLearningProgressPanel
-import com.ashalmawia.coriolan.ui.main.statistics.StatisticsPanelCardsStudiedByDate.setUpCardsLearntByDayPanel
+import com.ashalmawia.coriolan.ui.main.statistics.StatisticsPanelLineChart.setUpLineChart
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
 
@@ -66,7 +67,7 @@ class StatisticsFragment : BaseFragment() {
         val from = today.minusDays(7)
         val to = today
         val data = extractCardsLearntByDayData(from, to)
-        views.setUpCardsLearntByDayPanel(from, to, data)
+        views.cardsStudiedByDay.setUpLineChart(from, to, data, R.color.statistics_learnt)
     }
 
     private fun extractCardsLearntByDayData(from: DateTime, to: DateTime): Map<DateTime, Int> {
