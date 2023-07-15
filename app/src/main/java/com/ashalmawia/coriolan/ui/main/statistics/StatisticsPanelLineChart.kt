@@ -58,6 +58,7 @@ object StatisticsPanelLineChart {
             legend.isEnabled = false
             isHighlightPerDragEnabled = false
             isHighlightPerTapEnabled = false
+            extraBottomOffset = 10f
 
             val lineDataSet = LineDataSet(points, "").apply {
                 lineWidth = 3f
