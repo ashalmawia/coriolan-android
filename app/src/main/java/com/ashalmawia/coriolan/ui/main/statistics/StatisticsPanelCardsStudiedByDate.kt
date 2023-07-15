@@ -43,11 +43,14 @@ object StatisticsPanelCardsStudiedByDate {
                 valueFormatter = formatter
                 granularity = 1f
                 typeface = font
+                yOffset = 10f
                 setDrawGridLines(false)
             }
             axisLeft.apply {
                 typeface = font
+                granularity = 1f
                 axisMinimum = 0f
+                xOffset = 10f
             }
             axisRight.isEnabled = false
             description.isEnabled = false

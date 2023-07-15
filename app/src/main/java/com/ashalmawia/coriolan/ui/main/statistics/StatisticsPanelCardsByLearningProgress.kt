@@ -43,7 +43,8 @@ object StatisticsPanelCardsByLearningProgress {
     }
 
     private fun bindLegendLabel(status: Status, label: TextView, data: Map<Status, Int>) {
-        label.text = data[status].toString()
+        val value = data[status] ?: 0
+        label.text = value.toString()
     }
 
     @ColorRes
