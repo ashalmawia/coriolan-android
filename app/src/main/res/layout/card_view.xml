@@ -30,7 +30,6 @@
 				android:id="@+id/buttonsBar"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:visibility="invisible"
 				app:cardElevation="15dp">
 
 				<androidx.gridlayout.widget.GridLayout
@@ -88,6 +87,7 @@
 					style="@style/CardCover"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
+					android:visibility="gone"
 					tools:visibility="gone"
 					/>
 

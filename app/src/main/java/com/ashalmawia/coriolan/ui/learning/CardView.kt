@@ -34,7 +34,6 @@ class CardView(
 
     init {
         views.apply {
-            frontCover.setOnSingleClickListener { showBack(true) }
             backCover.setOnSingleClickListener { showBack(true) }
 
             buttons = initializeButtons(config.buttons)
@@ -57,12 +56,14 @@ class CardView(
 
         configureButtonsBar(answers)
 
-        showFront()
-        if (config.alwaysOpen) {
-            showBack(false)
-        }
-
         views.badgeNewWord.isVisible = config.showNewBadge
+
+        post {
+            showFront()
+            if (config.alwaysOpen) {
+                showBack(false)
+            }
+        }
     }
 
     private fun configureButtonsBar(answers: List<CardViewAnswer>) {
@@ -74,49 +75,41 @@ class CardView(
     }
 
     private fun showFront() {
-        if (backShown() && !config.alwaysOpen) {
-            hideButtonBarAnimated()
-        }
-        views.apply {
-            frontCover.visible = false
-            backCover.visible = true
-        }
+        val animate = backShown() && !config.alwaysOpen
+        hideButtonBar(animate)
+        views.backCover.visible = true
     }
 
     private fun showBack(animated: Boolean) {
-        views.backCover.visibility = View.GONE
-
-        if (animated) {
-            showButtonBarAnimated()
-        } else {
-            views.buttonsBar.visible = true
-        }
+        views.backCover.visible = false
+        showButtonBar(animated)
     }
 
-    private fun backShown() = !views.frontCover.visible && !views.backCover.visible
+    private fun backShown() = !views.backCover.visible
 
-    private fun showButtonBarAnimated() {
+    private fun showButtonBar(animated: Boolean) {
         views.apply {
-            if (!buttonsBar.visible) {
-                buttonsBar.y += buttonsBar.measuredHeight
-                buttonsBar.visible = true
+            if (animated) {
+                val animator = ObjectAnimator.ofFloat(
+                        buttonsBar, "translationY", buttonsBar.measuredHeight.toFloat(), 0f)
+                animator.duration = BUTTON_BAR_ANIMATION_DURATION
+                animator.start()
+            } else {
+                buttonsBar.translationY = 0f
             }
-
-            val animator = ObjectAnimator.ofFloat(
-                    buttonsBar, "y", buttonsBar.y, buttonsBar.y - buttonsBar.measuredHeight)
-            animator.duration = BUTTON_BAR_ANIMATION_DURATION
-            animator.start()
         }
     }
 
-    private fun hideButtonBarAnimated() {
+    private fun hideButtonBar(animated: Boolean) {
         views.apply {
-            if (!buttonsBar.visible) return
-
-            val animator = ObjectAnimator.ofFloat(
-                    buttonsBar, "y", buttonsBar.y, buttonsBar.y + buttonsBar.measuredHeight)
-            animator.duration = BUTTON_BAR_ANIMATION_DURATION
-            animator.start()
+            if (animated) {
+                val animator = ObjectAnimator.ofFloat(
+                        buttonsBar, "translationY", 0f, buttonsBar.measuredHeight.toFloat())
+                animator.duration = BUTTON_BAR_ANIMATION_DURATION
+                animator.start()
+            } else {
+                buttonsBar.translationY = buttonsBar.measuredHeight.toFloat()
+            }
         }
     }
 
