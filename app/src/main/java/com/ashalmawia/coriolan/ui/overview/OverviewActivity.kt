@@ -5,9 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +17,7 @@ import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
+import com.ashalmawia.coriolan.ui.view.setOnItemSelectedListener
 import com.ashalmawia.coriolan.ui.view.visible
 import org.koin.android.ext.android.inject
 
@@ -85,13 +83,9 @@ class OverviewActivity : BaseActivity(), OverviewAdapter.Callback, SearchView.On
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, values)
         views.sortingSpinner.adapter = spinnerAdapter
         views.sortingSpinner.setSelection(OverviewSorting.values().indexOf(defaultSorting))
-        views.sortingSpinner.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val sorting = OverviewSorting.values()[position]
-                bind(sorting)
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        views.sortingSpinner.setOnItemSelectedListener { position ->
+            val sorting = OverviewSorting.values()[position]
+            bind(sorting)
         }
     }
 

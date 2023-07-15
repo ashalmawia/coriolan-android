@@ -232,6 +232,10 @@
 	<string name="statistics_panel_cards_studied_by_day">Cards studied by day</string>
 	<string name="statistics_panel_cards_added_by_day">Cards added by day</string>
 	<string name="statistics_card_status_forgot">Forgot:</string>
+	<string name="statistics_date_range">Date range:</string>
+	<string name="statistics_date_range__week">Last week</string>
+	<string name="statistics_date_range__month">Last month</string>
+	<string name="statistics_date_range__year">Last year</string>
 
 	<!-- General -->
 	<string name="button_ok">OK</string>

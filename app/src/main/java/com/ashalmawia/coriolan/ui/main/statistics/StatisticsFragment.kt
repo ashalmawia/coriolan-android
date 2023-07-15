@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
@@ -17,10 +18,15 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsPanelCardsByLearningProgress.setupCardsByLearningProgressPanel
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsPanelLineChart.setUpLineChart
+import com.ashalmawia.coriolan.ui.view.setOnItemSelectedListener
 import org.joda.time.DateTime
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
+
+private const val POSITION_WEEK = 0
+private const val POSITION_MONTH = 1
+private const val POSITION_YEAR = 2
 
 class StatisticsFragment : BaseFragment() {
 
@@ -58,6 +64,11 @@ class StatisticsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setUpDateRangePicker()
+        initializePanels()
+    }
+
+    private fun initializePanels() {
         setupCardsByLearningProgressPanel()
         setUpCardsLearntByDayPanel()
         setUpCardsAddedByDayPanel()
@@ -69,17 +80,15 @@ class StatisticsFragment : BaseFragment() {
     }
 
     private fun setUpCardsLearntByDayPanel() {
-        val from = today.minusDays(7)
-        val to = today
-        val data = extractCardsLearntByDayData(from, to)
-        views.cardsStudiedByDay.setUpLineChart(from, to, data, R.color.statistics_learnt)
+        val range = selectedDateRange()
+        val data = extractCardsLearntByDayData(range.from, range.to)
+        views.cardsStudiedByDay.setUpLineChart(range.from, range.to, data, R.color.statistics_learnt)
     }
 
     private fun setUpCardsAddedByDayPanel() {
-        val from = today.minusDays(7)
-        val to = today
+        val range = selectedDateRange()
         val data = extractCardsAddedByDayData()
-        views.cardsAddedByDay.setUpLineChart(from, to, data, R.color.statistics_in_progress)
+        views.cardsAddedByDay.setUpLineChart(range.from, range.to, data, R.color.statistics_in_progress)
     }
 
     private fun extractCardsLearntByDayData(from: DateTime, to: DateTime): Map<DateTime, Int> {
@@ -99,4 +108,37 @@ class StatisticsFragment : BaseFragment() {
         val learningProgress = repository.getProgressForCardsWithOriginals(allCards.map { it.id })
         return learningProgress.values.groupBy { it.status }.mapValues { it.value.count() }.toSortedMap()
     }
+
+    private fun setUpDateRangePicker() {
+        val options = listOf(
+                // shall be in line with the POSITION_* constants
+                R.string.statistics_date_range__week,
+                R.string.statistics_date_range__month,
+                R.string.statistics_date_range__year
+        )
+        val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                options.map { requireContext().getString(it) })
+        views.dateRangePicker.apply {
+            this.adapter = adapter
+            setSelection(0)
+            setOnItemSelectedListener {
+                initializePanels()
+            }
+        }
+    }
+
+    private fun selectedDateRange(): DateRange {
+        val selectedPosition = views.dateRangePicker.selectedItemPosition
+        val dateFrom = when (selectedPosition) {
+            POSITION_WEEK -> today.minusWeeks(1)
+            POSITION_MONTH -> today.minusMonths(1)
+            POSITION_YEAR -> today.minusYears(1)
+            else -> throw IllegalStateException("unsupported selection: $selectedPosition")
+        }
+        return DateRange(dateFrom, today)
+    }
 }
+
+private data class DateRange(val from: DateTime, val to: DateTime)

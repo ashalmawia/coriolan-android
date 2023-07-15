@@ -10,6 +10,29 @@
 		android:orientation="vertical"
 		android:paddingBottom="@dimen/spacing__very_large">
 
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_horizontal">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="end"
+				android:layout_marginEnd="@dimen/spacing__medium"
+				android:text="@string/statistics_date_range"
+				style="@style/Coriolan.Text.Label"
+				/>
+
+			<Spinner
+				android:id="@+id/date_range_picker"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/>
+
+		</LinearLayout>
+
 		<TextView
 			style="@style/Statistics.Label"
 			android:text="@string/statistics_panel_cards_by_learning_progress" />

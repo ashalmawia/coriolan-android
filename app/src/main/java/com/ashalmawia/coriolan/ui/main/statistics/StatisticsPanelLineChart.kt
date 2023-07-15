@@ -25,19 +25,12 @@ object StatisticsPanelLineChart {
             data: Map<DateTime, Int>,
             @ColorRes colorRes: Int
     ) {
-        val rangeLength = Days.daysBetween(from, to).days
-        val allDates = (0 .. rangeLength).map {
-            from.plusDays(it)
-        }
-        val labels = allDates.map { dateFormat.print(it) }
-
-        val points = allDates.mapIndexedNotNull { index, date ->
-            Entry(index.toFloat(), data[date].orZero().toFloat())
-        }
+        val (points, labels) = generateChartData(from, to, data)
 
         val font = ResourcesCompat.getFont(context, R.font.font_montserrat_bold)
         val formatter = object : ValueFormatter() {
             override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                if (value >= labels.size) return "" // avoiding weird MPChart concurrency(?) issues
                 return labels[value.toInt()]
             }
 
@@ -70,7 +63,7 @@ object StatisticsPanelLineChart {
                 lineWidth = 3f
                 mode = LineDataSet.Mode.LINEAR
                 color = resources.getColor(colorRes, null)
-                circleRadius = 7f
+                circleRadius = 3f
                 setCircleColor(color)
                 setDrawCircleHole(false)
                 valueFormatter = formatter
@@ -79,4 +72,42 @@ object StatisticsPanelLineChart {
             invalidate()
         }
     }
+
+    private fun generateChartData(from: DateTime, to: DateTime, data: Map<DateTime, Int>): ChartData {
+        val rangeLength = Days.daysBetween(from, to).days
+        return if (rangeLength > 31) {
+            generateChartDataGroupedByMonth(from, to, data)
+        } else {
+            generateChartDataDefault(from, to, data)
+        }
+    }
+
+    private fun generateChartDataGroupedByMonth(from: DateTime, to: DateTime, data: Map<DateTime, Int>): ChartData {
+        val dataByMonth = data.entries.groupBy { it.key.monthOfYear() }.mapValues { it.value.sumOf { it.value } }
+        val months = mutableListOf<DateTime.Property>()
+        var current = to
+        while (current > from) {
+            months.add(current.monthOfYear())
+            current = current.minusMonths(1)
+        }
+        val points = months.mapIndexed { index, month ->
+            Entry(index.toFloat(), dataByMonth[month].orZero().toFloat())
+        }
+        val labels = months.map { it.asShortText }
+        return ChartData(points, labels)
+    }
+
+    private fun generateChartDataDefault(from: DateTime, to: DateTime, data: Map<DateTime, Int>): ChartData {
+        val rangeLength = Days.daysBetween(from, to).days
+        val allDates = (0 .. rangeLength).map {
+            from.plusDays(it)
+        }
+        val points = allDates.mapIndexed { index, date ->
+            Entry(index.toFloat(), data[date].orZero().toFloat())
+        }
+        val labels = allDates.map { dateFormat.print(it) }
+        return ChartData(points, labels)
+    }
 }
+
+private data class ChartData(val points: List<Entry>, val labels: List<String>)
