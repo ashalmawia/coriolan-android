@@ -6,3 +6,5 @@ import org.joda.time.DateTime
 data class CardPayload(val translationIds: List<TermId>, val dateAdded: Long = DateTime.now().timespamp)
 
 data class TermId(val id: Long)
+
+fun CardPayload.dateAdded() = DateTime(dateAdded)

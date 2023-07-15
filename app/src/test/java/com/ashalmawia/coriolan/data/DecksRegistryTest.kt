@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.data.storage.MockRepository
 import com.ashalmawia.coriolan.data.storage.justAddTerm
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.MockExercisesRegistry
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.forward
 import com.ashalmawia.coriolan.util.reverse
@@ -535,7 +536,7 @@ class DecksRegistryTest {
 
         val mockRegistry = createDeckRegistry()
 
-        val card = Card(77L, deck.id, domain, CardType.FORWARD, term1, listOf(term2))
+        val card = Card(77L, deck.id, domain, CardType.FORWARD, term1, listOf(term2), mockToday())
 
         // when
         val edited = mockRegistry.editCard(card,

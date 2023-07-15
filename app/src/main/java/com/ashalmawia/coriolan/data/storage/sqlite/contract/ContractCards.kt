@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.dateAdded
 import com.ashalmawia.coriolan.data.storage.sqlite.string
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
@@ -76,13 +77,15 @@ object ContractCards {
     }
     fun Cursor.cardWihoutTranslations(domain: Domain): Card {
         val id = cardsId()
+        val payload = cardsPayload()
         return Card(
                 id,
                 cardsDeckId(),
                 domain,
                 cardsCardType(),
                 term(),
-                emptyList()
+                emptyList(),
+                payload.dateAdded()
         )
     }
 

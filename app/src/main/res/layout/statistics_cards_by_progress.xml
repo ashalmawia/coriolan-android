@@ -20,53 +20,53 @@
 		android:orientation="vertical">
 
 		<TextView
-			style="@style/StatisticsLegendEntry.Title"
+			style="@style/Statistics.LegendEntry.Title"
 			app:drawableTint="@color/statistics_new"
 			android:text="@string/deck_details_new" />
 
 		<TextView
 			android:id="@+id/cards_by_learning_progress_legend_new"
-			style="@style/StatisticsLegendEntry"
+			style="@style/Statistics.LegendEntry"
 			tools:text="123" />
 
 		<TextView
-			style="@style/StatisticsLegendEntry.Title"
+			style="@style/Statistics.LegendEntry.Title"
 			app:drawableTint="@color/statistics_in_progress"
 			android:text="@string/deck_details_in_progress" />
 
 		<TextView
 			android:id="@+id/cards_by_learning_progress_legend_in_progress"
-			style="@style/StatisticsLegendEntry"
+			style="@style/Statistics.LegendEntry"
 			tools:text="123" />
 
 		<TextView
-			style="@style/StatisticsLegendEntry.Title"
+			style="@style/Statistics.LegendEntry.Title"
 			app:drawableTint="@color/statistics_learnt"
 			android:text="@string/deck_details_learnt" />
 
 		<TextView
 			android:id="@+id/cards_by_learning_progress_legend_learnt"
-			style="@style/StatisticsLegendEntry"
+			style="@style/Statistics.LegendEntry"
 			tools:text="123" />
 
 		<TextView
-			style="@style/StatisticsLegendEntry.Title"
+			style="@style/Statistics.LegendEntry.Title"
 			app:drawableTint="@color/statistics_forgot"
 			android:text="@string/statistics_card_status_forgot" />
 
 		<TextView
 			android:id="@+id/cards_by_learning_progress_legend_forgot"
-			style="@style/StatisticsLegendEntry"
+			style="@style/Statistics.LegendEntry"
 			tools:text="2" />
 
 		<TextView
-			style="@style/StatisticsLegendEntry.Title"
+			style="@style/Statistics.LegendEntry.Title"
 			android:layout_marginTop="@dimen/spacing__medium"
 			android:text="@string/deck_details_total" />
 
 		<TextView
 			android:id="@+id/cards_by_learning_progress_legend_total"
-			style="@style/StatisticsLegendEntry"
+			style="@style/Statistics.LegendEntry"
 			tools:text="349" />
 
 	</LinearLayout>

@@ -11,6 +11,7 @@ import com.ashalmawia.coriolan.databinding.StatisticsBinding
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayManager.today
 import com.ashalmawia.coriolan.learning.exercise.CardAction
+import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
@@ -45,6 +46,9 @@ class StatisticsFragment : BaseFragment() {
     private val allDecks: List<Deck> by lazy {
         repository.allDecks(domain)
     }
+    private val allCards: List<Card> by lazy {
+        repository.allCards(domain)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         views = StatisticsBinding.inflate(layoutInflater, container, false)
@@ -56,6 +60,7 @@ class StatisticsFragment : BaseFragment() {
 
         setupCardsByLearningProgressPanel()
         setUpCardsLearntByDayPanel()
+        setUpCardsAddedByDayPanel()
     }
 
     private fun setupCardsByLearningProgressPanel() {
@@ -70,6 +75,13 @@ class StatisticsFragment : BaseFragment() {
         views.cardsStudiedByDay.setUpLineChart(from, to, data, R.color.statistics_learnt)
     }
 
+    private fun setUpCardsAddedByDayPanel() {
+        val from = today.minusDays(7)
+        val to = today
+        val data = extractCardsAddedByDayData()
+        views.cardsAddedByDay.setUpLineChart(from, to, data, R.color.statistics_in_progress)
+    }
+
     private fun extractCardsLearntByDayData(from: DateTime, to: DateTime): Map<DateTime, Int> {
         val data = logbook.cardsStudiedOnDateRange(from, to, allDecks)
         return data.mapValues { pair ->
@@ -79,8 +91,11 @@ class StatisticsFragment : BaseFragment() {
         }
     }
 
+    private fun extractCardsAddedByDayData(): Map<DateTime, Int> {
+        return allCards.groupBy { it.dateAdded }.mapValues { it.value.size }
+    }
+
     private fun extractCardByLearningProgressData(): Map<Status, Int> {
-        val allCards = repository.allCards(domain)
         val learningProgress = repository.getProgressForCardsWithOriginals(allCards.map { it.id })
         return learningProgress.values.groupBy { it.status }.mapValues { it.value.count() }.toSortedMap()
     }

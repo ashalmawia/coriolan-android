@@ -120,15 +120,17 @@
 		<item name="android:text">/</item>
 	</style>
 
-	<style name="StatisticsLabel" parent="Coriolan.Text.Body.Large">
+	<style name="Statistics" />
+
+	<style name="Statistics.Label" parent="Coriolan.Text.Body.Large">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:layout_marginTop">@dimen/spacing__medium</item>
+		<item name="android:layout_marginTop">@dimen/spacing__very_large</item>
 		<item name="android:layout_marginBottom">@dimen/spacing__tiny</item>
 		<item name="android:textStyle">bold</item>
 	</style>
 
-	<style name="StatisticsLegendEntry" parent="Coriolan.Text.Body.Regular">
+	<style name="Statistics.LegendEntry" parent="Coriolan.Text.Body.Regular">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_marginBottom">@dimen/spacing__tiny</item>
@@ -137,9 +139,16 @@
 		<item name="android:drawableTint">@color/transparent</item>
 	</style>
 
-	<style name="StatisticsLegendEntry.Title">
+	<style name="Statistics.LegendEntry.Title">
 		<item name="fontFamily">@font/montserrat_heavy</item>
 		<item name="android:layout_marginBottom">0dp</item>
+	</style>
+
+	<style name="Statistics.LineChart">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">200dp</item>
+		<item name="android:layout_marginStart">@dimen/spacing__tiny</item>
+		<item name="android:layout_marginEnd">@dimen/spacing__small</item>
 	</style>
 
 </resources>

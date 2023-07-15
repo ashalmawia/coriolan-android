@@ -5,6 +5,7 @@ import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Status
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
@@ -73,7 +74,8 @@ class MockRepository : Repository {
                 domain,
                 if (domain.langOriginal() == original.language) CardType.FORWARD else CardType.REVERSE,
                 original,
-                translations
+                translations,
+                mockToday()
         )
         cards.add(card)
         return card
@@ -89,7 +91,7 @@ class MockRepository : Repository {
             throw DataProcessingException("card is not in the repo: $card")
         }
 
-        val updated = Card(card.id, deckId, card.domain, card.type, original, translations)
+        val updated = Card(card.id, deckId, card.domain, card.type, original, translations, mockToday())
         cards.remove(card)
         cards.add(updated)
         return updated

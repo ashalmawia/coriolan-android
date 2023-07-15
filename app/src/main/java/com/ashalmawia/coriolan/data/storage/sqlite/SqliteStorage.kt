@@ -66,6 +66,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.dateAdded
 import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.ExerciseData
 import com.ashalmawia.coriolan.learning.LearningProgress
@@ -326,11 +327,12 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
         val db = helper.writableDatabase
         val type = if (domain.langOriginal().id == original.language.id) CardType.FORWARD else CardType.REVERSE
+        val payload = createCardPayload(translations)
         val cardId = try {
             db.insert(
                     CARDS,
                     null,
-                    createCardContentValues(domain.id, deckId, original, type, createCardPayload(translations)))
+                    createCardContentValues(domain.id, deckId, original, type, payload))
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to add card ($original -> $translations), constraint violation", e)
         }
@@ -339,7 +341,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             throw DataProcessingException("failed to insert card ($original -> $translations)")
         }
 
-        return Card(cardId, deckId, domain, type, original, translations)
+        return Card(cardId, deckId, domain, type, original, translations, payload.dateAdded())
     }
 
     private fun verifyTranslations(original: Term, translations: List<Term>) {
@@ -463,8 +465,9 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         verifyTranslations(original, translations)
 
         val db = helper.writableDatabase
+        val payload = createCardPayload(translations)
         val cv = createCardContentValues(
-                card.domain.id, deckId, original, card.type, createCardPayload(translations), card.id
+                card.domain.id, deckId, original, card.type, payload, card.id
         )
         val updated = try {
             db.update(CARDS, cv, "$CARDS_ID = ?", arrayOf(card.id.toString()))
@@ -476,7 +479,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             throw DataProcessingException("failed to update card ${card.id}")
         }
 
-        return Card(card.id, deckId, card.domain, card.type, original, translations)
+        return Card(card.id, deckId, card.domain, card.type, original, translations, payload.dateAdded())
     }
 
     override fun deleteCard(card: Card) {

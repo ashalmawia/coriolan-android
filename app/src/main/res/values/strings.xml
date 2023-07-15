@@ -230,6 +230,7 @@
 	<!-- Statistics -->
 	<string name="statistics_panel_cards_by_learning_progress">Cards by learning progress</string>
 	<string name="statistics_panel_cards_studied_by_day">Cards studied by day</string>
+	<string name="statistics_panel_cards_added_by_day">Cards added by day</string>
 	<string name="statistics_card_status_forgot">Forgot:</string>
 
 	<!-- General -->

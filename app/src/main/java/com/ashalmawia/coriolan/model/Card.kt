@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import org.joda.time.DateTime
 import java.lang.IllegalArgumentException
 
 data class Card(
@@ -9,7 +10,8 @@ data class Card(
         val domain: Domain,
         val type: CardType,
         val original: Term,
-        val translations: List<Term>
+        val translations: List<Term>,
+        val dateAdded: DateTime
 )
 
 enum class CardType(val value: String) {
