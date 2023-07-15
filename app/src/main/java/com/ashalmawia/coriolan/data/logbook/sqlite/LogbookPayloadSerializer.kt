@@ -12,6 +12,10 @@ class LogbookPayloadSerializer {
     }
 
     fun deserializeLogbookPayload(payload: String): LogbookPayload {
-        return objectMapper.readValue(payload, LogbookPayload::class.java)
+        try {
+            return objectMapper.readValue(payload, LogbookPayload::class.java)
+        } catch (e: Exception) {
+            return LogbookPayload.create()
+        }
     }
 }
