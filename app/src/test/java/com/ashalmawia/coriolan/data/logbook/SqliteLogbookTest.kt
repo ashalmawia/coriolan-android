@@ -5,6 +5,7 @@ import com.ashalmawia.coriolan.learning.LearningDay
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.model.mockDeck
 import com.ashalmawia.coriolan.util.orZero
 import org.junit.Assert.*
 import org.junit.Test
@@ -222,6 +223,70 @@ class SqliteLogbookTest {
         assertValues(2, 2, 1, countsA)
         assertValues(3, 1, 0, countsB)
         assertValues(5, 3, 1, countsTotal)
+    }
+
+    @Test
+    fun test__cardsStudiedOnDateRange_sameDate() {
+        // given
+        val date = today
+        val deckId1 = 1L
+        val deckId2 = 2L
+        val decks = listOf(mockDeck(id = deckId1), mockDeck(id = deckId2))
+
+        // when
+        var counts = logbook.cardsStudiedOnDateRange(date, date, decks)
+
+        // then
+        assertTrue(counts.isEmpty())
+
+        // when
+        logbook.incrementCardActions(date, exerciseId, deckId1, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, deckId1, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, exerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+        counts = logbook.cardsStudiedOnDateRange(date, date, decks)
+
+        // then
+        assertEquals(1, counts.size)
+        assertEquals(mapOf(
+                CardAction.NEW_CARD_FIRST_SEEN to 2,
+                CardAction.CARD_REVIEWED to 1
+        ), counts[date])
+    }
+
+    @Test
+    fun test__cardsStudiedOnDateRange_week() {
+        // given
+        val dateStart = today.minusDays(7)
+        val dateEnd = today
+        val deckId1 = 1L
+        val deckId2 = 2L
+        val decks = listOf(mockDeck(id = deckId1), mockDeck(id = deckId2))
+
+        // when
+        var counts = logbook.cardsStudiedOnDateRange(dateStart, dateEnd, decks)
+
+        // then
+        assertTrue(counts.isEmpty())
+
+        // when
+        logbook.incrementCardActions(dateStart, exerciseId, deckId1, CardAction.NEW_CARD_FIRST_SEEN)
+        counts = logbook.cardsStudiedOnDateRange(dateStart, dateEnd, decks)
+
+        // then
+        assertEquals(1, counts.size)
+        assertEquals(mapOf(CardAction.NEW_CARD_FIRST_SEEN to 1), counts[dateStart])
+
+        // when
+        logbook.incrementCardActions(dateStart, exerciseId, deckId2, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(dateStart.plusDays(2), exerciseId, deckId1, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(dateEnd, exerciseId, deckId1, CardAction.CARD_REVIEWED)
+        counts = logbook.cardsStudiedOnDateRange(dateStart, dateEnd, decks)
+
+        // then
+        assertEquals(3, counts.size)
+        assertEquals(mapOf(CardAction.NEW_CARD_FIRST_SEEN to 2), counts[dateStart])
+        assertEquals(mapOf(CardAction.CARD_REVIEWED to 1), counts[dateStart.plusDays(2)])
+        assertEquals(mapOf(CardAction.CARD_REVIEWED to 1), counts[dateEnd])
     }
 
     private fun recordCardRelearned(date: LearningDay, deckId: Long = 1L) {

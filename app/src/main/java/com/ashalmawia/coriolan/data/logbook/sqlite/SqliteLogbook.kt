@@ -4,12 +4,15 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import com.ashalmawia.coriolan.data.logbook.Logbook
+import com.ashalmawia.coriolan.data.logbook.LogbookCardActionsPayloadEntry
 import com.ashalmawia.coriolan.data.logbook.LogbookPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.date
 import com.ashalmawia.coriolan.data.storage.sqlite.insertOrUpdate
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.util.orZero
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
 
@@ -49,9 +52,21 @@ class SqliteLogbook(context: Context) : Logbook {
         }
     }
 
-    override fun cardsStudiedOnDateRange(from: DateTime, to: DateTime): Map<DateTime, Map<CardAction, Int>> {
+    override fun cardsStudiedOnDateRange(from: DateTime, to: DateTime, decks: List<Deck>): Map<DateTime, Map<CardAction, Int>> {
         val payloads = readPayloads(from, to)
-        return payloads.mapValues { it.value.cardActions.total.unwrap() }
+        val set = decks.map { it.id }.toSet()
+        return payloads.mapValues {
+            val byDeck: Map<Long, LogbookCardActionsPayloadEntry> = it.value.cardActions.byDeck
+            val filtered: Map<Long, LogbookCardActionsPayloadEntry> = byDeck.filterKeys { set.contains(it) }
+            val unwrapped: Map<Long, Map<CardAction, Int>> = filtered.mapValues { it.value.unwrap() }
+            val result = mutableMapOf<CardAction, Int>()
+            unwrapped.values.forEach { map ->
+                map.forEach { entry ->
+                    result[entry.key] = result[entry.key].orZero() + entry.value
+                }
+            }
+            result
+        }
     }
 
     private fun readPayloads(from: DateTime, to: DateTime): Map<DateTime, LogbookPayload> {

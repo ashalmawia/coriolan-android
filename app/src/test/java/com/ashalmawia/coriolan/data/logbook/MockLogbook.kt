@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.logbook
 
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
 
@@ -32,5 +33,9 @@ class MockLogbook : Logbook {
 
     override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
         data[cardAction] = data[cardAction].orZero() - 1
+    }
+
+    override fun cardsStudiedOnDateRange(from: DateTime, to: DateTime, decks: List<Deck>): Map<DateTime, Map<CardAction, Int>> {
+        return emptyMap()
     }
 }
