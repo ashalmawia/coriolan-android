@@ -158,7 +158,7 @@ class CardView(
     }
 
     private fun TextView.adjustTextSizeForString(string: String) {
-        val textSizeRes = if (string.consistsOfHyeroglyphs()) {
+        val textSizeRes = if (string.containsHyeroglyphs()) {
             R.dimen.text__glyphs
         } else {
             R.dimen.card_text_size
@@ -167,7 +167,7 @@ class CardView(
     }
 }
 
-private fun String.consistsOfHyeroglyphs() = all { Character.isIdeographic(it.code) }
+private fun String.containsHyeroglyphs() = any { Character.isIdeographic(it.code) }
 
 interface CardViewListener {
 
