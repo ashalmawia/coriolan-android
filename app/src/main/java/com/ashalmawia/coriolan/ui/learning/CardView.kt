@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.databinding.CardViewButtonBinding
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.commons.setOnSingleClickListener
+import com.ashalmawia.coriolan.ui.util.fixItalicClipping
 import com.ashalmawia.coriolan.ui.view.layoutInflator
 import com.ashalmawia.coriolan.ui.view.visible
 
@@ -123,7 +124,7 @@ class CardView(
     private fun addTranslationItem(term: Term) {
         views.apply {
             val cardTranslationItem = CardTranslationItemBinding.inflate(layoutInflator, translations, false)
-            cardTranslationItem.text.text = " " + term.value + " " // fix for italic text clipped by TextView
+            cardTranslationItem.text.text = term.value
             cardTranslationItem.text.adjustTextSizeForString(term.value)
             cardTranslationItem.transcription.bindTranscription(term.transcription)
             translations.addView(cardTranslationItem.root)
@@ -135,7 +136,7 @@ class CardView(
     }
 
     private fun TextView.bindTranscription(transcription: String?) {
-        text = transcription
+        text = transcription.fixItalicClipping()
         visible = !transcription.isNullOrBlank()
     }
 
