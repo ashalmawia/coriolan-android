@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.exercise.preview
 
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.Task
@@ -19,10 +18,6 @@ class PreviewExerciseRenderer(
 ) : ExerciseRenderer, CardViewListener {
 
     private val cardView = CardView(context, cardViewConfig(), this)
-
-    override fun prepareUi(context: Context, parentView: ViewGroup): View {
-        return cardView
-    }
 
     override fun renderTask(task: Task) {
         uiContainer.removeAllViews()

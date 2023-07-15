@@ -1,7 +1,6 @@
 package com.ashalmawia.coriolan.learning.exercise.flashcards
 
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.LearningProgress
@@ -21,10 +20,6 @@ class FlashcardsExerciseRenderer(
 ): ExerciseRenderer, CardViewListener {
 
     private val cardView = CardView(context, flashcardsCardViewConfig(), this)
-
-    override fun prepareUi(context: Context, parentView: ViewGroup): View {
-        return cardView
-    }
 
     override fun renderTask(task: Task) {
         uiContainer.removeAllViews()
