@@ -169,7 +169,7 @@
 	<string name="backup__restore_select_and_restore">Select file and restore</string>
 	<string name="backup__restore_select_file">Select backup file:</string>
 	<string name="backup__restoring_1">Selected backup to restore from:</string>
-	<string name="backup__restoring_2">We are now restroing your data. It may take some time. Please be patient…</string>
+	<string name="backup__restoring_2">We are now restoring your data. It may take some time. Please be patient…</string>
 	<string name="backup__restore_failed">Failed to restore data from this backup. You local data was not changed.</string>
 	<string name="backup__restore_final_warning_title">Possible data loss!</string>
 	<string name="backup__restore_final_warning_message">Restoring from a backup will overwrite all the data you have locally!
