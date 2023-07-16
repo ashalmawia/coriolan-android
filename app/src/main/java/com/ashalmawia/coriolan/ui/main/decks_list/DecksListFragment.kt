@@ -9,29 +9,25 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
 import com.ashalmawia.coriolan.learning.StudyTargets
-import com.ashalmawia.coriolan.learning.StudyTargetsResolver
 import com.ashalmawia.coriolan.learning.TodayChangeListener
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
-import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
-import com.ashalmawia.coriolan.model.PendingCardsCount
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditDeckActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListBuilder
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
-import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.ui.learning.LearningActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
+import com.ashalmawia.coriolan.ui.util.activityViewModelBuilder
 import com.ashalmawia.coriolan.ui.util.negativeButton
 import com.ashalmawia.coriolan.ui.util.positiveButton
-import com.ashalmawia.coriolan.util.orMax
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
@@ -50,14 +46,11 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     private lateinit var views: LearningBinding
 
     private val repository: Repository by inject()
-    private val preferences: Preferences by inject()
-    private val studyTargetsResolver: StudyTargetsResolver by inject()
-
-    private val domain: Domain by lazy {
-        val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
-        repository.domainById(domainId)!!
-    }
     private val adapter = DecksListAdapter(this)
+
+    private val viewModel: DecksListViewModel by activityViewModelBuilder {
+        DecksListViewModel(requireArguments().getLong(ARGUMENT_DOMAIN_ID), repository, get(), get())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         views = LearningBinding.inflate(inflater, container, false)
@@ -109,15 +102,17 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun fetchData() {
-        adapter.setItems(decksList())
+        val decks = viewModel.decksList()
+        val list = buildDecksList(decks)
+        adapter.setItems(list)
     }
 
     override fun beginStudy(item: DeckListItem, studyOrder: StudyOrder) {
         if (item.hasPending) {
             launchLearning(item, studyOrder)
         } else {
-            val totalCounts = repository.deckPendingCountsMix(item.deck, today())
-            val total = repository.deckStats(item.deck)[CardTypeFilter.BOTH]!!.total
+            val totalCounts = viewModel.totalCounts(item)
+            val total = viewModel.deckTotal(item)
             if (total == 0) {
                 showDeckEmptyMessage(item)
             } else if (totalCounts.isAnythingPending()) {
@@ -169,7 +164,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     private fun launchLearning(
             deck: DeckListItem,
             studyOrder: StudyOrder,
-            studyTargets: StudyTargets = studyTargetsResolver.defaultStudyTargets(today())
+            studyTargets: StudyTargets = viewModel.defaultStudyTargets()
     ) {
         val intent = LearningActivity.intent(requireContext(), deck.deck, deck.cardTypeFilter, studyOrder, studyTargets)
         requireActivity().startActivity(intent)
@@ -196,33 +191,6 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
         fetchData()
     }
 
-    private fun decksList(): List<FlexListItem> {
-        val decks = repository.allDecksWithPendingCounts(domain, today())
-        val studyTargets = studyTargetsResolver.defaultStudyTargets(today())
-        val listItems = convertDecksToListItems(decks, studyTargets)
-        return buildDecksList(listItems)
-    }
-
-    private fun convertDecksToListItems(decks: Map<Deck, PendingCardsCount>, studyTargets: StudyTargets): List<DeckListItem> {
-        return if (preferences.mixForwardAndReverse) {
-            decks.map { (deck, counts) ->
-                DeckListItem(deck, CardTypeFilter.BOTH, hasPendingCardsForToday(counts.total, studyTargets))
-            }
-        } else {
-            decks.flatMap { (deck, counts) -> listOf(
-                    DeckListItem(deck, CardTypeFilter.FORWARD, hasPendingCardsForToday(counts.forward, studyTargets)),
-                    DeckListItem(deck, CardTypeFilter.REVERSE, hasPendingCardsForToday(counts.reverse, studyTargets))
-            ) }
-        }
-    }
-
-    private fun hasPendingCardsForToday(counts: Counts, studyTargets: StudyTargets): Boolean {
-        if (counts.relearn > 0) return true
-        val hasPendingNew = counts.new > 0 && studyTargets.new.orMax() > 0
-        val hasPendingReview = counts.review > 0 && studyTargets.review.orMax() > 0
-        return hasPendingNew || hasPendingReview
-    }
-
     private fun buildDecksList(decks: List<DeckListItem>): List<FlexListItem> {
         val builder = FlexListBuilder<DeckListItem>()
         builder.addCategory(R.string.decks_select_deck)
@@ -232,7 +200,7 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun createNewDeck(context: Context) {
-        val intent = AddEditDeckActivity.create(context, domain)
+        val intent = AddEditDeckActivity.create(context, viewModel.domain)
         startActivity(intent)
     }
 
