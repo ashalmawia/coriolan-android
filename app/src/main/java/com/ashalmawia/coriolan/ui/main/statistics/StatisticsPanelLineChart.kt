@@ -88,7 +88,7 @@ object StatisticsPanelLineChart {
         val months = mutableListOf<DateTime.Property>()
         var current = to
         while (current > from) {
-            months.add(current.monthOfYear())
+            months.add(0, current.monthOfYear())
             current = current.minusMonths(1)
         }
         val points = months.mapIndexed { index, month ->
