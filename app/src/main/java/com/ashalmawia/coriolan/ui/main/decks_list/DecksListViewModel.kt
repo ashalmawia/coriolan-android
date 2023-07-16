@@ -6,7 +6,9 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.StudyTargetsResolver
-import com.ashalmawia.coriolan.learning.TodayManager.today
+import com.ashalmawia.coriolan.learning.TodayChangeListener
+import com.ashalmawia.coriolan.learning.TodayManager
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
@@ -22,11 +24,46 @@ class DecksListViewModel(
         private val repository: Repository,
         private val preferences: Preferences,
         private val studyTargetsResolver: StudyTargetsResolver
-) : ViewModel() {
+) : ViewModel(), TodayChangeListener, DeckListAdapterListener {
 
     val domain: Domain by lazy { repository.domainById(domainId)!! }
 
-    fun fetchDeckCardCounts(item: DeckListItem, update: (Counts, Int) -> Unit) {
+    private fun today() = TodayManager.today()
+
+    private var view: DecksListView? = null
+
+    fun bind(view: DecksListView) {
+        this.view = view
+        view.initialize()
+    }
+
+    fun onStart() {
+        TodayManager.register(this)
+    }
+
+    fun onResume() {
+        fetchData()
+    }
+
+    fun onStop() {
+        TodayManager.unregister(this)
+    }
+
+    fun unbind() {
+        view = null
+    }
+
+    private fun fetchData() {
+        val view = view ?: return
+
+        view.showLoading()
+        fetchDecksList { decks ->
+            view.setDecks(decks)
+            view.hideLoading()
+        }
+    }
+
+    private fun fetchDeckCardCounts(item: DeckListItem, update: (Counts, Int) -> Unit) {
         viewModelScope.launch {
             val totalCounts = totalCounts(item)
             val total = deckTotal(item)
@@ -37,9 +74,9 @@ class DecksListViewModel(
         }
     }
 
-    fun defaultStudyTargets() = studyTargetsResolver.defaultStudyTargets(today())
+    private fun defaultStudyTargets() = studyTargetsResolver.defaultStudyTargets(today())
 
-    fun fetchDecksList(update: (List<DeckListItem>) -> Unit) {
+    private fun fetchDecksList(update: (List<DeckListItem>) -> Unit) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 val decks = decksList()
@@ -48,6 +85,27 @@ class DecksListViewModel(
                 }
             }
         }
+    }
+
+    private fun beginStudy(item: DeckListItem, studyOrder: StudyOrder) {
+        if (item.hasPending) {
+            view?.launchLearning(item, studyOrder, defaultStudyTargets())
+        } else {
+            fetchDeckCardCounts(item) { counts, total ->
+                if (total == 0) {
+                    view?.showDeckEmptyMessage(item)
+                } else if (counts.isAnythingPending()) {
+                    view?.showSuggestStudyMoreDialog(item, repository, today())
+                } else {
+                    view?.showNothingToLearnTodayDialog()
+                }
+            }
+        }
+    }
+
+    override fun onDayChanged() {
+        // to update pending counters on deck items
+        fetchData()
     }
 
     private suspend fun decksList(): List<DeckListItem> = withContext(Dispatchers.Default) {
@@ -82,5 +140,29 @@ class DecksListViewModel(
 
     private suspend fun deckTotal(item: DeckListItem) = withContext(Dispatchers.Default) {
         repository.deckStats(item.deck)[CardTypeFilter.BOTH]!!.total
+    }
+
+    override fun onDeckItemClicked(deck: DeckListItem) {
+        beginStudy(deck, StudyOrder.default())
+    }
+
+    override fun onOptionStudyStraightforward(deck: DeckListItem) {
+        beginStudy(deck, StudyOrder.ORDER_ADDED)
+    }
+
+    override fun onOptionStudyRandom(deck: DeckListItem) {
+        beginStudy(deck, StudyOrder.RANDOM)
+    }
+
+    override fun onOptionNewestFirst(deck: DeckListItem) {
+        beginStudy(deck, StudyOrder.NEWEST_FIRST)
+    }
+
+    override fun onOptionStudyMore(deck: DeckListItem) {
+        view?.showLearnMoreDialog(deck, repository, today())
+    }
+
+    override fun onOptionDetails(deck: DeckListItem) {
+        view?.showDeckDetailsDialog(deck, repository)
     }
 }

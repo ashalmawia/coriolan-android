@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.DeckListItemBinding
-import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.ui.commons.list.FlexListAdapter
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
@@ -28,53 +27,29 @@ class DecksListAdapter(private val listener: DeckListAdapterListener)
         menu.inflate(R.menu.decks_study_options_popup)
         menu.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.decks_study_options_popup__straightforward -> studyStraightforward(item)
-                R.id.decks_study_options_popup__random -> studyRandom(item)
-                R.id.decks_study_options_popup__newest_first -> studyNewestFirst(item)
-                R.id.decks_study_options_popup__study_more -> studyMore(item)
-                R.id.deck_study_options_popup__details -> showDeckDetails(item)
+                R.id.decks_study_options_popup__straightforward -> listener.onOptionStudyStraightforward(item)
+                R.id.decks_study_options_popup__random -> listener.onOptionStudyRandom(item)
+                R.id.decks_study_options_popup__newest_first -> listener.onOptionNewestFirst(item)
+                R.id.decks_study_options_popup__study_more -> listener.onOptionStudyMore(item)
+                R.id.deck_study_options_popup__details -> listener.onOptionDetails(item)
             }
             true
         }
         menu.show()
     }
 
-    override fun studyDefault(item: DeckListItem) {
-        instantiateLearningFlow(item, StudyOrder.default())
-    }
-
-    private fun studyStraightforward(item: DeckListItem) {
-        instantiateLearningFlow(item, StudyOrder.ORDER_ADDED)
-    }
-
-    private fun studyRandom(item: DeckListItem) {
-        instantiateLearningFlow(item, StudyOrder.RANDOM)
-    }
-
-    private fun studyNewestFirst(item: DeckListItem) {
-        val studyOrder = StudyOrder.NEWEST_FIRST
-        instantiateLearningFlow(item, studyOrder)
-    }
-
-    private fun instantiateLearningFlow(item: DeckListItem, studyOrder: StudyOrder) {
-        listener.beginStudy(item, studyOrder)
-    }
-
-    private fun studyMore(item: DeckListItem) {
-        listener.showLearnMoreDialog(item)
-    }
-
-    private fun showDeckDetails(item: DeckListItem) {
-        listener.showDeckDetailsDialog(item)
+    override fun onItemClicked(item: DeckListItem) {
+        listener.onDeckItemClicked(item)
     }
 }
 
 interface DeckListAdapterListener {
-    fun showDeckDetailsDialog(deck: DeckListItem)
-
-    fun showLearnMoreDialog(deck: DeckListItem)
-
-    fun beginStudy(item: DeckListItem, studyOrder: StudyOrder)
+    fun onDeckItemClicked(deck: DeckListItem)
+    fun onOptionStudyStraightforward(deck: DeckListItem)
+    fun onOptionStudyRandom(deck: DeckListItem)
+    fun onOptionNewestFirst(deck: DeckListItem)
+    fun onOptionStudyMore(deck: DeckListItem)
+    fun onOptionDetails(deck: DeckListItem)
 }
 
 private fun CardType.toTypeStringRes() = when (this) {
@@ -99,12 +74,12 @@ class DeckListDeckViewHolder(
         }
         views.deckListItemMore.isClickable = true
         views.deckListItemMore.setOnClickListener { callback.showPopupMenu(deck, it) }
-        itemView.setOnClickListener { callback.studyDefault(deck) }
+        itemView.setOnClickListener { callback.onItemClicked(deck) }
         views.pendingIndicator.visible = deck.hasPending
     }
 
     interface Callback {
         fun showPopupMenu(item: DeckListItem, anchor: View)
-        fun studyDefault(item: DeckListItem)
+        fun onItemClicked(item: DeckListItem)
     }
 }
