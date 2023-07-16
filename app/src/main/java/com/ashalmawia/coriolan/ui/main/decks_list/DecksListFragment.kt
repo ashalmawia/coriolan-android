@@ -102,23 +102,24 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun fetchData() {
-        val decks = viewModel.decksList()
-        val list = buildDecksList(decks)
-        adapter.setItems(list)
+        viewModel.fetchDecksList { decks ->
+            val list = buildDecksList(decks)
+            adapter.setItems(list)
+        }
     }
 
     override fun beginStudy(item: DeckListItem, studyOrder: StudyOrder) {
         if (item.hasPending) {
             launchLearning(item, studyOrder)
         } else {
-            val totalCounts = viewModel.totalCounts(item)
-            val total = viewModel.deckTotal(item)
-            if (total == 0) {
-                showDeckEmptyMessage(item)
-            } else if (totalCounts.isAnythingPending()) {
-                showSuggestStudyMoreDialog(item)
-            } else {
-                showNothingToLearnTodayDialog()
+            viewModel.fetchDeckCardCounts(item) { counts, total ->
+                if (total == 0) {
+                    showDeckEmptyMessage(item)
+                } else if (counts.isAnythingPending()) {
+                    showSuggestStudyMoreDialog(item)
+                } else {
+                    showNothingToLearnTodayDialog()
+                }
             }
         }
     }
