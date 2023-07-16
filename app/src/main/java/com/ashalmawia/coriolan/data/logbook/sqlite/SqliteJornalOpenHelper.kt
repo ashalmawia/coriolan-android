@@ -6,14 +6,14 @@ import android.database.sqlite.SQLiteOpenHelper
 
 private const val VERSION = 1
 
-class SqliteJornalOpenHelper(val context: Context)
-    : SQLiteOpenHelper(context, "journal.db", null, VERSION) {
+class SqliteJornalOpenHelper(val context: Context, name: String = "journal.db")
+    : SQLiteOpenHelper(context, name, null, VERSION) {
 
-    override fun onCreate(db: SQLiteDatabase?) {
-        if (db == null) {
-            return
-        }
+    override fun onCreate(db: SQLiteDatabase) {
+        initializeSchema(db)
+    }
 
+    fun initializeSchema(db: SQLiteDatabase) {
         db.execSQL("""
             |CREATE TABLE $SQLITE_TABLE_JOURNAL(
             |   $SQLITE_COLUMN_DATE INTEGER PRIMARY KEY,

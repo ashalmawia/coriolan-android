@@ -1,6 +1,8 @@
 package com.ashalmawia.coriolan.data.logbook
 
+import com.ashalmawia.coriolan.data.backup.logbook.createNonEmptyLogbookWithMockData
 import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbook
+import com.ashalmawia.coriolan.data.storage.provideLogbookHelper
 import com.ashalmawia.coriolan.learning.LearningDay
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
@@ -11,14 +13,13 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.SQLiteMode
 
 @RunWith(RobolectricTestRunner::class)
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
 class SqliteLogbookTest {
 
-    private val logbook = SqliteLogbook(RuntimeEnvironment.application)
+    private val logbook = SqliteLogbook(provideLogbookHelper())
 
     private val today = mockToday()
     private val exerciseId = ExerciseId.TEST
@@ -287,6 +288,24 @@ class SqliteLogbookTest {
         assertEquals(mapOf(CardAction.NEW_CARD_FIRST_SEEN to 2), counts[dateStart])
         assertEquals(mapOf(CardAction.CARD_REVIEWED to 1), counts[dateStart.plusDays(2)])
         assertEquals(mapOf(CardAction.CARD_REVIEWED to 1), counts[dateEnd])
+    }
+
+    @Test
+    fun test_dropAllData() {
+        // given
+        val logbook = createNonEmptyLogbookWithMockData()
+
+        // when
+        logbook.dropAllData()
+
+        // then
+        assertTrue(logbook.exportAllData(0, 500).isEmpty())
+
+        // when
+        (logbook as Logbook).incrementCardActions(today, exerciseId, 1L, CardAction.CARD_RELEARNED)
+
+        // then
+        assertEquals(1, logbook.exportAllData(0, 500).size)
     }
 
     private fun recordCardRelearned(date: LearningDay, deckId: Long = 1L) {

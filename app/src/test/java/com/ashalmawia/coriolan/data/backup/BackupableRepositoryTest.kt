@@ -119,7 +119,7 @@ abstract class BackupableRepositoryTest {
     }
 
     @Test
-    fun test__overrideRepositoryData__emptyData() {
+    fun test__dropAllData() {
         // given
         repo.writeLanguages(languages)
         repo.writeDomains(domains)
@@ -129,7 +129,7 @@ abstract class BackupableRepositoryTest {
         repo.writeExerciseStates(cardStates)
 
         // when
-        repo.overrideRepositoryData { }
+        clearDatabase()
 
         // then
         assertTrue(repo.allLanguages(0, 500).isEmpty())
@@ -138,35 +138,6 @@ abstract class BackupableRepositoryTest {
         assertTrue(repo.allCards(0, 500).isEmpty())
         assertTrue(repo.allDecks(0, 500).isEmpty())
         assertTrue(repo.allExerciseStates(0, 500).isEmpty())
-    }
-
-    @Test
-    fun test__overrideRepositoryData__nonEmptyData() {
-        // given
-        repo.writeLanguages(languages)
-        repo.writeDomains(domains)
-        repo.writeTerms(terms)
-        repo.writeDecks(decks)
-        repo.writeCards(cards)
-        repo.writeExerciseStates(cardStates)
-
-        // when
-        repo.overrideRepositoryData { repo ->
-            repo.writeLanguages(languages)
-            repo.writeDomains(domains)
-            repo.writeTerms(terms)
-            repo.writeDecks(decks)
-            repo.writeCards(cards)
-            repo.writeExerciseStates(cardStates)
-        }
-
-        // then
-        assertEquals(languages, repo.allLanguages(0, 500))
-        assertEquals(domains, repo.allDomains(0, 500))
-        assertEquals(terms, repo.allTerms(0, 500))
-        assertEquals(cards, repo.allCards(0, 500))
-        assertEquals(decks, repo.allDecks(0, 500))
-        assertEquals(cardStates.sortedBy { it.cardId }, repo.allExerciseStates(0, 500).sortedBy { it.cardId })
     }
 
     @Test
@@ -190,7 +161,7 @@ abstract class BackupableRepositoryTest {
         assertTrue(repo.hasAtLeastOneCard())
 
         // given
-        repo.overrideRepositoryData { }
+        clearDatabase()
 
         // then
         assertFalse(repo.hasAtLeastOneCard())
@@ -204,6 +175,14 @@ abstract class BackupableRepositoryTest {
 
         // then
         assertTrue(repo.hasAtLeastOneCard())
+    }
+
+    private fun clearDatabase() {
+        repo.beginTransaction()
+        // transaction is a simple way to bypass foreign keys constraints
+        repo.dropAllData()
+        repo.setTransactionSuccessful()
+        repo.endTransaction()
     }
 
     private fun <T> testEmpty(writer: (List<T>) -> Unit, reader: (Int, Int) -> List<T>) {

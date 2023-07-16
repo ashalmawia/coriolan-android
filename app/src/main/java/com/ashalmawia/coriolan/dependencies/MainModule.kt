@@ -11,7 +11,9 @@ import com.ashalmawia.coriolan.data.backup.BackupableRepository
 import com.ashalmawia.coriolan.data.backup.json.JsonBackup
 import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.data.importer.ImporterRegistryImpl
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.data.logbook.Logbook
+import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteJornalOpenHelper
 import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.prefs.SharedPreferencesImpl
@@ -37,7 +39,9 @@ val mainModule = module {
     single<Repository> { SqliteStorage(get()) }
     single { DecksRegistry(get(), get()) }
     single<Preferences> { SharedPreferencesImpl(get()) }
-    single<Logbook> { SqliteLogbook(get()) }
+    single { SqliteLogbook(get()) }
+    single<Logbook> { get<SqliteLogbook>() }
+    single<BackupableLogbook> { get<SqliteLogbook>() }
     single<LogbookWriter> { LogbookWriterImpl(get()) }
     single<BackupableRepository> { SqliteBackupHelper(get()) }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
@@ -46,6 +50,7 @@ val mainModule = module {
     single<ExercisesRegistry> { ExercisesRegistryImpl() }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
     single { SqliteRepositoryOpenHelper(get()) }
+    single { SqliteJornalOpenHelper(get()) }
     single<SpacedRepetitionScheduler> { MultiplierBasedScheduler() }
     single<HistoryFactory> { HistoryFactoryImpl }
     single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get(), get()) }

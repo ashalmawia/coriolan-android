@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.RestoreFromBackupBinding
@@ -33,6 +34,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     private val repository: Repository by inject()
     private val backupableRepository: BackupableRepository by inject()
+    private val backupableLogbook: BackupableLogbook by inject()
     private val backup: Backup by inject()
     private val preferences: Preferences by inject()
 
@@ -92,7 +94,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 
     private fun restoreFrom(uri: Uri) {
         val resolver = applicationContext.contentResolver
-        val task = RestoreFromBackupAsyncTask(resolver, backupableRepository, uri, backup, preferences)
+        val task = RestoreFromBackupAsyncTask(resolver, backupableRepository, backupableLogbook, uri, backup, preferences)
         task.listener = this
         this.task = task
 
@@ -135,6 +137,7 @@ class RestoreFromBackupActivity : BaseActivity(), BackupRestoringListener {
 private class RestoreFromBackupAsyncTask(
         private val resolver: ContentResolver,
         private val repo: BackupableRepository,
+        private val logbook: BackupableLogbook,
         private val backupFile: Uri,
         private val backup: Backup,
         private val preferences: Preferences
@@ -147,7 +150,7 @@ private class RestoreFromBackupAsyncTask(
 
         try {
             stream.use {
-                backup.restoreFrom(it, repo)
+                backup.restoreFrom(it, repo, logbook)
                 preferences.clearLastTranslationsLanguageId()
             }
             return true

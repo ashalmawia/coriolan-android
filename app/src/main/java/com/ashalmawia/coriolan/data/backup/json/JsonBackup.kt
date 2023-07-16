@@ -6,6 +6,7 @@ import com.ashalmawia.coriolan.data.backup.CardInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.TermExtraInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.model.CardType
 import com.fasterxml.jackson.core.*
 import java.io.InputStream
@@ -23,20 +24,38 @@ private const val FIELD_CARDS = "cards"
 private const val FIELD_DECKS = "decks"
 private const val FIELD_CARD_STATES = "card_states"
 private const val FIELD_CARD_STATES_LEGACY = "sr_state"
+private const val FIELD_LOGBOOK = "logbook"
 
 class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
-    override fun create(repository: BackupableRepository, stream: OutputStream) {
-        write(repository, stream, JacksonSerializer.instance())
+    override fun create(repository: BackupableRepository, logbook: BackupableLogbook, stream: OutputStream) {
+        write(repository, logbook, stream, JacksonSerializer.instance())
     }
 
-    override fun restoreFrom(stream: InputStream, repository: BackupableRepository) {
-        repository.overrideRepositoryData {
-            restoreFrom(stream, repository, JacksonDeserializer.instance())
+    override fun restoreFrom(stream: InputStream, repository: BackupableRepository, logbook: BackupableLogbook) {
+        repository.beginTransaction()
+        logbook.beginTransaction()
+
+        try {
+            repository.dropAllData()
+            logbook.dropAllData()
+
+            restoreFrom(stream, repository, logbook, JacksonDeserializer.instance())
+
+            repository.setTransactionSuccessful()
+            logbook.setTransactionSuccessful()
+        } finally {
+            logbook.endTransaction()
+            repository.endTransaction()
         }
     }
 
-    private fun restoreFrom(stream: InputStream, repository: BackupableRepository, deserializer: JacksonDeserializer) {
+    private fun restoreFrom(
+            stream: InputStream,
+            repository: BackupableRepository,
+            logbook: BackupableLogbook,
+            deserializer: JacksonDeserializer
+    ) {
         val factory = JsonFactory()
         val json = factory.createParser(stream)
         var isEmpty = true
@@ -69,6 +88,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
                 }
                 FIELD_DECKS -> read(json, deserializer::readDeck, repository::writeDecks)
                 FIELD_CARD_STATES, FIELD_CARD_STATES_LEGACY -> read(json, deserializer::readExerciseState, repository::writeExerciseStates)
+                FIELD_LOGBOOK -> read(json, deserializer::readLogbookEntry, logbook::overrideAllData)
             }
         }
 
@@ -93,6 +113,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
     private fun write(
             repository: BackupableRepository,
+            logbook: BackupableLogbook,
             stream: OutputStream,
             serializer: JacksonSerializer
     ) {
@@ -107,6 +128,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         write(FIELD_DECKS, repository::allDecks, json, serializer::writeDeck)
         write(FIELD_CARDS, repository::allCards, json, serializer::writeCard)
         write(FIELD_CARD_STATES, repository::allExerciseStates, json, serializer::writeCardState)
+        write(FIELD_LOGBOOK, logbook::exportAllData, json, serializer::writeLogbookEntry)
 
         json.writeEndObject()
         json.close()

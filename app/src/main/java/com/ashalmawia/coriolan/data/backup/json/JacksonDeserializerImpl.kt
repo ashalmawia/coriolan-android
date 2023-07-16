@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
+import com.ashalmawia.coriolan.data.logbook.LogbookEntryInfo
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
@@ -21,4 +22,6 @@ class JacksonDeserializerImpl : JacksonDeserializer {
     override fun readExerciseState(json: JsonParser): LearningProgressInfo = readExerciseStateFromJson(json)
 
     override fun readDeck(json: JsonParser): DeckInfo = readDeckFromJson(json)
+
+    override fun readLogbookEntry(json: JsonParser): LogbookEntryInfo = readLogbookEntryFromJson(json)
 }

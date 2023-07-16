@@ -1,7 +1,11 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.storage.provideHelper
+import com.ashalmawia.coriolan.data.backup.logbook.createNonEmptyLogbookWithMockData
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
+import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbook
+import com.ashalmawia.coriolan.data.storage.provideLogbookHelper
+import com.ashalmawia.coriolan.data.storage.provideRepositoryHelper
 import com.ashalmawia.coriolan.data.storage.sqlite.SqliteBackupHelper
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -12,10 +16,10 @@ import org.robolectric.annotation.SQLiteMode
 class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
 
     override fun createEmptyRepo(): BackupableRepository
-            = SqliteBackupHelper(provideHelper())
+            = SqliteBackupHelper(provideRepositoryHelper())
 
     override fun createNonEmptyRepo(): BackupableRepository {
-        val repo = SqliteBackupHelper(provideHelper())
+        val repo = SqliteBackupHelper(provideRepositoryHelper())
 
         repo.writeLanguages(JsonBackupTestData.languages)
         repo.writeDomains(JsonBackupTestData.domains)
@@ -26,4 +30,10 @@ class JsonBackupSqliteRepositoryTest : JsonBackupTest() {
 
         return repo
     }
+
+    override fun createEmptyLogbook(): BackupableLogbook {
+        return SqliteLogbook(provideLogbookHelper())
+    }
+
+    override fun createNonEmptyLogbook(): BackupableLogbook = createNonEmptyLogbookWithMockData()
 }

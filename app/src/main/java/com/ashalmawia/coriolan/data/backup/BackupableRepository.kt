@@ -1,10 +1,9 @@
 package com.ashalmawia.coriolan.data.backup
 
-import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.CardType
 import org.joda.time.DateTime
 
-interface BackupableRepository {
+interface BackupableRepository : BackupableEntity {
 
     fun allLanguages(offset: Int, limit: Int): List<LanguageInfo>
 
@@ -29,8 +28,6 @@ interface BackupableRepository {
     fun writeDecks(decks: List<DeckInfo>)
 
     fun writeExerciseStates(states: List<LearningProgressInfo>)
-
-    fun overrideRepositoryData(override: (BackupableRepository) -> Unit)
 
     fun hasAtLeastOneCard(): Boolean
 }

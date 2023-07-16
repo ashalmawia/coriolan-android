@@ -6,6 +6,7 @@ import com.ashalmawia.coriolan.model.CardType
 import java.util.*
 
 object JsonBackupTestData {
+
     val languages = listOf(
             LanguageInfo(1L, "English"),
             LanguageInfo(2L, "Russian"),

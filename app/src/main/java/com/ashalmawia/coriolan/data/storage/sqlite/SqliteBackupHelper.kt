@@ -49,6 +49,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsP
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsLanguageId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsValue
+import com.ashalmawia.coriolan.data.util.dropAllTables
 
 class SqliteBackupHelper(
         private val helper: SqliteRepositoryOpenHelper
@@ -189,49 +190,33 @@ class SqliteBackupHelper(
         }
     }
 
-    override fun overrideRepositoryData(override: (BackupableRepository) -> Unit) {
+    override fun beginTransaction() {
         val db = helper.writableDatabase
 
         // must be done outside a transaction
         db.setForeignKeyConstraintsEnabled(false)
 
         db.beginTransaction()
-        try {
-            dropAllTables()
-            helper.initializeDatabaseSchema(db)
-            override(this)
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-        }
+    }
+
+    override fun endTransaction() {
+        val db = helper.writableDatabase
+
+        db.endTransaction()
 
         // must be done outside a transaction
         db.setForeignKeyConstraintsEnabled(true)
     }
 
-    private fun dropAllTables() {
+    override fun setTransactionSuccessful() {
+        helper.writableDatabase.setTransactionSuccessful()
+    }
+
+    override fun dropAllData() {
         val db = helper.writableDatabase
 
-        val cursor = db.rawQuery("""
-            SELECT name
-                FROM sqlite_master
-                WHERE type='table'
-        """.trimIndent(), null)
-        val tables = cursor.use {
-            val result = mutableListOf<String>()
-            while (it.moveToNext()) {
-                val name = it.string("name", null)
-                if (name == "android_metadata" || name == "sqlite_sequence") {
-                    continue
-                }
-                result.add(name)
-            }
-            result
-        }
-
-        tables.forEach { name ->
-            db.execSQL("DROP TABLE IF EXISTS '$name'")
-        }
+        dropAllTables(db)
+        helper.initializeDatabaseSchema(db)
     }
 
     override fun writeLanguages(languages: List<LanguageInfo>) {

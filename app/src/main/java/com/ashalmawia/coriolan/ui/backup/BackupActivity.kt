@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.databinding.BackupBinding
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.view.visible
@@ -23,6 +24,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
     private val views by lazy { BackupBinding.inflate(layoutInflater) }
 
     private val backupableRepository: BackupableRepository by inject()
+    private val backupableLogbook: BackupableLogbook by inject()
     private val backup: Backup by inject()
 
     private val createDocumentLauncher = registerForActivityResult(
@@ -62,7 +64,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
         updateUiCreatingBackup()
 
         val resolver = applicationContext.contentResolver
-        val task = BackupAsyncTask(resolver, backupableRepository, uri, backup)
+        val task = BackupAsyncTask(resolver, backupableRepository, backupableLogbook, uri, backup)
         task.listener = this
         this.task = task
 
@@ -114,6 +116,7 @@ class BackupActivity : BaseActivity(), BackupCreationListener {
 private class BackupAsyncTask(
         private val resolver: ContentResolver,
         private val repo: BackupableRepository,
+        private val logbook: BackupableLogbook,
         private val backupUri: Uri,
         private val backup: Backup
 ) : AsyncTask<Any, Nothing, Uri?>() {
@@ -124,7 +127,7 @@ private class BackupAsyncTask(
         val stream = resolver.openOutputStream(backupUri) ?: return null
 
         stream.use {
-            backup.create(repo, it)
+            backup.create(repo, logbook, it)
         }
         return backupUri
     }

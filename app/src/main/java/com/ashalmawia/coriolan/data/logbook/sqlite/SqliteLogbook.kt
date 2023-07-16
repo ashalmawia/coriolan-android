@@ -1,24 +1,26 @@
 package com.ashalmawia.coriolan.data.logbook.sqlite
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.Cursor
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.logbook.LogbookCardActionsPayloadEntry
+import com.ashalmawia.coriolan.data.logbook.LogbookEntryInfo
 import com.ashalmawia.coriolan.data.logbook.LogbookPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.date
 import com.ashalmawia.coriolan.data.storage.sqlite.insertOrUpdate
+import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.data.util.dropAllTables
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.util.orZero
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
 
-class SqliteLogbook(context: Context) : Logbook {
+class SqliteLogbook(private val helper: SqliteJornalOpenHelper) : Logbook, BackupableLogbook {
 
-    private val helper = SqliteJornalOpenHelper(context)
     private val serializer = LogbookPayloadSerializer()
 
     override fun cardsStudiedOnDate(date: DateTime): Map<CardAction, Int> {
@@ -78,15 +80,7 @@ class SqliteLogbook(context: Context) : Logbook {
             |   WHERE $SQLITE_COLUMN_DATE BETWEEN ? AND ?
         """.trimMargin(), arrayOf(from.timespamp.toString(), to.timespamp.toString()))
 
-        return cursor.use {
-            val map = mutableMapOf<DateTime, LogbookPayload>()
-            while (it.moveToNext()) {
-                val date = it.date(SQLITE_COLUMN_DATE)
-                val payload = serializer.deserializeLogbookPayload(it.getPayload())
-                map[date] = payload
-            }
-            map
-        }
+        return cursor.use { it.extractAllData() }
     }
 
     override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
@@ -125,10 +119,73 @@ class SqliteLogbook(context: Context) : Logbook {
     }
 
     private fun createContentValues(date: DateTime, payload: LogbookPayload): ContentValues {
+        return createContentValues(date.timespamp, serializer.serializeLogbookPayload(payload))
+    }
+
+    private fun createContentValues(timestamp: Long, rawPayload: String): ContentValues {
         val cv = ContentValues()
-        cv.put(SQLITE_COLUMN_DATE, date.timespamp)
-        cv.put(SQLITE_COLUMN_PAYLOAD, serializer.serializeLogbookPayload(payload))
+        cv.put(SQLITE_COLUMN_DATE, timestamp)
+        cv.put(SQLITE_COLUMN_PAYLOAD, rawPayload)
         return cv
+    }
+
+    override fun overrideAllData(data: List<LogbookEntryInfo>) {
+        val db = helper.writableDatabase
+
+        data.forEach { (date, payload) ->
+            val cv = createContentValues(date, payload)
+            db.insertOrUpdate(SQLITE_TABLE_JOURNAL, cv)
+        }
+    }
+
+    override fun exportAllData(offset: Int, limit: Int): List<LogbookEntryInfo> {
+        val db = helper.readableDatabase
+
+        val cursor = db.rawQuery("""
+            |SELECT *
+            |   FROM $SQLITE_TABLE_JOURNAL
+            |   ORDER BY $SQLITE_COLUMN_DATE ASC
+            |   LIMIT $limit OFFSET $offset
+        """.trimMargin(), arrayOf())
+
+        return cursor.use {
+            val list = mutableListOf<LogbookEntryInfo>()
+            while (it.moveToNext()) {
+                val date = it.long(SQLITE_COLUMN_DATE)
+                val rawPayload = it.getPayload()
+                list.add(LogbookEntryInfo(date, rawPayload))
+            }
+            list
+        }
+    }
+
+    private fun Cursor.extractAllData(): Map<DateTime, LogbookPayload> {
+        val map = mutableMapOf<DateTime, LogbookPayload>()
+        while (moveToNext()) {
+            val date = date(SQLITE_COLUMN_DATE)
+            val payload = serializer.deserializeLogbookPayload(getPayload())
+            map[date] = payload
+        }
+        return map
+    }
+
+    override fun beginTransaction() {
+        helper.writableDatabase.beginTransaction()
+    }
+
+    override fun endTransaction() {
+        helper.writableDatabase.endTransaction()
+    }
+
+    override fun setTransactionSuccessful() {
+        helper.writableDatabase.setTransactionSuccessful()
+    }
+
+    override fun dropAllData() {
+        val db = helper.writableDatabase
+
+        dropAllTables(db)
+        helper.initializeSchema(db)
     }
 }
 

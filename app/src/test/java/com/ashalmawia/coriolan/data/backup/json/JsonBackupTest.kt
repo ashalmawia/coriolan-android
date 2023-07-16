@@ -8,6 +8,7 @@ import com.ashalmawia.coriolan.data.backup.DeckInfo
 import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
+import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.model.CardType
 import org.junit.Assert.*
 import org.joda.time.DateTime
@@ -25,40 +26,47 @@ abstract class JsonBackupTest {
     protected abstract fun createEmptyRepo(): BackupableRepository
     protected abstract fun createNonEmptyRepo(): BackupableRepository
 
+    protected abstract fun createEmptyLogbook(): BackupableLogbook
+    protected abstract fun createNonEmptyLogbook(): BackupableLogbook
+
     @Test
     fun test__emptyRepository() {
         // given
         val repo = createEmptyRepo()
+        val logbook = createEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     @Test
     fun test__singleExercise() {
         // given
         val repo = createNonEmptyRepo()
+        val logbook = createNonEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     @Test
     fun test__multipleExercises() {
         // given
         val repo = createNonEmptyRepo()
+        val logbook = createNonEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     @Test
     fun test__multipleExercisesAndSomeWithoutState() {
         // given
         val repo = createNonEmptyRepo()
+        val logbook = createNonEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     @Test
@@ -67,8 +75,11 @@ abstract class JsonBackupTest {
         val repo = createEmptyRepo()
         val outRepo = createNonEmptyRepo()
 
+        val logbook = createEmptyLogbook()
+        val outLogbook = createNonEmptyLogbook()
+
         // then
-        test(repo, backup, outRepo)
+        test(repo, logbook, backup, outRepo, outLogbook)
     }
 
     @Test
@@ -77,8 +88,11 @@ abstract class JsonBackupTest {
         val repo = createNonEmptyRepo()
         val outRepo = createNonEmptyRepo()
 
+        val logbook = createNonEmptyLogbook()
+        val outLogbook = createNonEmptyLogbook()
+
         // then
-        test(repo, backup, outRepo)
+        test(repo, logbook, backup, outRepo, outLogbook)
     }
 
     @Test
@@ -86,9 +100,10 @@ abstract class JsonBackupTest {
         // given
         val backup = JsonBackup(2)
         val repo = createNonEmptyRepo()
+        val logbook = createNonEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     @Test
@@ -96,9 +111,10 @@ abstract class JsonBackupTest {
         // given
         val backup = JsonBackup(5)
         val repo = createNonEmptyRepo()
+        val logbook = createNonEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     @Test
@@ -106,21 +122,24 @@ abstract class JsonBackupTest {
         // given
         val backup = JsonBackup(50)
         val repo = createNonEmptyRepo()
+        val logbook = createNonEmptyLogbook()
 
         // then
-        test(repo, backup)
+        test(repo, logbook, backup)
     }
 
     private fun test(
             repo: BackupableRepository,
+            logbook: BackupableLogbook,
             backup: Backup,
-            outRepo: BackupableRepository = createEmptyRepo()
+            outRepo: BackupableRepository = createEmptyRepo(),
+            outLogbook: BackupableLogbook = createEmptyLogbook()
     ) {
         // when
         val output = ByteArrayOutputStream()
 
         // when
-        backup.create(repo, output)
+        backup.create(repo, logbook, output)
 
         println(output.toString())
 
@@ -128,10 +147,11 @@ abstract class JsonBackupTest {
         val input = ByteArrayInputStream(output.toByteArray())
 
         // when
-        backup.restoreFrom(input, outRepo)
+        backup.restoreFrom(input, outRepo, outLogbook)
 
         // then
         assertRepoEquals(repo, outRepo)
+        assertLogbookEquals(logbook, outLogbook)
     }
 
     private fun assertRepoEquals(expected: BackupableRepository, actual: BackupableRepository) {
@@ -141,6 +161,10 @@ abstract class JsonBackupTest {
         assertEquals(expected.allCards(0, 500), actual.allCards(0, 500))
         assertEquals(expected.allDecks(0, 500), actual.allDecks(0, 500))
         assertEquals(expected.allExerciseStates(0, 500), actual.allExerciseStates(0, 500))
+    }
+
+    private fun assertLogbookEquals(expected: BackupableLogbook, actual: BackupableLogbook) {
+        assertEquals(expected.exportAllData(0, 500), actual.exportAllData(0, 500))
     }
 
     @Test
@@ -180,10 +204,13 @@ abstract class JsonBackupTest {
                 LearningProgressInfo(5, DateTime(1680400800000), 1),
         )
 
+        val outLogbook = createNonEmptyLogbook()
+
         // when
         backup.restoreFrom(
                 legacyBackup.byteInputStream(),
-                repo
+                repo,
+                outLogbook
         )
 
         // then
@@ -193,6 +220,8 @@ abstract class JsonBackupTest {
         assertEquals(terms, repo.allTerms(0, 500))
         assertEquals(cards, repo.allCards(0, 500))
         assertEquals(states, repo.allExerciseStates(0, 500))
+
+        assertTrue(outLogbook.exportAllData(0, 500).isEmpty())
     }
 }
 

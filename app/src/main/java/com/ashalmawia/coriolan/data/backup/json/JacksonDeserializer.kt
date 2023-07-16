@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.*
+import com.ashalmawia.coriolan.data.logbook.LogbookEntryInfo
 import com.fasterxml.jackson.core.JsonParser
 
 interface JacksonDeserializer {
@@ -18,6 +19,8 @@ interface JacksonDeserializer {
     fun readExerciseState(json: JsonParser): LearningProgressInfo
 
     fun readDeck(json: JsonParser): DeckInfo
+
+    fun readLogbookEntry(json: JsonParser): LogbookEntryInfo
 
     companion object {
         fun instance(): JacksonDeserializer = JacksonDeserializerImpl()

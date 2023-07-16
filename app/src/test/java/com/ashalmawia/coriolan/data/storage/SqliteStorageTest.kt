@@ -14,7 +14,7 @@ import org.robolectric.annotation.SQLiteMode
 class SqliteStorageTest : StorageTest() {
 
     override fun createStorage(): Repository {
-        val helper = provideHelper()
+        val helper = provideRepositoryHelper()
         return SqliteStorage(helper)
     }
 }
