@@ -151,4 +151,6 @@
 		<item name="android:layout_marginEnd">@dimen/spacing__small</item>
 	</style>
 
+	<style name="ToolbarLoader" parent="Base.Widget.AppCompat.ProgressBar.Horizontal" />
+
 </resources>

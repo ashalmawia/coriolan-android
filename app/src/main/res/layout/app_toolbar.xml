@@ -13,5 +13,16 @@
 		tools:title="Deck"
 		tools:subtitle="120 cards"
 		/>
+	
+	<ProgressBar
+		style="@style/ToolbarLoader"
+		android:id="@+id/toolbar_loading"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="-7dp"
+		android:layout_marginBottom="-7dp"
+		android:indeterminate="true"
+		android:visibility="gone"
+		/>
 
 </com.google.android.material.appbar.AppBarLayout>

@@ -102,9 +102,11 @@ class DecksListFragment : BaseFragment(), DeckListAdapterListener, TodayChangeLi
     }
 
     private fun fetchData() {
+        showLoading()
         viewModel.fetchDecksList { decks ->
             val list = buildDecksList(decks)
             adapter.setItems(list)
+            hideLoading()
         }
     }
 
