@@ -13,7 +13,7 @@ import com.ashalmawia.coriolan.data.importer.ImporterRegistry
 import com.ashalmawia.coriolan.data.importer.ImporterRegistryImpl
 import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.data.logbook.Logbook
-import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteJornalOpenHelper
+import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbookOpenHelper
 import com.ashalmawia.coriolan.data.logbook.sqlite.SqliteLogbook
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.prefs.SharedPreferencesImpl
@@ -50,7 +50,7 @@ val mainModule = module {
     single<ExercisesRegistry> { ExercisesRegistryImpl() }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
     single { SqliteRepositoryOpenHelper(get()) }
-    single { SqliteJornalOpenHelper(get()) }
+    single { SqliteLogbookOpenHelper(get()) }
     single<SpacedRepetitionScheduler> { MultiplierBasedScheduler() }
     single<HistoryFactory> { HistoryFactoryImpl }
     single<LearningFlow.Factory> { LearningFlowFactory(get(), get(), get(), get()) }

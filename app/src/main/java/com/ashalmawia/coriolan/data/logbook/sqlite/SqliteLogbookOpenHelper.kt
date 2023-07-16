@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 
 private const val VERSION = 1
 
-class SqliteJornalOpenHelper(val context: Context, name: String = "journal.db")
+class SqliteLogbookOpenHelper(val context: Context, name: String = "journal.db")
     : SQLiteOpenHelper(context, name, null, VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {

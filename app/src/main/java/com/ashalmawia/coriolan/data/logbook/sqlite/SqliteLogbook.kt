@@ -19,7 +19,7 @@ import com.ashalmawia.coriolan.util.orZero
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
 
-class SqliteLogbook(private val helper: SqliteJornalOpenHelper) : Logbook, BackupableLogbook {
+class SqliteLogbook(private val helper: SqliteLogbookOpenHelper) : Logbook, BackupableLogbook {
 
     private val serializer = LogbookPayloadSerializer()
 
