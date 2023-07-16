@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.ui.main.statistics
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.StatisticsBinding
 import com.ashalmawia.coriolan.learning.Status
@@ -31,6 +32,8 @@ object StatisticsPanelCardsByLearningProgress {
                 labelsFont = ResourcesCompat.getFont(context, R.font.font_montserrat_bold)!!
                 labelsSize = 12.dp
                 outsideLabelsMargin = 4.dp
+
+                isVisible = true
             }
 
             bindLegendLabel(Status.NEW, cardsByLearningProgressLegendNew, data)
