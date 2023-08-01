@@ -17,8 +17,6 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import org.joda.time.format.DateTimeFormat
 
-private val dateFormat = DateTimeFormat.forPattern("dd MMM")
-
 object StatisticsPanelLineChart {
 
     fun LineChart.setUpLineChart(
@@ -101,7 +99,8 @@ object StatisticsPanelLineChart {
         val points = months.mapIndexed { index, month ->
             Entry(index.toFloat(), dataByMonth[month].orZero().toFloat())
         }
-        val labels = months.map { it.asShortText }
+        val formatter = DateTimeFormat.forPattern("MMM yy")
+        val labels = months.map { formatter.print(it.dateTime) }
         return ChartData(points, labels)
     }
 
@@ -113,6 +112,7 @@ object StatisticsPanelLineChart {
         val points = allDates.mapIndexed { index, date ->
             Entry(index.toFloat(), data[date.midnight()].orZero().toFloat())
         }
+        val dateFormat = DateTimeFormat.forPattern("dd MMM")
         val labels = allDates.map { dateFormat.print(it) }
         return ChartData(points, labels)
     }
