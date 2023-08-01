@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.ui.main.statistics
 import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.util.midnight
 import com.ashalmawia.coriolan.util.orZero
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -104,7 +105,7 @@ object StatisticsPanelLineChart {
             from.plusDays(it)
         }
         val points = allDates.mapIndexed { index, date ->
-            Entry(index.toFloat(), data[date].orZero().toFloat())
+            Entry(index.toFloat(), data[date.midnight()].orZero().toFloat())
         }
         val labels = allDates.map { dateFormat.print(it) }
         return ChartData(points, labels)

@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Status
-import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.util.midnight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,7 +22,7 @@ class StatisticsViewModel(
         private val repository: Repository,
         private val logbook: Logbook
 ) : ViewModel() {
-    private val today = TodayManager.today()
+    private val today = DateTime.now().midnight()
 
     private val _currentState = MutableLiveData<StatisticsViewState>()
     val currentState: LiveData<StatisticsViewState> = _currentState
@@ -89,7 +89,7 @@ class StatisticsViewModel(
 
     private fun extractCardsLearntByDayData(from: DateTime, to: DateTime, allDecks: List<Deck>): Map<DateTime, Int> {
         val data = logbook.cardsStudiedOnDateRange(from, to, allDecks)
-        return data.mapValues { pair ->
+        return data.mapKeys { it.key.midnight() }.mapValues { pair ->
             pair.value.filter {
                 it.key == CardAction.NEW_CARD_FIRST_SEEN || it.key == CardAction.CARD_REVIEWED
             }.values.sum()
@@ -97,7 +97,7 @@ class StatisticsViewModel(
     }
 
     private fun extractCardsAddedByDayData(allCards: List<Card>): Map<DateTime, Int> {
-        return allCards.groupBy { it.dateAdded }.mapValues { it.value.size }
+        return allCards.groupBy { it.dateAdded.midnight() }.mapValues { it.value.size }
     }
 
     private fun extractCardByLearningProgressData(allCards: List<Card>): Map<Status, Int> {
