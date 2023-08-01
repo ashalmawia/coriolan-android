@@ -3,10 +3,15 @@ package com.ashalmawia.coriolan.ui.learning
 import android.content.Context
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
+import com.ashalmawia.coriolan.model.Card
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LearningViewModel(
         private val learningFlowFactory: LearningFlow.Factory,
@@ -24,20 +29,32 @@ class LearningViewModel(
             studyOrder: StudyOrder,
             studyTargets: StudyTargets
     ) {
-        val deck = repository.deckById(deckId)
-        flow = learningFlowFactory.createLearningFlow(
-                context,
-                uiContainer,
-                deck,
-                cardTypeFilter,
-                studyOrder,
-                studyTargets,
-                this)
-        beginExercise()
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                val deck = repository.deckById(deckId)
+                withContext(Dispatchers.Main) {
+                    view.initialize(deck.name)
+                    view.showLoading()
+                }
+
+                flow = learningFlowFactory.createLearningFlow(
+                        context,
+                        uiContainer,
+                        deck,
+                        cardTypeFilter,
+                        studyOrder,
+                        studyTargets,
+                        this@LearningViewModel)
+                withContext(Dispatchers.Main) {
+                    view.hideLoading()
+                    beginExercise()
+                }
+            }
+        }
     }
 
     val canUndo: Boolean
-        get() = flow.canUndo()
+        get() = if (this::flow.isInitialized) flow.canUndo() else false
 
 
     fun undo() {
@@ -51,7 +68,15 @@ class LearningViewModel(
     fun deleteCurrentCard() {
         val current = flow.current
         flow.dropCard(current.card)
-        repository.deleteCard(current.card)
+        deleteCardFromRepository(current.card)
+    }
+
+    private fun deleteCardFromRepository(card: Card) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                repository.deleteCard(card)
+            }
+        }
     }
 
     fun onCurrentCardUpdated() {
@@ -59,8 +84,6 @@ class LearningViewModel(
     }
 
     private fun beginExercise() {
-        val toolbarTitle = flow.deck.name
-        view.onExerciseBegins(toolbarTitle)
         flow.showNextOrComplete()
     }
 

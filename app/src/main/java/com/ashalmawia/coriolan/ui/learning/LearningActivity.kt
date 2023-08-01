@@ -60,7 +60,7 @@ class LearningActivity : BaseActivity() {
         delegate.isHandleNativeActionModesEnabled = false
 
         withParameters { deckId, cardType, studyOrder, studyTargets ->
-            viewModel.start(this, views.exerciseContainer, deckId, cardType, studyOrder, studyTargets)
+            viewModel.start(this@LearningActivity, views.exerciseContainer, deckId, cardType, studyOrder, studyTargets)
         }
     }
 

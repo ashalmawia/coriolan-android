@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui.learning
 
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.LearningActivityBinding
 import com.ashalmawia.coriolan.model.Card
@@ -11,7 +12,9 @@ import com.ashalmawia.coriolan.util.setStartDrawableTint
 private const val REQUEST_CODE_EDIT_CARD = 1
 
 interface LearningView {
-    fun onExerciseBegins(toolbarTitle: String)
+    fun initialize(toolbarTitle: String)
+    fun showLoading()
+    fun hideLoading()
     fun updateProgressCounts(counts: Counts)
     fun launchEdit(card: Card)
     fun congratulateWithAccomplishedAssignment()
@@ -27,13 +30,23 @@ class LearningViewImpl(
         adjustProgressCountsUI()
     }
 
-    override fun onExerciseBegins(toolbarTitle: String) {
+    override fun initialize(toolbarTitle: String) {
         activity.setUpToolbar(toolbarTitle)
         views.toolbarTitle.text = toolbarTitle
+        views.deckProgressBar.root.isVisible = false
+    }
+
+    override fun showLoading() {
+        activity.showLoading()
+    }
+
+    override fun hideLoading() {
+        activity.hideLoading()
     }
 
     override fun updateProgressCounts(counts: Counts) {
         views.deckProgressBar.apply {
+            root.isVisible = true
             deckProgressBarNew.text = counts.new.toString()
             deckProgressBarReview.text = counts.review.toString()
             deckProgressBarRelearn.text = counts.relearn.toString()
