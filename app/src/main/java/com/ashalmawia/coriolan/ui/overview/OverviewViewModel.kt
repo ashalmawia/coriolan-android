@@ -1,10 +1,14 @@
 package com.ashalmawia.coriolan.ui.overview
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class OverviewViewModel(
         private val deckId: Long,
@@ -21,27 +25,27 @@ class OverviewViewModel(
 
     fun start(view: OverviewView) {
         this.view = view
-
-        deck = fetchDeck()
-        allCards = fetchCards()
+        view.showLoading()
 
         val defaultSorting = OverviewSorting.default()
-        view.initialize(deck.name, defaultSorting)
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                deck = repository.deckById(deckId)
+            }
+            withContext(Dispatchers.Main) {
+                view.initialize(deck.name, defaultSorting)
+            }
+            withContext(Dispatchers.Default) {
+                allCards = buildCardsList(repository.cardsOfDeck(deck))
+            }
+            withContext(Dispatchers.Main) {
+                updateContent(sort(allCards, defaultSorting))
+            }
+        }
     }
 
     fun finish() {
         this.view = null
-    }
-
-    private fun fetchDeck(): Deck {
-
-        return repository.deckById(deckId)
-    }
-
-    private fun fetchCards(): List<CardItem> {
-        val list = buildCardsList(repository.cardsOfDeck(deck))
-        currentCards = list
-        return list
     }
 
     private fun buildCardsList(cards: List<Card>): List<CardItem> {
@@ -59,6 +63,7 @@ class OverviewViewModel(
 
     fun searchTerm(term: String) {
         val view = view ?: return
+        view.showLoading()
 
         val oldTerm = searchTerm
         val baseList = if (term.contains(oldTerm)) {
@@ -72,8 +77,7 @@ class OverviewViewModel(
     }
 
     fun onSortingUpdated(sorting: OverviewSorting) {
-        val cards = if (searchTerm.isEmpty()) allCards else currentCards
-        updateContent(sort(cards, sorting))
+        updateContent(sort(currentCards, sorting))
     }
 
     private fun updateContent(list: List<CardItem>) {

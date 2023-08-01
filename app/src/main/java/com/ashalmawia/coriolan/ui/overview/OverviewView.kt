@@ -22,6 +22,7 @@ interface OverviewView {
     fun selectedSorting(): OverviewSorting
     fun startAddCardsActivity(deck: Deck)
     fun startEditDeckActivity(deck: Deck)
+    fun showLoading()
 }
 
 class OverviewViewImpl(
@@ -40,13 +41,18 @@ class OverviewViewImpl(
     override fun initialize(deckName: String, defaultSorting: OverviewSorting) {
         initializeSorting(defaultSorting)
         activity.setUpToolbar(deckName, "")
+        activity.showLoading()
     }
 
     private fun initializeSorting(defaultSorting: OverviewSorting) {
         val values = OverviewSorting.values().map { activity.getString(it.titleRes) }
         val spinnerAdapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, values)
         views.sortingSpinner.adapter = spinnerAdapter
+        views.sortingSpinner.onItemSelectedListener = null
         views.sortingSpinner.setSelection(OverviewSorting.values().indexOf(defaultSorting))
+    }
+
+    private fun initializeSortingListener() {
         views.sortingSpinner.setOnItemSelectedListener { position ->
             val sorting = OverviewSorting.values()[position]
             viewModel.onSortingUpdated(sorting)
@@ -59,7 +65,7 @@ class OverviewViewImpl(
     }
 
     override fun initializeSearch(menu: Menu) {
-        val searchItem = menu.findItem(com.ashalmawia.coriolan.R.id.toolbar_search)
+        val searchItem = menu.findItem(R.id.toolbar_search)
         val searchView = searchItem.actionView as SearchView
         searchView.setOnQueryTextListener(this)
     }
@@ -99,6 +105,7 @@ class OverviewViewImpl(
     }
 
     override fun bindContent(cards: List<CardItem>, totalCardsCount: Int) {
+        activity.hideLoading()
         updateToolbarSubtitle(totalCardsCount)
 
         if (totalCardsCount == 0) {
@@ -115,5 +122,11 @@ class OverviewViewImpl(
 
             adapter.setItems(cards)
         }
+
+        initializeSortingListener()
+    }
+
+    override fun showLoading() {
+        activity.showLoading()
     }
 }
