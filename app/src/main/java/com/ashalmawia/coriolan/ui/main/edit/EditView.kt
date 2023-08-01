@@ -14,6 +14,7 @@ import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
 import com.ashalmawia.coriolan.ui.overview.OverviewActivity
 
 interface EditView {
+    fun showLoading()
     fun onDecksList(domain: Domain, decks: List<EditDeckListItem>)
     fun showDeleteFailedDialog(deck: Deck)
 }
@@ -30,7 +31,12 @@ class EditViewImpl(
         views.list.layoutManager = LinearLayoutManager(activity)
     }
 
+    override fun showLoading() {
+        activity.showLoading()
+    }
+
     override fun onDecksList(domain: Domain, decks: List<EditDeckListItem>) {
+        activity.hideLoading()
         (views.list.adapter as EditDeckListAdapter).setItems(toFlexListItems(domain, decks))
     }
 
