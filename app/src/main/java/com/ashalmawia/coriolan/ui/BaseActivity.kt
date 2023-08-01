@@ -23,6 +23,10 @@ abstract class BaseActivity : AppCompatActivity() {
         supportActionBar!!.subtitle = subtitle
     }
 
+    fun updateToolbarSubtitle(subtitle: String?) {
+        supportActionBar!!.subtitle = subtitle
+    }
+
     fun setUpToolbar(@StringRes titleRes: Int, @StringRes subtitleRes: Int = 0, cancellable: Boolean = true) {
         val title = getString(titleRes)
         val subtitle = if (subtitleRes == 0) null else getString(subtitleRes)
