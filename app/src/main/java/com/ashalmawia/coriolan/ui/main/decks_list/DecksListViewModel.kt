@@ -32,13 +32,9 @@ class DecksListViewModel(
 
     private var view: DecksListView? = null
 
-    fun bind(view: DecksListView) {
-        this.view = view
-        view.initialize()
-    }
-
-    fun onStart() {
+    fun onStart(view: DecksListView) {
         TodayManager.register(this)
+        this.view = view
     }
 
     fun onResume() {
@@ -47,9 +43,6 @@ class DecksListViewModel(
 
     fun onStop() {
         TodayManager.unregister(this)
-    }
-
-    fun unbind() {
         view = null
     }
 

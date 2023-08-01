@@ -45,8 +45,6 @@ class DecksListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
-        viewModel.bind(this.decksListView)
-
         reportFragmentInflated(view)
     }
 
@@ -63,7 +61,7 @@ class DecksListFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.onStart()
+        viewModel.onStart(decksListView)
     }
 
     override fun onResume() {
@@ -76,8 +74,8 @@ class DecksListFragment : BaseFragment() {
         viewModel.onStop()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.unbind()
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.onStop()
     }
 }

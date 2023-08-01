@@ -22,8 +22,6 @@ import org.joda.time.DateTime
 
 interface DecksListView {
 
-    fun initialize()
-
     fun showLoading()
     fun hideLoading()
 
@@ -53,7 +51,7 @@ class DecksListViewImpl(
     private val context = views.root.context
     private val adapter = DecksListAdapter(viewModel)
 
-    override fun initialize() {
+    init {
         views.decksList.layoutManager = LinearLayoutManager(context)
         views.decksList.adapter = adapter
     }
