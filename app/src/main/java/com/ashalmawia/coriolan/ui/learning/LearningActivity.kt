@@ -6,25 +6,20 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ashalmawia.coriolan.R
-import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningActivityBinding
-import com.ashalmawia.coriolan.learning.LearningFlow
-import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.learning.StudyTargets
+import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.commons.DeletingCard.confirmDeleteCurrentCard
-import com.ashalmawia.coriolan.util.setStartDrawableTint
+import com.ashalmawia.coriolan.ui.util.viewModelBuilder
 import org.koin.android.ext.android.get
-import org.koin.android.ext.android.inject
 
 private const val REQUEST_CODE_EDIT_CARD = 1
 
@@ -33,7 +28,7 @@ private const val EXTRA_CARD_TYPE_FILTER = "extra_card_type"
 private const val EXTRA_STUDY_ORDER = "extra_study_order"
 private const val EXTRA_STUDY_TARGETS = "extra_study_targets"
 
-class LearningActivity : BaseActivity(), LearningFlow.Listener {
+class LearningActivity : BaseActivity() {
 
     companion object {
         fun intent(context: Context,
@@ -52,37 +47,30 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     }
 
     private val views by lazy { LearningActivityBinding.inflate(layoutInflater) }
+    private val view: LearningView by lazy { LearningViewImpl(views, this) }
 
-    private val repository: Repository by inject()
-
-    private val flow by lazy {
-        val learningFlowFactory: LearningFlow.Factory = get()
-
-        withParameters { deck, cardType, studyOrder, studyTargets ->
-            learningFlowFactory.createLearningFlow(
-                    this, views.exerciseContainer, deck, cardType, studyOrder, studyTargets, this
-            )
-        }
+    private val viewModel: LearningViewModel by viewModelBuilder {
+        LearningViewModel(get(), get(), view)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(views.root)
 
-        adjustProgressCountsUI()
-
-        beginExercise()
         delegate.isHandleNativeActionModesEnabled = false
+
+        withParameters { deckId, cardType, studyOrder, studyTargets ->
+            viewModel.start(this, views.exerciseContainer, deckId, cardType, studyOrder, studyTargets)
+        }
     }
 
-    private fun <T> withParameters(onResolved: (Deck, CardTypeFilter, StudyOrder, StudyTargets) -> T): T {
+    private fun <T> withParameters(onResolved: (Long, CardTypeFilter, StudyOrder, StudyTargets) -> T): T {
         val deckId = intent.getLongExtra(EXTRA_DECK_ID, 0L)
-        val deck = repository.deckById(deckId)
         val cardType = CardTypeFilter.valueOf(intent.getStringExtra(EXTRA_CARD_TYPE_FILTER)!!)
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
         val studyTargets = intent.getSerializableExtra(EXTRA_STUDY_TARGETS) as StudyTargets
 
-        return onResolved(deck, cardType, studyOrder, studyTargets)
+        return onResolved(deckId, cardType, studyOrder, studyTargets)
     }
 
     private lateinit var undoIcon: VectorDrawableSelector
@@ -96,7 +84,7 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val canUndo = flow.canUndo()
+        val canUndo = viewModel.canUndo
         menu.findItem(R.id.learning_menu__undo).isEnabled = canUndo
         menu.findItem(R.id.learning_menu__undo).icon = undoIcon.get(canUndo)
         return super.onPrepareOptionsMenu(menu)
@@ -105,34 +93,19 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.learning_menu__undo -> {
-                undo()
+                viewModel.undo()
                 return true
             }
             R.id.learning_menu__edit_card -> {
-                editCurrentCard()
+                viewModel.editCurrentCard()
                 return true
             }
             R.id.learning_menu__delete_card -> {
-                confirmDeleteCurrentCard(this, this::deleteCurrentCard)
+                confirmDeleteCurrentCard(this, viewModel::deleteCurrentCard)
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun undo() {
-        flow.undo()
-    }
-
-    private fun editCurrentCard() {
-        val intent = AddEditCardActivity.edit(this, flow.current.card)
-        startActivityForResult(intent, REQUEST_CODE_EDIT_CARD)
-    }
-
-    private fun deleteCurrentCard() {
-        val current = flow.current
-        flow.dropCard(current.card)
-        repository.deleteCard(current.card)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -140,53 +113,9 @@ class LearningActivity : BaseActivity(), LearningFlow.Listener {
 
         when (requestCode) {
             REQUEST_CODE_EDIT_CARD -> {
-                onCurrentCardUpdated()
+                viewModel.onCurrentCardUpdated()
             }
         }
-    }
-
-    private fun onCurrentCardUpdated() {
-        flow.refetchTask(flow.current)
-    }
-
-    private fun beginExercise() {
-        setUpToolbar(flow.deck.name)
-        views.toolbarTitle.text = flow.deck.name
-
-        flow.showNextOrComplete()
-    }
-
-    private fun adjustProgressCountsUI() {
-        views.deckProgressBar.apply {
-            deckProgressBarNew.setStartDrawableTint(R.color.card_activity__pending_counters)
-            deckProgressBarReview.setStartDrawableTint(R.color.card_activity__pending_counters)
-            deckProgressBarRelearn.setStartDrawableTint(R.color.card_activity__pending_counters)
-        }
-    }
-
-    private fun updateProgressCounts() {
-        val counts = flow.counts
-        views.deckProgressBar.apply {
-            deckProgressBarNew.text = counts.new.toString()
-            deckProgressBarReview.text = counts.review.toString()
-            deckProgressBarRelearn.text = counts.relearn.toString()
-        }
-    }
-
-    override fun onTaskRendered() {
-        updateProgressCounts()
-        invalidateOptionsMenu()
-    }
-
-    override fun onFinish(emptyAssignment: Boolean) {
-        if (!emptyAssignment) {
-            congratulateWithAccomplishedAssignment()
-        }
-        finish()
-    }
-
-    private fun congratulateWithAccomplishedAssignment() {
-        Toast.makeText(this, R.string.assignment_accomplished_congratulation, Toast.LENGTH_LONG).show()
     }
 }
 

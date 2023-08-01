@@ -16,14 +16,14 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private val loader: ProgressBar by lazy { findViewById(R.id.toolbar_loading) }
 
-    protected fun setUpToolbar(title: String, subtitle: String? = null, cancellable: Boolean = true) {
+    fun setUpToolbar(title: String, subtitle: String? = null, cancellable: Boolean = true) {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(cancellable)
         supportActionBar!!.title = title
         supportActionBar!!.subtitle = subtitle
     }
 
-    protected fun setUpToolbar(@StringRes titleRes: Int, @StringRes subtitleRes: Int = 0, cancellable: Boolean = true) {
+    fun setUpToolbar(@StringRes titleRes: Int, @StringRes subtitleRes: Int = 0, cancellable: Boolean = true) {
         val title = getString(titleRes)
         val subtitle = if (subtitleRes == 0) null else getString(subtitleRes)
         setUpToolbar(title, subtitle, cancellable)
