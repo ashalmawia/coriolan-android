@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.ui.main.statistics
 import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.util.endOfDay
 import com.ashalmawia.coriolan.util.midnight
 import com.ashalmawia.coriolan.util.orZero
 import com.github.mikephil.charting.charts.LineChart
@@ -85,7 +86,12 @@ object StatisticsPanelLineChart {
     }
 
     private fun generateChartDataGroupedByMonth(from: DateTime, to: DateTime, data: Map<DateTime, Int>): ChartData {
-        val dataByMonth = data.entries.groupBy { it.key.monthOfYear() }.mapValues { it.value.sumOf { it.value } }
+        val fromNormalized = from.minusDays(1).endOfDay()
+        val toNormalized = to.endOfDay()
+        val dataByMonth = data.entries
+                .filter { it.key.isAfter(fromNormalized) && it.key.isBefore(toNormalized) }
+                .groupBy { it.key.monthOfYear() }
+                .mapValues { it.value.sumOf { it.value } }
         val months = mutableListOf<DateTime.Property>()
         var current = to
         while (current > from) {
