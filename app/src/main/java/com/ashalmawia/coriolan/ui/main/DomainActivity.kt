@@ -19,7 +19,6 @@ import com.ashalmawia.coriolan.ui.commons.tapTargetForToolbarOverflow
 import com.ashalmawia.coriolan.ui.commons.tapTargetForView
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
-import com.ashalmawia.coriolan.ui.main.edit.EditFragmentListener
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
@@ -41,7 +40,7 @@ private const val EXTRA_DOMAIN_ID = "domain_id"
 private const val KEY_SELECTED_TAB = "selected_tag"
 private const val TAG = "DomainActivity"
 
-class DomainActivity : BaseActivity(), EditFragmentListener {
+class DomainActivity : BaseActivity() {
 
     private val views by lazy { DomainActivityBinding.inflate(layoutInflater) }
 
@@ -141,10 +140,6 @@ class DomainActivity : BaseActivity(), EditFragmentListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return appMenu.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
-    }
-
-    override fun onDataUpdated() {
-        selectTab(Tab.DECKS_LIST)
     }
 
     fun onDecksListFragmentInflated(firstDeckView: View) {
