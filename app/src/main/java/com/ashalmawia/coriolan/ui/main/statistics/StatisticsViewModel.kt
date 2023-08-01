@@ -39,8 +39,8 @@ class StatisticsViewModel(
 
     private fun buildDateRange(range: StatisticsDateRange): DateRange {
         return when (range) {
-            StatisticsDateRange.LastMonth -> DateRange(today.minusWeeks(1), today)
-            StatisticsDateRange.LastWeek -> DateRange(today.minusMonths(1), today)
+            StatisticsDateRange.LastWeek -> DateRange(today.minusWeeks(1), today)
+            StatisticsDateRange.LastMonth -> DateRange(today.minusMonths(1), today)
             StatisticsDateRange.LastYear -> DateRange(today.minusYears(1), today)
         }
     }
