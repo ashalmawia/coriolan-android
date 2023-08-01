@@ -13,7 +13,9 @@ private const val POSITION_WEEK = 0
 private const val POSITION_MONTH = 1
 private const val POSITION_YEAR = 2
 
-interface StatisticsView
+interface StatisticsView {
+    fun hideLoading()
+}
 
 class StatisticsViewImpl(
         private val views: StatisticsBinding,
@@ -85,8 +87,12 @@ class StatisticsViewImpl(
         }
     }
 
-    private fun renderData(state: StatisticsViewState.Data) {
+    override fun hideLoading() {
         fragment.hideLoading()
+    }
+
+    private fun renderData(state: StatisticsViewState.Data) {
+        hideLoading()
         setUpChartBackgrounds(false)
 
         views.setupCardsByLearningProgressPanel(state.learningProgressData)

@@ -40,4 +40,9 @@ class StatisticsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.initialize()
     }
+
+    override fun onStop() {
+        super.onStop()
+        statisticsView.hideLoading()
+    }
 }

@@ -17,12 +17,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
-class StatisticsViewModel(domainId: Long, private val repository: Repository, private val logbook: Logbook) : ViewModel() {
+class StatisticsViewModel(
+        private val domainId: Long,
+        private val repository: Repository,
+        private val logbook: Logbook
+) : ViewModel() {
     private val today = TodayManager.today()
-
-    private val domain: Domain by lazy {
-        repository.domainById(domainId)!!
-    }
 
     private val _currentState = MutableLiveData<StatisticsViewState>()
     val currentState: LiveData<StatisticsViewState> = _currentState
@@ -55,32 +55,39 @@ class StatisticsViewModel(domainId: Long, private val repository: Repository, pr
     }
 
     private fun fetchDataSync(range: StatisticsDateRange) {
+        val domain = domain()
+        val allDecks = allDecks(domain)
+
         val (from, to) = buildDateRange(range)
-        val state = lastData?.copy(
-                rangeFrom = from,
-                rangeTo = to,
-                rangeValue = range,
-                cardsLearntByDayData = extractCardsLearntByDayData(from, to)
-        ) ?: StatisticsViewState.Data(
-                rangeFrom = from,
-                rangeTo = to,
-                rangeValue = range,
-                learningProgressData = extractCardByLearningProgressData(),
-                cardsLearntByDayData = extractCardsLearntByDayData(from, to),
-                cardsAddedByDayData = extractCardsAddedByDayData()
-        )
-        lastData = state
+        val lastData = lastData
+
+        val state = if (lastData != null) {
+            lastData.copy(
+                    rangeFrom = from,
+                    rangeTo = to,
+                    rangeValue = range,
+                    cardsLearntByDayData = extractCardsLearntByDayData(from, to, allDecks)
+            )
+        } else {
+            val allCards = allCards(domain)
+            StatisticsViewState.Data(
+                    rangeFrom = from,
+                    rangeTo = to,
+                    rangeValue = range,
+                    learningProgressData = extractCardByLearningProgressData(allCards),
+                    cardsLearntByDayData = extractCardsLearntByDayData(from, to, allDecks),
+                    cardsAddedByDayData = extractCardsAddedByDayData(allCards)
+            )
+        }
+        this.lastData = state
         _currentState.postValue(state)
     }
 
-    private val allDecks: List<Deck> by lazy {
-        repository.allDecks(domain)
-    }
-    private val allCards: List<Card> by lazy {
-        repository.allCards(domain)
-    }
+    private fun domain(): Domain = repository.domainById(domainId)!!
+    private fun allDecks(domain: Domain): List<Deck> = repository.allDecks(domain)
+    private fun allCards(domain: Domain): List<Card> = repository.allCards(domain)
 
-    private fun extractCardsLearntByDayData(from: DateTime, to: DateTime): Map<DateTime, Int> {
+    private fun extractCardsLearntByDayData(from: DateTime, to: DateTime, allDecks: List<Deck>): Map<DateTime, Int> {
         val data = logbook.cardsStudiedOnDateRange(from, to, allDecks)
         return data.mapValues { pair ->
             pair.value.filter {
@@ -89,11 +96,11 @@ class StatisticsViewModel(domainId: Long, private val repository: Repository, pr
         }
     }
 
-    private fun extractCardsAddedByDayData(): Map<DateTime, Int> {
+    private fun extractCardsAddedByDayData(allCards: List<Card>): Map<DateTime, Int> {
         return allCards.groupBy { it.dateAdded }.mapValues { it.value.size }
     }
 
-    private fun extractCardByLearningProgressData(): Map<Status, Int> {
+    private fun extractCardByLearningProgressData(allCards: List<Card>): Map<Status, Int> {
         val learningProgress = repository.getProgressForCardsWithOriginals(allCards.map { it.id })
         return learningProgress.values.groupBy { it.status }.mapValues { it.value.count() }.toSortedMap()
     }
