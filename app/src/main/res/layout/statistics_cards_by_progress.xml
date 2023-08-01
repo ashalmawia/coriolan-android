@@ -6,12 +6,25 @@
 	android:layout_height="wrap_content"
 	android:orientation="horizontal">
 
-	<ir.mahozad.android.PieChart
-		android:id="@+id/panel_cards_by_learning_progress"
+	<FrameLayout
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:visibility="invisible"/>
+		android:layout_weight="1">
+
+		<ir.mahozad.android.PieChart
+			android:id="@+id/panel_cards_by_learning_progress"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:visibility="invisible" />
+
+		<View
+			android:id="@+id/panel_placeholder"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_margin="@dimen/spacing__medium"
+			android:background="@color/grey_light"/>
+
+	</FrameLayout>
 
 	<LinearLayout
 		android:layout_width="wrap_content"

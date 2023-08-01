@@ -1,6 +1,8 @@
 package com.ashalmawia.coriolan.ui.main.statistics
 
+import android.view.View
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.StatisticsBinding
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsPanelCardsByLearningProgress.setupCardsByLearningProgressPanel
@@ -11,11 +13,7 @@ private const val POSITION_WEEK = 0
 private const val POSITION_MONTH = 1
 private const val POSITION_YEAR = 2
 
-interface StatisticsView {
-
-    fun showLoading()
-    fun hideLoading()
-}
+interface StatisticsView
 
 class StatisticsViewImpl(
         private val views: StatisticsBinding,
@@ -68,6 +66,29 @@ class StatisticsViewImpl(
     }
 
     private fun render(state: StatisticsViewState) {
+        when (state) {
+            is StatisticsViewState.Loading -> renderLoading()
+            is StatisticsViewState.Data -> renderData(state)
+        }
+    }
+
+    private fun renderLoading() {
+        fragment.showLoading()
+        setUpChartBackgrounds(true)
+    }
+
+    private fun setUpChartBackgrounds(isLoading: Boolean) {
+        views.apply {
+            statisticsCardsByProgress.panelCardsByLearningProgress.visibility =
+                    if (isLoading) View.INVISIBLE else View.VISIBLE
+            statisticsCardsByProgress.panelPlaceholder.isVisible = isLoading
+        }
+    }
+
+    private fun renderData(state: StatisticsViewState.Data) {
+        fragment.hideLoading()
+        setUpChartBackgrounds(false)
+
         views.setupCardsByLearningProgressPanel(state.learningProgressData)
         views.cardsStudiedByDay.setUpLineChart(state.rangeFrom, state.rangeTo, state.cardsLearntByDayData, R.color.statistics_learnt)
         views.cardsAddedByDay.setUpLineChart(state.rangeFrom, state.rangeTo, state.cardsAddedByDayData, R.color.statistics_in_progress)
@@ -78,13 +99,5 @@ class StatisticsViewImpl(
             setSelection(state.rangeValue.toPosition())
             onItemSelectedListener = dateListener
         }
-    }
-
-    override fun showLoading() {
-        fragment.showLoading()
-    }
-
-    override fun hideLoading() {
-        fragment.hideLoading()
     }
 }

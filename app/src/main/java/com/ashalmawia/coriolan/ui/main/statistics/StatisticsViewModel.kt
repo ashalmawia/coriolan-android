@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.ui.main.statistics
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ashalmawia.coriolan.data.logbook.Logbook
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.Status
@@ -11,6 +12,9 @@ import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
 class StatisticsViewModel(domainId: Long, private val repository: Repository, private val logbook: Logbook) : ViewModel() {
@@ -22,6 +26,8 @@ class StatisticsViewModel(domainId: Long, private val repository: Repository, pr
 
     private val _currentState = MutableLiveData<StatisticsViewState>()
     val currentState: LiveData<StatisticsViewState> = _currentState
+
+    private var lastData: StatisticsViewState.Data? = null
 
     fun initialize() {
         fetchData(StatisticsDateRange.LastWeek)
@@ -40,13 +46,22 @@ class StatisticsViewModel(domainId: Long, private val repository: Repository, pr
     }
 
     private fun fetchData(range: StatisticsDateRange) {
+        _currentState.postValue(StatisticsViewState.Loading)
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                fetchDataSync(range)
+            }
+        }
+    }
+
+    private fun fetchDataSync(range: StatisticsDateRange) {
         val (from, to) = buildDateRange(range)
-        val state = currentState.value?.copy(
+        val state = lastData?.copy(
                 rangeFrom = from,
                 rangeTo = to,
                 rangeValue = range,
                 cardsLearntByDayData = extractCardsLearntByDayData(from, to)
-        ) ?: StatisticsViewState(
+        ) ?: StatisticsViewState.Data(
                 rangeFrom = from,
                 rangeTo = to,
                 rangeValue = range,
@@ -54,6 +69,7 @@ class StatisticsViewModel(domainId: Long, private val repository: Repository, pr
                 cardsLearntByDayData = extractCardsLearntByDayData(from, to),
                 cardsAddedByDayData = extractCardsAddedByDayData()
         )
+        lastData = state
         _currentState.postValue(state)
     }
 
