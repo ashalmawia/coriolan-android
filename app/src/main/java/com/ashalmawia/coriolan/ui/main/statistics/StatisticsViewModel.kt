@@ -101,7 +101,7 @@ class StatisticsViewModel(
     }
 
     private fun extractCardByLearningProgressData(allCards: List<Card>): Map<Status, Int> {
-        val learningProgress = repository.getProgressForCardsWithOriginals(allCards.map { it.id })
+        val learningProgress = repository.getProgressForCardsWithOriginals(allCards.map { it.original.id })
         return learningProgress.values.groupBy { it.status }.mapValues { it.value.count() }.toSortedMap()
     }
 }
