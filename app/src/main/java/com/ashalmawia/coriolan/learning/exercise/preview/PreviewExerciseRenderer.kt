@@ -21,7 +21,7 @@ class PreviewExerciseRenderer(
 
     override fun renderTask(task: Task) {
         uiContainer.removeAllViews()
-        cardView.bind(task.card, listOf(CardAnswer.ACCEPT))
+        cardView.bind(task.card, listOf(CardAnswer.ACCEPT, CardAnswer.REJECT))
         uiContainer.addView(cardView)
     }
 
@@ -31,7 +31,8 @@ class PreviewExerciseRenderer(
 }
 
 private fun cardViewConfig() = CardViewConfiguration.Builder()
-        .addButton(R.string.button_next, CardViewButton.Type.NEUTRAL, CardAnswer.ACCEPT)
+        .addButton(R.string.cards_reject, CardViewButton.Type.NEGATIVE, CardAnswer.REJECT)
+        .addButton(R.string.cards_accept, CardViewButton.Type.NEUTRAL, CardAnswer.ACCEPT)
         .alwaysOpen(true)
         .showNewBadge(true)
         .build()

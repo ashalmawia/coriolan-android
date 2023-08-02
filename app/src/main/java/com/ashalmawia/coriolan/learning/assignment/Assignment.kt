@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.learning.assignment
 
+import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
@@ -12,9 +13,11 @@ import kotlin.math.min
 class Assignment(
         val date: DateTime,
         private val history: History,
-        tasks: List<Task>
+        tasks: List<Task>,
+        extraNewCards: List<CardWithProgress>
 ) {
     private val queue = LinkedList(tasks)
+    private val extraNewCards: Queue<CardWithProgress> = LinkedList(extraNewCards.shuffled())
 
     val originalCount = tasks.size
 
@@ -84,6 +87,8 @@ class Assignment(
     }
 
     fun canUndo() = history.canGoBack() && current?.exercise?.canUndo ?: false
+
+    fun extraNewCard(): CardWithProgress? = extraNewCards.poll()
 
     private fun tasks(): List<Task> {
         val cur = current

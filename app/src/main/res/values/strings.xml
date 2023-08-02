@@ -67,6 +67,8 @@
 	<string name="cards_no">No</string>
 	<string name="cards_hard">Hard</string>
 	<string name="cards_easy">Easy</string>
+	<string name="cards_reject">Put aside</string>
+	<string name="cards_accept">Got it!</string>
 	<string name="cards_tap_to_show_answer">Tap on the question mark to show the answer</string>
 	<string name="card_badge_new">New\nword</string>
 

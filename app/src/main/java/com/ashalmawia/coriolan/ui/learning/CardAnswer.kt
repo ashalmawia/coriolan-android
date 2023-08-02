@@ -5,5 +5,6 @@ enum class CardAnswer {
     CORRECT,
     EASY,
     HARD,
-    ACCEPT
+    ACCEPT,
+    REJECT
 }

@@ -55,14 +55,26 @@ class LearningFlow(
 
         when (answer) {
             CardAnswer.ACCEPT -> acceptNewWord(task)
+            CardAnswer.REJECT -> rejectNewWord(task)
             else -> reschedule(task, answer)
         }
-        showNextOrComplete()
     }
 
     private fun acceptNewWord(task: Task) {
         val newTasks = exercises.mapNotNull { it.onNewWordAccepted(task.card, task.learningProgress) }
         newTasks.forEach { assignment.reschedule(it, ReschedulingStrategy.SOON) }
+        showNextOrComplete()
+    }
+
+    private fun rejectNewWord(task: Task) {
+        val replacementCard = assignment.extraNewCard()
+        if (replacementCard != null) {
+            val replacementTask = Task(replacementCard.card, replacementCard.learningProgress, task.exercise)
+            assignment.replace(task.card, replacementTask)
+            renderTask(replacementTask)
+        } else {
+            showNextOrComplete()
+        }
     }
 
     private fun reschedule(task: Task, answer: CardAnswer) {
@@ -75,6 +87,8 @@ class LearningFlow(
             assignment.reschedule(updated, ReschedulingStrategy.MEDIUM)
         }
         logbook.recordCardAction(task, newProgress.state)
+
+        showNextOrComplete()
     }
 
     private fun finish(emptyAssignment: Boolean) {

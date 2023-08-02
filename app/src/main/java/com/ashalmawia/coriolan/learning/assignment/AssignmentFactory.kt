@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.data.storage.Repository
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.mutation.Mutations
@@ -46,11 +47,13 @@ class AssignmentFactoryImpl(
 
         val cards = repository.pendingCards(deck, date)
         val cardsToLearn = mutations.apply(cards)
+        val extraNewCards = cards.minus(cardsToLearn.toSet()).filter { it.status == Status.NEW }
+
         val tasks = orderTasks(
                 exercisesRegistry.enabledExercises().flatMap { it.generateTasks(cardsToLearn) }
         )
 
-        return Assignment(date, history, tasks)
+        return Assignment(date, history, tasks, extraNewCards)
     }
 
     private fun mutations(

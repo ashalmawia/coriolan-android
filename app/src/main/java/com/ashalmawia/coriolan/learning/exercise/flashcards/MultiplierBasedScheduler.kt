@@ -6,6 +6,7 @@ import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.TodayManager
 import com.ashalmawia.coriolan.ui.learning.CardAnswer
 import org.joda.time.Days
+import java.lang.IllegalArgumentException
 import kotlin.math.*
 
 private const val MULTIPLIER_HARD = 0.5f
@@ -22,7 +23,7 @@ class MultiplierBasedScheduler : SpacedRepetitionScheduler {
             CardAnswer.CORRECT -> correct(state)
             CardAnswer.EASY -> easy(state)
             CardAnswer.HARD -> hard(state)
-            CardAnswer.ACCEPT -> state
+            else -> throw IllegalArgumentException("unexpected state: $state")
         }
     }
 
