@@ -2,7 +2,7 @@ package com.ashalmawia.coriolan.learning.scheduler
 
 import com.ashalmawia.coriolan.learning.*
 import com.ashalmawia.coriolan.learning.exercise.flashcards.MultiplierBasedScheduler
-import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
+import com.ashalmawia.coriolan.ui.learning.CardAnswer
 import com.ashalmawia.coriolan.learning.exercise.flashcards.SpacedRepetitionScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -26,7 +26,7 @@ class MultiplierBasedSchedulerTest {
         assertEquals(Status.NEW, state.status)       // test requirement, update if needed
 
         // when
-        state = scheduler.processAnswer(CardViewAnswer.WRONG, state)
+        state = scheduler.processAnswer(CardAnswer.WRONG, state)
 
         // then
         val today = today
@@ -332,7 +332,7 @@ class MultiplierBasedSchedulerTest {
     }
 }
 
-private fun SpacedRepetitionScheduler.wrong(SchedulingState: SchedulingState) = processAnswer(CardViewAnswer.WRONG, SchedulingState)
-private fun SpacedRepetitionScheduler.correct(SchedulingState: SchedulingState) = processAnswer(CardViewAnswer.CORRECT, SchedulingState)
-private fun SpacedRepetitionScheduler.easy(SchedulingState: SchedulingState) = processAnswer(CardViewAnswer.EASY, SchedulingState)
-private fun SpacedRepetitionScheduler.hard(SchedulingState: SchedulingState) = processAnswer(CardViewAnswer.HARD, SchedulingState)
+private fun SpacedRepetitionScheduler.wrong(SchedulingState: SchedulingState) = processAnswer(CardAnswer.WRONG, SchedulingState)
+private fun SpacedRepetitionScheduler.correct(SchedulingState: SchedulingState) = processAnswer(CardAnswer.CORRECT, SchedulingState)
+private fun SpacedRepetitionScheduler.easy(SchedulingState: SchedulingState) = processAnswer(CardAnswer.EASY, SchedulingState)
+private fun SpacedRepetitionScheduler.hard(SchedulingState: SchedulingState) = processAnswer(CardAnswer.HARD, SchedulingState)

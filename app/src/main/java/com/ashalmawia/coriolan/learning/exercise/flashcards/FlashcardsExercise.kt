@@ -6,12 +6,14 @@ import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.ExerciseData
+import com.ashalmawia.coriolan.learning.LearningProgress
+import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.model.Card
-import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
+import com.ashalmawia.coriolan.ui.learning.CardAnswer
 
 /**
  * Simple learning exercise which shows all the cards in the assignment: given front, guess back.
@@ -41,12 +43,18 @@ class FlashcardsExercise : Exercise {
         )
     }
 
+    override fun onNewWordAccepted(card: Card, learningProgress: LearningProgress): Task {
+        return Task(card, learningProgress, this)
+    }
+
     override fun onTaskStudied(card: Card, answer: Any, exerciseData: ExerciseData): Pair<Boolean, ExerciseData> {
-        val shouldReschedule = answer == CardViewAnswer.WRONG
+        val shouldReschedule = answer == CardAnswer.WRONG
         return Pair(shouldReschedule, exerciseData)
     }
 
     override fun generateTasks(cards: List<CardWithProgress>): List<Task> {
-        return cards.map { Task(it.card, it.learningProgress, this) }
+        return cards
+                .filterNot { it.status == Status.NEW }
+                .map { Task(it.card, it.learningProgress, this) }
     }
 }

@@ -5,7 +5,9 @@ import android.view.ViewGroup
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.learning.assignment.Assignment
+import com.ashalmawia.coriolan.learning.assignment.ReschedulingStrategy
 import com.ashalmawia.coriolan.learning.exercise.Exercise
+import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.learning.exercise.ExercisesRegistry
 import com.ashalmawia.coriolan.learning.exercise.LogbookWriter
@@ -14,7 +16,7 @@ import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
-import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
+import com.ashalmawia.coriolan.ui.learning.CardAnswer
 
 class LearningFlow(
         context: Context,
@@ -28,7 +30,8 @@ class LearningFlow(
         private val listener: Listener
 ) : ExerciseRenderer.Listener {
 
-    private val renderers = exercisesRegistry.enabledExercises()
+    private val exercises: List<Exercise> = exercisesRegistry.enabledExercises()
+    private val renderers: Map<ExerciseId, ExerciseRenderer> = exercises
             .associate { Pair(it.id, it.createRenderer(context, uiContainer, this)) }
 
     val current
@@ -47,18 +50,31 @@ class LearningFlow(
         }
     }
 
-    override fun onAnswered(answer: Any) {
+    override fun onAnswered(answer: CardAnswer) {
         val task = current
-        val newState = scheduler.processAnswer(answer as CardViewAnswer, task.learningProgress.state)
+
+        when (answer) {
+            CardAnswer.ACCEPT -> acceptNewWord(task)
+            else -> reschedule(task, answer)
+        }
+        showNextOrComplete()
+    }
+
+    private fun acceptNewWord(task: Task) {
+        val newTasks = exercises.mapNotNull { it.onNewWordAccepted(task.card, task.learningProgress) }
+        newTasks.forEach { assignment.reschedule(it, ReschedulingStrategy.SOON) }
+    }
+
+    private fun reschedule(task: Task, answer: CardAnswer) {
+        val newState = scheduler.processAnswer(answer, task.learningProgress.state)
         val (shouldReschedule, newData) = task.exercise.onTaskStudied(task.card, answer, task.learningProgress.exerciseData)
         val newProgress = task.learningProgress.copy(state = newState, exerciseData = newData)
         val updated = updateTask(task, newProgress)
 
         if (shouldReschedule) {
-            assignment.reschedule(updated)
+            assignment.reschedule(updated, ReschedulingStrategy.MEDIUM)
         }
         logbook.recordCardAction(task, newProgress.state)
-        showNextOrComplete()
     }
 
     private fun finish(emptyAssignment: Boolean) {

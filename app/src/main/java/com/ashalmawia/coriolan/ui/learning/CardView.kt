@@ -30,7 +30,7 @@ class CardView(
 ) : FrameLayout(context) {
 
     private val views: CardViewBinding = CardViewBinding.inflate(layoutInflator, this)
-    private val buttons: Map<CardViewAnswer, CardViewButtonBinding>
+    private val buttons: Map<CardAnswer, CardViewButtonBinding>
 
     init {
         views.apply {
@@ -40,12 +40,12 @@ class CardView(
         }
     }
 
-    private fun initializeButtons(buttons: List<CardViewButton>): Map<CardViewAnswer, CardViewButtonBinding> {
+    private fun initializeButtons(buttons: List<CardViewButton>): Map<CardAnswer, CardViewButtonBinding> {
         views.buttonsContainer.rowCount = (buttons.size + 1) / 2
         return buttons.associate { Pair(it.answer, inflateButton(it)) }
     }
 
-    fun bind(card: Card, answers: List<CardViewAnswer>) {
+    fun bind(card: Card, answers: List<CardAnswer>) {
         views.frontText.text = card.original.value
         views.frontText.adjustTextSizeForString(card.original.value)
 
@@ -66,7 +66,7 @@ class CardView(
         }
     }
 
-    private fun configureButtonsBar(answers: List<CardViewAnswer>) {
+    private fun configureButtonsBar(answers: List<CardAnswer>) {
         buttons.forEach { (answer, binding) ->
             val available = answers.contains(answer)
             binding.button.visible = available
@@ -164,7 +164,7 @@ private fun String.containsHyeroglyphs() = any { Character.isIdeographic(it.code
 
 interface CardViewListener {
 
-    fun onAnswered(answer: CardViewAnswer)
+    fun onAnswered(answer: CardAnswer)
 }
 
 private fun View.setOnSingleClickListenerWithDelay(listener: (View) -> Unit) {

@@ -8,8 +8,6 @@ import org.joda.time.DateTime
 import java.util.*
 import kotlin.math.min
 
-private const val RESCHEDULING_STEP = 20
-
 @OpenForTesting
 class Assignment(
         val date: DateTime,
@@ -32,8 +30,9 @@ class Assignment(
         return queue.size > 0
     }
 
-    fun reschedule(task: Task) {
-        val index = min(RESCHEDULING_STEP, queue.size)
+    fun reschedule(task: Task, reschedulingStrategy: ReschedulingStrategy) {
+        val step = reschedulingStrategy.reschedulingStep
+        val index = min(step - 1, queue.size)
         queue.add(index, task)
     }
 
@@ -94,4 +93,9 @@ class Assignment(
             queue.toList()
         }
     }
+}
+
+enum class ReschedulingStrategy(val reschedulingStep: Int) {
+    SOON(5),
+    MEDIUM(20)
 }

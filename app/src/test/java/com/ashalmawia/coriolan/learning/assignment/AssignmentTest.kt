@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.learning.assignment
 
 import com.ashalmawia.coriolan.learning.Task
+import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockCard
 import com.ashalmawia.coriolan.model.mockTask
 import org.joda.time.DateTime
@@ -77,7 +78,7 @@ class AssignmentTest {
 
             map[current] = 1
 
-            assignment.reschedule(current)
+            assignment.reschedule(current, ReschedulingStrategy.MEDIUM)
         }
         for (i in 0 until map.size) {
             assignment.next()
@@ -106,7 +107,7 @@ class AssignmentTest {
 
             val current = assignment.current!!
             if (map[current]!!) {
-                assignment.reschedule(current)
+                assignment.reschedule(current, ReschedulingStrategy.MEDIUM)
             }
         }
         for (i in 0 until map.size / 2) {
@@ -134,11 +135,28 @@ class AssignmentTest {
             assertNotNull("next card was selected as current", assignment.current)
 
             val current = assignment.current!!
-            assignment.reschedule(current)
+            assignment.reschedule(current, ReschedulingStrategy.MEDIUM)
 
             assertNotEquals("current card differs from the last met", lastMet, current)
 
             lastMet = current
+        }
+    }
+
+    @Test
+    fun test__reschedule_strategies() {
+        // given
+        val tasks = (1 .. 50).map { mockTask() }
+        val assignment = create(mockToday(), tasks)
+        val original = assignment.next()
+
+        for (strategy in ReschedulingStrategy.values()) {
+            // when
+            assignment.reschedule(original, strategy)
+            repeat(strategy.reschedulingStep) { assignment.next() }
+
+            // then
+            assertEquals(original, assignment.current)
         }
     }
 
@@ -228,7 +246,7 @@ class AssignmentTest {
 
         var last = assignment.next()
         (1 .. 2).forEach {
-            assignment.reschedule(last)
+            assignment.reschedule(last, ReschedulingStrategy.MEDIUM)
             last = assignment.next()
         }
         assertTrue(assignment.hasNext())        // reschedules

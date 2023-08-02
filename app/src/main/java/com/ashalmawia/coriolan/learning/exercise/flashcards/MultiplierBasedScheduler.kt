@@ -4,7 +4,7 @@ import com.ashalmawia.coriolan.learning.INTERVAL_FIRST_ASNWER_WRONG
 import com.ashalmawia.coriolan.learning.INTERVAL_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.TodayManager
-import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
+import com.ashalmawia.coriolan.ui.learning.CardAnswer
 import org.joda.time.Days
 import kotlin.math.*
 
@@ -16,13 +16,13 @@ private const val NEW_RESPONDED_EASY_DAYS = 4
 
 class MultiplierBasedScheduler : SpacedRepetitionScheduler {
 
-    override fun processAnswer(answer: CardViewAnswer, state: SchedulingState): SchedulingState {
+    override fun processAnswer(answer: CardAnswer, state: SchedulingState): SchedulingState {
         return when (answer) {
-            CardViewAnswer.WRONG -> wrong(state)
-            CardViewAnswer.CORRECT -> correct(state)
-            CardViewAnswer.EASY -> easy(state)
-            CardViewAnswer.HARD -> hard(state)
-            CardViewAnswer.NEXT -> state
+            CardAnswer.WRONG -> wrong(state)
+            CardAnswer.CORRECT -> correct(state)
+            CardAnswer.EASY -> easy(state)
+            CardAnswer.HARD -> hard(state)
+            CardAnswer.ACCEPT -> state
         }
     }
 

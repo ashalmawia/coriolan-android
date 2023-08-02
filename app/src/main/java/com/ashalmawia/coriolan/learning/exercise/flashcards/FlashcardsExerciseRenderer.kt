@@ -9,7 +9,7 @@ import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.learning.exercise.ExerciseRenderer
 import com.ashalmawia.coriolan.ui.learning.CardView
 import com.ashalmawia.coriolan.ui.learning.CardViewListener
-import com.ashalmawia.coriolan.ui.learning.CardViewAnswer
+import com.ashalmawia.coriolan.ui.learning.CardAnswer
 import com.ashalmawia.coriolan.ui.learning.CardViewButton
 import com.ashalmawia.coriolan.ui.learning.CardViewConfiguration
 
@@ -30,23 +30,23 @@ class FlashcardsExerciseRenderer(
         uiContainer.addView(cardView)
     }
 
-    private fun answers(progress: LearningProgress): Array<CardViewAnswer> {
+    private fun answers(progress: LearningProgress): Array<CardAnswer> {
         return when (progress.status) {
-            Status.NEW -> arrayOf(CardViewAnswer.WRONG, CardViewAnswer.CORRECT, CardViewAnswer.EASY)
-            Status.RELEARN -> arrayOf(CardViewAnswer.WRONG, CardViewAnswer.CORRECT)
-            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(CardViewAnswer.WRONG, CardViewAnswer.HARD, CardViewAnswer.CORRECT, CardViewAnswer.EASY)
+            Status.NEW -> arrayOf(CardAnswer.WRONG, CardAnswer.CORRECT, CardAnswer.EASY)
+            Status.RELEARN -> arrayOf(CardAnswer.WRONG, CardAnswer.CORRECT)
+            Status.IN_PROGRESS, Status.LEARNT -> arrayOf(CardAnswer.WRONG, CardAnswer.HARD, CardAnswer.CORRECT, CardAnswer.EASY)
         }
     }
 
-    override fun onAnswered(answer: CardViewAnswer) {
+    override fun onAnswered(answer: CardAnswer) {
         listener.onAnswered(answer)
     }
 }
 
 private fun flashcardsCardViewConfig() = CardViewConfiguration.Builder()
-        .addButton(R.string.cards_hard, CardViewButton.Type.NEUTRAL, CardViewAnswer.HARD)
-        .addButton(R.string.cards_easy, CardViewButton.Type.NEUTRAL, CardViewAnswer.EASY)
-        .addButton(R.string.cards_no, CardViewButton.Type.NEGATIVE, CardViewAnswer.WRONG)
-        .addButton(R.string.cards_yes, CardViewButton.Type.POSITIVE, CardViewAnswer.CORRECT)
+        .addButton(R.string.cards_hard, CardViewButton.Type.NEUTRAL, CardAnswer.HARD)
+        .addButton(R.string.cards_easy, CardViewButton.Type.NEUTRAL, CardAnswer.EASY)
+        .addButton(R.string.cards_no, CardViewButton.Type.NEGATIVE, CardAnswer.WRONG)
+        .addButton(R.string.cards_yes, CardViewButton.Type.POSITIVE, CardAnswer.CORRECT)
         .alwaysOpen(false)
         .build()

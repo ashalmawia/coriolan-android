@@ -19,7 +19,7 @@ data class CardViewConfiguration(
         fun addButton(
                 @StringRes textRes: Int,
                 type: CardViewButton.Type,
-                answer: CardViewAnswer
+                answer: CardAnswer
         ): Builder {
             buttons.add(CardViewButton(textRes, type, answer))
             return this
@@ -49,7 +49,7 @@ data class CardViewConfiguration(
 data class CardViewButton(
         @StringRes val textRes: Int,
         val type: Type,
-        val answer: CardViewAnswer
+        val answer: CardAnswer
 ) {
     enum class Type(
             @ColorRes val textColorRes: Int,

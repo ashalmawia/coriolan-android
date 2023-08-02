@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.ExerciseData
+import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.Task
 import com.ashalmawia.coriolan.model.Card
 
@@ -30,6 +31,8 @@ interface Exercise {
     fun onTranslationAdded(card: Card, exerciseData: ExerciseData): ExerciseData {
         return exerciseData
     }
+
+    fun onNewWordAccepted(card: Card, learningProgress: LearningProgress): Task? = null
 
     /**
      * Returns: Pair of

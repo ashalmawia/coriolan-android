@@ -1,9 +1,9 @@
 package com.ashalmawia.coriolan.ui.learning
 
-enum class CardViewAnswer {
+enum class CardAnswer {
     WRONG,
     CORRECT,
     EASY,
     HARD,
-    NEXT
+    ACCEPT
 }
