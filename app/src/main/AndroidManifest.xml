@@ -54,7 +54,7 @@
 			/>
 
 		<activity
-			android:name=".ui.domain_add_edit.CreateDomainActivity"
+			android:name=".ui.domain_add_edit.AddEditDomainActivity"
 			android:parentActivityName=".ui.domains_list.DomainsListActivity"/>
 
 		<activity

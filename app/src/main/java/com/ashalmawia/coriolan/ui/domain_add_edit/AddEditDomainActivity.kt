@@ -16,7 +16,7 @@ import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
-import com.ashalmawia.coriolan.databinding.CreateDomainBinding
+import com.ashalmawia.coriolan.databinding.AddEditDomainBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
@@ -26,13 +26,13 @@ import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import org.koin.android.ext.android.inject
 
-private const val TAG = "CreateDomainActivity"
+private const val TAG = "AddEditDomainActivity"
 
 private const val EXTRA_FIRST_START = "cancellable"
 
-class CreateDomainActivity : BaseActivity() {
+class AddEditDomainActivity : BaseActivity() {
 
-    private val views by lazy { CreateDomainBinding.inflate(layoutInflater) }
+    private val views by lazy { AddEditDomainBinding.inflate(layoutInflater) }
 
     private val preferences: Preferences by inject()
     private val repository: Repository by inject()
@@ -187,7 +187,7 @@ class CreateDomainActivity : BaseActivity() {
     companion object {
 
         fun intent(context: Context, firstStart: Boolean): Intent {
-            val intent = Intent(context, CreateDomainActivity::class.java)
+            val intent = Intent(context, AddEditDomainActivity::class.java)
             intent.putExtra(EXTRA_FIRST_START, firstStart)
             return intent
         }

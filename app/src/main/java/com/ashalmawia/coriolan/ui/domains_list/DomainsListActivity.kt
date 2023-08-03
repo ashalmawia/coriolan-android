@@ -11,7 +11,7 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.DomainsListBinding
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.domain_add_edit.CreateDomainActivity
+import com.ashalmawia.coriolan.ui.domain_add_edit.AddEditDomainActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import org.koin.android.ext.android.inject
 
@@ -77,7 +77,7 @@ class DomainsListActivity : BaseActivity() {
     )
 
     private fun createNewDomain(context: Context) {
-        val intent = CreateDomainActivity.intent(context, false)
+        val intent = AddEditDomainActivity.intent(context, false)
         startActivity(intent)
     }
 }
