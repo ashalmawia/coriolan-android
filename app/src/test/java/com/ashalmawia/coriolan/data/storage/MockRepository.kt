@@ -19,6 +19,18 @@ class MockRepository : Repository {
         return lang
     }
 
+    override fun updateLanguage(language: Language, name: String): Language {
+        if (!langs.contains(language)) {
+            throw DataProcessingException("lang is not in the repo: $language")
+        }
+
+        val updated = language.copy(value = name)
+        langs.remove(language)
+        langs.add(updated)
+
+        return updated
+    }
+
     override fun languageById(id: Long): Language? {
         return langs.find { it.id == id }
     }

@@ -99,6 +99,23 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
+    override fun updateLanguage(language: Language, name: String): Language {
+        val db = helper.writableDatabase
+        val cv = createLanguageContentValues(name, language.id)
+
+        try {
+            val updated = db.update(LANGUAGES, cv, "$LANGUAGES_ID = ?", arrayOf(language.id.toString()))
+
+            if (updated == 0) {
+                throw DataProcessingException("failed to updated language [${language.value}] -> [$name]")
+            }
+
+            return Language(language.id, name)
+        } catch (e: SQLiteConstraintException) {
+            throw DataProcessingException("failed to updated language [${language.value}] -> [$name], constraint violation")
+        }
+    }
+
     override fun languageById(id: Long): Language? {
         val db = helper.readableDatabase
 

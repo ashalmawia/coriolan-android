@@ -1,6 +1,5 @@
 package com.ashalmawia.coriolan.data.storage
 
-import androidx.annotation.VisibleForTesting
 import com.ashalmawia.coriolan.data.stats.DeckStats
 import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.model.Counts
@@ -12,6 +11,8 @@ import org.joda.time.DateTime
 interface Repository {
 
     fun addLanguage(value: String): Language
+
+    fun updateLanguage(language: Language, name: String): Language
 
     fun languageById(id: Long): Language?
 

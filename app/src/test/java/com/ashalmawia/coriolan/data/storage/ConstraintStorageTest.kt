@@ -45,6 +45,28 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
+    fun test__updateLanguage__notPresent() {
+        // given
+        val storage = emptyStorage.value
+        val value = "Russian"
+
+        // when
+        storage.updateLanguage(Language(1L, ""), value)
+    }
+
+    @Test(expected = DataProcessingException::class)
+    fun test__updateLanguage__nameUnique() {
+        // given
+        val storage = emptyStorage.value
+        val sharedName = "Russian"
+        storage.addLanguage(sharedName)
+        val language = storage.addLanguage("English")
+
+        // when
+        storage.updateLanguage(language, sharedName)
+    }
+
+    @Test(expected = DataProcessingException::class)
     fun test__addTerm__valueUnique() {
         // given
         val storage = prefilledStorage.value

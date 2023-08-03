@@ -52,6 +52,20 @@ abstract class StorageTest {
     }
 
     @Test
+    fun test__updateLanguage() {
+        // given
+        val storage = emptyStorage.value
+        val newValue = "Russian"
+
+        // when
+        val language = storage.addLanguage("Rusian")
+        val updated = storage.updateLanguage(language, newValue)
+
+        // then
+        assertLanguageCorrect(updated, newValue)
+    }
+
+    @Test
     fun test__languageById__languageExists() {
         // given
         val storage = emptyStorage.value
