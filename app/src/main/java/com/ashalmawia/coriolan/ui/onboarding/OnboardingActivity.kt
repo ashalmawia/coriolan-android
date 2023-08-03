@@ -7,11 +7,10 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.core.view.forEachIndexed
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.databinding.OnboardingActivityBinding
 import com.ashalmawia.coriolan.ui.BaseActivity
-import com.ashalmawia.coriolan.ui.CreateDomainActivity
+import com.ashalmawia.coriolan.ui.domain_add_edit.CreateDomainActivity
 import com.ashalmawia.coriolan.ui.view.visible
 import org.koin.android.ext.android.inject
 

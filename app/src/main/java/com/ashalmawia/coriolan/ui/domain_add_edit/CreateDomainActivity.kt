@@ -1,4 +1,4 @@
-package com.ashalmawia.coriolan.ui
+package com.ashalmawia.coriolan.ui.domain_add_edit
 
 import android.content.Context
 import android.content.Intent
@@ -20,6 +20,7 @@ import com.ashalmawia.coriolan.databinding.CreateDomainBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.view.visible
@@ -142,7 +143,7 @@ class CreateDomainActivity : BaseActivity() {
             openAddCardsActivity(domain, defaultDeck)
             finish()
         } catch (e: DataProcessingException) {
-            showError(getString(R.string.create_domain__error__already_exists, originalLang, translationsLang))
+            showError(getString(R.string.create_domain__error__already_exists))
             Log.e(TAG, "failed to create domain", e)
         } catch (e: Exception) {
             showError(R.string.create_domain__error__generic)

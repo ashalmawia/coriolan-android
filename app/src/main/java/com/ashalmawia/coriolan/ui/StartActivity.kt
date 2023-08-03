@@ -5,6 +5,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.ui.domain_add_edit.CreateDomainActivity
 import com.ashalmawia.coriolan.ui.domains_list.DomainsListActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.onboarding.OnboardingActivity
