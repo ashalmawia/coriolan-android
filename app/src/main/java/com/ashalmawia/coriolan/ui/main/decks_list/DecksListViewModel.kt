@@ -26,7 +26,7 @@ class DecksListViewModel(
         private val studyTargetsResolver: StudyTargetsResolver
 ) : ViewModel(), TodayChangeListener, DeckListAdapterListener {
 
-    val domain: Domain by lazy { repository.domainById(domainId)!! }
+    lateinit var domain: Domain
 
     private fun today() = TodayManager.today()
 
@@ -72,6 +72,7 @@ class DecksListViewModel(
     private fun fetchDecksList(update: (List<DeckListItem>) -> Unit) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
+                domain = repository.domainById(domainId)!!
                 val decks = decksList()
                 withContext(Dispatchers.Main) {
                     update(decks)

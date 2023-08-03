@@ -48,7 +48,7 @@ class DomainActivity : BaseActivity() {
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
 
-    private lateinit var domain: Domain
+    private val domainId: Long by lazy { intent.getLongExtra(EXTRA_DOMAIN_ID, -1) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,12 +58,17 @@ class DomainActivity : BaseActivity() {
             throw IllegalStateException("missing domain id")
         }
 
-        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
-        domain = repository.domainById(domainId)!!
-
-        setUpToolbar(domain.name)
-
         setUpBottomBarNavigation()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        refreshAndBindDomain()
+    }
+
+    private fun refreshAndBindDomain() {
+        val domain = repository.domainById(domainId)!!
+        setUpToolbar(domain.name)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -115,7 +120,7 @@ class DomainActivity : BaseActivity() {
 
     private fun switchToLearning() {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_DECKS_LIST)
-                ?: DecksListFragment.create(domain)
+                ?: DecksListFragment.create(domainId)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_DECKS_LIST)
                 .commitAllowingStateLoss()
@@ -123,7 +128,7 @@ class DomainActivity : BaseActivity() {
 
     private fun switchToEdit() {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_EDIT)
-                ?: EditFragment.create(domain)
+                ?: EditFragment.create(domainId)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_EDIT)
                 .commitAllowingStateLoss()
@@ -131,7 +136,7 @@ class DomainActivity : BaseActivity() {
 
     private fun switchToStatistics() {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_STATISTICS)
-                ?: StatisticsFragment.create(domain)
+                ?: StatisticsFragment.create(domainId)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, FRAGMENT_STATISTICS)
                 .commitAllowingStateLoss()
@@ -170,7 +175,7 @@ class DomainActivity : BaseActivity() {
     }
 
     private fun openDomainEditing() {
-        val intent = AddEditDomainActivity.edit(this, domain)
+        val intent = AddEditDomainActivity.edit(this, domainId)
         startActivity(intent)
     }
 

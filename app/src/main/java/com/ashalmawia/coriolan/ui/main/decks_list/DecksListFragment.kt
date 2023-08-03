@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
-import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.util.activityViewModelBuilder
@@ -19,9 +18,9 @@ private const val ARGUMENT_DOMAIN_ID = "domain_id"
 class DecksListFragment : BaseFragment() {
 
     companion object {
-        fun create(domain: Domain): DecksListFragment {
+        fun create(domainId: Long): DecksListFragment {
             val arguments = Bundle().also {
-                it.putLong(ARGUMENT_DOMAIN_ID, domain.id)
+                it.putLong(ARGUMENT_DOMAIN_ID, domainId)
             }
             return DecksListFragment().also { it.arguments = arguments }
         }

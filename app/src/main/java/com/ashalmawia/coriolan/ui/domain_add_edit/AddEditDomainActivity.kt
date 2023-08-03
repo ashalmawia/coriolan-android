@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.AddEditDomainBinding
-import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
 import com.ashalmawia.coriolan.ui.util.viewModelBuilder
@@ -69,10 +68,10 @@ class AddEditDomainActivity : BaseActivity() {
             return intent
         }
 
-        fun edit(context: Context, domain: Domain): Intent {
+        fun edit(context: Context, domainId: Long): Intent {
             val intent = Intent(context, AddEditDomainActivity::class.java)
             intent.putExtra(EXTRA_FIRST_START, false)
-            intent.putExtra(EXTRA_DOMAIN_ID, domain.id)
+            intent.putExtra(EXTRA_DOMAIN_ID, domainId)
             return intent
         }
     }

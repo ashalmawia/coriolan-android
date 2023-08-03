@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.databinding.EditBinding
-import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.util.activityViewModelBuilder
@@ -16,9 +15,9 @@ private const val ARGUMENT_DOMAIN_ID = "domain_id"
 class EditFragment : BaseFragment() {
 
     companion object {
-        fun create(domain: Domain): EditFragment {
+        fun create(domainId: Long): EditFragment {
             val arguments = Bundle().also {
-                it.putLong(ARGUMENT_DOMAIN_ID, domain.id)
+                it.putLong(ARGUMENT_DOMAIN_ID, domainId)
             }
             return EditFragment().also { it.arguments = arguments }
         }
