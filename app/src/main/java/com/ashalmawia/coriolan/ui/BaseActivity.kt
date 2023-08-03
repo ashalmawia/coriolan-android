@@ -33,7 +33,7 @@ abstract class BaseActivity : AppCompatActivity() {
         setUpToolbar(title, subtitle, cancellable)
     }
 
-    protected fun setUpToolbarWithLogo() {
+    fun setUpToolbarWithLogo() {
         setSupportActionBar(toolbar)
         toolbar.setLogo(R.drawable.ic_logo_action_bar_with_text)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
