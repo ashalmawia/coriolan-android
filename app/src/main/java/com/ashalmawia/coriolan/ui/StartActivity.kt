@@ -56,7 +56,7 @@ class StartActivity : BaseActivity() {
     }
 
     private fun openDomainCreation() {
-        val intent = AddEditDomainActivity.intent(this, true)
+        val intent = AddEditDomainActivity.create(this, true)
         startActivity(intent)
     }
 }

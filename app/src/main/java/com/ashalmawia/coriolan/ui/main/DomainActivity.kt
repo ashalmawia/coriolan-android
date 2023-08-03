@@ -17,6 +17,7 @@ import com.ashalmawia.coriolan.ui.commons.showFeatureDiscoverySequence
 import com.ashalmawia.coriolan.ui.commons.tapTargetForNavigationIcon
 import com.ashalmawia.coriolan.ui.commons.tapTargetForToolbarOverflow
 import com.ashalmawia.coriolan.ui.commons.tapTargetForView
+import com.ashalmawia.coriolan.ui.domain_add_edit.AddEditDomainActivity
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
@@ -136,10 +137,19 @@ class DomainActivity : BaseActivity() {
                 .commitAllowingStateLoss()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu) = appMenu.onCreateOptionsMenu(menuInflater, menu)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.domain, menu)
+        return appMenu.onCreateOptionsMenu(menuInflater, menu)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return appMenu.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.menu_edit -> {
+                openDomainEditing()
+                true
+            }
+            else -> appMenu.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
+        }
     }
 
     fun onDecksListFragmentInflated(firstDeckView: View) {
@@ -157,6 +167,11 @@ class DomainActivity : BaseActivity() {
                 tapTargetForNavigationIcon(toolbar, R.string.feature_discovery_back_title, R.string.feature_discovery_back_description),
                 tapTargetForToolbarOverflow(toolbar, R.string.feature_discovery_overflow_title, R.string.feature_discovery_overflow_description)
         )) { preferences.recordMainFeatureDiscoverySeen() }
+    }
+
+    private fun openDomainEditing() {
+        val intent = AddEditDomainActivity.edit(this, domain)
+        startActivity(intent)
     }
 
     companion object {

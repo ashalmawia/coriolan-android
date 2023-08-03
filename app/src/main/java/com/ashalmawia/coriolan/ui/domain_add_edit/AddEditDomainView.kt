@@ -14,10 +14,12 @@ import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.add_edit.AddEditCardActivity
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.view.visible
+import com.ashalmawia.coriolan.ui.domain_add_edit.AddEditDomainViewModel.DomainData
 
 interface AddEditDomainView {
     val context: Context
-    fun initalize(isFirstStart: Boolean)
+    fun initalizeForCreation(isFirstStart: Boolean)
+    fun initalizeForEditing(domain: Domain)
     fun prefillTranslationsLanguage(language: Language)
     fun showError(@StringRes messageId: Int)
     fun showError(message: String)
@@ -35,7 +37,7 @@ class AddEditDomainViewImpl(
     override val context: Context
         get() = activity
 
-    override fun initalize(isFirstStart: Boolean) {
+    override fun initalizeForCreation(isFirstStart: Boolean) {
         if (isFirstStart) {
             // show logo and don't allow to cancel this activity
             activity.setUpToolbarWithLogo()
@@ -43,29 +45,42 @@ class AddEditDomainViewImpl(
             activity.setUpToolbar(R.string.create_domain__title)
         }
 
-        initialize(isFirstStart)
+        initialize(
+                showWelcome = isFirstStart,
+                allowCancel = !isFirstStart,
+                confirmButtonTitle = if (isFirstStart) R.string.button_next else R.string.button_create
+        )
     }
 
-    private fun initialize(isFirstStart: Boolean) {
-        if (isFirstStart) {
-            // if it's the first start, user can't cancel this activity
-            views.buttonCancel.isVisible = false
-            views.buttonOk.setText(R.string.button_next)
-
-            views.welcomeLabelTitle.isVisible = true
-            views.welcomeLabelSubtitle.isVisible = true
-        } else {
-            views.buttonCancel.setOnClickListener { activity.finish() }
-            views.buttonOk.setText(R.string.button_create)
-
-            views.welcomeLabelTitle.isVisible = false
-            views.welcomeLabelSubtitle.isVisible = false
+    override fun initalizeForEditing(domain: Domain) {
+        activity.setUpToolbar(R.string.edit_domain__title)
+        initialize(
+                showWelcome = false,
+                allowCancel = true,
+                confirmButtonTitle = R.string.button_save
+        )
+        views.apply {
+            inputOriginalLang.setText(domain.langOriginal().value)
+            inputTranslationsLang.setText(domain.langTranslations().value)
         }
+    }
 
-        views.buttonOk.setOnClickListener {
-            val originalLang = views.inputOriginalLang.text.toString()
-            val translationsLang = views.inputTranslationsLang.text.toString()
-            viewModel.verifyAndSave(originalLang, translationsLang)
+    private fun initialize(
+            showWelcome: Boolean, allowCancel: Boolean,
+            @StringRes confirmButtonTitle: Int
+    ) {
+        views.apply {
+            buttonCancel.setOnClickListener { activity.finish() }
+            buttonCancel.isVisible = allowCancel
+
+            buttonOk.setText(confirmButtonTitle)
+            buttonOk.setOnClickListener {
+                val data = extractInput()
+                viewModel.verifyAndSave(data)
+            }
+
+            welcomeLabelTitle.isVisible = showWelcome
+            welcomeLabelSubtitle.isVisible = showWelcome
         }
     }
 
@@ -104,5 +119,11 @@ class AddEditDomainViewImpl(
 
     override fun finish() {
         activity.finish()
+    }
+
+    private fun extractInput(): DomainData {
+        val originalLang = views.inputOriginalLang.text.toString()
+        val translationsLang = views.inputTranslationsLang.text.toString()
+        return DomainData(originalLang, translationsLang)
     }
 }

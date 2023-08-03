@@ -15,7 +15,7 @@ class AppMenu(
 ) {
 
     fun onCreateOptionsMenu(menuInflater: MenuInflater, menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.domain, menu)
+        menuInflater.inflate(R.menu.app, menu)
 
         if (BuildConfig.DEBUG) {
             menu.setGroupVisible(R.id.menu_group_debug, true)

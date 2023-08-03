@@ -77,7 +77,7 @@ class DomainsListActivity : BaseActivity() {
     )
 
     private fun createNewDomain(context: Context) {
-        val intent = AddEditDomainActivity.intent(context, false)
+        val intent = AddEditDomainActivity.create(context, false)
         startActivity(intent)
     }
 }

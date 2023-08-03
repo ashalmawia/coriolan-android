@@ -8,6 +8,7 @@ import com.ashalmawia.coriolan.model.Language
 interface DomainsRegistry {
 
     fun createDomain(originalLangName: String, translationsLangName: String, defaultDeckName: String): Pair<Domain, Deck>
+    fun updateDomain(domain: Domain, originalLangName: String, translationsLangName: String): Domain
 }
 
 class DomainsRegistryImpl(private val repository: Repository) : DomainsRegistry {
@@ -21,6 +22,18 @@ class DomainsRegistryImpl(private val repository: Repository) : DomainsRegistry 
         val domain = repository.createDomain("", langOriginal, langTranslations)
         val deck = addDefaultDeck(domain, defaultDeckName)
         return Pair(domain, deck)
+    }
+
+    override fun updateDomain(domain: Domain, originalLangName: String, translationsLangName: String): Domain {
+        var langOriginal = domain.langOriginal()
+        if (langOriginal.value != originalLangName) {
+            langOriginal = repository.updateLanguage(langOriginal, originalLangName)
+        }
+        var langTranslation = domain.langTranslations()
+        if (langTranslation.value != translationsLangName) {
+            langTranslation = repository.updateLanguage(langTranslation, translationsLangName)
+        }
+        return domain.copy(langOriginal = langOriginal, langTranslations = langTranslation)
     }
 
     private fun addDefaultDeck(domain: Domain, defaultDeckName: String): Deck {
