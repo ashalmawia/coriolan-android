@@ -18,7 +18,7 @@ private val date = DateTime.now()
 class AssignmentTest {
     
     private fun create(date: DateTime, tasks: List<Task>): Assignment {
-        return Assignment(date, MockHistoryFactory.create(), tasks)
+        return Assignment(date, MockHistoryFactory.create(), tasks, emptyList())
     }
 
     @Test(expected = IllegalStateException::class)
