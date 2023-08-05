@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
@@ -42,7 +43,7 @@ fun readDomainFromJson(json: JsonParser): DomainInfo {
         throw JsonDeserializationException("failed to deserialize domain, id $id, name[$name], " +
                 "origLangId $origLangId, transLangId $transLangId")
     }
-    return DomainInfo(id.asDomainId(), name, origLangId, transLangId)
+    return DomainInfo(id.asDomainId(), name, origLangId.asLanguageId(), transLangId.asLanguageId())
 }
 
 fun writeDomainToJson(domain: DomainInfo, json: JsonGenerator) {
@@ -50,8 +51,8 @@ fun writeDomainToJson(domain: DomainInfo, json: JsonGenerator) {
 
     json.writeNumberField(FIELD_ID, domain.id.value)
     json.writeStringField(FIELD_NAME, domain.name)
-    json.writeNumberField(FIELD_ORIGINAL_LANG_ID, domain.origLangId)
-    json.writeNumberField(FIELD_TRANSLATION_LANG_ID, domain.transLangId)
+    json.writeNumberField(FIELD_ORIGINAL_LANG_ID, domain.origLangId.value)
+    json.writeNumberField(FIELD_TRANSLATION_LANG_ID, domain.transLangId.value)
 
     json.writeEndObject()
 }

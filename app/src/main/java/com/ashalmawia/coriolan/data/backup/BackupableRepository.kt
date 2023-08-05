@@ -4,6 +4,7 @@ import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.model.LanguageId
 import com.ashalmawia.coriolan.model.TermId
 import org.joda.time.DateTime
 
@@ -37,20 +38,20 @@ interface BackupableRepository : BackupableEntity {
 }
 
 data class LanguageInfo(
-        val id: Long,
+        val id: LanguageId,
         val value: String
 )
 
 data class DomainInfo(
         val id: DomainId,
         val name: String,
-        val origLangId: Long,
-        val transLangId: Long)
+        val origLangId: LanguageId,
+        val transLangId: LanguageId)
 
 data class TermInfo(
         val id: TermId,
         val value: String,
-        val languageId: Long,
+        val languageId: LanguageId,
         val transcription: String?)
 
 data class TermExtraInfo(

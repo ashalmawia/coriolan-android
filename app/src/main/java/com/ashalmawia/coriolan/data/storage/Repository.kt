@@ -14,7 +14,7 @@ interface Repository {
 
     fun updateLanguage(language: Language, name: String): Language
 
-    fun languageById(id: Long): Language?
+    fun languageById(id: LanguageId): Language?
 
     fun languageByName(name: String): Language?
 

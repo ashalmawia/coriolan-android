@@ -2,6 +2,8 @@ package com.ashalmawia.coriolan.data.prefs
 
 import android.content.Context
 import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.model.LanguageId
+import com.ashalmawia.coriolan.util.asLanguageId
 import org.joda.time.DateTime
 
 class SharedPreferencesImpl(context: Context) : Preferences {
@@ -76,12 +78,12 @@ class SharedPreferencesImpl(context: Context) : Preferences {
         dailyLimitsReview.edit().clear().apply()
     }
 
-    override fun getLastTranslationsLanguageId(): Long? {
-        return prefs.getLongOrNull(LAST_TRANSLATIONS_LANGUAGE)
+    override fun getLastTranslationsLanguageId(): LanguageId? {
+        return prefs.getLongOrNull(LAST_TRANSLATIONS_LANGUAGE)?.asLanguageId()
     }
 
     override fun setLastTranslationsLanguageId(language: Language) {
-        prefs.edit().putLong(LAST_TRANSLATIONS_LANGUAGE, language.id).apply()
+        prefs.edit().putLong(LAST_TRANSLATIONS_LANGUAGE, language.id.value).apply()
     }
 
     override fun clearLastTranslationsLanguageId() {

@@ -5,6 +5,8 @@ import android.database.Cursor
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.model.LanguageId
+import com.ashalmawia.coriolan.util.asLanguageId
 
 object ContractLanguages {
 
@@ -28,16 +30,16 @@ object ContractLanguages {
             $LANGUAGES_PAYLOAD TEXT
         );""".trimMargin()
 
-    fun createLanguageContentValues(value: String, id: Long? = null): ContentValues {
+    fun createLanguageContentValues(value: String, id: LanguageId? = null): ContentValues {
         val cv = ContentValues()
         if (id != null) {
-            cv.put(LANGUAGES_ID, id)
+            cv.put(LANGUAGES_ID, id.value)
         }
         cv.put(LANGUAGES_VALUE, value)
         return cv
     }
 
-    fun Cursor.languagesId(alias: String? = null): Long { return long(LANGUAGES_ID, alias) }
+    fun Cursor.languagesId(alias: String? = null): LanguageId { return long(LANGUAGES_ID, alias).asLanguageId() }
     fun Cursor.languagesValue(alias: String? = null): String { return string(LANGUAGES_VALUE, alias) }
     fun Cursor.language(alias: String? = null): Language {
         return Language(

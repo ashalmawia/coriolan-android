@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
@@ -27,12 +28,12 @@ fun readLanguageFromJson(json: JsonParser): LanguageInfo {
     if (id == null || value == null) {
         throw JsonDeserializationException("failed to read language: id $id, value[$value]")
     }
-    return LanguageInfo(id, value)
+    return LanguageInfo(id.asLanguageId(), value)
 }
 
 fun writeLanguageToJson(language: LanguageInfo, json: JsonGenerator) {
     json.writeStartObject()
-    json.writeNumberField(NAME_ID, language.id)
+    json.writeNumberField(NAME_ID, language.id.value)
     json.writeStringField(NAME_VALUE, language.value)
     json.writeEndObject()
 }

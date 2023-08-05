@@ -79,12 +79,14 @@ import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.model.LanguageId
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.model.TermId
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.ashalmawia.coriolan.util.asTermId
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
@@ -98,12 +100,16 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.writableDatabase
         val cv = createLanguageContentValues(value)
 
-        try {
-            val id = db.insertOrThrow(LANGUAGES, null, cv)
-            return Language(id, value)
+        val id = try {
+            db.insertOrThrow(LANGUAGES, null, cv)
         } catch (e: SQLiteConstraintException) {
-            throw DataProcessingException("failed to add langauge [$value], constraint violation", e)
+            throw DataProcessingException("failed to add language [$value], constraint violation", e)
         }
+
+        if (id < 0) {
+            throw DataProcessingException("failed to add language [$value]")
+        }
+        return Language(id.asLanguageId(), value)
     }
 
     override fun updateLanguage(language: Language, name: String): Language {
@@ -111,7 +117,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val cv = createLanguageContentValues(name, language.id)
 
         try {
-            val updated = db.update(LANGUAGES, cv, "$LANGUAGES_ID = ?", arrayOf(language.id.toString()))
+            val updated = db.update(LANGUAGES, cv, "$LANGUAGES_ID = ?", arrayOf(language.id.asString()))
 
             if (updated == 0) {
                 throw DataProcessingException("failed to updated language [${language.value}] -> [$name]")
@@ -123,13 +129,13 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
-    override fun languageById(id: Long): Language? {
+    override fun languageById(id: LanguageId): Language? {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             SELECT * FROM $LANGUAGES
             WHERE $LANGUAGES_ID = ?
-        """.trimMargin(), arrayOf(id.toString()))
+        """.trimMargin(), arrayOf(id.asString()))
 
         cursor.use {
             return if (it.moveToNext()) {
@@ -218,7 +224,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             
             WHERE $TERMS_VALUE = ? AND $TERMS_LANGUAGE_ID = ?
             
-        """.trimMargin(), arrayOf(value, language.id.toString()))
+        """.trimMargin(), arrayOf(value, language.id.asString()))
 
         cursor.use {
             if (it.count == 0) {

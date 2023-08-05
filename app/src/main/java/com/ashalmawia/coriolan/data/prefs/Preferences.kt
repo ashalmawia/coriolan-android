@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.prefs
 
 import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.model.LanguageId
 import org.joda.time.DateTime
 
 interface Preferences {
@@ -26,7 +27,7 @@ interface Preferences {
     fun setReviewCardsDailyLimit(limit: Int, date: DateTime)
     fun clearReviewCardsDailyLimit()
 
-    fun getLastTranslationsLanguageId(): Long?
+    fun getLastTranslationsLanguageId(): LanguageId?
     fun setLastTranslationsLanguageId(language: Language)
     fun clearLastTranslationsLanguageId()
 

@@ -2,7 +2,6 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.model.CardType
 import org.junit.Assert.*
@@ -167,8 +166,8 @@ abstract class JsonBackupTest {
         // given
         val repo = createNonEmptyRepo()
         val languages = listOf(
-                LanguageInfo(1, "Английский"),
-                LanguageInfo(2, "Русский"))
+                languageInfo(1, "Английский"),
+                languageInfo(2, "Русский"))
         val domains = listOf(
                 domainInfo(1, "", 1, 2)
         )

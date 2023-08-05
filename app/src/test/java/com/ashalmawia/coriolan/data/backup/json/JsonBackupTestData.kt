@@ -8,14 +8,14 @@ import java.util.*
 object JsonBackupTestData {
 
     val languages = listOf(
-            LanguageInfo(1L, "English"),
-            LanguageInfo(2L, "Russian"),
-            LanguageInfo(3L, "French"),
-            LanguageInfo(4L, "Greek"),
-            LanguageInfo(5L, "Chineese"),
-            LanguageInfo(6L, "Polish"),
-            LanguageInfo(7L, "Finnish"),
-            LanguageInfo(8L, "Arabic")
+            languageInfo(1L, "English"),
+            languageInfo(2L, "Russian"),
+            languageInfo(3L, "French"),
+            languageInfo(4L, "Greek"),
+            languageInfo(5L, "Chineese"),
+            languageInfo(6L, "Polish"),
+            languageInfo(7L, "Finnish"),
+            languageInfo(8L, "Arabic")
     )
     val domains = listOf(
             domainInfo(1L, "English", 1L, 2L),

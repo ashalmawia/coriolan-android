@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.prefs
 
 import com.ashalmawia.coriolan.model.Language
+import com.ashalmawia.coriolan.model.LanguageId
 import org.joda.time.DateTime
 
 class MockPreferences : Preferences {
@@ -47,8 +48,8 @@ class MockPreferences : Preferences {
         firstStart = false
     }
 
-    private var lastTranslationsLanguageId: Long? = null
-    override fun getLastTranslationsLanguageId(): Long? = lastTranslationsLanguageId
+    private var lastTranslationsLanguageId: LanguageId? = null
+    override fun getLastTranslationsLanguageId(): LanguageId? = lastTranslationsLanguageId
     override fun setLastTranslationsLanguageId(language: Language) {
         lastTranslationsLanguageId = language.id
     }

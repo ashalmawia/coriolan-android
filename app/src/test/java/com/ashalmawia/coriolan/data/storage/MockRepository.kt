@@ -12,13 +12,15 @@ import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.ashalmawia.coriolan.util.asTermId
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
     val langs = mutableListOf<Language>()
     override fun addLanguage(value: String): Language {
-        val lang = Language(langs.size + 1L, value)
+        val id = langs.size + 1L
+        val lang = Language(id.asLanguageId(), value)
         langs.add(lang)
         return lang
     }
@@ -35,7 +37,7 @@ class MockRepository : Repository {
         return updated
     }
 
-    override fun languageById(id: Long): Language? {
+    override fun languageById(id: LanguageId): Language? {
         return langs.find { it.id == id }
     }
     override fun languageByName(name: String): Language? {

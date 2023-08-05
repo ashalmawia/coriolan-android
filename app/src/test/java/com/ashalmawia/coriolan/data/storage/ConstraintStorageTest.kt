@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,7 +54,7 @@ class ConstraintStorageTest {
         val value = "Russian"
 
         // when
-        storage.updateLanguage(Language(1L, ""), value)
+        storage.updateLanguage(Language(1L.asLanguageId(), ""), value)
     }
 
     @Test(expected = DataProcessingException::class)

@@ -9,7 +9,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.string
 import com.ashalmawia.coriolan.data.storage.sqlite.stringOrNull
+import com.ashalmawia.coriolan.model.LanguageId
 import com.ashalmawia.coriolan.model.TermId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
@@ -50,7 +52,7 @@ object ContractTerms {
 
     fun Cursor.termsId(): TermId { return long(TERMS_ID).asTermId() }
     fun Cursor.termsValue(): String { return string(TERMS_VALUE) }
-    fun Cursor.termsLanguageId(): Long { return long(TERMS_LANGUAGE_ID) }
+    fun Cursor.termsLanguageId(): LanguageId { return long(TERMS_LANGUAGE_ID).asLanguageId() }
     fun Cursor.termsPayload(): TermPayload {
         val serialized = stringOrNull(TERMS_PAYLOAD)
         return deserialize(serialized)
@@ -68,14 +70,14 @@ object ContractTerms {
     fun createTermContentValues(value: String, language: Language, payload: TermPayload) =
             createTermContentValues(value, language.id, payload)
 
-    fun createTermContentValues(value: String, languageId: Long, payload: TermPayload, id: TermId? = null): ContentValues {
+    fun createTermContentValues(value: String, languageId: LanguageId, payload: TermPayload, id: TermId? = null): ContentValues {
         val cv = ContentValues()
         if (id != null) {
             cv.put(TERMS_ID, id.value)
         }
         cv.put(TERMS_VALUE, value)
         cv.put(TERMS_PAYLOAD, serialize(payload))
-        cv.put(TERMS_LANGUAGE_ID, languageId)
+        cv.put(TERMS_LANGUAGE_ID, languageId.value)
         return cv
     }
 

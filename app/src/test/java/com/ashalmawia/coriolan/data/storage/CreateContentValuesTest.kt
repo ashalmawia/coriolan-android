@@ -43,6 +43,7 @@ import com.ashalmawia.coriolan.model.mockTerm
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.joda.time.DateTime
@@ -74,7 +75,7 @@ class CreateContentValuesTest {
         val id = 5L
 
         // when
-        val cv = createLanguageContentValues(value, id)
+        val cv = createLanguageContentValues(value, id.asLanguageId())
 
         // then
         assertEquals("values count is correct", 2, cv.size())
@@ -96,7 +97,7 @@ class CreateContentValuesTest {
         // then
         assertEquals("values count is correct", 3, cv.size())
         assertEquals("$TERMS_VALUE is correct", value, cv.get(TERMS_VALUE))
-        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv.get(TERMS_LANGUAGE_ID))
+        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id.value, cv.get(TERMS_LANGUAGE_ID))
         assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
 
         // when
@@ -107,7 +108,7 @@ class CreateContentValuesTest {
         assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$TERMS_ID is correct", id, cv1.get(TERMS_ID))
         assertEquals("$TERMS_VALUE is correct", value, cv1.get(TERMS_VALUE))
-        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv1.get(TERMS_LANGUAGE_ID))
+        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id.value, cv1.get(TERMS_LANGUAGE_ID))
         assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
     }
 
@@ -125,7 +126,7 @@ class CreateContentValuesTest {
         // then
         assertEquals("values count is correct", 3, cv.size())
         assertEquals("$TERMS_VALUE is correct", value, cv.get(TERMS_VALUE))
-        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv.get(TERMS_LANGUAGE_ID))
+        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id.value, cv.get(TERMS_LANGUAGE_ID))
         assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
 
         // when
@@ -136,7 +137,7 @@ class CreateContentValuesTest {
         assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$TERMS_ID is correct", id, cv1.get(TERMS_ID))
         assertEquals("$TERMS_VALUE is correct", value, cv1.get(TERMS_VALUE))
-        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id, cv1.get(TERMS_LANGUAGE_ID))
+        assertEquals("$TERMS_LANGUAGE_ID is correct", lang.id.value, cv1.get(TERMS_LANGUAGE_ID))
         assertEquals("$TERMS_PAYLOAD is correct", payloadString, cv.get(TERMS_PAYLOAD))
     }
 
@@ -153,8 +154,8 @@ class CreateContentValuesTest {
         // then
         assertEquals("values count is correct", 3, cv.size())
         assertEquals("$DOMAINS_NAME is correct", name, cv.get(DOMAINS_NAME))
-        assertEquals("$DOMAINS_LANG_ORIGINAL is correct", langOriginal.id, cv.get(DOMAINS_LANG_ORIGINAL))
-        assertEquals("$DOMAINS_LANG_TRANSLATIONS is correct", langTranslations.id, cv.get(DOMAINS_LANG_TRANSLATIONS))
+        assertEquals("$DOMAINS_LANG_ORIGINAL is correct", langOriginal.id.value, cv.get(DOMAINS_LANG_ORIGINAL))
+        assertEquals("$DOMAINS_LANG_TRANSLATIONS is correct", langTranslations.id.value, cv.get(DOMAINS_LANG_TRANSLATIONS))
 
         // when
         val id = 5L
@@ -164,8 +165,8 @@ class CreateContentValuesTest {
         assertEquals("values count is correct", 4, cv1.size())
         assertEquals("$DOMAINS_ID is correct", id, cv1.get(DOMAINS_ID))
         assertEquals("$DOMAINS_NAME is correct", name, cv1.get(DOMAINS_NAME))
-        assertEquals("$DOMAINS_LANG_ORIGINAL is correct", langOriginal.id, cv1.get(DOMAINS_LANG_ORIGINAL))
-        assertEquals("$DOMAINS_LANG_TRANSLATIONS is correct", langTranslations.id, cv1.get(DOMAINS_LANG_TRANSLATIONS))
+        assertEquals("$DOMAINS_LANG_ORIGINAL is correct", langOriginal.id.value, cv1.get(DOMAINS_LANG_ORIGINAL))
+        assertEquals("$DOMAINS_LANG_TRANSLATIONS is correct", langTranslations.id.value, cv1.get(DOMAINS_LANG_TRANSLATIONS))
     }
 
     @Test

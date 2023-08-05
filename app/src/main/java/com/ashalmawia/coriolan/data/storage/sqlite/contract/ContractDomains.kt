@@ -6,6 +6,8 @@ import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.stringOrNull
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.model.LanguageId
+import com.ashalmawia.coriolan.util.asLanguageId
 
 object ContractDomains {
 
@@ -47,20 +49,20 @@ object ContractDomains {
 
     fun Cursor.domainsId(): DomainId { return DomainId(long(DOMAINS_ID)) }
     fun Cursor.domainsName(): String? { return stringOrNull(DOMAINS_NAME) }
-    fun Cursor.domainsOriginalLangId(): Long { return long(DOMAINS_LANG_ORIGINAL) }
-    fun Cursor.domainsTranslationsLangId(): Long { return long(DOMAINS_LANG_TRANSLATIONS) }
+    fun Cursor.domainsOriginalLangId(): LanguageId { return long(DOMAINS_LANG_ORIGINAL).asLanguageId() }
+    fun Cursor.domainsTranslationsLangId(): LanguageId { return long(DOMAINS_LANG_TRANSLATIONS).asLanguageId() }
 
     fun createDomainContentValues(name: String?, langOriginal: Language, langTranslations: Language) =
             createDomainContentValues(name, langOriginal.id, langTranslations.id)
 
-    fun createDomainContentValues(name: String?, langOriginalId: Long, langTranslationsId: Long, id: DomainId? = null): ContentValues {
+    fun createDomainContentValues(name: String?, langOriginalId: LanguageId, langTranslationsId: LanguageId, id: DomainId? = null): ContentValues {
         val cv = ContentValues()
         if (id != null) {
             cv.put(DOMAINS_ID, id.value)
         }
         cv.put(DOMAINS_NAME, name)
-        cv.put(DOMAINS_LANG_ORIGINAL, langOriginalId)
-        cv.put(DOMAINS_LANG_TRANSLATIONS, langTranslationsId)
+        cv.put(DOMAINS_LANG_ORIGINAL, langOriginalId.value)
+        cv.put(DOMAINS_LANG_TRANSLATIONS, langTranslationsId.value)
         return cv
     }
 }

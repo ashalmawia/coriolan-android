@@ -13,14 +13,14 @@ import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.ashalmawia.coriolan.util.asTermId
 import org.joda.time.DateTime
 
-// TODO: go over it's default usages and consider adding params and checking them
-fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id, value)
+fun mockLanguage(id: Long = 1L, value: String = "English") = Language(id.asLanguageId(), value)
 
-fun langOriginal() = Language(1L, "English")
-fun langTranslations() = Language(2L, "Russian")
+fun langOriginal() = Language(1L.asLanguageId(), "English")
+fun langTranslations() = Language(2L.asLanguageId(), "Russian")
 
 fun addMockLanguages(storage: Repository) {
     storage.addLanguage(langOriginal().value)

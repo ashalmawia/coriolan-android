@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
+import com.ashalmawia.coriolan.util.asLanguageId
 import com.ashalmawia.coriolan.util.asTermId
 import org.junit.Assert.*
 import org.junit.Test
@@ -92,7 +93,7 @@ abstract class StorageTest {
         val storage = emptyStorage.value
 
         // when
-        val read = storage.languageById(777L)
+        val read = storage.languageById(777L.asLanguageId())
 
         // then
         assertNull(read)
