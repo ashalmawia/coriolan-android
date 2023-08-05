@@ -48,9 +48,9 @@ class DomainViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 domainsRegistry.deleteDomain(domain)
-            }
-            withContext(Dispatchers.Main) {
-                view?.finish()
+                withContext(Dispatchers.Main) {
+                    view?.finish()
+                }
             }
         }
     }
