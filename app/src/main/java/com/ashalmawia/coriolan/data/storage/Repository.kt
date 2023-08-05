@@ -38,7 +38,7 @@ interface Repository {
 
     fun allDomains(): List<Domain>
 
-    fun deleteDomain(domain: Domain)
+    fun deleteDomain(domainId: DomainId)
 
     fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card
 

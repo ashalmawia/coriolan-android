@@ -370,21 +370,35 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return list
     }
 
-    override fun deleteDomain(domain: Domain) {
+    override fun deleteDomain(domainId: DomainId) {
         val db = helper.writableDatabase
 
+        db.beginTransaction()
         try {
+            db.delete(
+                    CARDS,
+                    "$CARDS_DOMAIN_ID = ?",
+                    arrayOf(domainId.asString())
+            )
+            db.delete(
+                    DECKS,
+                    "$DECKS_DOMAIN_ID = ?",
+                    arrayOf(domainId.asString())
+            )
             val result = db.delete(
                     DOMAINS,
                     "$DOMAINS_ID = ?",
-                    arrayOf(domain.id.asString())
+                    arrayOf(domainId.asString())
             )
 
             if (result == 0) {
-                throw DataProcessingException("failed to delete domain[$domain.id]: no such domain")
+                throw DataProcessingException("failed to delete domain[$domainId]: no such domain")
             }
+            db.setTransactionSuccessful()
         } catch (e: Exception) {
-            throw DataProcessingException("failed to delete domain[$domain.id]", e)
+            throw DataProcessingException("failed to delete domain[$domainId]", e)
+        } finally {
+            db.endTransaction()
         }
     }
 

@@ -9,9 +9,10 @@ interface DomainsRegistry {
 
     fun createDomain(originalLangName: String, translationsLangName: String, defaultDeckName: String): Pair<Domain, Deck>
     fun updateDomain(domain: Domain, originalLangName: String, translationsLangName: String): Domain
+    fun deleteDomain(domain: Domain)
 }
 
-class DomainsRegistryImpl(private val repository: Repository) : DomainsRegistry {
+class DomainsRegistryImpl(private val repository: Repository, private val decksRegistry: DecksRegistry) : DomainsRegistry {
 
     override fun createDomain(
             originalLangName: String, translationsLangName: String, defaultDeckName: String
@@ -38,6 +39,13 @@ class DomainsRegistryImpl(private val repository: Repository) : DomainsRegistry 
 
     private fun addDefaultDeck(domain: Domain, defaultDeckName: String): Deck {
         return repository.addDeck(domain, defaultDeckName)
+    }
+
+    override fun deleteDomain(domain: Domain) {
+        val domainCards = repository.allCards(domain)
+        val allDomainTerms = domainCards.flatMap { it.translations.plus(it.original) }
+        repository.deleteDomain(domain.id)
+        decksRegistry.deleteOrphanTerms(allDomainTerms)
     }
 
     private fun Repository.findOrAddLanguage(name: String): Language {

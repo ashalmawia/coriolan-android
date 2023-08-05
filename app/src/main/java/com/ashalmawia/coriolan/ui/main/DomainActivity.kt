@@ -7,7 +7,9 @@ import androidx.core.content.res.ResourcesCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.data.DomainsRegistry
 import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.DomainActivityBinding
@@ -22,6 +24,7 @@ import com.ashalmawia.coriolan.ui.domain_add_edit.AddEditDomainActivity
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
+import com.ashalmawia.coriolan.ui.util.positiveButton
 import com.ashalmawia.coriolan.ui.util.requireSerializable
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
@@ -49,8 +52,10 @@ class DomainActivity : BaseActivity() {
 
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
+    private val domainsRegistry: DomainsRegistry by inject()
 
     private val domainId: DomainId by lazy { intent.requireSerializable(EXTRA_DOMAIN_ID) }
+    private val domain: Domain by lazy { repository.domainById(domainId)!! }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -155,6 +160,10 @@ class DomainActivity : BaseActivity() {
                 openDomainEditing()
                 true
             }
+            R.id.menu_delete -> {
+                confirmDeleteDomain()
+                true
+            }
             else -> appMenu.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
     }
@@ -179,6 +188,21 @@ class DomainActivity : BaseActivity() {
     private fun openDomainEditing() {
         val intent = AddEditDomainActivity.edit(this, domainId)
         startActivity(intent)
+    }
+
+    private fun confirmDeleteDomain() {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.delete_domain__title)
+                .setMessage(getString(R.string.delete_domain__message, domain.name))
+                .positiveButton(R.string.delete_domain__ok) { performDeleteDomain() }
+                .setNegativeButton(R.string.button_cancel, null)
+                .create()
+                .show()
+    }
+
+    private fun performDeleteDomain() {
+        domainsRegistry.deleteDomain(domain)
+        finish()
     }
 
     companion object {

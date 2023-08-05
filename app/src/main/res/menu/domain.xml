@@ -5,4 +5,8 @@
 		android:id="@+id/menu_edit"
 		android:title="@string/domains_list__edit" />
 
+	<item
+		android:id="@+id/menu_delete"
+		android:title="@string/domains_list__delete" />
+
 </menu>

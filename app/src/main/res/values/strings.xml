@@ -133,6 +133,12 @@
 	<string name="domains_list__add">Add new language to learn…</string>
 	<string name="domains_list__subtitle">What do you feel like studying?</string>
 	<string name="domains_list__edit">Edit language</string>
+	<string name="domains_list__delete">Delete language</string>
+	<string name="delete_domain__title">Are you sure?</string>
+	<string name="delete_domain__message">You are about to delete language: %1$s.
+		All words and decks associated with this language will be deleted. There is no way to undo.
+		It\'s the best to create a backup before you proceed.</string>
+	<string name="delete_domain__ok">DELETE</string>
 
 	<!-- Settings -->
 	<string name="settings__title">Settings</string>

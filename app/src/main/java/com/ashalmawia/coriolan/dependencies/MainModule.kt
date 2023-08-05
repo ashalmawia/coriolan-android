@@ -46,7 +46,7 @@ val mainModule = module {
     single<BackupableRepository> { SqliteBackupHelper(get()) }
     single<PreferenceDataStore> { CoriolanPreferencesDataStore(get()) }
     single<ImporterRegistry> { ImporterRegistryImpl() }
-    single<DomainsRegistry> { DomainsRegistryImpl(get()) }
+    single<DomainsRegistry> { DomainsRegistryImpl(get(), get()) }
     single<ExercisesRegistry> { ExercisesRegistryImpl() }
     single<AssignmentFactory> { AssignmentFactoryImpl(get(), get(), get()) }
     single { SqliteRepositoryOpenHelper(get()) }
