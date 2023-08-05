@@ -52,7 +52,7 @@ class DecksRegistry(
     }
 
     fun deleteOrphanTerms(candidates: List<Term>) {
-        candidates.forEach { if (!repository.isUsed(it)) repository.deleteTerm(it) }
+        candidates.toSet().forEach { if (!repository.isUsed(it)) repository.deleteTerm(it) }
     }
 
     /**
