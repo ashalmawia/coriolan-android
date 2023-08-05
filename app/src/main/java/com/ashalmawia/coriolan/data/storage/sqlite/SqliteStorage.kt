@@ -164,6 +164,24 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
+    override fun deleteLanguage(language: Language) {
+        val db = helper.writableDatabase
+
+        try {
+            val result = db.delete(
+                    LANGUAGES,
+                    "$LANGUAGES_ID = ?",
+                    arrayOf(language.id.asString())
+            )
+
+            if (result == 0) {
+                throw DataProcessingException("failed to delete language[$language.id]: no such language")
+            }
+        } catch (e: Exception) {
+            throw DataProcessingException("failed to delete language[$language.id]", e)
+        }
+    }
+
     override fun addTerm(value: String, language: Language, transcription: String?): Term {
         try {
             val id = helper.writableDatabase.insert(TERMS,

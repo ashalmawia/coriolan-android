@@ -70,6 +70,24 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
+    fun test__deleteLanguage__notPresent() {
+        // given
+        val storage = emptyStorage.value
+
+        // when
+        storage.deleteLanguage(Language(1L.asLanguageId(), ""))
+    }
+
+    @Test(expected = DataProcessingException::class)
+    fun test__deleteLanguage__isUsed() {
+        // given
+        val storage = prefilledStorage.value
+
+        // when
+        storage.deleteLanguage(domain.langOriginal())
+    }
+
+    @Test(expected = DataProcessingException::class)
     fun test__addTerm__valueUnique() {
         // given
         val storage = prefilledStorage.value

@@ -24,7 +24,6 @@ class MockRepository : Repository {
         langs.add(lang)
         return lang
     }
-
     override fun updateLanguage(language: Language, name: String): Language {
         if (!langs.contains(language)) {
             throw DataProcessingException("lang is not in the repo: $language")
@@ -36,12 +35,14 @@ class MockRepository : Repository {
 
         return updated
     }
-
     override fun languageById(id: LanguageId): Language? {
         return langs.find { it.id == id }
     }
     override fun languageByName(name: String): Language? {
         return langs.find { it.value == name }
+    }
+    override fun deleteLanguage(language: Language) {
+        langs.remove(language)
     }
 
     private val terms = mutableListOf<Term>()

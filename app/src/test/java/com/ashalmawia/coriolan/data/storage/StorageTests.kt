@@ -130,6 +130,20 @@ abstract class StorageTest {
     }
 
     @Test
+    fun test__deleteLanguage__present() {
+        // given
+        val storage = emptyStorage.value
+        val language = storage.addLanguage("Russian")
+
+        // when
+        storage.deleteLanguage(language)
+
+        // then
+        val byId = storage.languageById(language.id)
+        assertNull(byId)
+    }
+
+    @Test
     fun test__addTerm__Word() {
         // given
         val storage = prefilledStorage.value

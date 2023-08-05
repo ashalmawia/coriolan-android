@@ -18,6 +18,8 @@ interface Repository {
 
     fun languageByName(name: String): Language?
 
+    fun deleteLanguage(language: Language)
+
     fun addTerm(value: String, language: Language, transcription: String?): Term
 
     fun updateTerm(term: Term, transcription: String?): Term
