@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import org.junit.Assert.*
 import org.junit.Test
@@ -777,7 +778,7 @@ abstract class StorageTest {
         val storage = prefilledStorage.value
 
         // when
-        val read = storage.cardById(1L, domain)
+        val read = storage.cardById(1L.asCardId(), domain)
 
         // then
         assertNull(read)

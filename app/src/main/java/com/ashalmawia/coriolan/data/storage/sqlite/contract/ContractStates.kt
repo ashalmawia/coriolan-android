@@ -13,6 +13,8 @@ import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.string
 import com.ashalmawia.coriolan.learning.INTERVAL_NEVER_SCHEDULED
 import com.ashalmawia.coriolan.learning.SchedulingState
+import com.ashalmawia.coriolan.model.CardId
+import com.ashalmawia.coriolan.util.asCardId
 import org.joda.time.DateTime
 
 object ContractStates {
@@ -64,7 +66,7 @@ object ContractStates {
         """.trimMargin()
 
 
-    fun Cursor.statesCardId(): Long { return long(STATES_CARD_ID) }
+    fun Cursor.statesCardId(): CardId { return long(STATES_CARD_ID).asCardId() }
 
     fun Cursor.statesExerciseId(): ExerciseId {
         val value = string(STATES_EXERCISE)
@@ -79,18 +81,18 @@ object ContractStates {
     }
 
     fun createAllLearningProgressContentValues(
-            cardId: Long, learningProgress: LearningProgress): List<ContentValues> {
+            cardId: CardId, learningProgress: LearningProgress): List<ContentValues> {
         return listOf(createCardStateContentValues(cardId, learningProgress))
     }
 
-    fun createCardStateContentValues(cardId: Long, learningProgress: LearningProgress): ContentValues {
+    fun createCardStateContentValues(cardId: CardId, learningProgress: LearningProgress): ContentValues {
         val state = learningProgress.state
         return createCardStateContentValues(cardId, state.due, state.interval)
     }
 
-    fun createCardStateContentValues(cardId: Long, due: DateTime, interval: Int): ContentValues {
+    fun createCardStateContentValues(cardId: CardId, due: DateTime, interval: Int): ContentValues {
         val cv = ContentValues()
-        cv.put(STATES_CARD_ID, cardId)
+        cv.put(STATES_CARD_ID, cardId.value)
         cv.put(STATES_EXERCISE, "flashcards")
         cv.put(STATES_DUE_DATE, due)
         cv.put(STATES_INTERVAL, interval)

@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import org.joda.time.DateTime
@@ -54,7 +55,7 @@ fun mockCard(
         back: String = "mock back"
 ): Card {
     return Card(
-            id,
+            id.asCardId(),
             deckId.asDeckId(),
             domain,
             type,

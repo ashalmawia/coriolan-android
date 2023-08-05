@@ -38,7 +38,7 @@ interface Repository {
 
     fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card
 
-    fun cardById(id: Long, domain: Domain): Card?
+    fun cardById(id: CardId, domain: Domain): Card?
 
     fun cardByValues(domain: Domain, original: Term): Card?
 

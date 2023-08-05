@@ -112,9 +112,9 @@ abstract class BackupableRepositoryTest {
 
         // then
         testNonEmpty(
-                cardStates.sortedBy { it.cardId },
+                cardStates.sortedBy { it.cardId.value },
                 { states -> repo.writeExerciseStates(states) },
-                { offset, limit -> repo.allExerciseStates(offset, limit).sortedBy { it.cardId } }
+                { offset, limit -> repo.allExerciseStates(offset, limit).sortedBy { it.cardId.value } }
         )
     }
 

@@ -55,8 +55,8 @@ class OverviewViewModel(
 
     private fun sort(cards: List<CardItem>, sorting: OverviewSorting): List<CardItem> {
         return when (sorting) {
-            OverviewSorting.DATE_ADDED_NEWEST_FIRST -> cards.sortedByDescending { it.entity.id }
-            OverviewSorting.DATE_ADDED_OLDEST_FIRST -> cards.sortedBy { it.entity.id }
+            OverviewSorting.DATE_ADDED_NEWEST_FIRST -> cards.sortedByDescending { it.entity.id.value }
+            OverviewSorting.DATE_ADDED_OLDEST_FIRST -> cards.sortedBy { it.entity.id.value }
             OverviewSorting.ALPHABETICALLY_A_Z -> cards.sortedBy { it.entity.original.value }
             OverviewSorting.ALPHABETICALLY_Z_A -> cards.sortedByDescending { it.entity.original.value }
         }

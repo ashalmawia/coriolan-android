@@ -2,10 +2,11 @@ package com.ashalmawia.coriolan.model
 
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import org.joda.time.DateTime
+import java.io.Serializable
 import java.lang.IllegalArgumentException
 
 data class Card(
-        val id: Long,
+        val id: CardId,
         val deckId: DeckId,
         val domain: Domain,
         val type: CardType,
@@ -13,6 +14,11 @@ data class Card(
         val translations: List<Term>,
         val dateAdded: DateTime
 )
+
+data class CardId(val value: Long) : Serializable {
+
+    fun asString() = value.toString()
+}
 
 enum class CardType(val value: String) {
     FORWARD("forward"), REVERSE("reverse");

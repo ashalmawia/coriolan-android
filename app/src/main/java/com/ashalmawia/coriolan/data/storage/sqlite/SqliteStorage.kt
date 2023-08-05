@@ -73,6 +73,7 @@ import com.ashalmawia.coriolan.learning.LearningProgress
 import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.DeckId
@@ -81,6 +82,7 @@ import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.ashalmawia.coriolan.util.timespamp
@@ -362,7 +364,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             throw DataProcessingException("failed to insert card ($original -> $translations)")
         }
 
-        return Card(cardId, deckId, domain, type, original, translations, payload.dateAdded())
+        return Card(cardId.asCardId(), deckId, domain, type, original, translations, payload.dateAdded())
     }
 
     private fun verifyTranslations(original: Term, translations: List<Term>) {
@@ -398,12 +400,12 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
-    override fun cardById(id: Long, domain: Domain): Card? {
+    override fun cardById(id: CardId, domain: Domain): Card? {
         val list = cardsWithIds(listOf(id), domain)
         return list.firstOrNull()
     }
 
-    private fun cardsWithIds(ids: List<Long>, domain: Domain): List<Card> {
+    private fun cardsWithIds(ids: List<CardId>, domain: Domain): List<Card> {
         if (ids.isEmpty()) throw IllegalArgumentException("ids list must not be empty")
 
         val db = helper.readableDatabase
@@ -419,14 +421,14 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 LEFT JOIN $LANGUAGES
                     ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
             
-            WHERE $CARDS_ID IN (${ids.joinToString()})
+            WHERE $CARDS_ID IN (${ids.map { it.value }.joinToString()})
         """.trimMargin(), arrayOf())
 
         return extractCardsFromCursor(cursor, domain)
     }
 
     private fun extractCardsFromCursor(cursor: Cursor, domain: Domain): List<Card> {
-        val payloads = mutableMapOf<Long, CardPayload>()
+        val payloads = mutableMapOf<CardId, CardPayload>()
 
         val cards = mutableListOf<Card>()
         cursor.use {
@@ -491,7 +493,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 card.domain.id, deckId, original, card.type, payload, card.id
         )
         val updated = try {
-            db.update(CARDS, cv, "$CARDS_ID = ?", arrayOf(card.id.toString()))
+            db.update(CARDS, cv, "$CARDS_ID = ?", arrayOf(card.id.asString()))
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to add card ($original -> $translations), constraint violation", e)
         }
@@ -510,7 +512,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             val result = db.delete(
                     CARDS,
                     "$CARDS_ID = ?",
-                    arrayOf(card.id.toString())
+                    arrayOf(card.id.asString())
             )
 
             if (result == 0) {
@@ -705,7 +707,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             SELECT *
                FROM $STATES
                WHERE $STATES_CARD_ID = ?
-        """.trimMargin(), arrayOf(card.id.toString()))
+        """.trimMargin(), arrayOf(card.id.asString()))
 
         return cursor.use {
             if (it.moveToNext()) {
@@ -738,7 +740,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
     }
 
-    private fun pendingCardIds(deck: Deck, date: DateTime, types: Array<CardType>): Map<Long, LearningProgress> {
+    private fun pendingCardIds(deck: Deck, date: DateTime, types: Array<CardType>): Map<CardId, LearningProgress> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -758,7 +760,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                ($STATES_DUE_DATE IS NULL OR $STATES_DUE_DATE <= ? AND $STATES_IS_ACTIVE = $STATES__CARD_ACTIVE)
         """.trimMargin(), arrayOf(deck.id.asString(), date.timespamp.toString()))
 
-        val pendingStates = mutableMapOf<Long, SchedulingState>()
+        val pendingStates = mutableMapOf<CardId, SchedulingState>()
         cursor.use {
             while (cursor.moveToNext()) {
                 val cardId = cursor.cardsId()
@@ -848,7 +850,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             SELECT *
                FROM $STATES
                WHERE
-                   $STATES_CARD_ID IN (${cardIdsToFrontIds.keys.joinToString()})
+                   $STATES_CARD_ID IN (${cardIdsToFrontIds.keys.map { it.value }.joinToString()})
         """.trimMargin(), arrayOf())
 
         val map = mutableMapOf<Long, LearningProgress>()  // front id as key
@@ -867,14 +869,14 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return cardIdsToFrontIds.values.associateWith { map[it] ?: LearningProgress.empty() }
     }
 
-    private fun cardIdsToFrontIds(db: SQLiteDatabase, frontIds: List<Long>): Map<Long, Long> {
+    private fun cardIdsToFrontIds(db: SQLiteDatabase, frontIds: List<Long>): Map<CardId, Long> {
         val cursor = db.rawQuery("""
             SELECT $CARDS_ID, $CARDS_FRONT_ID
                 FROM $CARDS
                 WHERE $CARDS_FRONT_ID IN (${frontIds.joinToString()})
         """.trimIndent(), arrayOf())
 
-        val map = mutableMapOf<Long, Long>()
+        val map = mutableMapOf<CardId, Long>()
         cursor.use {
             while (it.moveToNext()) {
                 val cardId = it.cardsId()

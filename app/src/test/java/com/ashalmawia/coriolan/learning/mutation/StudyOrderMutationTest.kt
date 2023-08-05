@@ -3,8 +3,8 @@ package com.ashalmawia.coriolan.learning.mutation
 import com.ashalmawia.coriolan.model.mockCardWithProgress
 import com.ashalmawia.coriolan.model.mockLearningProgressInProgress
 import com.ashalmawia.coriolan.model.mockLearningProgressNew
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertFalse
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -42,7 +42,7 @@ class StudyOrderMutationTest {
 
         // then
         assertFalse(cards == processed)
-        assertEquals(cards, processed.sortedBy { it.card.id })
+        assertEquals(cards, processed.sortedBy { it.card.id.value })
     }
 
     @Test

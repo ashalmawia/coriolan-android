@@ -100,15 +100,15 @@ object JsonBackupTestData {
     private val today = mockToday()
 
     val cardStates = listOf(
-            LearningProgressInfo(20L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(6L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(11L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(1L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(9L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(10L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(15L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(21L, today, random.nextInt(500)),
-            LearningProgressInfo(2L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
-            LearningProgressInfo(7L, today, random.nextInt(500))
+            learningProgressInfo(20L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(6L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(11L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(1L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(9L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(10L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(15L, today.plusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(21L, today, random.nextInt(500)),
+            learningProgressInfo(2L, today.minusDays(random.nextInt(500)), random.nextInt(500)),
+            learningProgressInfo(7L, today, random.nextInt(500))
     )
 }

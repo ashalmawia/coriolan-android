@@ -1,5 +1,6 @@
 package com.ashalmawia.coriolan.data.backup
 
+import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
@@ -58,7 +59,7 @@ data class TermExtraInfo(
         val value: String)
 
 data class CardInfo(
-        val id: Long,
+        val id: CardId,
         val deckId: DeckId,
         val domainId: DomainId,
         val originalId: Long,
@@ -71,6 +72,6 @@ data class DeckInfo(
         val name: String)
 
 data class LearningProgressInfo(
-        val cardId: Long,
+        val cardId: CardId,
         val due: DateTime,
         val interval: Int)

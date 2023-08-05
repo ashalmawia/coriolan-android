@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.LearningProgressInfo
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.timespamp
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -39,13 +40,13 @@ fun readExerciseStateFromJson(json: JsonParser): LearningProgressInfo {
                 "cardId $cardId, due $due, interval $interval")
     }
 
-    return LearningProgressInfo(cardId, DateTime(due), interval)
+    return LearningProgressInfo(cardId.asCardId(), DateTime(due), interval)
 }
 
 fun writeExerciseStateToJson(state: LearningProgressInfo, json: JsonGenerator) {
     json.writeStartObject()
 
-    json.writeNumberField(FIELD_CARD_ID, state.cardId)
+    json.writeNumberField(FIELD_CARD_ID, state.cardId.value)
     json.writeNumberField(FIELD_DUE, state.due.timespamp)
     json.writeNumberField(FIELD_INTERVAL, state.interval)
 

@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import org.joda.time.DateTime
@@ -83,8 +84,9 @@ class MockRepository : Repository {
 
     val cards = mutableListOf<Card>()
     override fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card {
+        val id = cards.size + 1L
         val card = Card(
-                cards.size + 1L,
+                id.asCardId(),
                 deckId,
                 domain,
                 if (domain.langOriginal() == original.language) CardType.FORWARD else CardType.REVERSE,
@@ -95,7 +97,7 @@ class MockRepository : Repository {
         cards.add(card)
         return card
     }
-    override fun cardById(id: Long, domain: Domain): Card? {
+    override fun cardById(id: CardId, domain: Domain): Card? {
         return cards.find { it.id == id }
     }
     override fun cardByValues(domain: Domain, original: Term): Card? {
@@ -201,7 +203,7 @@ class MockRepository : Repository {
         )
     }
 
-    val states = mutableMapOf<Long, LearningProgress>()
+    val states = mutableMapOf<CardId, LearningProgress>()
     override fun updateCardLearningProgress(card: Card, learningProgress: LearningProgress) {
         if (!cards.contains(card)) {
             throw DataProcessingException("card is not in the repo: $card")

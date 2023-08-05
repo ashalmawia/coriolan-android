@@ -12,8 +12,10 @@ import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.dateAdded
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -67,7 +69,7 @@ object ContractCards {
 
 
     private val objectMapper = jacksonObjectMapper()
-    fun Cursor.cardsId(): Long { return long(CARDS_ID) }
+    fun Cursor.cardsId(): CardId { return long(CARDS_ID).asCardId() }
     fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }
     fun Cursor.cardsDeckId(): DeckId { return long(CARDS_DECK_ID).asDeckId() }
     fun Cursor.cardsDomainId(): DomainId { return long(CARDS_DOMAIN_ID).asDomainId() }
@@ -94,13 +96,13 @@ object ContractCards {
     }
 
 
-    fun createCardContentValues(domainId: DomainId, deckId: DeckId, original: Term, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null) =
+    fun createCardContentValues(domainId: DomainId, deckId: DeckId, original: Term, cardType: CardType, cardPayload: CardPayload, cardId: CardId? = null) =
             createCardContentValues(domainId, deckId, original.id, cardType, cardPayload, cardId)
 
-    fun createCardContentValues(domainId: DomainId, deckId: DeckId, originalId: Long, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null): ContentValues {
+    fun createCardContentValues(domainId: DomainId, deckId: DeckId, originalId: Long, cardType: CardType, cardPayload: CardPayload, cardId: CardId? = null): ContentValues {
         val cv = ContentValues()
         if (cardId != null) {
-            cv.put(CARDS_ID, cardId)
+            cv.put(CARDS_ID, cardId.value)
         }
         cv.put(CARDS_FRONT_ID, originalId)
         cv.put(CARDS_DECK_ID, deckId.value)

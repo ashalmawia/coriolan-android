@@ -196,9 +196,9 @@ abstract class JsonBackupTest {
                 deckInfo(1, 1, "Default")
         )
         val states = listOf(
-                LearningProgressInfo(1, DateTime(1680400800000), 1),
-                LearningProgressInfo(3, DateTime(1680314400000), -1),
-                LearningProgressInfo(5, DateTime(1680400800000), 1),
+                learningProgressInfo(1, DateTime(1680400800000), 1),
+                learningProgressInfo(3, DateTime(1680314400000), -1),
+                learningProgressInfo(5, DateTime(1680400800000), 1),
         )
 
         val outLogbook = createNonEmptyLogbook()

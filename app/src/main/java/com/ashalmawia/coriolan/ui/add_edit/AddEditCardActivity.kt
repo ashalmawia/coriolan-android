@@ -65,7 +65,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun extractDataEditCard() {
-        val cardId = intent.getLongExtra(EXTRA_CARD_ID, -1)
+        val cardId = intent.requireSerializable<CardId>(EXTRA_CARD_ID)
         val card = repository.cardById(cardId, domain) ?: throw IllegalStateException("card with id[$cardId] does not exist in the database")
 
         if (card.translations.isEmpty()) throw IllegalStateException("card with id[$cardId] has no translations")

@@ -20,7 +20,7 @@ class LearningModeMutation(private val repository: Repository) : Mutation {
 
     private fun List<CardWithProgress>.filterReady() : List<CardWithProgress> {
         val cardsAndTranslationsIds = flatMap { it.card.translations }.map { it.id }
-                .plus(this.map { it.card.id })
+                .plus(this.map { it.card.original.id })
 
         val progresses = repository.getProgressForCardsWithOriginals(cardsAndTranslationsIds)
 
@@ -30,7 +30,7 @@ class LearningModeMutation(private val repository: Repository) : Mutation {
     }
 
     private fun Card.alreadySeen(states: Map<Long, LearningProgress>): Boolean {
-        return (states[id]?.status ?: Status.NEW) != Status.NEW
+        return (states[original.id]?.status ?: Status.NEW) != Status.NEW
     }
 
     private fun Term.isReady(progresses: Map<Long, LearningProgress>): Boolean {

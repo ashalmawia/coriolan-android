@@ -40,6 +40,7 @@ import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.mockLanguage
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.mockTerm
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -202,7 +203,7 @@ class CreateContentValuesTest {
         val cardId = 7L
 
         // when
-        val cv = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original, type, payload, cardId)
+        val cv = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original, type, payload, cardId.asCardId())
 
         // then
         cv.run {
@@ -216,7 +217,7 @@ class CreateContentValuesTest {
         }
 
         // when
-        val cv1 = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original.id, type, payload, cardId)
+        val cv1 = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original.id, type, payload, cardId.asCardId())
 
         // then
         cv1.run {
@@ -271,7 +272,7 @@ class CreateContentValuesTest {
         val learningProgress = mockLearningProgress(due, interval)
 
         // when
-        val cv = createCardStateContentValues(cardId, learningProgress)
+        val cv = createCardStateContentValues(cardId.asCardId(), learningProgress)
 
         // then
         assertEquals("values count is correct", 5, cv.size())
@@ -282,7 +283,7 @@ class CreateContentValuesTest {
 
         // when
         val state = learningProgress.state
-        val cv1 = createCardStateContentValues(cardId, state.due, state.interval)
+        val cv1 = createCardStateContentValues(cardId.asCardId(), state.due, state.interval)
 
         // then
         assertEquals("values count is correct", 5, cv1.size())

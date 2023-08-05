@@ -34,7 +34,7 @@ class ShuffleMutationTest {
 
         // then
         assertFalse(cards == processed)
-        assertEquals(cards.sortedBy { it.card.id }, processed.sortedBy { it.card.id })
+        assertEquals(cards.sortedBy { it.card.id.value }, processed.sortedBy { it.card.id.value })
     }
 
     @Test
@@ -56,7 +56,7 @@ class ShuffleMutationTest {
 
         // then
         assertFalse(cards == processed)
-        assertEquals(cards.sortedBy { it.card.id }, processed.sortedBy { it.card.id })
+        assertEquals(cards.sortedBy { it.card.id.value }, processed.sortedBy { it.card.id.value })
         assertFalse(processed.subList(processed.size - processed.size / 3, processed.size)
                 .any { it.learningProgress.status == Status.NEW })
     }

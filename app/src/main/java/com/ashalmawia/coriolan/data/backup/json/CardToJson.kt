@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.CardInfo
+import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.core.JsonGenerator
@@ -55,13 +56,13 @@ fun readCardFromJson(json: JsonParser): CardInfo {
         throw JsonDeserializationException("failed to deserialize card, id $id, deckId $deckId, " +
                 "domainId $domainId, originalId $originalId, translations $translations")
     }
-    return CardInfo(id, deckId.asDeckId(), domainId.asDomainId(), originalId, translations, null)
+    return CardInfo(id.asCardId(), deckId.asDeckId(), domainId.asDomainId(), originalId, translations, null)
 }
 
 fun writeCardToJson(card: CardInfo, json: JsonGenerator) {
     json.writeStartObject()
 
-    json.writeNumberField(FIELD_ID, card.id)
+    json.writeNumberField(FIELD_ID, card.id.value)
     json.writeNumberField(FIELD_DECK_ID, card.deckId.value)
     json.writeNumberField(FIELD_DOMAIN_ID, card.domainId.value)
     json.writeNumberField(FIELD_ORIGINAL_ID, card.originalId)

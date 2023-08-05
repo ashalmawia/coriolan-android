@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
@@ -39,3 +40,4 @@ fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
 
 fun Long.asDomainId() = DomainId(this)
 fun Long.asDeckId() = DeckId(this)
+fun Long.asCardId() = CardId(this)
