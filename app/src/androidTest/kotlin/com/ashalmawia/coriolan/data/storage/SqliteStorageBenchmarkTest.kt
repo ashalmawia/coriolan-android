@@ -16,6 +16,11 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.util.asCardId
+import com.ashalmawia.coriolan.util.asDeckId
+import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asLanguageId
+import com.ashalmawia.coriolan.util.asTermId
 import org.joda.time.DateTime
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -113,8 +118,8 @@ class SqliteStorageBenchmarkTest {
         var language1: Language? = null
         var language2: Language? = null
         benchmark("add domain", prepare = {
-            language1 = it.languageById(8L)
-            language2 = it.languageById(2L)
+            language1 = it.languageById(8L.asLanguageId())
+            language2 = it.languageById(2L.asLanguageId())
         }) {
             it.createDomain("", language1!!, language2!!)
         }
@@ -123,7 +128,7 @@ class SqliteStorageBenchmarkTest {
     private fun add_term() {
         var language: Language? = null
         benchmark("add term", prepare = {
-            language = it.languageById(1L)
+            language = it.languageById(1L.asLanguageId())
         }) {
             it.addTerm("new term", language!!, "transcription")
         }
@@ -132,7 +137,7 @@ class SqliteStorageBenchmarkTest {
     private fun add_deck() {
         var domain: Domain? = null
         benchmark("add deck", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
         }) {
             it.addDeck(domain!!, "new deck")
         }
@@ -144,13 +149,13 @@ class SqliteStorageBenchmarkTest {
         var translations: List<Term>? = null
 
         benchmark("add card", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
             original = it.addTerm("some new term", domain!!.langOriginal(), "transcription")
             translations = (1 .. 3).map { i ->
                 it.addTerm("some new term $i", domain!!.langTranslations(), null)
             }
         }) {
-            it.addCard(domain!!, 1L, original!!, translations!!)
+            it.addCard(domain!!, 1L.asDeckId(), original!!, translations!!)
         }
     }
 
@@ -158,7 +163,7 @@ class SqliteStorageBenchmarkTest {
     private fun update_term() {
         var term: Term? = null
         benchmark("update term", prepare = {
-            term = it.termById(1L)
+            term = it.termById(1L.asTermId())
         }) {
             it.updateTerm(term!!, "new transcription")
         }
@@ -167,7 +172,7 @@ class SqliteStorageBenchmarkTest {
     private fun update_deck() {
         var deck: Deck? = null
         benchmark("update deck", prepare = {
-            deck = it.deckById(8L)
+            deck = it.deckById(8L.asDeckId())
         }) {
             it.updateDeck(deck!!,"new deck name")
         }
@@ -177,10 +182,10 @@ class SqliteStorageBenchmarkTest {
         var domain: Domain?
         var card: Card? = null
         benchmark("update card - move", prepare = {
-            domain = it.domainById(1L)
-            card = it.cardById(count.toLong(), domain!!)
+            domain = it.domainById(1L.asDomainId())
+            card = it.cardById(count.toLong().asCardId(), domain!!)
         }) {
-            it.updateCard(card!!, 5L, card!!.original, card!!.translations)
+            it.updateCard(card!!, 5L.asDeckId(), card!!.original, card!!.translations)
         }
     }
 
@@ -189,8 +194,8 @@ class SqliteStorageBenchmarkTest {
         var card: Card? = null
         var translation: Term? = null
         benchmark("update card - add translation", prepare = {
-            domain = it.domainById(1L)
-            card = it.cardById(count.toLong(), domain!!)
+            domain = it.domainById(1L.asDomainId())
+            card = it.cardById(count.toLong().asCardId(), domain!!)
             translation = it.addTerm("new term", domain!!.langTranslations(), null)
         }) {
             it.updateCard(card!!, card!!.deckId, card!!.original, card!!.translations.plus(translation!!))
@@ -201,8 +206,8 @@ class SqliteStorageBenchmarkTest {
         var domain: Domain?
         var card: Card? = null
         benchmark("update card learning progress", prepare = {
-            domain = it.domainById(1L)
-            card = it.cardById(count.toLong(), domain!!)
+            domain = it.domainById(1L.asDomainId())
+            card = it.cardById(count.toLong().asCardId(), domain!!)
         }) {
             it.updateCardLearningProgress(card!!, LearningProgress(SchedulingState(mockToday(), 5), ExerciseData()))
         }
@@ -213,7 +218,7 @@ class SqliteStorageBenchmarkTest {
     private fun delete_term() {
         var term: Term? = null
         benchmark("delete term", prepare = {
-            term = it.termById((count + 10).toLong())
+            term = it.termById((count + 10).toLong().asTermId())
         }) {
             it.deleteTerm(term!!)
         }
@@ -222,7 +227,7 @@ class SqliteStorageBenchmarkTest {
     private fun delete_deck() {
         var deck: Deck? = null
         benchmark("delete deck", prepare = {
-            deck = it.deckById(8L)
+            deck = it.deckById(8L.asDeckId())
         }) {
             it.deleteDeck(deck!!)
         }
@@ -232,8 +237,8 @@ class SqliteStorageBenchmarkTest {
         var domain: Domain?
         var card: Card? = null
         benchmark("delete card", prepare = {
-            domain = it.domainById(1L)
-            card = it.cardById(count.toLong(), domain!!)
+            domain = it.domainById(1L.asDomainId())
+            card = it.cardById(count.toLong().asCardId(), domain!!)
         }) {
             it.deleteCard(card!!)
         }
@@ -244,7 +249,7 @@ class SqliteStorageBenchmarkTest {
 
     private fun query_language_by_id() {
         benchmark("query language by id") {
-            it.languageById(3L)
+            it.languageById(3L.asLanguageId())
         }
     }
 
@@ -256,7 +261,7 @@ class SqliteStorageBenchmarkTest {
 
     private fun query_domain_by_id() {
         benchmark("query domain by id") {
-            it.domainById(5L)
+            it.domainById(5L.asDomainId())
         }
     }
 
@@ -268,14 +273,14 @@ class SqliteStorageBenchmarkTest {
 
     private fun query_term_by_name() {
         benchmark("query term by name") {
-            it.termById(15L)
+            it.termById(15L.asTermId())
         }
     }
 
     private fun query_term_by_values() {
         var language: Language? = null
         benchmark("query term by values", prepare = {
-            language = it.languageById(1L)
+            language = it.languageById(1L.asLanguageId())
         }) {
             it.termByValues("term with id: 33", language!!)
         }
@@ -284,7 +289,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_term_is_used() {
         var term: Term? = null
         benchmark("query term is used", prepare = {
-            term = it.termById(70L)
+            term = it.termById(70L.asTermId())
         }) {
             it.isUsed(term!!)
         }
@@ -292,14 +297,14 @@ class SqliteStorageBenchmarkTest {
 
     private fun query_deck_by_id() {
         benchmark("query deck by id") {
-            it.deckById(8L)
+            it.deckById(8L.asDeckId())
         }
     }
 
     private fun query_all_decks() {
         var domain: Domain? = null
         benchmark("query all decks", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
         }) {
             it.allDecks(domain!!)
         }
@@ -308,7 +313,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_all_decks_cards_count() {
         var domain: Domain? = null
         benchmark("query all decks cards count", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
         }) {
             it.allDecksCardsCount(domain!!)
         }
@@ -317,9 +322,9 @@ class SqliteStorageBenchmarkTest {
     private fun query_card_by_id() {
         var domain: Domain? = null
         benchmark("query card by id", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
         }) {
-            it.cardById(count.toLong(), domain!!)
+            it.cardById(count.toLong().asCardId(), domain!!)
         }
     }
 
@@ -327,8 +332,8 @@ class SqliteStorageBenchmarkTest {
         var domain: Domain? = null
         var original: Term? = null
         benchmark("query card by values", prepare = {
-            domain = it.domainById(2L)
-            original = it.termById(count.toLong())
+            domain = it.domainById(2L.asDomainId())
+            original = it.termById(count.toLong().asTermId())
         }) {
             it.cardByValues(domain!!, original!!)
         }
@@ -337,7 +342,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_all_cards() {
         var domain: Domain? = null
         benchmark("query all cards", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
         }) {
             it.allCards(domain!!)
         }
@@ -346,7 +351,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_cards_of_deck() {
         var deck: Deck? = null
         benchmark("query cards of deck", prepare = {
-            deck = it.deckById(3L)
+            deck = it.deckById(3L.asDeckId())
         }) {
             it.cardsOfDeck(deck!!)
         }
@@ -355,7 +360,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_deck_pending_cards() {
         var deck: Deck? = null
         benchmark("query deck pending cards", prepare = {
-            deck = it.deckById(3L)
+            deck = it.deckById(3L.asDeckId())
         }) {
             it.pendingCards(deck!!, mockToday())
         }
@@ -364,7 +369,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_deck_pending_counts() {
         var deck: Deck? = null
         benchmark("query deck pending counts", prepare = {
-            deck = it.deckById(3L)
+            deck = it.deckById(3L.asDeckId())
         }) {
             it.deckPendingCounts(deck!!, CardType.FORWARD, mockToday())
         }
@@ -373,7 +378,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_all_decks_with_pending_counts() {
         var domain: Domain? = null
         benchmark("query all decks with pending counts", prepare = {
-            domain = it.domainById(1L)
+            domain = it.domainById(1L.asDomainId())
         }) {
             it.allDecksWithPendingCounts(domain!!, mockToday())
         }
@@ -382,7 +387,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_deck_stats() {
         var deck: Deck? = null
         benchmark("query deck stats", prepare = {
-            deck = it.deckById(3L)
+            deck = it.deckById(3L.asDeckId())
         }) {
             it.deckStats(deck!!)
         }
@@ -392,8 +397,8 @@ class SqliteStorageBenchmarkTest {
         var domain: Domain?
         var card: Card? = null
         benchmark("query card learning progress", prepare = {
-            domain = it.domainById(1L)
-            card = it.cardById(count.toLong(), domain!!)
+            domain = it.domainById(1L.asDomainId())
+            card = it.cardById(count.toLong().asCardId(), domain!!)
         }) {
             it.getCardLearningProgress(card!!)
         }
@@ -402,7 +407,7 @@ class SqliteStorageBenchmarkTest {
     private fun query_progress_for_cards_with_originals() {
         benchmark("query progress for cards with originals") {
             it.getProgressForCardsWithOriginals(
-                    (1..count).map { id -> id.toLong() }
+                    (1..count).map { id -> id.toLong().asTermId() }
             )
         }
     }
