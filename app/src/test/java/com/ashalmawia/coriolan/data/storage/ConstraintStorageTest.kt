@@ -9,6 +9,8 @@ import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.ashalmawia.coriolan.util.asLanguageId
 import org.junit.Assert
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -185,6 +187,22 @@ class ConstraintStorageTest {
 
         // when
         storage.deleteDomain(mockDomain())
+    }
+
+    @Test
+    fun test__deleteDomain__isUsed__verifyCascadeDeleted() {
+        // given
+        val storage = prefilledStorage.value
+        val deck = storage.addDeck(domain, "deck")
+        val card = addMockCard(storage, domain = domain, deckId = deck.id)
+
+        // when
+        storage.deleteDomain(domain)
+        val readCard = storage.cardById(card.id, domain)
+
+        // then
+        assertNull(readCard)
+        assertTrue(storage.allDecks(domain).isEmpty())
     }
 
     @Test(expected = DataProcessingException::class)
