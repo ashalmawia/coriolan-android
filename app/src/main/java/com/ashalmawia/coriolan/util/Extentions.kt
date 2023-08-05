@@ -13,6 +13,7 @@ import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.model.TermId
 import org.joda.time.DateTime
 
 fun ViewGroup.inflate(resource: Int, attachToRoot: Boolean): View {
@@ -41,3 +42,4 @@ fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
 fun Long.asDomainId() = DomainId(this)
 fun Long.asDeckId() = DeckId(this)
 fun Long.asCardId() = CardId(this)
+fun Long.asTermId() = TermId(this)

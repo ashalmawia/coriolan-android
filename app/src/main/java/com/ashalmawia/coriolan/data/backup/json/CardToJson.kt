@@ -4,6 +4,7 @@ import com.ashalmawia.coriolan.data.backup.CardInfo
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
@@ -56,7 +57,13 @@ fun readCardFromJson(json: JsonParser): CardInfo {
         throw JsonDeserializationException("failed to deserialize card, id $id, deckId $deckId, " +
                 "domainId $domainId, originalId $originalId, translations $translations")
     }
-    return CardInfo(id.asCardId(), deckId.asDeckId(), domainId.asDomainId(), originalId, translations, null)
+    return CardInfo(
+            id.asCardId(),
+            deckId.asDeckId(),
+            domainId.asDomainId(),
+            originalId.asTermId(), translations.map { it.asTermId() },
+            null
+    )
 }
 
 fun writeCardToJson(card: CardInfo, json: JsonGenerator) {
@@ -65,10 +72,10 @@ fun writeCardToJson(card: CardInfo, json: JsonGenerator) {
     json.writeNumberField(FIELD_ID, card.id.value)
     json.writeNumberField(FIELD_DECK_ID, card.deckId.value)
     json.writeNumberField(FIELD_DOMAIN_ID, card.domainId.value)
-    json.writeNumberField(FIELD_ORIGINAL_ID, card.originalId)
+    json.writeNumberField(FIELD_ORIGINAL_ID, card.originalId.value)
 
     json.writeFieldName(FIELD_TRANSLATIONS)
-    json.writeArray(card.translationIds.toLongArray(), 0, card.translationIds.size)
+    json.writeArray(card.translationIds.map { it.value }.toLongArray(), 0, card.translationIds.size)
 
     json.writeEndObject()
 }

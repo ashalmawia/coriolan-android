@@ -66,7 +66,6 @@ import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.term
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.ContractTerms.termsId
 import com.ashalmawia.coriolan.data.storage.sqlite.contract.SqliteUtils.from
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
-import com.ashalmawia.coriolan.data.storage.sqlite.payload.dateAdded
 import com.ashalmawia.coriolan.learning.CardWithProgress
 import com.ashalmawia.coriolan.learning.ExerciseData
 import com.ashalmawia.coriolan.learning.LearningProgress
@@ -81,10 +80,12 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.model.TermId
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asTermId
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
 import org.joda.time.DateTime
@@ -167,7 +168,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 throw DataProcessingException("failed to add term [$value], lang $language: maybe missing lang")
             }
 
-            return Term(id, value, language, transcription)
+            return Term(id.asTermId(), value, language, transcription)
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to add term [$value], lang $language: constraint violation", e)
         }
@@ -179,12 +180,12 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         )
 
         val db = helper.writableDatabase
-        db.update(TERMS, cv, "$TERMS_ID == ?", arrayOf(term.id.toString()))
+        db.update(TERMS, cv, "$TERMS_ID == ?", arrayOf(term.id.asString()))
 
         return term.copy(transcription = transcription)
     }
 
-    override fun termById(id: Long): Term? {
+    override fun termById(id: TermId): Term? {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -194,7 +195,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 LEFT JOIN $LANGUAGES ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
             WHERE $TERMS_ID = ?
             
-            """.trimMargin(), arrayOf(id.toString()))
+            """.trimMargin(), arrayOf(id.asString()))
 
         if (cursor.count == 0) return null
         if (cursor.count > 1) throw IllegalStateException("more that one term for id $id")
@@ -242,9 +243,9 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             SELECT COUNT(*)
             FROM $CARDS
             WHERE
-               $CARDS_FRONT_ID = ${term.id}
+               $CARDS_FRONT_ID = ${term.id.asString()}
                OR
-               $CARDS_PAYLOAD LIKE '%{"id":${term.id}}%'
+               $CARDS_PAYLOAD LIKE '%{"id":${term.id.asString()}}%'
         """.trimMargin(), arrayOf())
 
         cursor.use {
@@ -257,7 +258,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
     override fun deleteTerm(term: Term) {
         val db = helper.writableDatabase
         try {
-            val result = db.delete(TERMS, "$TERMS_ID = ?", arrayOf(term.id.toString()))
+            val result = db.delete(TERMS, "$TERMS_ID = ?", arrayOf(term.id.asString()))
             if (result == 0) {
                 throw DataProcessingException("failed to delete term $term: not in the database")
             }
@@ -384,10 +385,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val cursor = db.rawQuery("""
             SELECT $TERMS_ID
             FROM $TERMS
-            WHERE $TERMS_ID IN ( ${terms.map { it.id }.joinToString()} )
+            WHERE $TERMS_ID IN ( ${terms.joinToString { it.id.asString() }} )
         """.trimIndent(), arrayOf())
 
-        val found = mutableSetOf<Long>()
+        val found = mutableSetOf<TermId>()
         cursor.use {
             while (it.moveToNext()) {
                 found.add(it.termsId())
@@ -421,7 +422,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 LEFT JOIN $LANGUAGES
                     ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
             
-            WHERE $CARDS_ID IN (${ids.map { it.value }.joinToString()})
+            WHERE $CARDS_ID IN (${ids.joinToString { it.asString() }})
         """.trimMargin(), arrayOf())
 
         return extractCardsFromCursor(cursor, domain)
@@ -440,10 +441,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         }
 
         val translations = termsWithIds(
-                payloads.values.flatMap { it.translationIds }.map { it.id }
+                payloads.values.flatMap { it.translationsIds() }
         )
         return cards.map { card ->
-            card.copy(translations = payloads[card.id]!!.translationIds.map { translations[it.id]!! })
+            card.copy(translations = payloads[card.id]!!.translationsIds().map { translations[it]!! })
         }
     }
 
@@ -466,7 +467,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                    $CARDS_DOMAIN_ID = ?
                        AND
                    $CARDS_FRONT_ID = ?
-        """.trimMargin(), arrayOf(domain.id.asString(), original.id.toString()))
+        """.trimMargin(), arrayOf(domain.id.asString(), original.id.asString()))
 
         val (card, payload) = cursor.use {
             // go over these cards
@@ -480,7 +481,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         } ?: return null
 
         return card.copy(
-                translations = termsWithIds(payload.translationIds.map { it.id }).values.toList()
+                translations = termsWithIds(payload.translationsIds()).values.toList()
         )
     }
 
@@ -677,7 +678,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return extractCardsFromCursor(cursor, deck.domain)
     }
 
-    private fun termsWithIds(ids: Collection<Long>): Map<Long, Term> {
+    private fun termsWithIds(ids: Collection<TermId>): Map<TermId, Term> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -687,10 +688,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                LEFT JOIN $LANGUAGES
                    ON $TERMS_LANGUAGE_ID = $LANGUAGES_ID
                    
-            WHERE $TERMS_ID IN ( ${ids.joinToString()} )
+            WHERE $TERMS_ID IN ( ${ids.joinToString { it.asString() }} )
         """.trimIndent(), arrayOf())
 
-        val terms = mutableMapOf<Long, Term>()
+        val terms = mutableMapOf<TermId, Term>()
         cursor.use {
             while (it.moveToNext()) {
                 val term = it.term()
@@ -841,7 +842,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return stats.mapValues { (_, it) -> it.toDeckStats() }
     }
 
-    override fun getProgressForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
+    override fun getProgressForCardsWithOriginals(originalIds: List<TermId>): Map<TermId, LearningProgress> {
         val db = helper.readableDatabase
 
         val cardIdsToFrontIds = cardIdsToFrontIds(db, originalIds)
@@ -850,10 +851,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             SELECT *
                FROM $STATES
                WHERE
-                   $STATES_CARD_ID IN (${cardIdsToFrontIds.keys.map { it.value }.joinToString()})
+                   $STATES_CARD_ID IN (${cardIdsToFrontIds.keys.joinToString { it.asString() }})
         """.trimMargin(), arrayOf())
 
-        val map = mutableMapOf<Long, LearningProgress>()  // front id as key
+        val map = mutableMapOf<TermId, LearningProgress>()  // front id as key
         cursor.use {
             while (it.moveToNext()) {
                 val cardId = it.statesCardId()
@@ -869,14 +870,14 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return cardIdsToFrontIds.values.associateWith { map[it] ?: LearningProgress.empty() }
     }
 
-    private fun cardIdsToFrontIds(db: SQLiteDatabase, frontIds: List<Long>): Map<CardId, Long> {
+    private fun cardIdsToFrontIds(db: SQLiteDatabase, frontIds: List<TermId>): Map<CardId, TermId> {
         val cursor = db.rawQuery("""
             SELECT $CARDS_ID, $CARDS_FRONT_ID
                 FROM $CARDS
-                WHERE $CARDS_FRONT_ID IN (${frontIds.joinToString()})
+                WHERE $CARDS_FRONT_ID IN (${frontIds.joinToString { it.asString() }})
         """.trimIndent(), arrayOf())
 
-        val map = mutableMapOf<CardId, Long>()
+        val map = mutableMapOf<CardId, TermId>()
         cursor.use {
             while (it.moveToNext()) {
                 val cardId = it.cardsId()

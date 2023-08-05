@@ -2,9 +2,7 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.backup.LearningProgressInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
-import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.model.CardType
 import org.junit.Assert.*
@@ -175,13 +173,13 @@ abstract class JsonBackupTest {
                 domainInfo(1, "", 1, 2)
         )
         val terms = listOf(
-                TermInfo(1, "get", 1, "get"),
-                TermInfo(2, "получать", 2, null),
-                TermInfo(3, "зарабатывать", 2, null),
-                TermInfo(4, "добиваться", 2, null),
-                TermInfo(5, "earn", 1, "/ɜːn ɜːrn/"),
-                TermInfo(6, "climb", 1, null),
-                TermInfo(7, "карабкаться", 2, null),
+                termInfo(1, "get", 1, "get"),
+                termInfo(2, "получать", 2, null),
+                termInfo(3, "зарабатывать", 2, null),
+                termInfo(4, "добиваться", 2, null),
+                termInfo(5, "earn", 1, "/ɜːn ɜːrn/"),
+                termInfo(6, "climb", 1, null),
+                termInfo(7, "карабкаться", 2, null),
         )
         val cards = listOf(
                 cardInfo(1, 1, 1, 1, listOf(2, 3, 4), CardType.FORWARD),

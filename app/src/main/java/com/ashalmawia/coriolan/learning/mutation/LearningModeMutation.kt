@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Term
+import com.ashalmawia.coriolan.model.TermId
 
 /**
  * Leave only those reverse cards for which forward is already in progress.
@@ -29,11 +30,11 @@ class LearningModeMutation(private val repository: Repository) : Mutation {
         }
     }
 
-    private fun Card.alreadySeen(states: Map<Long, LearningProgress>): Boolean {
+    private fun Card.alreadySeen(states: Map<TermId, LearningProgress>): Boolean {
         return (states[original.id]?.status ?: Status.NEW) != Status.NEW
     }
 
-    private fun Term.isReady(progresses: Map<Long, LearningProgress>): Boolean {
+    private fun Term.isReady(progresses: Map<TermId, LearningProgress>): Boolean {
         val progress = progresses[id]
         return progress != null && progress.state.interval >= 4
     }

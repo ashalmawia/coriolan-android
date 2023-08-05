@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.model.TermId
 import com.fasterxml.jackson.core.*
 import java.io.InputStream
 import java.io.OutputStream
@@ -62,9 +63,9 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         var isEmpty = true
 
         val domains = mutableMapOf<DomainId, DomainInfo>()
-        val terms = mutableMapOf<Long, TermInfo>()
+        val terms = mutableMapOf<TermId, TermInfo>()
         val cards = mutableListOf<CardInfo>()
-        val legacyExtras = mutableMapOf<Long, TermExtraInfo>()
+        val legacyExtras = mutableMapOf<TermId, TermExtraInfo>()
 
         while (true) {
             val token = json.nextToken()
@@ -103,7 +104,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
         repository.writeCards(cards)
     }
 
-    private fun writeTerms(repository: BackupableRepository, terms: List<TermInfo>, legacyExtras: Map<Long, TermExtraInfo>) {
+    private fun writeTerms(repository: BackupableRepository, terms: List<TermInfo>, legacyExtras: Map<TermId, TermExtraInfo>) {
         if (legacyExtras.isEmpty()) {
             repository.writeTerms(terms)
         } else {
@@ -173,7 +174,7 @@ class JsonBackup(private val pageSize: Int = PAGE_SIZE_DEFAULT) : Backup {
 
 private operator fun Regex.contains(regex: String): Boolean = matches(regex)
 
-private fun resolveCardType(cardInfo: CardInfo, terms: Map<Long, TermInfo>, domains: Map<DomainId, DomainInfo>): CardType {
+private fun resolveCardType(cardInfo: CardInfo, terms: Map<TermId, TermInfo>, domains: Map<DomainId, DomainInfo>): CardType {
     val domain = domains[cardInfo.domainId]!!
     val original = terms[cardInfo.originalId]!!
     return if (domain.origLangId == original.languageId) CardType.FORWARD else CardType.REVERSE

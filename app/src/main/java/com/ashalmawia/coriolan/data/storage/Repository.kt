@@ -22,7 +22,7 @@ interface Repository {
 
     fun updateTerm(term: Term, transcription: String?): Term
 
-    fun termById(id: Long): Term?
+    fun termById(id: TermId): Term?
 
     fun termByValues(value: String, language: Language): Term?
 
@@ -84,7 +84,7 @@ interface Repository {
 
     fun pendingCards(deck: Deck, date: DateTime): List<CardWithProgress>
 
-    fun getProgressForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress>
+    fun getProgressForCardsWithOriginals(originalIds: List<TermId>): Map<TermId, LearningProgress>
 
     fun invalidateCache()
 }

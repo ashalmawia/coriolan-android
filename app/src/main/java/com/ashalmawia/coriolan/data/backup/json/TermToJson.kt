@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.TermInfo
+import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
@@ -50,13 +51,13 @@ fun readTermFromJson(json: JsonParser, objectMapper: ObjectMapper): TermInfo {
 
     val extras = extrasStr?.run { objectMapper.readValue(this, LegacyExtras::class.java) }
     if (extras != null) transcription = extras.transcription
-    return TermInfo(id, value, langId, transcription)
+    return TermInfo(id.asTermId(), value, langId, transcription)
 }
 
 fun writeTermToJson(term: TermInfo, json: JsonGenerator) {
     json.writeStartObject()
 
-    json.writeNumberField(FIELD_ID, term.id)
+    json.writeNumberField(FIELD_ID, term.id.value)
     json.writeStringField(FIELD_VALUE, term.value)
     json.writeNumberField(FIELD_LANGUAGE_ID, term.languageId)
     if (term.transcription != null) {

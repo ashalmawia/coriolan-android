@@ -43,6 +43,7 @@ import com.ashalmawia.coriolan.model.mockTerm
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
@@ -100,7 +101,7 @@ class CreateContentValuesTest {
 
         // when
         val id = 7L
-        val cv1 = createTermContentValues(value, lang.id, payload, id)
+        val cv1 = createTermContentValues(value, lang.id, payload, id.asTermId())
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -129,7 +130,7 @@ class CreateContentValuesTest {
 
         // when
         val id = 7L
-        val cv1 = createTermContentValues(value, lang.id, payload, id)
+        val cv1 = createTermContentValues(value, lang.id, payload, id.asTermId())
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -183,7 +184,7 @@ class CreateContentValuesTest {
 
         // then
         assertEquals("values count is correct", 5, cv.size())
-        assertEquals("$CARDS_FRONT_ID is correct", original.id, cv.get(CARDS_FRONT_ID))
+        assertEquals("$CARDS_FRONT_ID is correct", original.id.value, cv.get(CARDS_FRONT_ID))
         assertEquals("$CARDS_DECK_ID is correct", deckId, cv.get(CARDS_DECK_ID))
         assertEquals("$CARDS_DOMAIN_ID is correct", domainId, cv.get(CARDS_DOMAIN_ID))
         assertEquals("$CARDS_TYPE is correct", type.value, cv.get(CARDS_TYPE))
@@ -198,7 +199,7 @@ class CreateContentValuesTest {
         val lang = mockLanguage()
         val type = CardType.FORWARD
         val original = mockTerm("some original term", lang)
-        val payload = CardPayload(listOf(TermId(1L), TermId(2L)))
+        val payload = CardPayload(listOf(1L, 2L).map { TermId(it) })
         val payloadString = jacksonObjectMapper().writeValueAsString(payload)
         val cardId = 7L
 
@@ -209,7 +210,7 @@ class CreateContentValuesTest {
         cv.run {
             assertEquals("values count is correct", 6, size())
             assertEquals("$CARDS_ID is correct", cardId, get(CARDS_ID))
-            assertEquals("$CARDS_FRONT_ID is correct", original.id, get(CARDS_FRONT_ID))
+            assertEquals("$CARDS_FRONT_ID is correct", original.id.value, get(CARDS_FRONT_ID))
             assertEquals("$CARDS_DECK_ID is correct", deckId, get(CARDS_DECK_ID))
             assertEquals("$CARDS_DOMAIN_ID is correct", domainId, get(CARDS_DOMAIN_ID))
             assertEquals("$CARDS_TYPE is correct", type.value, get(CARDS_TYPE))
@@ -223,7 +224,7 @@ class CreateContentValuesTest {
         cv1.run {
             assertEquals("values count is correct", 6, size())
             assertEquals("$CARDS_ID is correct", cardId, get(CARDS_ID))
-            assertEquals("$CARDS_FRONT_ID is correct", original.id, get(CARDS_FRONT_ID))
+            assertEquals("$CARDS_FRONT_ID is correct", original.id.value, get(CARDS_FRONT_ID))
             assertEquals("$CARDS_DECK_ID is correct", deckId, get(CARDS_DECK_ID))
             assertEquals("$CARDS_DOMAIN_ID is correct", domainId, get(CARDS_DOMAIN_ID))
             assertEquals("$CARDS_TYPE is correct", type.value, get(CARDS_TYPE))

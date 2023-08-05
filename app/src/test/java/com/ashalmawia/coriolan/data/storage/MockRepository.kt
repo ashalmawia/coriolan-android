@@ -12,6 +12,7 @@ import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asTermId
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
@@ -43,7 +44,8 @@ class MockRepository : Repository {
 
     private val terms = mutableListOf<Term>()
     override fun addTerm(value: String, language: Language, transcription: String?): Term {
-        val exp = Term(terms.size + 1L, value, language, transcription)
+        val id = terms.size + 1L
+        val exp = Term(id.asTermId(), value, language, transcription)
         terms.add(exp)
         return exp
     }
@@ -57,7 +59,7 @@ class MockRepository : Repository {
         terms.add(updated)
         return updated
     }
-    override fun termById(id: Long): Term? {
+    override fun termById(id: TermId): Term? {
         return terms.find { it.id == id }
     }
     override fun termByValues(value: String, language: Language): Term? {
@@ -221,7 +223,7 @@ class MockRepository : Repository {
                     progress.state.due <= date
                 }
     }
-    override fun getProgressForCardsWithOriginals(originalIds: List<Long>): Map<Long, LearningProgress> {
+    override fun getProgressForCardsWithOriginals(originalIds: List<TermId>): Map<TermId, LearningProgress> {
         val cards = originalIds.mapNotNull { cards.find { card -> card.original.id == it } }
         return cards.associateBy(
                 { it.original.id },

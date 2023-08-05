@@ -28,33 +28,33 @@ object JsonBackupTestData {
 
     val terms = listOf(
             // English
-            TermInfo(1L, "shrimp", 1L, null),
-            TermInfo(2L, "rocket", 1L, "/ˈrɒkɪt \$ ˈrɑː-/"),
-            TermInfo(3L, "spring", 1L, "/sprɪŋ/"),
-            TermInfo(4L, "summer", 1L, "/ˈsʌmə \$ -ər/"),
-            TermInfo(5L, "victory", 1L, "/ˈvɪktəri/"),
-            TermInfo(6L, "march", 1L, "/mɑːtʃ \$ mɑːrtʃ/"),
+            termInfo(1L, "shrimp", 1L, null),
+            termInfo(2L, "rocket", 1L, "/ˈrɒkɪt \$ ˈrɑː-/"),
+            termInfo(3L, "spring", 1L, "/sprɪŋ/"),
+            termInfo(4L, "summer", 1L, "/ˈsʌmə \$ -ər/"),
+            termInfo(5L, "victory", 1L, "/ˈvɪktəri/"),
+            termInfo(6L, "march", 1L, "/mɑːtʃ \$ mɑːrtʃ/"),
 
             // Russian
-            TermInfo(7L, "креветка", 2L, null),
-            TermInfo(8L, "ракета", 2L, null),
-            TermInfo(9L, "источник", 2L, null),
-            TermInfo(10L, "весна", 2L, null),
-            TermInfo(11L, "пружина", 2L, null),
-            TermInfo(12L, "лето", 2L, null),
-            TermInfo(13L, "победа", 2L, null),
-            TermInfo(14L, "март", 2L, null),
-            TermInfo(15L, "марш", 2L, null),
+            termInfo(7L, "креветка", 2L, null),
+            termInfo(8L, "ракета", 2L, null),
+            termInfo(9L, "источник", 2L, null),
+            termInfo(10L, "весна", 2L, null),
+            termInfo(11L, "пружина", 2L, null),
+            termInfo(12L, "лето", 2L, null),
+            termInfo(13L, "победа", 2L, null),
+            termInfo(14L, "март", 2L, null),
+            termInfo(15L, "марш", 2L, null),
 
             // French
-            TermInfo(16L, "ameloirer", 3L, null),
-            TermInfo(17L, "chercher", 3L, null),
-            TermInfo(18L, "voisin", 3L, null),
+            termInfo(16L, "ameloirer", 3L, null),
+            termInfo(17L, "chercher", 3L, null),
+            termInfo(18L, "voisin", 3L, null),
 
             // Russian
-            TermInfo(19L, "улучшать", 2L, null),
-            TermInfo(20L, "искать", 2L, null),
-            TermInfo(21L, "сосед", 2L, null)
+            termInfo(19L, "улучшать", 2L, null),
+            termInfo(20L, "искать", 2L, null),
+            termInfo(21L, "сосед", 2L, null)
     )
 
     val cards = listOf(

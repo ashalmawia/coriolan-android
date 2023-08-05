@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.TermExtraInfo
+import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
 
@@ -41,5 +42,5 @@ fun readTermExtraFromJson(json: JsonParser): TermExtraInfo {
                 "id $id, termId $termId, type $type value[$value]")
     }
 
-    return TermExtraInfo(id, termId, type, value)
+    return TermExtraInfo(id, termId.asTermId(), type, value)
 }

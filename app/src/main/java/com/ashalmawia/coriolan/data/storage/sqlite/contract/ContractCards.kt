@@ -9,15 +9,16 @@ import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
-import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
-import com.ashalmawia.coriolan.data.storage.sqlite.payload.dateAdded
+import com.ashalmawia.coriolan.data.storage.sqlite.payload.toPayloadTermId
 import com.ashalmawia.coriolan.data.storage.sqlite.string
 import com.ashalmawia.coriolan.model.CardId
 import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.model.TermId
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
+import com.ashalmawia.coriolan.util.asTermId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 object ContractCards {
@@ -69,8 +70,9 @@ object ContractCards {
 
 
     private val objectMapper = jacksonObjectMapper()
+
     fun Cursor.cardsId(): CardId { return long(CARDS_ID).asCardId() }
-    fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }
+    fun Cursor.cardsFrontId(): TermId { return long(CARDS_FRONT_ID).asTermId() }
     fun Cursor.cardsDeckId(): DeckId { return long(CARDS_DECK_ID).asDeckId() }
     fun Cursor.cardsDomainId(): DomainId { return long(CARDS_DOMAIN_ID).asDomainId() }
     fun Cursor.cardsCardType(): CardType {
@@ -99,12 +101,12 @@ object ContractCards {
     fun createCardContentValues(domainId: DomainId, deckId: DeckId, original: Term, cardType: CardType, cardPayload: CardPayload, cardId: CardId? = null) =
             createCardContentValues(domainId, deckId, original.id, cardType, cardPayload, cardId)
 
-    fun createCardContentValues(domainId: DomainId, deckId: DeckId, originalId: Long, cardType: CardType, cardPayload: CardPayload, cardId: CardId? = null): ContentValues {
+    fun createCardContentValues(domainId: DomainId, deckId: DeckId, originalId: TermId, cardType: CardType, cardPayload: CardPayload, cardId: CardId? = null): ContentValues {
         val cv = ContentValues()
         if (cardId != null) {
             cv.put(CARDS_ID, cardId.value)
         }
-        cv.put(CARDS_FRONT_ID, originalId)
+        cv.put(CARDS_FRONT_ID, originalId.value)
         cv.put(CARDS_DECK_ID, deckId.value)
         cv.put(CARDS_DOMAIN_ID, domainId.value)
         cv.put(CARDS_TYPE, cardType.value)
@@ -114,10 +116,10 @@ object ContractCards {
 
     @JvmName("createCardPayloadTerm")
     fun createCardPayload(translations: List<Term>): CardPayload {
-        return CardPayload(translations.map { TermId(it.id) })
+        return CardPayload(translations.map { it.id.toPayloadTermId() })
     }
-    @JvmName("createCardPayloadLong")
-    fun createCardPayload(translations: List<Long>): CardPayload {
-        return CardPayload(translations.map { TermId(it) })
+    @JvmName("createCardPayloadTermId")
+    fun createCardPayload(translations: List<TermId>): CardPayload {
+        return CardPayload(translations.map { it.toPayloadTermId() })
     }
 }

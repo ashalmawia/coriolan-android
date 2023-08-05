@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.asCardId
 import com.ashalmawia.coriolan.util.asDeckId
+import com.ashalmawia.coriolan.util.asTermId
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -415,7 +416,7 @@ abstract class StorageTest {
 
         storage.addTerm("shrimp", domain.langOriginal(), null)
         storage.addTerm("креветка", domain.langTranslations(), null)
-        val term = Term(5L, "spring", domain.langOriginal(), null)
+        val term = Term(5L.asTermId(), "spring", domain.langOriginal(), null)
 
         // when
         val used = storage.isUsed(term)
@@ -2111,7 +2112,9 @@ abstract class StorageTest {
         val storage = emptyStorage.value
 
         // when
-        val map = storage.getProgressForCardsWithOriginals(listOf(1L, 5L, 10L))
+        val map = storage.getProgressForCardsWithOriginals(
+                listOf(1L, 5L, 10L).map { it.asTermId() }
+        )
 
         // then
         assertEquals(0, map.size)

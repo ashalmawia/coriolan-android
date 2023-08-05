@@ -141,7 +141,7 @@ class SqliteBackupHelper(
                         cursor.cardsDeckId(),
                         cursor.cardsDomainId(),
                         cursor.cardsFrontId(),
-                        cursor.cardsPayload().translationIds.map { it.id },
+                        cursor.cardsPayload().translationsIds(),
                         cursor.cardsCardType()
                     )
                 )
