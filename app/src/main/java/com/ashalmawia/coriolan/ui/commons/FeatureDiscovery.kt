@@ -21,26 +21,29 @@ fun Activity.showFeatureDiscoverySequence(targets: List<TapTarget>, listener: ()
     }).continueOnCancel(true).start()
 }
 
-fun Activity.tapTargetForView(view: View, @StringRes titleRes: Int, @StringRes descriptionRes: Int): TapTarget {
+fun tapTargetForView(view: View, @StringRes titleRes: Int, @StringRes descriptionRes: Int): TapTarget {
+    val context = view.context
     return TapTarget.forView(
             view,
-            getString(titleRes),
-            getString(descriptionRes)
+            context.getString(titleRes),
+            context.getString(descriptionRes)
     ).descriptionTextAlpha(0.7f)
 }
 
-fun Activity.tapTargetForToolbarOverflow(toolbar: Toolbar, @StringRes titleRes: Int, @StringRes descriptionRes: Int): TapTarget {
+fun tapTargetForToolbarOverflow(toolbar: Toolbar, @StringRes titleRes: Int, @StringRes descriptionRes: Int): TapTarget {
+    val context = toolbar.context
     return TapTarget.forToolbarOverflow(
             toolbar,
-            getString(titleRes),
-            getString(descriptionRes)
+            context.getString(titleRes),
+            context.getString(descriptionRes)
     ).descriptionTextAlpha(0.7f)
 }
 
-fun Activity.tapTargetForNavigationIcon(toolbar: Toolbar, @StringRes titleRes: Int, @StringRes descriptionRes: Int): TapTarget {
+fun tapTargetForNavigationIcon(toolbar: Toolbar, @StringRes titleRes: Int, @StringRes descriptionRes: Int): TapTarget {
+    val context = toolbar.context
     return TapTarget.forToolbarNavigationIcon(
             toolbar,
-            getString(titleRes),
-            getString(descriptionRes)
+            context.getString(titleRes),
+            context.getString(descriptionRes)
     ).descriptionTextAlpha(0.7f)
 }

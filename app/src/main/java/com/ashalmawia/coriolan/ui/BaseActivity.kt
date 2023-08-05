@@ -11,8 +11,8 @@ import com.ashalmawia.coriolan.debug.DebugIncreaseDateDialog
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected val appMenu: AppMenu by lazy { AppMenu(this) { DebugIncreaseDateDialog(this) } }
-    protected val toolbar: Toolbar by lazy { findViewById(R.id.toolbar) }
+    val toolbar: Toolbar by lazy { findViewById(R.id.toolbar) }
+    val appMenu: AppMenu by lazy { AppMenu(this) { DebugIncreaseDateDialog(this) } }
 
     private val loader: ProgressBar by lazy { findViewById(R.id.toolbar_loading) }
 
