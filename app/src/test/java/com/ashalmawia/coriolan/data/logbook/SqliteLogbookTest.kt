@@ -8,6 +8,7 @@ import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockDeck
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.orZero
 import org.junit.Assert.*
 import org.junit.Test
@@ -166,8 +167,8 @@ class SqliteLogbookTest {
     fun test__multipleExercises() {
         // given
         val date = today
-        val deckId = 1L
-        val anotherDeckId = 2L
+        val deckId = 1L.asDeckId()
+        val anotherDeckId = 2L.asDeckId()
         val anotherExerciseId = ExerciseId.FLASHCARDS
 
         // when
@@ -198,8 +199,8 @@ class SqliteLogbookTest {
     fun test__multipleDecks() {
         // given
         val date = today
-        val deckId1 = 1L
-        val deckId2 = 2L
+        val deckId1 = 1L.asDeckId()
+        val deckId2 = 2L.asDeckId()
         val anotherExerciseId = ExerciseId.FLASHCARDS
 
         // when
@@ -230,8 +231,8 @@ class SqliteLogbookTest {
     fun test__cardsStudiedOnDateRange_sameDate() {
         // given
         val date = today
-        val deckId1 = 1L
-        val deckId2 = 2L
+        val deckId1 = 1L.asDeckId()
+        val deckId2 = 2L.asDeckId()
         val decks = listOf(mockDeck(id = deckId1), mockDeck(id = deckId2))
 
         // when
@@ -259,8 +260,8 @@ class SqliteLogbookTest {
         // given
         val dateStart = today.minusDays(7)
         val dateEnd = today
-        val deckId1 = 1L
-        val deckId2 = 2L
+        val deckId1 = 1L.asDeckId()
+        val deckId2 = 2L.asDeckId()
         val decks = listOf(mockDeck(id = deckId1), mockDeck(id = deckId2))
 
         // when
@@ -302,34 +303,34 @@ class SqliteLogbookTest {
         assertTrue(logbook.exportAllData(0, 500).isEmpty())
 
         // when
-        (logbook as Logbook).incrementCardActions(today, exerciseId, 1L, CardAction.CARD_RELEARNED)
+        (logbook as Logbook).incrementCardActions(today, exerciseId, 1L.asDeckId(), CardAction.CARD_RELEARNED)
 
         // then
         assertEquals(1, logbook.exportAllData(0, 500).size)
     }
 
     private fun recordCardRelearned(date: LearningDay, deckId: Long = 1L) {
-        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.CARD_RELEARNED)
+        logbook.incrementCardActions(date, exerciseId, deckId.asDeckId(), CardAction.CARD_RELEARNED)
     }
 
     private fun recordReviewStudied(date: LearningDay, deckId: Long = 1L) {
-        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.CARD_REVIEWED)
+        logbook.incrementCardActions(date, exerciseId, deckId.asDeckId(), CardAction.CARD_REVIEWED)
     }
 
     private fun recordNewCardStudied(date: LearningDay, deckId: Long = 1L) {
-        logbook.incrementCardActions(date, exerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.incrementCardActions(date, exerciseId, deckId.asDeckId(), CardAction.NEW_CARD_FIRST_SEEN)
     }
 
     private fun undoCardRelearned(date: LearningDay, deckId: Long = 1L) {
-        logbook.decrementCardActions(date, exerciseId, deckId, CardAction.CARD_RELEARNED)
+        logbook.decrementCardActions(date, exerciseId, deckId.asDeckId(), CardAction.CARD_RELEARNED)
     }
 
     private fun undoReviewStudied(date: LearningDay, deckId: Long = 1L) {
-        logbook.decrementCardActions(date, exerciseId, deckId, CardAction.CARD_REVIEWED)
+        logbook.decrementCardActions(date, exerciseId, deckId.asDeckId(), CardAction.CARD_REVIEWED)
     }
 
     private fun undoNewCardStudied(date: LearningDay, deckId: Long = 1L) {
-        logbook.decrementCardActions(date, exerciseId, deckId, CardAction.NEW_CARD_FIRST_SEEN)
+        logbook.decrementCardActions(date, exerciseId, deckId.asDeckId(), CardAction.NEW_CARD_FIRST_SEEN)
     }
 }
 

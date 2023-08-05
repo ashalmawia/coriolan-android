@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup
 
 import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
 import org.joda.time.DateTime
 
@@ -58,14 +59,14 @@ data class TermExtraInfo(
 
 data class CardInfo(
         val id: Long,
-        val deckId: Long,
+        val deckId: DeckId,
         val domainId: DomainId,
         val originalId: Long,
         val translationIds: List<Long>,
         var cardType: CardType?)
 
 data class DeckInfo(
-        val id: Long,
+        val id: DeckId,
         val domainId: DomainId,
         val name: String)
 

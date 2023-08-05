@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.learning.LearningFlow
 import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Card
+import com.ashalmawia.coriolan.model.DeckId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,7 +25,7 @@ class LearningViewModel(
     fun start(
             context: Context,
             uiContainer: ViewGroup,
-            deckId: Long,
+            deckId: DeckId,
             cardTypeFilter: CardTypeFilter,
             studyOrder: StudyOrder,
             studyTargets: StudyTargets

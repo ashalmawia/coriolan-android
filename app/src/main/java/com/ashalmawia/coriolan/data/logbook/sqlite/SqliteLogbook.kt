@@ -15,6 +15,7 @@ import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.data.storage.sqlite.string
 import com.ashalmawia.coriolan.data.util.dropAllTables
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.util.orZero
 import com.ashalmawia.coriolan.util.timespamp
 import org.joda.time.DateTime
@@ -32,7 +33,7 @@ class SqliteLogbook(private val helper: SqliteLogbookOpenHelper) : Logbook, Back
         return readPayload(date).cardActions.byExercise(exercise).unwrap()
     }
 
-    override fun cardsStudiedOnDate(date: DateTime, deckId: Long): Map<CardAction, Int> {
+    override fun cardsStudiedOnDate(date: DateTime, deckId: DeckId): Map<CardAction, Int> {
         return readPayload(date).cardActions.byDeck(deckId).unwrap()
     }
 
@@ -56,7 +57,7 @@ class SqliteLogbook(private val helper: SqliteLogbookOpenHelper) : Logbook, Back
 
     override fun cardsStudiedOnDateRange(from: DateTime, to: DateTime, decks: List<Deck>): Map<DateTime, Map<CardAction, Int>> {
         val payloads = readPayloads(from, to)
-        val set = decks.map { it.id }.toSet()
+        val set = decks.map { it.id.value }.toSet()
         return payloads.mapValues {
             val byDeck: Map<Long, LogbookCardActionsPayloadEntry> = it.value.cardActions.byDeck
             val filtered: Map<Long, LogbookCardActionsPayloadEntry> = byDeck.filterKeys { set.contains(it) }
@@ -83,13 +84,13 @@ class SqliteLogbook(private val helper: SqliteLogbookOpenHelper) : Logbook, Back
         return cursor.use { it.extractAllData() }
     }
 
-    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
+    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: DeckId, cardAction: CardAction) {
         updatePayload(date) {
             cardActions.increment(exercise, deckId, cardAction)
         }
     }
 
-    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
+    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: DeckId, cardAction: CardAction) {
         updatePayload(date) {
             cardActions.decrement(exercise, deckId, cardAction)
         }

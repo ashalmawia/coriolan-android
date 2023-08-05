@@ -13,6 +13,7 @@ import com.ashalmawia.coriolan.data.importer.DataImportFlow
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.EnterFilePathBinding
 import com.ashalmawia.coriolan.dependencies.dataImportScope
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
@@ -112,7 +113,7 @@ class EnterFilePathActivity : BaseActivity() {
             if (text != null) {
                 views.editText.setText(text)
             }
-            val deckId = savedInstanceState.getLong(EXTRA_DECK_ID)
+            val deckId = savedInstanceState.requireSerializable<DeckId>(EXTRA_DECK_ID)
             views.deckSelector.selectDeckWithId(deckId)
         }
     }
@@ -120,7 +121,7 @@ class EnterFilePathActivity : BaseActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EXTRA_TEXT, views.editText.text.toString())
-        outState.putLong(EXTRA_DECK_ID, views.deckSelector.selectedDeck().id)
+        outState.putSerializable(EXTRA_DECK_ID, views.deckSelector.selectedDeck().id)
     }
 
     companion object {

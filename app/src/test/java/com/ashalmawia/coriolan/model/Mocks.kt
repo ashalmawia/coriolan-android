@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import org.joda.time.DateTime
 
@@ -54,7 +55,7 @@ fun mockCard(
 ): Card {
     return Card(
             id,
-            deckId,
+            deckId.asDeckId(),
             domain,
             type,
             mockTerm(front, language = domain.langOriginal(type)),
@@ -93,7 +94,7 @@ fun mockCardWithProgress(
 }
 
 private var deckId = 1L
-fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: Long = deckId++) = Deck(id, domain, name)
+fun mockDeck(name: String = "My deck", domain: Domain = mockDomain(), id: DeckId = deckId++.asDeckId()) = Deck(id, domain, name)
 
 fun mockState(interval: Int = 0) = SchedulingState(mockToday(), interval)
 fun mockStateNew() = SchedulingState(mockToday(), INTERVAL_NEVER_SCHEDULED)

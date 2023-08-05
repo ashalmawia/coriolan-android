@@ -5,6 +5,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import org.junit.Assert
 import org.junit.Test
@@ -182,7 +183,7 @@ class ConstraintStorageTest {
         val original = storage.justAddTerm("shrimp", domain.langOriginal())
         val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
-        val dummyDeckId = 5L
+        val dummyDeckId = 5L.asDeckId()
 
         // when
         storage.addCard(domain, dummyDeckId, original, listOf(translation))
@@ -254,7 +255,7 @@ class ConstraintStorageTest {
         val card = mockCard()
 
         // when
-        storage.updateCard(card, 2L, mockTerm(), listOf(mockTerm()))
+        storage.updateCard(card, 2L.asDeckId(), mockTerm(), listOf(mockTerm()))
     }
 
     @Test(expected = DataProcessingException::class)
@@ -269,7 +270,7 @@ class ConstraintStorageTest {
 
         val card = storage.addCard(domain, deck.id, original, listOf(translation))
 
-        val dummyDeckId = 5L
+        val dummyDeckId = 5L.asDeckId()
 
         // when
         storage.updateCard(card, dummyDeckId, original, listOf(translation))
@@ -404,7 +405,7 @@ class ConstraintStorageTest {
     fun test__updateDeck__wrongDeck() {
         // given
         val storage = prefilledStorage.value
-        val deck = mockDeck(id = 777L)
+        val deck = mockDeck(id = 777L.asDeckId())
 
         // when
         storage.updateDeck(deck, "some name")
@@ -447,7 +448,7 @@ class ConstraintStorageTest {
     fun test__deleteDeck__wrongDeck() {
         // given
         val storage = prefilledStorage.value
-        val deck = mockDeck(id = 77L)
+        val deck = mockDeck(id = 77L.asDeckId())
 
         // when
         storage.deleteDeck(deck)

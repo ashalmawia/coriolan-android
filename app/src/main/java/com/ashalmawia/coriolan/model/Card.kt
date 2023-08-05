@@ -6,7 +6,7 @@ import java.lang.IllegalArgumentException
 
 data class Card(
         val id: Long,
-        val deckId: Long,
+        val deckId: DeckId,
         val domain: Domain,
         val type: CardType,
         val original: Term,

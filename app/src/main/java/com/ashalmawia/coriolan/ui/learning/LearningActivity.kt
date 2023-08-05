@@ -16,8 +16,10 @@ import com.ashalmawia.coriolan.databinding.LearningActivityBinding
 import com.ashalmawia.coriolan.learning.StudyTargets
 import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.commons.DeletingCard.confirmDeleteCurrentCard
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import com.ashalmawia.coriolan.ui.util.viewModelBuilder
 import org.koin.android.ext.android.get
 
@@ -64,11 +66,11 @@ class LearningActivity : BaseActivity() {
         }
     }
 
-    private fun <T> withParameters(onResolved: (Long, CardTypeFilter, StudyOrder, StudyTargets) -> T): T {
-        val deckId = intent.getLongExtra(EXTRA_DECK_ID, 0L)
+    private fun <T> withParameters(onResolved: (DeckId, CardTypeFilter, StudyOrder, StudyTargets) -> T): T {
+        val deckId = intent.requireSerializable<DeckId>(EXTRA_DECK_ID)
         val cardType = CardTypeFilter.valueOf(intent.getStringExtra(EXTRA_CARD_TYPE_FILTER)!!)
         val studyOrder = StudyOrder.valueOf(intent.getStringExtra(EXTRA_STUDY_ORDER)!!)
-        val studyTargets = intent.getSerializableExtra(EXTRA_STUDY_TARGETS) as StudyTargets
+        val studyTargets = intent.requireSerializable<StudyTargets>(EXTRA_STUDY_TARGETS)
 
         return onResolved(deckId, cardType, studyOrder, studyTargets)
     }

@@ -3,6 +3,7 @@ package com.ashalmawia.coriolan.data.logbook
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.util.orZero
 import org.joda.time.DateTime
 
@@ -23,15 +24,15 @@ class MockLogbook : Logbook {
         return data
     }
 
-    override fun cardsStudiedOnDate(date: DateTime, deckId: Long): Map<CardAction, Int> {
+    override fun cardsStudiedOnDate(date: DateTime, deckId: DeckId): Map<CardAction, Int> {
         return data
     }
 
-    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
+    override fun incrementCardActions(date: DateTime, exercise: ExerciseId, deckId: DeckId, cardAction: CardAction) {
         data[cardAction] = data[cardAction].orZero() + 1
     }
 
-    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: Long, cardAction: CardAction) {
+    override fun decrementCardActions(date: DateTime, exercise: ExerciseId, deckId: DeckId, cardAction: CardAction) {
         data[cardAction] = data[cardAction].orZero() - 1
     }
 

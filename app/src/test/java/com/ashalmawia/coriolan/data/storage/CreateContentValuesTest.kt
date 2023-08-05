@@ -40,6 +40,7 @@ import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.mockLanguage
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.mockTerm
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.joda.time.DateTime
@@ -177,7 +178,7 @@ class CreateContentValuesTest {
         val payloadString = jacksonObjectMapper().writeValueAsString(payload)
 
         // when
-        val cv = createCardContentValues(domainId.asDomainId(), deckId, original, type, payload)
+        val cv = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original, type, payload)
 
         // then
         assertEquals("values count is correct", 5, cv.size())
@@ -201,7 +202,7 @@ class CreateContentValuesTest {
         val cardId = 7L
 
         // when
-        val cv = createCardContentValues(domainId.asDomainId(), deckId, original, type, payload, cardId)
+        val cv = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original, type, payload, cardId)
 
         // then
         cv.run {
@@ -215,7 +216,7 @@ class CreateContentValuesTest {
         }
 
         // when
-        val cv1 = createCardContentValues(domainId.asDomainId(), deckId, original.id, type, payload, cardId)
+        val cv1 = createCardContentValues(domainId.asDomainId(), deckId.asDeckId(), original.id, type, payload, cardId)
 
         // then
         cv1.run {
@@ -252,7 +253,7 @@ class CreateContentValuesTest {
         val deckId = 5L
 
         // when
-        val cv = createDeckContentValues(domainId.asDomainId(), name, deckId)
+        val cv = createDeckContentValues(domainId.asDomainId(), name, deckId.asDeckId())
 
         // then
         assertEquals("values count is correct", 3, cv.size())

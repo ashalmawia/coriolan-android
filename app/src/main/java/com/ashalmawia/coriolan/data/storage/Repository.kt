@@ -36,13 +36,13 @@ interface Repository {
 
     fun allDomains(): List<Domain>
 
-    fun addCard(domain: Domain, deckId: Long, original: Term, translations: List<Term>): Card
+    fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card
 
     fun cardById(id: Long, domain: Domain): Card?
 
     fun cardByValues(domain: Domain, original: Term): Card?
 
-    fun updateCard(card: Card, deckId: Long, original: Term, translations: List<Term>): Card
+    fun updateCard(card: Card, deckId: DeckId, original: Term, translations: List<Term>): Card
 
     fun deleteCard(card: Card)
 
@@ -58,9 +58,9 @@ interface Repository {
         }
     }
 
-    fun allDecksCardsCount(domain: Domain): Map<Long, Int>
+    fun allDecksCardsCount(domain: Domain): Map<DeckId, Int>
 
-    fun deckById(id: Long): Deck
+    fun deckById(id: DeckId): Deck
 
     fun cardsOfDeck(deck: Deck): List<Card>
 

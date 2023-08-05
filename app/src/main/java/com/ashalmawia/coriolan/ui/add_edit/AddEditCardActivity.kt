@@ -18,6 +18,7 @@ import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.commons.DeletingCard.confirmDeleteCurrentCard
 import com.ashalmawia.coriolan.ui.util.requireSerializable
+import com.ashalmawia.coriolan.ui.util.serializable
 import org.koin.android.ext.android.inject
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
@@ -98,11 +99,7 @@ class AddEditCardActivity : BaseActivity() {
     }
 
     private fun prefillDataAdd() {
-        val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
-        if (deckId == -1L) {
-            return
-        }
-
+        val deckId = intent.serializable<DeckId>(EXTRA_DECK_ID) ?: return
         views.deckSelector.selectDeckWithId(deckId)
     }
 

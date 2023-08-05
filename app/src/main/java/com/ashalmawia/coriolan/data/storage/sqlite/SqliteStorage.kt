@@ -75,11 +75,13 @@ import com.ashalmawia.coriolan.learning.Status
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
@@ -341,7 +343,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return list
     }
 
-    override fun addCard(domain: Domain, deckId: Long, original: Term, translations: List<Term>): Card {
+    override fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card {
         verifyTranslations(original, translations)
 
         val db = helper.writableDatabase
@@ -480,7 +482,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         )
     }
 
-    override fun updateCard(card: Card, deckId: Long, original: Term, translations: List<Term>): Card {
+    override fun updateCard(card: Card, deckId: DeckId, original: Term, translations: List<Term>): Card {
         verifyTranslations(original, translations)
 
         val db = helper.writableDatabase
@@ -562,7 +564,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return list
     }
 
-    override fun allDecksCardsCount(domain: Domain): Map<Long, Int> {
+    override fun allDecksCardsCount(domain: Domain): Map<DeckId, Int> {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
@@ -572,10 +574,10 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                GROUP BY $CARDS_DECK_ID
         """.trimMargin(), arrayOf(domain.id.asString()))
 
-        val map = mutableMapOf<Long, Int>()
+        val map = mutableMapOf<DeckId, Int>()
         cursor.use {
             while (it.moveToNext()) {
-                val deckId = it.getLong(0)
+                val deckId = it.getLong(0).asDeckId()
                 val count = it.getInt(1)
                 map[deckId] = count
             }
@@ -584,14 +586,14 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         return map
     }
 
-    override fun deckById(id: Long): Deck {
+    override fun deckById(id: DeckId): Deck {
         val db = helper.readableDatabase
 
         val cursor = db.rawQuery("""
             SELECT *
             FROM $DECKS
             WHERE $DECKS_ID = ?
-        """.trimIndent(), arrayOf(id.toString()))
+        """.trimIndent(), arrayOf(id.asString()))
 
         cursor.use {
             if (it.count == 0) throw DataProcessingException("could not find deck for id $id")
@@ -613,7 +615,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                 throw DataProcessingException("failed to add deck with name[$name] to domain[$domain.id]")
             }
 
-            return Deck(id, domain, name)
+            return Deck(id.asDeckId(), domain, name)
         } catch (e: Exception) {
             throw DataProcessingException("failed to add deck with name[$name] to domain[$domain.id], constraint violation", e)
         }
@@ -624,7 +626,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val cv = createDeckContentValues(deck.domain.id, name)
 
         try {
-            val updated = db.update(DECKS, cv, "$DECKS_ID = ?", arrayOf(deck.id.toString()))
+            val updated = db.update(DECKS, cv, "$DECKS_ID = ?", arrayOf(deck.id.asString()))
 
             if (updated == 0) {
                 throw DataProcessingException("failed to updated deck [${deck.name}] -> [$name]")
@@ -640,7 +642,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
         val db = helper.writableDatabase
 
         try {
-            val deleted = db.delete(DECKS, "$DECKS_ID = ?", arrayOf(deck.id.toString()))
+            val deleted = db.delete(DECKS, "$DECKS_ID = ?", arrayOf(deck.id.asString()))
             if (deleted == 0) {
                 throw DataProcessingException("deck with the id ${deck.id} was not in the database")
             }
@@ -668,7 +670,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             
             WHERE $CARDS_DECK_ID = ?
             
-            """.trimMargin(), arrayOf(deck.id.toString()))
+            """.trimMargin(), arrayOf(deck.id.asString()))
 
         return extractCardsFromCursor(cursor, deck.domain)
     }
@@ -754,7 +756,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                $CARDS_TYPE IN (${types.joinToString { "'${it.value}'" }})
                    AND
                ($STATES_DUE_DATE IS NULL OR $STATES_DUE_DATE <= ? AND $STATES_IS_ACTIVE = $STATES__CARD_ACTIVE)
-        """.trimMargin(), arrayOf(deck.id.toString(), date.timespamp.toString()))
+        """.trimMargin(), arrayOf(deck.id.asString(), date.timespamp.toString()))
 
         val pendingStates = mutableMapOf<Long, SchedulingState>()
         cursor.use {
@@ -802,7 +804,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                $CARDS
                LEFT JOIN $STATES ON $CARDS_ID = $STATES_CARD_ID
             WHERE $CARDS_DECK_ID = ?
-            """.trimMargin(), arrayOf(deck.id.toString()))
+            """.trimMargin(), arrayOf(deck.id.asString()))
 
         val stats = mapOf(
                 CardTypeFilter.FORWARD to MutableDeckStats(),

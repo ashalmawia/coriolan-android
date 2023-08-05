@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.assertCardCorrect
 import com.ashalmawia.coriolan.model.mockDomain
 import com.ashalmawia.coriolan.model.mockTerm
+import com.ashalmawia.coriolan.util.asDeckId
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +20,7 @@ class CardsMergerTest {
     private val repository = MockRepository()
     private val exersicesRegistry = MockExercisesRegistry()
 
-    private val deckId = 5L
+    private val deckId = 5L.asDeckId()
     private val today = mockToday()
     private val mockLearningProgress = mockLearningProgress(today.plusDays(5), 8)
 

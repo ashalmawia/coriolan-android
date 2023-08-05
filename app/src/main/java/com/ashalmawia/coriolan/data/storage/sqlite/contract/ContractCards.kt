@@ -12,7 +12,9 @@ import com.ashalmawia.coriolan.data.storage.sqlite.payload.CardPayload
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.TermId
 import com.ashalmawia.coriolan.data.storage.sqlite.payload.dateAdded
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
@@ -67,7 +69,7 @@ object ContractCards {
     private val objectMapper = jacksonObjectMapper()
     fun Cursor.cardsId(): Long { return long(CARDS_ID) }
     fun Cursor.cardsFrontId(): Long { return long(CARDS_FRONT_ID) }
-    fun Cursor.cardsDeckId(): Long { return long(CARDS_DECK_ID) }
+    fun Cursor.cardsDeckId(): DeckId { return long(CARDS_DECK_ID).asDeckId() }
     fun Cursor.cardsDomainId(): DomainId { return long(CARDS_DOMAIN_ID).asDomainId() }
     fun Cursor.cardsCardType(): CardType {
         val type = string(CARDS_TYPE)
@@ -92,16 +94,16 @@ object ContractCards {
     }
 
 
-    fun createCardContentValues(domainId: DomainId, deckId: Long, original: Term, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null) =
+    fun createCardContentValues(domainId: DomainId, deckId: DeckId, original: Term, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null) =
             createCardContentValues(domainId, deckId, original.id, cardType, cardPayload, cardId)
 
-    fun createCardContentValues(domainId: DomainId, deckId: Long, originalId: Long, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null): ContentValues {
+    fun createCardContentValues(domainId: DomainId, deckId: DeckId, originalId: Long, cardType: CardType, cardPayload: CardPayload, cardId: Long? = null): ContentValues {
         val cv = ContentValues()
         if (cardId != null) {
             cv.put(CARDS_ID, cardId)
         }
         cv.put(CARDS_FRONT_ID, originalId)
-        cv.put(CARDS_DECK_ID, deckId)
+        cv.put(CARDS_DECK_ID, deckId.value)
         cv.put(CARDS_DOMAIN_ID, domainId.value)
         cv.put(CARDS_TYPE, cardType.value)
         cv.put(CARDS_PAYLOAD, objectMapper.writeValueAsString(cardPayload))

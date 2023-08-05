@@ -5,13 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class OverviewViewModel(
-        private val deckId: Long,
+        private val deckId: DeckId,
         private val repository: Repository
 ) : ViewModel() {
 

@@ -6,7 +6,9 @@ import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.data.storage.sqlite.long
 import com.ashalmawia.coriolan.data.storage.sqlite.string
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.DomainId
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 
 object ContractDecks {
@@ -41,17 +43,17 @@ object ContractDecks {
                ON CONFLICT ABORT
         );""".trimMargin()
 
-    fun Cursor.decksId(): Long { return long(DECKS_ID) }
+    fun Cursor.decksId(): DeckId { return long(DECKS_ID).asDeckId() }
     fun Cursor.decksName(): String { return string(DECKS_NAME) }
     fun Cursor.decksDomainId(): DomainId { return long(DECKS_DOMAIN_ID).asDomainId() }
     fun Cursor.deck(domain: Domain): Deck {
         return Deck(decksId(), domain, decksName())
     }
 
-    fun createDeckContentValues(domainId: DomainId, name: String, id: Long? = null): ContentValues {
+    fun createDeckContentValues(domainId: DomainId, name: String, id: DeckId? = null): ContentValues {
         val cv = ContentValues()
         if (id != null) {
-            cv.put(DECKS_ID, id)
+            cv.put(DECKS_ID, id.value)
         }
         cv.put(DECKS_NAME, name)
         cv.put(DECKS_DOMAIN_ID, domainId.value)

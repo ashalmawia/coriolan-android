@@ -7,6 +7,7 @@ import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asDeckId
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -31,7 +32,7 @@ abstract class StorageTest {
         return storage.addDeck(domain, "Mock")
     }
 
-    private fun addMockCard(storage: Repository, deckId: Long): Card {
+    private fun addMockCard(storage: Repository, deckId: DeckId): Card {
         return addMockCard(storage, deckId, "original ${System.nanoTime()}", listOf(
                 "translation first ${System.nanoTime()}",
                 "translation second ${System.nanoTime()}"
@@ -1698,7 +1699,7 @@ abstract class StorageTest {
         // given
         val storage = prefilledStorage.value
 
-        val id = 100L
+        val id = 100L.asDeckId()
         storage.addDeck(domain, "wrong deck 1")
         storage.addDeck(domain, "wrong deck 2")
 

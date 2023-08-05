@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.errors.Errors
 
 class DeckSelector(context: Context, attributeSet: AttributeSet?) : AppCompatSpinner(context, attributeSet) {
@@ -18,7 +19,7 @@ class DeckSelector(context: Context, attributeSet: AttributeSet?) : AppCompatSpi
         setSelection(0, false)
     }
 
-    fun selectDeckWithId(id: Long) {
+    fun selectDeckWithId(id: DeckId) {
         val position = (adapter as DecksSelectorAdapter).positionOfDeck { it.id == id }
         setSelection(position)
     }
@@ -49,7 +50,7 @@ private class DecksSelectorAdapter(val context: Context, val decks: List<Deck>) 
     }
 
     override fun getItemId(position: Int): Long {
-        return decks[position].id
+        return decks[position].id.value
     }
 
     override fun getCount(): Int {

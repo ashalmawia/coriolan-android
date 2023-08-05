@@ -1,10 +1,11 @@
 package com.ashalmawia.coriolan.data.storage
 
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.util.asDeckId
 
 fun addMockCard(
         storage: Repository,
-        deckId: Long = 1L,
+        deckId: DeckId = 1L.asDeckId(),
         original: String = "spring",
         translations: List<String> = listOf("весна", "источник"),
         domain: Domain = mockDomain(),

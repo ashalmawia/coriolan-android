@@ -2,6 +2,7 @@ package com.ashalmawia.coriolan.data.logbook
 
 import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.learning.exercise.ExerciseId
+import com.ashalmawia.coriolan.model.DeckId
 
 data class LogbookPayload(
         val cardActions: LogbookCardActionsPayload
@@ -16,17 +17,17 @@ data class LogbookCardActionsPayload(
         val byDeck: MutableMap<Long, LogbookCardActionsPayloadEntry>,
         val total: LogbookCardActionsPayloadEntry
 ) {
-    fun increment(exerciseId: ExerciseId, deckId: Long, cardAction: CardAction) {
+    fun increment(exerciseId: ExerciseId, deckId: DeckId, cardAction: CardAction) {
         process(exerciseId, deckId, cardAction, Count::increment)
     }
-    fun decrement(exerciseId: ExerciseId, deckId: Long, cardAction: CardAction) {
+    fun decrement(exerciseId: ExerciseId, deckId: DeckId, cardAction: CardAction) {
         process(exerciseId, deckId, cardAction, Count::decrement)
     }
 
     fun byExercise(exerciseId: ExerciseId) = byExercise.getOrPut(exerciseId) { LogbookCardActionsPayloadEntry.create() }
-    fun byDeck(deckId: Long) = byDeck.getOrPut(deckId) { LogbookCardActionsPayloadEntry.create() }
+    fun byDeck(deckId: DeckId) = byDeck.getOrPut(deckId.value) { LogbookCardActionsPayloadEntry.create() }
 
-    private fun process(exerciseId: ExerciseId, deckId: Long, cardAction: CardAction, update: Count.() -> Unit) {
+    private fun process(exerciseId: ExerciseId, deckId: DeckId, cardAction: CardAction, update: Count.() -> Unit) {
         byExercise(exerciseId)
                 .map.getOrPut(cardAction) { Count.zero() }
                 .update()

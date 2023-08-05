@@ -10,10 +10,12 @@ import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.CreateDeckBinding
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.model.Domain
 import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.util.requireSerializable
+import com.ashalmawia.coriolan.ui.util.serializable
 import com.ashalmawia.errors.Errors
 import org.koin.android.ext.android.inject
 
@@ -41,9 +43,8 @@ class AddEditDeckActivity : BaseActivity() {
         setContentView(views.root)
         initialize()
 
-        val deckId = intent.getLongExtra(EXTRA_DECK_ID, -1L)
-        val editMode = deckId != -1L
-        if (editMode) {
+        val deckId = intent.serializable<DeckId>(EXTRA_DECK_ID)
+        if (deckId != null) {
             setTitle(R.string.edit_deck__title)
             extractData(deckId)
         } else {
@@ -56,7 +57,7 @@ class AddEditDeckActivity : BaseActivity() {
         views.buttonBar.buttonOk.setOnClickListener { saveWithValidation() }
     }
 
-    private fun extractData(deckId: Long) {
+    private fun extractData(deckId: DeckId) {
         val deck = repository.deckById(deckId)
         this.deck = deck
         prefillValues(deck)

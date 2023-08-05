@@ -38,7 +38,7 @@ private fun _assertCardCorrect(card: Card?, data: CardData, langOriginal: Langua
         assertTermCorrect(card.translations[i], data.translations[i], langTranslations)
     }
 }
-fun assertCardCorrect(card: Card?, original: Term, translations: List<Term>, deckId: Long, domain: Domain) {
+fun assertCardCorrect(card: Card?, original: Term, translations: List<Term>, deckId: DeckId, domain: Domain) {
     assertNotNull(card)
     card!!
     assertEquals(original, card.original)

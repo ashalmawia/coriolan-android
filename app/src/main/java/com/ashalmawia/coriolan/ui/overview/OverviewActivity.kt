@@ -9,8 +9,10 @@ import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.OverviewBinding
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
+import com.ashalmawia.coriolan.model.DeckId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.commons.list.FlexListItem
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import com.ashalmawia.coriolan.ui.util.viewModelBuilder
 import org.koin.android.ext.android.get
 
@@ -23,14 +25,13 @@ class OverviewActivity : BaseActivity() {
     companion object {
         fun intent(context: Context, deck: Deck): Intent {
             val intent = Intent(context, OverviewActivity::class.java)
-            return intent
-                    .putExtra(KEY_DECK_ID, deck.id)
+            return intent.putExtra(KEY_DECK_ID, deck.id)
         }
     }
 
     private val views by lazy { OverviewBinding.inflate(layoutInflater) }
     private val viewModel by viewModelBuilder {
-        val deckId = intent.getLongExtra(KEY_DECK_ID, -1L)
+        val deckId = intent.requireSerializable<DeckId>(KEY_DECK_ID)
         OverviewViewModel(deckId, get())
     }
     private val view: OverviewView by lazy { OverviewViewImpl(views, this, viewModel) }

@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asDeckId
 import com.ashalmawia.coriolan.util.asDomainId
 import org.joda.time.DateTime
 
@@ -81,7 +82,7 @@ class MockRepository : Repository {
     }
 
     val cards = mutableListOf<Card>()
-    override fun addCard(domain: Domain, deckId: Long, original: Term, translations: List<Term>): Card {
+    override fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card {
         val card = Card(
                 cards.size + 1L,
                 deckId,
@@ -100,7 +101,7 @@ class MockRepository : Repository {
     override fun cardByValues(domain: Domain, original: Term): Card? {
         return cards.find { it.original.id == original.id }
     }
-    override fun updateCard(card: Card, deckId: Long, original: Term, translations: List<Term>): Card {
+    override fun updateCard(card: Card, deckId: DeckId, original: Term, translations: List<Term>): Card {
         if (!cards.contains(card)) {
             throw DataProcessingException("card is not in the repo: $card")
         }
@@ -121,21 +122,22 @@ class MockRepository : Repository {
     override fun allDecks(domain: Domain): List<Deck> {
         return decks
     }
-    override fun allDecksCardsCount(domain: Domain): Map<Long, Int> {
+    override fun allDecksCardsCount(domain: Domain): Map<DeckId, Int> {
         return decks.associate {
             val id = it.id
             val count = cards.count { it.deckId == id }
             Pair(id, count)
         }.filter { it.value > 0 }
     }
-    override fun deckById(id: Long): Deck {
+    override fun deckById(id: DeckId): Deck {
         return decks.find { it.id == id } ?: throw DataProcessingException("could not find id $id")
     }
     override fun cardsOfDeck(deck: Deck): List<Card> {
         return cards.filter { it.deckId == deck.id }
     }
     override fun addDeck(domain: Domain, name: String): Deck {
-        val deck = Deck(decks.size + 1L, domain, name)
+        val id = decks.size + 1L
+        val deck = Deck(id.asDeckId(), domain, name)
         decks.add(deck)
         return deck
     }
