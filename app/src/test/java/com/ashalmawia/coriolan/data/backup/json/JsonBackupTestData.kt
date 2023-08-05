@@ -18,12 +18,12 @@ object JsonBackupTestData {
             LanguageInfo(8L, "Arabic")
     )
     val domains = listOf(
-            DomainInfo(1L, "English", 1L, 2L),
-            DomainInfo(2L, "French", 3L, 2L),
-            DomainInfo(3L, "Greek", 4L, 2L),
-            DomainInfo(4L, "Chineese", 5L, 2L),
-            DomainInfo(5L, "Polish", 6L, 2L),
-            DomainInfo(6L, "Finnish", 7L, 2L)
+            domainInfo(1L, "English", 1L, 2L),
+            domainInfo(2L, "French", 3L, 2L),
+            domainInfo(3L, "Greek", 4L, 2L),
+            domainInfo(4L, "Chineese", 5L, 2L),
+            domainInfo(5L, "Polish", 6L, 2L),
+            domainInfo(6L, "Finnish", 7L, 2L)
     )
 
     val terms = listOf(
@@ -58,42 +58,42 @@ object JsonBackupTestData {
     )
 
     val cards = listOf(
-            CardInfo(1L, 1L, 1L, 1L, listOf(7L), CardType.FORWARD),
-            CardInfo(2L, 1L, 1L, 2L, listOf(8L), CardType.FORWARD),
-            CardInfo(3L, 2L, 1L, 3L, listOf(9L, 10L, 11L), CardType.FORWARD),
-            CardInfo(4L, 1L, 1L, 4L, listOf(12L), CardType.FORWARD),
-            CardInfo(5L, 2L, 1L, 5L, listOf(13L), CardType.FORWARD),
-            CardInfo(6L, 1L, 1L, 6L, listOf(14L, 15L), CardType.FORWARD),
+            cardInfo(1L, 1L, 1L, 1L, listOf(7L), CardType.FORWARD),
+            cardInfo(2L, 1L, 1L, 2L, listOf(8L), CardType.FORWARD),
+            cardInfo(3L, 2L, 1L, 3L, listOf(9L, 10L, 11L), CardType.FORWARD),
+            cardInfo(4L, 1L, 1L, 4L, listOf(12L), CardType.FORWARD),
+            cardInfo(5L, 2L, 1L, 5L, listOf(13L), CardType.FORWARD),
+            cardInfo(6L, 1L, 1L, 6L, listOf(14L, 15L), CardType.FORWARD),
 
-            CardInfo(7L, 1L, 1L, 7L, listOf(1L), CardType.REVERSE),
-            CardInfo(8L, 1L, 1L, 8L, listOf(2L), CardType.REVERSE),
-            CardInfo(9L, 2L, 1L, 9L, listOf(3L), CardType.REVERSE),
-            CardInfo(10L, 2L, 1L, 10L, listOf(3L), CardType.REVERSE),
-            CardInfo(11L, 2L, 1L, 11L, listOf(3L), CardType.REVERSE),
-            CardInfo(12L, 1L, 1L, 12L, listOf(4L), CardType.REVERSE),
-            CardInfo(13L, 2L, 1L, 13L, listOf(5L), CardType.REVERSE),
-            CardInfo(14L, 1L, 1L, 14L, listOf(6L), CardType.REVERSE),
-            CardInfo(15L, 1L, 1L, 15L, listOf(6L), CardType.REVERSE),
+            cardInfo(7L, 1L, 1L, 7L, listOf(1L), CardType.REVERSE),
+            cardInfo(8L, 1L, 1L, 8L, listOf(2L), CardType.REVERSE),
+            cardInfo(9L, 2L, 1L, 9L, listOf(3L), CardType.REVERSE),
+            cardInfo(10L, 2L, 1L, 10L, listOf(3L), CardType.REVERSE),
+            cardInfo(11L, 2L, 1L, 11L, listOf(3L), CardType.REVERSE),
+            cardInfo(12L, 1L, 1L, 12L, listOf(4L), CardType.REVERSE),
+            cardInfo(13L, 2L, 1L, 13L, listOf(5L), CardType.REVERSE),
+            cardInfo(14L, 1L, 1L, 14L, listOf(6L), CardType.REVERSE),
+            cardInfo(15L, 1L, 1L, 15L, listOf(6L), CardType.REVERSE),
 
-            CardInfo(16L, 3L, 2L, 16L, listOf(19L), CardType.FORWARD),
-            CardInfo(17L, 3L, 2L, 17L, listOf(20L), CardType.FORWARD),
-            CardInfo(18L, 3L, 2L, 18L, listOf(21L), CardType.FORWARD),
+            cardInfo(16L, 3L, 2L, 16L, listOf(19L), CardType.FORWARD),
+            cardInfo(17L, 3L, 2L, 17L, listOf(20L), CardType.FORWARD),
+            cardInfo(18L, 3L, 2L, 18L, listOf(21L), CardType.FORWARD),
 
-            CardInfo(19L, 3L, 2L, 19L, listOf(16L), CardType.REVERSE),
-            CardInfo(20L, 3L, 2L, 20L, listOf(17L), CardType.REVERSE),
-            CardInfo(21L, 3L, 2L, 21L, listOf(18L), CardType.REVERSE)
+            cardInfo(19L, 3L, 2L, 19L, listOf(16L), CardType.REVERSE),
+            cardInfo(20L, 3L, 2L, 20L, listOf(17L), CardType.REVERSE),
+            cardInfo(21L, 3L, 2L, 21L, listOf(18L), CardType.REVERSE)
     )
 
     val decks = listOf(
-            DeckInfo(1L, 1L, "Basic English"),
-            DeckInfo(2L, 1L, "Advanced"),
-            DeckInfo(3L, 2L, "Default"),
-            DeckInfo(4L, 1L, "Some deck"),
-            DeckInfo(5L, 1L, "Advanced deck"),
-            DeckInfo(6L, 2L, "Another deck"),
-            DeckInfo(7L, 1L, "Topic - Travelling"),
-            DeckInfo(8L, 1L, "Topic - Music"),
-            DeckInfo(9L, 2L, "Topic - Sports")
+            deckInfo(1L, 1L, "Basic English"),
+            deckInfo(2L, 1L, "Advanced"),
+            deckInfo(3L, 2L, "Default"),
+            deckInfo(4L, 1L, "Some deck"),
+            deckInfo(5L, 1L, "Advanced deck"),
+            deckInfo(6L, 2L, "Another deck"),
+            deckInfo(7L, 1L, "Topic - Travelling"),
+            deckInfo(8L, 1L, "Topic - Music"),
+            deckInfo(9L, 2L, "Topic - Sports")
     )
 
     private val random = Random()

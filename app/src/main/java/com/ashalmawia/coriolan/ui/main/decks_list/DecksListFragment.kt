@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.LearningBinding
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.main.DomainActivity
 import com.ashalmawia.coriolan.ui.util.activityViewModelBuilder
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
@@ -18,9 +20,9 @@ private const val ARGUMENT_DOMAIN_ID = "domain_id"
 class DecksListFragment : BaseFragment() {
 
     companion object {
-        fun create(domainId: Long): DecksListFragment {
+        fun create(domainId: DomainId): DecksListFragment {
             val arguments = Bundle().also {
-                it.putLong(ARGUMENT_DOMAIN_ID, domainId)
+                it.putSerializable(ARGUMENT_DOMAIN_ID, domainId)
             }
             return DecksListFragment().also { it.arguments = arguments }
         }
@@ -31,7 +33,7 @@ class DecksListFragment : BaseFragment() {
     private val repository: Repository by inject()
 
     private val viewModel: DecksListViewModel by activityViewModelBuilder {
-        DecksListViewModel(requireArguments().getLong(ARGUMENT_DOMAIN_ID), repository, get(), get())
+        DecksListViewModel(requireArguments().requireSerializable(ARGUMENT_DOMAIN_ID), repository, get(), get())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

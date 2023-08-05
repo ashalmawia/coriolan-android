@@ -9,6 +9,7 @@ import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asDomainId
 import org.joda.time.DateTime
 
 class MockRepository : Repository {
@@ -69,11 +70,12 @@ class MockRepository : Repository {
 
     private val domains = mutableListOf<Domain>()
     override fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain {
-        val domain = Domain(domains.size + 1L, name, langOriginal, langTranslations)
+        val id = domains.size + 1L
+        val domain = Domain(id.asDomainId(), name, langOriginal, langTranslations)
         domains.add(domain)
         return domain
     }
-    override fun domainById(id: Long): Domain? = domains.find { it.id == id }
+    override fun domainById(id: DomainId): Domain? = domains.find { it.id == id }
     override fun allDomains(): List<Domain> {
         return domains
     }

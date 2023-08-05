@@ -17,6 +17,7 @@ import com.ashalmawia.coriolan.databinding.AddEditCardBinding
 import com.ashalmawia.coriolan.model.*
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.commons.DeletingCard.confirmDeleteCurrentCard
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import org.koin.android.ext.android.inject
 
 private const val EXTRA_DOMAIN_ID = "domain_id"
@@ -35,7 +36,7 @@ class AddEditCardActivity : BaseActivity() {
     private val decksRegistry: DecksRegistry by inject()
 
     private val domain: Domain by lazy {
-        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        val domainId = intent.requireSerializable<DomainId>(EXTRA_DOMAIN_ID)
         repository.domainById(domainId)!!
     }
 

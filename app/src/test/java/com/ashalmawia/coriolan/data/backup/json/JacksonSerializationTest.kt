@@ -32,7 +32,7 @@ class JacksonSerializationTest {
     @Test
     fun testDomainInfo() {
         // given
-        val info = DomainInfo(333L, "My cool domain", 5L, 13L)
+        val info = domainInfo(333L, "My cool domain", 5L, 13L)
 
         // then
         test(info, serializer::writeDomain, deserializer::readDomain)
@@ -50,7 +50,7 @@ class JacksonSerializationTest {
     @Test
     fun testCardInfo() {
         // given
-        val info = CardInfo(8L, 17L, 2L, 888L, listOf(55L, 31L, 3L), null)
+        val info = cardInfo(8L, 17L, 2L, 888L, listOf(55L, 31L, 3L), null)
 
         // then
         test(info, serializer::writeCard, deserializer::readCard)
@@ -59,7 +59,7 @@ class JacksonSerializationTest {
     @Test
     fun testDeckInfo() {
         // given
-        val info = DeckInfo(57L, 3L, "some name")
+        val info = deckInfo(57L, 3L, "some name")
 
         // then
         test(info, serializer::writeDeck, deserializer::readDeck)

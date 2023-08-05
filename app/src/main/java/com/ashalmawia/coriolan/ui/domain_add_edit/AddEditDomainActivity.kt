@@ -7,8 +7,10 @@ import android.view.Menu
 import android.view.MenuItem
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.AddEditDomainBinding
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.backup.RestoreFromBackupActivity
+import com.ashalmawia.coriolan.ui.util.serializable
 import com.ashalmawia.coriolan.ui.util.viewModelBuilder
 import org.koin.android.ext.android.get
 
@@ -19,7 +21,7 @@ class AddEditDomainActivity : BaseActivity() {
 
     private val firstStart by lazy { intent.getBooleanExtra(EXTRA_FIRST_START, false) }
     private val viewModel by viewModelBuilder {
-        val domainId = if (intent.hasExtra(EXTRA_DOMAIN_ID)) intent.getLongExtra(EXTRA_DOMAIN_ID, -1L) else null
+        val domainId = intent.serializable<DomainId>(EXTRA_DOMAIN_ID)
         AddEditDomainViewModel(get(), get(), get(), firstStart, domainId)
     }
 
@@ -68,7 +70,7 @@ class AddEditDomainActivity : BaseActivity() {
             return intent
         }
 
-        fun edit(context: Context, domainId: Long): Intent {
+        fun edit(context: Context, domainId: DomainId): Intent {
             val intent = Intent(context, AddEditDomainActivity::class.java)
             intent.putExtra(EXTRA_FIRST_START, false)
             intent.putExtra(EXTRA_DOMAIN_ID, domainId)

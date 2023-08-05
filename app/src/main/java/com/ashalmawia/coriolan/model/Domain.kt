@@ -1,7 +1,9 @@
 package com.ashalmawia.coriolan.model
 
+import java.io.Serializable
+
 data class Domain(
-        val id: Long,
+        val id: DomainId,
         private val customName: String?,
         private val langOriginal: Language,
         private val langTranslations: Language
@@ -21,4 +23,9 @@ data class Domain(
             CardType.REVERSE -> langOriginal
         }
     }
+}
+
+data class DomainId(val value: Long) : Serializable {
+
+    fun asString() = value.toString()
 }

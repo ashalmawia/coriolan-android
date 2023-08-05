@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ashalmawia.coriolan.databinding.EditBinding
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.BaseFragment
 import com.ashalmawia.coriolan.ui.util.activityViewModelBuilder
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import org.koin.android.ext.android.get
 
 private const val ARGUMENT_DOMAIN_ID = "domain_id"
@@ -15,9 +17,9 @@ private const val ARGUMENT_DOMAIN_ID = "domain_id"
 class EditFragment : BaseFragment() {
 
     companion object {
-        fun create(domainId: Long): EditFragment {
+        fun create(domainId: DomainId): EditFragment {
             val arguments = Bundle().also {
-                it.putLong(ARGUMENT_DOMAIN_ID, domainId)
+                it.putSerializable(ARGUMENT_DOMAIN_ID, domainId)
             }
             return EditFragment().also { it.arguments = arguments }
         }
@@ -25,7 +27,7 @@ class EditFragment : BaseFragment() {
 
     private lateinit var view: EditView
     private val viewModel by activityViewModelBuilder {
-        val domainId = requireArguments().getLong(ARGUMENT_DOMAIN_ID)
+        val domainId = requireArguments().requireSerializable<DomainId>(ARGUMENT_DOMAIN_ID)
         EditViewModel(domainId, get())
     }
 

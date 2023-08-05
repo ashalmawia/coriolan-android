@@ -10,6 +10,7 @@ import com.ashalmawia.coriolan.learning.SchedulingState
 import com.ashalmawia.coriolan.learning.exercise.Exercise
 import com.ashalmawia.coriolan.learning.exercise.MockExercise
 import com.ashalmawia.coriolan.learning.mockToday
+import com.ashalmawia.coriolan.util.asDomainId
 import org.joda.time.DateTime
 
 // TODO: go over it's default usages and consider adding params and checking them
@@ -41,7 +42,7 @@ fun mockTerm(value: String = "mock value", language: Language = mockLanguage(), 
         = Term(termId++, value, language, transcription)
 
 private var domainId = 1L
-fun mockDomain(value: String = "Mock Domain") = Domain(domainId++, value, langOriginal(), langTranslations())
+fun mockDomain(value: String = "Mock Domain") = Domain(domainId++.asDomainId(), value, langOriginal(), langTranslations())
 
 private var cardId = 1L
 fun mockCard(

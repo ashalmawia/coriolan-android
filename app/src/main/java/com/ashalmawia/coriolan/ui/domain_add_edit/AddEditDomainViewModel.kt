@@ -8,6 +8,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.DataProcessingException
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 
 private const val TAG = "AddEditDomainActivity"
 
@@ -16,7 +17,7 @@ class AddEditDomainViewModel(
         private val preferences: Preferences,
         private val domainsRegistry: DomainsRegistry,
         private val isFirstStart: Boolean,
-        private val domainId: Long?
+        private val domainId: DomainId?
 ) : ViewModel() {
 
     private val domain: Domain? by lazy { if (domainId != null) repository.domainById(domainId) else null }

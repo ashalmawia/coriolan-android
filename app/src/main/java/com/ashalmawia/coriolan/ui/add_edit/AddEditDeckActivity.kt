@@ -11,7 +11,9 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.CreateDeckBinding
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import com.ashalmawia.errors.Errors
 import org.koin.android.ext.android.inject
 
@@ -30,7 +32,7 @@ class AddEditDeckActivity : BaseActivity() {
     private val decksRegistry: DecksRegistry by inject()
 
     private val domain: Domain by lazy {
-        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        val domainId = intent.requireSerializable<DomainId>(EXTRA_DOMAIN_ID)
         repository.domainById(domainId)!!
     }
 

@@ -12,6 +12,7 @@ import com.ashalmawia.coriolan.data.prefs.Preferences
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.DomainActivityBinding
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.commons.showFeatureDiscoverySequence
 import com.ashalmawia.coriolan.ui.commons.tapTargetForNavigationIcon
@@ -21,6 +22,7 @@ import com.ashalmawia.coriolan.ui.domain_add_edit.AddEditDomainActivity
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
@@ -48,7 +50,7 @@ class DomainActivity : BaseActivity() {
     private val repository: Repository by inject()
     private val preferences: Preferences by inject()
 
-    private val domainId: Long by lazy { intent.getLongExtra(EXTRA_DOMAIN_ID, -1) }
+    private val domainId: DomainId by lazy { intent.requireSerializable(EXTRA_DOMAIN_ID) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

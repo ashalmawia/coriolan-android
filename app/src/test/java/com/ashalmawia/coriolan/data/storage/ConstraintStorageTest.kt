@@ -5,6 +5,7 @@ import com.ashalmawia.coriolan.data.storage.sqlite.SqliteStorage
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.learning.mockToday
 import com.ashalmawia.coriolan.model.*
+import com.ashalmawia.coriolan.util.asDomainId
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -167,7 +168,7 @@ class ConstraintStorageTest {
         val original = storage.justAddTerm("shrimp", domain.langOriginal())
         val translation = storage.justAddTerm("креветка", domain.langTranslations())
 
-        val dummyDomain = Domain(5L, "some name", domain.langOriginal(), domain.langTranslations())
+        val dummyDomain = Domain(5L.asDomainId(), "some name", domain.langOriginal(), domain.langTranslations())
 
         // when
         storage.addCard(dummyDomain, deck.id, original, listOf(translation))
@@ -363,7 +364,7 @@ class ConstraintStorageTest {
         val storage = emptyStorage.value
         val name = "My new deck"
 
-        val dummyDomain = Domain(5L, "some name", mockLanguage(), mockLanguage())
+        val dummyDomain = Domain(5L.asDomainId(), "some name", mockLanguage(), mockLanguage())
 
         // when
         storage.addDeck(dummyDomain, name)

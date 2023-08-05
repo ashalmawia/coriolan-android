@@ -5,12 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EditViewModel(
-        private val domainId: Long,
+        private val domainId: DomainId,
         private val repository: Repository
 ) : ViewModel() {
 

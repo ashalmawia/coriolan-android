@@ -40,6 +40,7 @@ import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.mockLanguage
 import com.ashalmawia.coriolan.model.mockLearningProgress
 import com.ashalmawia.coriolan.model.mockTerm
+import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
@@ -154,7 +155,7 @@ class CreateContentValuesTest {
 
         // when
         val id = 5L
-        val cv1 = createDomainContentValues(name, langOriginal.id, langTranslations.id, id)
+        val cv1 = createDomainContentValues(name, langOriginal.id, langTranslations.id, id.asDomainId())
 
         // then
         assertEquals("values count is correct", 4, cv1.size())
@@ -176,7 +177,7 @@ class CreateContentValuesTest {
         val payloadString = jacksonObjectMapper().writeValueAsString(payload)
 
         // when
-        val cv = createCardContentValues(domainId, deckId, original, type, payload)
+        val cv = createCardContentValues(domainId.asDomainId(), deckId, original, type, payload)
 
         // then
         assertEquals("values count is correct", 5, cv.size())
@@ -200,7 +201,7 @@ class CreateContentValuesTest {
         val cardId = 7L
 
         // when
-        val cv = createCardContentValues(domainId, deckId, original, type, payload, cardId)
+        val cv = createCardContentValues(domainId.asDomainId(), deckId, original, type, payload, cardId)
 
         // then
         cv.run {
@@ -214,7 +215,7 @@ class CreateContentValuesTest {
         }
 
         // when
-        val cv1 = createCardContentValues(domainId, deckId, original.id, type, payload, cardId)
+        val cv1 = createCardContentValues(domainId.asDomainId(), deckId, original.id, type, payload, cardId)
 
         // then
         cv1.run {
@@ -235,7 +236,7 @@ class CreateContentValuesTest {
         val domainId = 3L
 
         // when
-        val cv = createDeckContentValues(domainId, name)
+        val cv = createDeckContentValues(domainId.asDomainId(), name)
 
         // then
         assertEquals("values count is correct", 2, cv.size())
@@ -251,7 +252,7 @@ class CreateContentValuesTest {
         val deckId = 5L
 
         // when
-        val cv = createDeckContentValues(domainId, name, deckId)
+        val cv = createDeckContentValues(domainId.asDomainId(), name, deckId)
 
         // then
         assertEquals("values count is correct", 3, cv.size())

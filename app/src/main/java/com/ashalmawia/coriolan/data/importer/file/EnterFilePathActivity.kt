@@ -14,8 +14,10 @@ import com.ashalmawia.coriolan.data.storage.Repository
 import com.ashalmawia.coriolan.databinding.EnterFilePathBinding
 import com.ashalmawia.coriolan.dependencies.dataImportScope
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.ui.BaseActivity
 import com.ashalmawia.coriolan.ui.util.isPermissionGranted
+import com.ashalmawia.coriolan.ui.util.requireSerializable
 import com.ashalmawia.coriolan.ui.util.showStoragePermissionDeniedAlert
 import org.koin.android.ext.android.inject
 import java.io.File
@@ -32,7 +34,7 @@ class EnterFilePathActivity : BaseActivity() {
 
     private val repository: Repository by inject()
     private val domain: Domain by lazy {
-        val domainId = intent.getLongExtra(EXTRA_DOMAIN_ID, -1)
+        val domainId = intent.requireSerializable<DomainId>(EXTRA_DOMAIN_ID)
         repository.domainById(domainId)!!
     }
     private val importFlow: DataImportFlow by dataImportScope().inject()

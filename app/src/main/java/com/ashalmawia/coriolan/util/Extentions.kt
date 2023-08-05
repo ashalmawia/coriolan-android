@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
+import com.ashalmawia.coriolan.model.DomainId
 import org.joda.time.DateTime
 
 fun ViewGroup.inflate(resource: Int, attachToRoot: Boolean): View {
@@ -34,3 +35,5 @@ fun Int?.orMax(): Int {
 
 fun List<Card>.forward() = filter { it.type == CardType.FORWARD }
 fun List<Card>.reverse() = filter { it.type == CardType.REVERSE }
+
+fun Long.asDomainId() = DomainId(this)

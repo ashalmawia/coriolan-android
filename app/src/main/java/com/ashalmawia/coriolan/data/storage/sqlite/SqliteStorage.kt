@@ -76,9 +76,11 @@ import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.CardType
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.model.Language
 import com.ashalmawia.coriolan.model.Term
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
+import com.ashalmawia.coriolan.util.asDomainId
 import com.ashalmawia.coriolan.util.timespamp
 import com.ashalmawia.errors.Errors
 import org.joda.time.DateTime
@@ -266,13 +268,13 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
 
         try {
             val id = db.insertOrThrow(DOMAINS, null, cv)
-            return Domain(id, name, langOriginal, langTranslations)
+            return Domain(id.asDomainId(), name, langOriginal, langTranslations)
         } catch (e: SQLiteConstraintException) {
             throw DataProcessingException("failed to create domain $langOriginal -> $langTranslations, constraint violation", e)
         }
     }
 
-    override fun domainById(id: Long): Domain {
+    override fun domainById(id: DomainId): Domain {
         val db = helper.readableDatabase
 
         val LANGS1 = "L1"
@@ -292,7 +294,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             
                WHERE
                   $DOMAINS_ID = ?
-        """.trimMargin(), arrayOf(id.toString()))
+        """.trimMargin(), arrayOf(id.asString()))
 
         cursor.use {
             it.moveToNext()
@@ -460,7 +462,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                    $CARDS_DOMAIN_ID = ?
                        AND
                    $CARDS_FRONT_ID = ?
-        """.trimMargin(), arrayOf(domain.id.toString(), original.id.toString()))
+        """.trimMargin(), arrayOf(domain.id.asString(), original.id.toString()))
 
         val (card, payload) = cursor.use {
             // go over these cards
@@ -536,7 +538,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             
             WHERE
                $CARDS_DOMAIN_ID = ?
-        """.trimMargin(), arrayOf(domain.id.toString()))
+        """.trimMargin(), arrayOf(domain.id.asString()))
 
         return extractCardsFromCursor(cursor, domain)
     }
@@ -548,7 +550,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
             SELECT *
                FROM $DECKS
                WHERE $DECKS_DOMAIN_ID = ?
-        """.trimMargin(), arrayOf(domain.id.toString()))
+        """.trimMargin(), arrayOf(domain.id.asString()))
 
         val list = mutableListOf<Deck>()
         cursor.use {
@@ -568,7 +570,7 @@ class SqliteStorage(private val helper: SqliteRepositoryOpenHelper) : Repository
                FROM $CARDS
                WHERE $CARDS_DOMAIN_ID = ?
                GROUP BY $CARDS_DECK_ID
-        """.trimMargin(), arrayOf(domain.id.toString()))
+        """.trimMargin(), arrayOf(domain.id.asString()))
 
         val map = mutableMapOf<Long, Int>()
         cursor.use {

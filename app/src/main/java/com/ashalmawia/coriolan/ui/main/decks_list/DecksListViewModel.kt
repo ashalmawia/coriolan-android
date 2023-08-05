@@ -12,6 +12,7 @@ import com.ashalmawia.coriolan.learning.mutation.StudyOrder
 import com.ashalmawia.coriolan.model.Counts
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.model.PendingCardsCount
 import com.ashalmawia.coriolan.ui.learning.CardTypeFilter
 import com.ashalmawia.coriolan.util.orMax
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DecksListViewModel(
-        private val domainId: Long,
+        private val domainId: DomainId,
         private val repository: Repository,
         private val preferences: Preferences,
         private val studyTargetsResolver: StudyTargetsResolver

@@ -11,6 +11,7 @@ import com.ashalmawia.coriolan.learning.exercise.CardAction
 import com.ashalmawia.coriolan.model.Card
 import com.ashalmawia.coriolan.model.Deck
 import com.ashalmawia.coriolan.model.Domain
+import com.ashalmawia.coriolan.model.DomainId
 import com.ashalmawia.coriolan.util.midnight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
 class StatisticsViewModel(
-        private val domainId: Long,
+        private val domainId: DomainId,
         private val repository: Repository,
         private val logbook: Logbook
 ) : ViewModel() {

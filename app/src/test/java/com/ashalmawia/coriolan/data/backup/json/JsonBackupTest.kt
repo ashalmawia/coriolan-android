@@ -2,10 +2,7 @@ package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.Backup
 import com.ashalmawia.coriolan.data.backup.BackupableRepository
-import com.ashalmawia.coriolan.data.backup.CardInfo
 import com.ashalmawia.coriolan.data.backup.LearningProgressInfo
-import com.ashalmawia.coriolan.data.backup.DeckInfo
-import com.ashalmawia.coriolan.data.backup.DomainInfo
 import com.ashalmawia.coriolan.data.backup.LanguageInfo
 import com.ashalmawia.coriolan.data.backup.TermInfo
 import com.ashalmawia.coriolan.data.logbook.BackupableLogbook
@@ -175,7 +172,7 @@ abstract class JsonBackupTest {
                 LanguageInfo(1, "Английский"),
                 LanguageInfo(2, "Русский"))
         val domains = listOf(
-                DomainInfo(1, "", 1, 2)
+                domainInfo(1, "", 1, 2)
         )
         val terms = listOf(
                 TermInfo(1, "get", 1, "get"),
@@ -187,16 +184,16 @@ abstract class JsonBackupTest {
                 TermInfo(7, "карабкаться", 2, null),
         )
         val cards = listOf(
-                CardInfo(1, 1, 1, 1, listOf(2, 3, 4), CardType.FORWARD),
-                CardInfo(2, 1, 1, 2, listOf(1), CardType.REVERSE),
-                CardInfo(3, 1, 1, 3, listOf(1, 5), CardType.REVERSE),
-                CardInfo(4, 1, 1, 4, listOf(1), CardType.REVERSE),
-                CardInfo(5, 1, 1, 5, listOf(3), CardType.FORWARD),
-                CardInfo(6, 1, 1, 6, listOf(7), CardType.FORWARD),
-                CardInfo(7, 1, 1, 7, listOf(6), CardType.REVERSE),
+                cardInfo(1, 1, 1, 1, listOf(2, 3, 4), CardType.FORWARD),
+                cardInfo(2, 1, 1, 2, listOf(1), CardType.REVERSE),
+                cardInfo(3, 1, 1, 3, listOf(1, 5), CardType.REVERSE),
+                cardInfo(4, 1, 1, 4, listOf(1), CardType.REVERSE),
+                cardInfo(5, 1, 1, 5, listOf(3), CardType.FORWARD),
+                cardInfo(6, 1, 1, 6, listOf(7), CardType.FORWARD),
+                cardInfo(7, 1, 1, 7, listOf(6), CardType.REVERSE),
         )
         val decks = listOf(
-                DeckInfo(1, 1, "Default")
+                deckInfo(1, 1, "Default")
         )
         val states = listOf(
                 LearningProgressInfo(1, DateTime(1680400800000), 1),

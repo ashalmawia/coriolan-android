@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.data.backup.json
 
 import com.ashalmawia.coriolan.data.backup.DeckInfo
+import com.ashalmawia.coriolan.util.asDomainId
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
@@ -34,14 +35,14 @@ fun readDeckFromJson(json: JsonParser): DeckInfo {
     if (id == null || domainId == null || name == null) {
         throw JsonDeserializationException("failed to deserialize deck, id $id, domainId $domainId, name $name")
     }
-    return DeckInfo(id, domainId, name)
+    return DeckInfo(id, domainId.asDomainId(), name)
 }
 
 fun writeDeckToJson(deck: DeckInfo, json: JsonGenerator) {
     json.writeStartObject()
 
     json.writeNumberField(FIELD_ID, deck.id)
-    json.writeNumberField(FIELD_DOMAIN_ID, deck.domainId)
+    json.writeNumberField(FIELD_DOMAIN_ID, deck.domainId.value)
     json.writeStringField(FIELD_NAME, deck.name)
 
     json.writeEndObject()

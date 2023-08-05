@@ -32,7 +32,7 @@ interface Repository {
 
     fun createDomain(name: String?, langOriginal: Language, langTranslations: Language): Domain
 
-    fun domainById(id: Long): Domain?
+    fun domainById(id: DomainId): Domain?
 
     fun allDomains(): List<Domain>
 
