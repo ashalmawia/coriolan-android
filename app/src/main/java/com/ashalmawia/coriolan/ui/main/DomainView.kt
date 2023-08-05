@@ -38,6 +38,8 @@ interface DomainView {
     fun onOptionsItemSelected(item: MenuItem): Boolean
     fun selectTab(index: Int)
     fun finish()
+
+    fun showLoading()
 }
 
 class DomainViewImpl(
@@ -74,6 +76,7 @@ class DomainViewImpl(
     }
 
     override fun finish() {
+        activity.hideLoading()
         activity.finish()
     }
 
@@ -175,6 +178,13 @@ class DomainViewImpl(
         }
     }
 
+    override fun showLoading() {
+        activity.showLoading()
+    }
+
+    private fun hideLoading() {
+        activity.hideLoading()
+    }
 }
 
 private enum class Tab {
