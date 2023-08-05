@@ -161,6 +161,15 @@ class ConstraintStorageTest {
     }
 
     @Test(expected = DataProcessingException::class)
+    fun test__deleteDomain__notPresent() {
+        // given
+        val storage = emptyStorage.value
+
+        // when
+        storage.deleteDomain(mockDomain())
+    }
+
+    @Test(expected = DataProcessingException::class)
     fun test__addCard__domainIncorrect() {
         // given
         val storage = prefilledStorage.value

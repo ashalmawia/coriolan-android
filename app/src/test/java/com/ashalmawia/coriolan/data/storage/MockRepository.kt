@@ -85,6 +85,9 @@ class MockRepository : Repository {
     override fun allDomains(): List<Domain> {
         return domains
     }
+    override fun deleteDomain(domain: Domain) {
+        domains.remove(domain)
+    }
 
     val cards = mutableListOf<Card>()
     override fun addCard(domain: Domain, deckId: DeckId, original: Term, translations: List<Term>): Card {

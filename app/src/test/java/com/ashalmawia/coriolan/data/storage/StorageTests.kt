@@ -664,6 +664,21 @@ abstract class StorageTest {
     }
 
     @Test
+    fun test__deleteDomain__present() {
+        // given
+        val storage = prefilledStorage.value
+        val allDomains = storage.allDomains()
+        assertEquals(1, allDomains.size)
+        val domain = allDomains[0]
+
+        // when
+        storage.deleteDomain(domain)
+
+        // then
+        assertTrue(storage.allDomains().isEmpty())
+    }
+
+    @Test
     fun test__addCard__Word__SingleTranslation__Forward() {
         // given
         val storage = prefilledStorage.value
