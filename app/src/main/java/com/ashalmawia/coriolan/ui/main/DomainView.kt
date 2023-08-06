@@ -3,7 +3,6 @@ package com.ashalmawia.coriolan.ui.main
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import com.ashalmawia.coriolan.R
 import com.ashalmawia.coriolan.databinding.DomainActivityBinding
@@ -14,10 +13,10 @@ import com.ashalmawia.coriolan.ui.commons.tapTargetForNavigationIcon
 import com.ashalmawia.coriolan.ui.commons.tapTargetForToolbarOverflow
 import com.ashalmawia.coriolan.ui.commons.tapTargetForView
 import com.ashalmawia.coriolan.ui.domain_add_edit.AddEditDomainActivity
+import com.ashalmawia.coriolan.ui.domain_add_edit.DeleteDomainDialog.showConfirmDeleteDomainDialog
 import com.ashalmawia.coriolan.ui.main.decks_list.DecksListFragment
 import com.ashalmawia.coriolan.ui.main.edit.EditFragment
 import com.ashalmawia.coriolan.ui.main.statistics.StatisticsFragment
-import com.ashalmawia.coriolan.ui.util.positiveButton
 import com.ashalmawia.errors.Errors
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
@@ -151,13 +150,7 @@ class DomainViewImpl(
     private fun domainId() = viewModel.domain.id
 
     private fun confirmDeleteDomain() {
-        AlertDialog.Builder(activity)
-                .setTitle(R.string.delete_domain__title)
-                .setMessage(activity.getString(R.string.delete_domain__message, viewModel.domain.name))
-                .positiveButton(R.string.delete_domain__ok) { viewModel.deleteDomain() }
-                .setNegativeButton(R.string.button_cancel, null)
-                .create()
-                .show()
+        activity.showConfirmDeleteDomainDialog(viewModel.domain) { viewModel.deleteDomain() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu) {

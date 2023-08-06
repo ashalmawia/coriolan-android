@@ -55,6 +55,7 @@
 		android:background="?attr/selectableItemBackgroundBorderless"
 		android:src="@drawable/ic_more_vert_black"
 		android:scaleType="centerInside"
+		app:tint="@color/colorPrimary"
 		/>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.ashalmawia.coriolan.ui.domains_list
 
 import android.content.Context
+import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.ashalmawia.coriolan.model.Domain
@@ -13,7 +14,11 @@ sealed class DomainsListItem {
             get() = DomainsListItemType.CATEGORY
     }
 
-    data class DomainItem(val domain: Domain, val onClick: (Context) -> Unit) : DomainsListItem() {
+    data class DomainItem(
+            val domain: Domain,
+            val onClick: (Context) -> Unit,
+            val onMoreClick: (View) -> Unit
+    ) : DomainsListItem() {
         override val type
             get() = DomainsListItemType.DOMAIN
     }

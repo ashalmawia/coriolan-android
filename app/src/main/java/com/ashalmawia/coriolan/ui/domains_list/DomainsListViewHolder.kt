@@ -22,6 +22,7 @@ sealed class DomainsListViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             views.apply {
                 name.text = item.domain.name
                 root.setOnClickListener { item.onClick(it.context) }
+                more.setOnClickListener { item.onMoreClick(more) }
             }
         }
     }

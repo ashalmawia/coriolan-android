@@ -16,7 +16,7 @@ class DomainsListActivity : BaseActivity() {
         fun intent(context: Context) = Intent(context, DomainsListActivity::class.java)
     }
 
-    private val viewModel by viewModelBuilder { DomainsListViewModel(get()) }
+    private val viewModel by viewModelBuilder { DomainsListViewModel(get(), get()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +24,7 @@ class DomainsListActivity : BaseActivity() {
         val views = DomainsListBinding.inflate(layoutInflater)
         setContentView(views.root)
 
-        val view: DomainsListView = DomainsListViewImpl(views, this)
+        val view: DomainsListView = DomainsListViewImpl(views, this, viewModel)
         viewModel.init(view)
     }
 
