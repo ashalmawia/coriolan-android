@@ -1,15 +1,18 @@
 package com.ashalmawia.coriolan.ui.domains_list
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.ashalmawia.coriolan.R
+import com.ashalmawia.coriolan.databinding.DomainListItemBinding
+import com.ashalmawia.coriolan.databinding.DomainListOptionItemBinding
+import com.ashalmawia.coriolan.databinding.DomainsListCategoryItemBinding
+import com.ashalmawia.coriolan.ui.util.layoutInflater
 
 enum class DomainsListItemType {
     CATEGORY {
         override fun createViewHolder(context: Context, parent: ViewGroup): DomainsListViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.domains_list_category_item, parent, false)
-            return DomainsListViewHolder.Category(view)
+            return DomainsListViewHolder.Category(
+                    DomainsListCategoryItemBinding.inflate(context.layoutInflater, parent, false)
+            )
         }
 
         override fun bindViewHolder(holder: DomainsListViewHolder, item: DomainsListItem) {
@@ -18,8 +21,9 @@ enum class DomainsListItemType {
     },
     DOMAIN {
         override fun createViewHolder(context: Context, parent: ViewGroup): DomainsListViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.domain_list_item, parent, false)
-            return DomainsListViewHolder.Domain(view)
+            return DomainsListViewHolder.Domain(
+                    DomainListItemBinding.inflate(context.layoutInflater, parent, false)
+            )
         }
 
         override fun bindViewHolder(holder: DomainsListViewHolder, item: DomainsListItem) {
@@ -28,8 +32,9 @@ enum class DomainsListItemType {
     },
     OPTION {
         override fun createViewHolder(context: Context, parent: ViewGroup): DomainsListViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.domain_list_option_item, parent, false)
-            return DomainsListViewHolder.Option(view)
+            return DomainsListViewHolder.Option(
+                    DomainListOptionItemBinding.inflate(context.layoutInflater, parent, false)
+            )
         }
 
         override fun bindViewHolder(holder: DomainsListViewHolder, item: DomainsListItem) {
